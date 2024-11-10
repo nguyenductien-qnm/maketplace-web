@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="512" viewBox="0 0 128 128" width="512">
+    <g id="Flat">
+        <g id="Color">
+            <rect fill="#e0e0e0" height="125" rx="12" width="75" x="1.5" y="1.5"></rect>
+            <path
+                d="m19.2 1.5 3.589 6.688a7.812 7.812 0 0 0 6.811 4.312h18.8a7.813 7.813 0 0 0 6.811-4.312l3.589-6.688z"
+                fill="#bdbdbd"></path>
+            <path d="m117.5 94h-78.5v-60h78.5a9 9 0 0 1 9 9v42a9 9 0 0 1 -9 9z" fill="#0071DC"></path>
+            <rect fill="#ffb300" height="15" rx="3" width="15" x="47" y="46"></rect>
+            <g fill="#fff">
+                <rect height="9" rx="1.5" width="9" x="46.75" y="73"></rect>
+                <rect height="9" rx="1.5" width="9" x="67.75" y="73"></rect>
+                <rect height="9" rx="1.5" width="9" x="88.75" y="73"></rect>
+                <rect height="9" rx="1.5" width="9" x="109.75" y="73"></rect>
+                <rect height="6" rx="1.5" width="29" x="89.5" y="50.5"></rect>
+            </g>
+            <path
+                d="m27.5 113.5a1.5 1.5 0 0 0 1.5 1.5h21a1.5 1.5 0 0 0 0-3h-21a1.5 1.5 0 0 0 -1.5 1.5z"
+                fill="#bdbdbd"></path>
+            <path d="m39 28a1.5 1.5 0 0 0 -1.5 1.5v69a1.5 1.5 0 0 0 3 0v-69a1.5 1.5 0 0 0 -1.5-1.5z"
+                fill="#0071DC"></path>
+        </g>
+    </g>
+</svg>
