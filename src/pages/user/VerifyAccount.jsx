@@ -11,9 +11,9 @@ import { verifyAccount } from '~/redux/user.slice'
 import { useDispatch } from 'react-redux'
 
 function VerifyAccount() {
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const otp = useParams()
-  const navigate = useNavigate()
   const [stateVerify, setStateVerify] = useState('pending')
 
   useEffect(() => {
@@ -30,7 +30,7 @@ function VerifyAccount() {
     }
 
     verifyAndNavigate()
-  }, [otp, navigate])
+  }, [])
 
   return (
     <Box

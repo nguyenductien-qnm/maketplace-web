@@ -4,31 +4,38 @@ import Store from './pages/user/Store'
 import ShoppingCart from './pages/user/ShoppingCart'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import { createBrowserRouter } from 'react-router-dom'
 import MyAccount from './pages/user/MyAccount'
 import Auth from './pages/user/Auth'
 import Vendor from './pages/user/Vendor'
 import SetupAccount from './pages/user/SetupAccount'
 import VerifyAccount from './pages/user/VerifyAccount'
 import PrivateRoute from './components/PrivateRoute'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
-const router = createBrowserRouter([
-  { path: '/home', element: <Home /> },
-  { path: '/product', element: <DetailProduct /> },
-  { path: '/store', element: <Store /> },
-  { path: '/cart', element: <ShoppingCart /> },
-  { path: '/my-account/:page', element: <MyAccount /> },
-  { path: '/auth/:page', element: <Auth /> },
-  { path: '/auth/verify-account/:otp', element: <VerifyAccount /> },
-  { path: '/vendor/:page', element: <Vendor /> },
-  {
-    path: '/setup-account',
-    element: (
-      <PrivateRoute>
-        <SetupAccount />
-      </PrivateRoute>
-    )
-  }
-])
-
-export default router
+function App() {
+  const currentUser = useSelector((state) => state.user.currentUser)
+  return (
+    <Routes>
+      <Route path="/home" element={<Home />} />
+      <Route path="/product" element={<DetailProduct />} />
+      <Route path="/store" element={<Store />} />
+      <Route path="/cart" element={<ShoppingCart />} />
+      <Route path="/my-account/:page" element={<MyAccount />} />
+      <Route path="/auth/:page" element={<Auth />} />
+      <Route path="/auth/verify-account/:otp" element={<VerifyAccount />} />
+      <Route path="/vendor/:page" element={<Vendor />} />
+      <Route
+        path="/setup-account"
+        element={
+          currentUser?.user_status === 'pendingSetup' ? (
+            <SetupAccount />
+          ) : (
+            <Navigate to="/home" />
+          )
+        }
+      />
+    </Routes>
+  )
+}
+export default App

@@ -58,6 +58,10 @@ export const userSlice = createSlice({
       .addCase(setupAccount.fulfilled, (state, action) => {
         state.currentUser = action.payload.metadata
       })
+
+      .addCase(setupAccount.rejected, (state, action) => {
+        state.currentUser = null
+      })
   }
 })
 

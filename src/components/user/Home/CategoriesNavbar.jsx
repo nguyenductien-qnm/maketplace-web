@@ -11,6 +11,8 @@ import { useSelector } from 'react-redux'
 import { Card, CardContent, Collapse } from '@mui/material'
 
 export default function CategoriesNavbar() {
+  const categories = useSelector((state) => state.categories.categories)
+
   const open = useSelector((state) => state.categories.isOpen)
 
   const DrawerList = (
