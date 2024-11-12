@@ -6,18 +6,12 @@ import FieldErrorAlert from '~/components/FieldErrorAlert'
 import {
   FIELD_REQUIRED_MESSAGE,
   EMAIL_RULE,
-  EMAIL_RULE_MESSAGE,
-  PASSWORD_RULE,
-  PASSWORD_RULE_MESSAGE
+  EMAIL_RULE_MESSAGE
 } from '~/utils/validators'
-import { Link } from 'react-router-dom'
 
-import { loginAPI } from '~/redux/user.slice'
-import { useDispatch } from 'react-redux'
+import { forgotPassword } from '~/api/auth'
 
-function FormLogin() {
-  const dispatch = useDispatch()
-
+function FormForgotPassword() {
   const {
     register,
     formState: { errors },
@@ -25,7 +19,7 @@ function FormLogin() {
   } = useForm()
 
   const onSubmitLogin = (data) => {
-    dispatch(loginAPI(data))
+    forgotPassword(data)
   }
 
   return (
@@ -64,28 +58,6 @@ function FormLogin() {
             <FieldErrorAlert errors={errors} fieldName={'email'} />
           </Box>
 
-          <Box sx={{ width: '100%' }}>
-            <TextField
-              label="Password"
-              type="password"
-              fullWidth
-              {...register('password', {
-                required: FIELD_REQUIRED_MESSAGE,
-                pattern: {
-                  value: PASSWORD_RULE,
-                  message: PASSWORD_RULE_MESSAGE
-                }
-              })}
-            />
-            <FieldErrorAlert errors={errors} fieldName={'password'} />
-          </Box>
-
-          <Link
-            to="/auth/forgot-password"
-            style={{ color: 'black', fontSize: '14px' }}
-          >
-            Forgot password?
-          </Link>
           <Button
             type="submit"
             fullWidth
@@ -96,20 +68,11 @@ function FormLogin() {
               fontSize: '20px'
             }}
           >
-            Login
+            Forgot Password
           </Button>
-          <Box sx={{ display: 'flex', gap: '4px' }}>
-            <Typography>Don't have an account?</Typography>
-            <Link
-              to="/auth/register"
-              style={{ fontWeight: '600', color: 'black' }}
-            >
-              Register
-            </Link>
-          </Box>
         </Box>
       </Zoom>
     </form>
   )
 }
-export default FormLogin
+export default FormForgotPassword

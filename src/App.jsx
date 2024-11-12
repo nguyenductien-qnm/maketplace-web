@@ -23,6 +23,7 @@ function App() {
       <Route path="/cart" element={<ShoppingCart />} />
       <Route path="/my-account/:page" element={<MyAccount />} />
       <Route path="/auth/:page" element={<Auth />} />
+      <Route path="/auth/reset-password/:token" element={<Auth />} />
       <Route path="/auth/verify-account/:otp" element={<VerifyAccount />} />
       <Route path="/vendor/:page" element={<Vendor />} />
       <Route

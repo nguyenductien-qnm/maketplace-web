@@ -12,11 +12,14 @@ function FormChangePassword() {
 
   const FormLabelCustom = styled(FormLabel)({
     fontSize: '14px',
-    color: 'black'
+    color: 'black',
+    fontWeight: '600'
   })
   return (
     <Box>
-      <Typography sx={{ fontSize: '25px', marginBottom: '20px' }}>
+      <Typography
+        sx={{ fontSize: '25px', marginBottom: '20px', fontWeight: '600' }}
+      >
         Password change
       </Typography>
       <FormControl

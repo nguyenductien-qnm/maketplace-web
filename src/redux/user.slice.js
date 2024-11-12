@@ -35,8 +35,21 @@ export const setupAccount = createAsyncThunk(
   async (data) => {
     const result = await authorizedAxios.post(
       `${API_ROOT}/v1/api/user/setup-account`,
+      rest
+    )
+    return result.data
+  }
+)
+
+export const updateUserInfoAPI = createAsyncThunk(
+  'user/updateUserInfoAPI',
+  async (data) => {
+    delete data.user_email
+    const result = await authorizedAxios.post(
+      `${API_ROOT}/v1/api/user/update-info`,
       data
     )
+    console.log('resultAPI::::', result)
     return result.data
   }
 )
@@ -59,8 +72,9 @@ export const userSlice = createSlice({
         state.currentUser = action.payload.metadata
       })
 
-      .addCase(setupAccount.rejected, (state, action) => {
-        state.currentUser = null
+      .addCase(updateUserInfoAPI.fulfilled, (state, action) => {
+        state.currentUser.user_name = action.payload.metadata.user_name
+        state.currentUser.user_avatar = action.payload.metadata.user_avatar
       })
   }
 })

@@ -1,11 +1,13 @@
 import { Box } from '@mui/material'
 import { useParams } from 'react-router-dom'
 import backgroundAuth from '~/assets/user/img/backgroundAuth.jpg'
+import FormForgotPassword from '~/components/user/Auth/FormForgotPassword'
 import FormLogin from '~/components/user/Auth/FormLogin'
 import FormRegister from '~/components/user/Auth/FormRegister'
+import FormResetPassword from '~/components/user/Auth/FormResetPassword'
 function Auth() {
-  const { page } = useParams()
-  console.log(page)
+  const { page, token } = useParams()
+
   return (
     <Box
       sx={{
@@ -22,6 +24,8 @@ function Auth() {
     >
       {page === 'login' && <FormLogin />}
       {page === 'register' && <FormRegister />}
+      {page === 'forgot-password' && <FormForgotPassword />}
+      {token && <FormResetPassword token={token} />}
     </Box>
   )
 }

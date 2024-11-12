@@ -44,13 +44,13 @@ const FormSetInfoUser = forwardRef((props, ref) => {
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <TextField
-            {...register('fullName')}
+            {...register('user_name')}
             type="text"
             label="Full name"
             fullWidth
           />
           <TextField
-            {...register('phoneNumber')}
+            {...register('user_phone')}
             type="text"
             label="Phone number"
             fullWidth
@@ -60,7 +60,7 @@ const FormSetInfoUser = forwardRef((props, ref) => {
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Gender</InputLabel>
           <Controller
-            name="gender"
+            name="user_gender"
             control={control}
             defaultValue=""
             render={({ field }) => (
