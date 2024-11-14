@@ -2,59 +2,119 @@ import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import { Box, FormControl, FormLabel, styled, Typography } from '@mui/material'
 import { grey } from '@mui/material/colors'
+import { useForm } from 'react-hook-form'
+import FieldErrorAlert from '~/components/FieldErrorAlert'
+import {
+  FIELD_REQUIRED_MESSAGE,
+  PASSWORD_RULE,
+  PASSWORD_RULE_MESSAGE
+} from '~/utils/validators'
+
+import { changePasswordAPI } from '~/api/user'
 
 function FormChangePassword() {
-  const BoxCustom = styled(Box)({
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '7px'
-  })
-
-  const FormLabelCustom = styled(FormLabel)({
+  const TypographyCustom = styled(Typography)({
     fontSize: '14px',
     color: 'black',
-    fontWeight: '600'
+    fontWeight: '600',
+    marginBottom: '5px'
   })
+
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    watch,
+    reset
+  } = useForm()
+
+  const handleChangePassword = async (data) => {
+    const result = await changePasswordAPI(data)
+    if (result.status === 200) reset({})
+  }
+
   return (
-    <Box>
-      <Typography
-        sx={{ fontSize: '25px', marginBottom: '20px', fontWeight: '600' }}
-      >
-        Password change
-      </Typography>
-      <FormControl
-        sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}
-      >
-        <BoxCustom>
-          <FormLabelCustom>
-            Current password (leave blank to leave unchanged)
-          </FormLabelCustom>
-          <TextField size="small" fullWidth></TextField>
-        </BoxCustom>
-        <BoxCustom>
-          <FormLabelCustom>
-            New password (leave blank to leave unchanged)
-          </FormLabelCustom>
-          <TextField size="small" fullWidth></TextField>
-        </BoxCustom>
-        <BoxCustom>
-          <FormLabelCustom>Confirm new password</FormLabelCustom>
-          <TextField size="small" fullWidth></TextField>
-        </BoxCustom>
-        <Button
-          sx={{
-            textTransform: 'none',
-            backgroundColor: grey[200],
-            color: 'black',
-            fontWeight: '600',
-            padding: '10px 20px',
-            alignSelf: 'flex-start'
-          }}
+    <form onSubmit={handleSubmit(handleChangePassword)}>
+      <Box>
+        <Typography
+          sx={{ fontSize: '25px', marginBottom: '20px', fontWeight: '600' }}
         >
-          Save changes
-        </Button>
-      </FormControl>
-    </Box>
+          Password change
+        </Typography>
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          <Box>
+            <TypographyCustom>
+              Current password (leave blank to leave unchanged)
+            </TypographyCustom>
+            <Box>
+              <TextField
+                {...register('password', {
+                  required: FIELD_REQUIRED_MESSAGE,
+                  pattern: {
+                    value: PASSWORD_RULE,
+                    message: PASSWORD_RULE_MESSAGE
+                  }
+                })}
+                error={!!errors['password']}
+                size="small"
+                fullWidth
+              />
+              <FieldErrorAlert errors={errors} fieldName="password" />
+            </Box>
+          </Box>
+          <Box>
+            <TypographyCustom>
+              New password (leave blank to leave unchanged)
+            </TypographyCustom>
+            <TextField
+              {...register('new_password', {
+                required: FIELD_REQUIRED_MESSAGE,
+                pattern: {
+                  value: PASSWORD_RULE,
+                  message: PASSWORD_RULE_MESSAGE
+                }
+              })}
+              error={!!errors['new_password']}
+              size="small"
+              fullWidth
+            />
+            <FieldErrorAlert errors={errors} fieldName="new_password" />
+          </Box>
+          <Box>
+            <TypographyCustom>Confirm new password</TypographyCustom>
+            <TextField
+              {...register('confirm_password', {
+                required: FIELD_REQUIRED_MESSAGE,
+                pattern: {
+                  value: PASSWORD_RULE,
+                  message: PASSWORD_RULE_MESSAGE
+                },
+                validate: (value) =>
+                  value === watch('new_password') || 'Passwords do not match'
+              })}
+              error={!!errors['confirm_password']}
+              size="small"
+              fullWidth
+            />
+            <FieldErrorAlert errors={errors} fieldName="confirm_password" />
+          </Box>
+          <Button
+            type="submit"
+            sx={{
+              textTransform: 'none',
+              backgroundColor: grey[200],
+              color: 'black',
+              fontWeight: '600',
+              padding: '10px 20px',
+              alignSelf: 'flex-start'
+            }}
+          >
+            Save changes
+          </Button>
+        </Box>
+      </Box>
+    </form>
   )
 }
 export default FormChangePassword

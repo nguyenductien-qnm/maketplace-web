@@ -9,7 +9,7 @@ import {
   EMAIL_RULE_MESSAGE
 } from '~/utils/validators'
 
-import { forgotPassword } from '~/api/auth'
+import { forgotPasswordAPI } from '~/api/auth.api'
 
 function FormForgotPassword() {
   const {
@@ -19,7 +19,7 @@ function FormForgotPassword() {
   } = useForm()
 
   const onSubmitLogin = (data) => {
-    forgotPassword(data)
+    forgotPasswordAPI(data)
   }
 
   return (

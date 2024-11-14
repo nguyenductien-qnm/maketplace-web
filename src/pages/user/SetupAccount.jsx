@@ -7,18 +7,21 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import FormSetInfoUser from '~/components/user/SetupAccount/FormSetInfoUser'
 import FormSetPassword from '~/components/user/SetupAccount/FormSetPassword'
-import { setupAccount } from '~/redux/user.slice'
+import { setupAccountAPI } from '~/redux/user.slice'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 const steps = ['CHANGE YOUR PASSWORD', 'INFORMATION USER']
 
 export default function SetupAccount() {
   const [activeStep, setActiveStep] = React.useState(0)
   const [skipped, setSkipped] = React.useState(new Set())
   const [formData, setFormData] = React.useState({
-    newPassword: '',
-    repeatPassword: '',
+    new_password: '',
+    confirm_password: '',
     userInfo: {}
   })
+
+  const navigate = useNavigate()
 
   const dispatch = useDispatch()
 
@@ -52,8 +55,8 @@ export default function SetupAccount() {
   const handleSubmitPassword = (data) => {
     setFormData((prevData) => ({
       ...prevData,
-      newPassword: data.newPassword,
-      repeatPassword: data.repeatPassword
+      new_password: data.new_password,
+      confirm_password: data.confirm_password
     }))
     setActiveStep((prevActiveStep) => prevActiveStep + 1)
   }
@@ -72,7 +75,11 @@ export default function SetupAccount() {
   }
 
   const finishProgress = async () => {
-    await dispatch(setupAccount(formData))
+    const res = await dispatch(setupAccountAPI(formData))
+    if (res.payload?.status === 200)
+      setTimeout(() => {
+        navigate('/home')
+      }, 1000)
   }
 
   return (

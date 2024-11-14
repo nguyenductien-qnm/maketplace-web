@@ -1,13 +1,13 @@
 import { Box, Typography } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
+import { green, red } from '@mui/material/colors'
+import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
+import ThumbDownOffAltOutlinedIcon from '@mui/icons-material/ThumbDownOffAltOutlined'
+import { verifyAccountAPI } from '~/redux/user.slice'
+
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-
 import { useNavigate } from 'react-router-dom'
-import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
-import { green, red } from '@mui/material/colors'
-import ThumbDownOffAltOutlinedIcon from '@mui/icons-material/ThumbDownOffAltOutlined'
-import { verifyAccount } from '~/redux/user.slice'
 import { useDispatch } from 'react-redux'
 
 function VerifyAccount() {
@@ -18,8 +18,8 @@ function VerifyAccount() {
 
   useEffect(() => {
     const verifyAndNavigate = async () => {
-      const res = await dispatch(verifyAccount(otp))
-      if (res?.payload?.status !== 200) {
+      const res = await dispatch(verifyAccountAPI(otp))
+      if (res.payload?.status !== 200) {
         setStateVerify('failure')
       } else {
         setStateVerify('success')

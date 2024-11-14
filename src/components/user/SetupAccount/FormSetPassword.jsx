@@ -1,14 +1,14 @@
 import { Box, Typography } from '@mui/material'
-import Logo from '~/layouts/user/Header/Logo'
 import TextField from '@mui/material/TextField'
-import { useForm } from 'react-hook-form'
 import {
   PASSWORD_RULE_MESSAGE,
   PASSWORD_RULE,
   FIELD_REQUIRED_MESSAGE
 } from '~/utils/validators'
-import { forwardRef, useImperativeHandle } from 'react'
+import Logo from '~/layouts/user/Header/Logo'
 import FieldErrorAlert from '~/components/FieldErrorAlert'
+import { forwardRef, useImperativeHandle } from 'react'
+import { useForm } from 'react-hook-form'
 
 const FormSetPassword = forwardRef((props, ref) => {
   const {
@@ -49,30 +49,30 @@ const FormSetPassword = forwardRef((props, ref) => {
 
         <Box>
           <TextField
-            {...register('newPassword', {
+            {...register('new_password', {
               required: FIELD_REQUIRED_MESSAGE,
               pattern: { value: PASSWORD_RULE, message: PASSWORD_RULE_MESSAGE }
             })}
-            error={!!errors['newPassword']}
+            error={!!errors['new_password']}
             label="Enter new password"
             fullWidth
           />
-          <FieldErrorAlert errors={errors} fieldName={'newPassword'} />
+          <FieldErrorAlert errors={errors} fieldName={'new_password'} />
         </Box>
 
         <Box>
           <TextField
-            {...register('repeatPassword', {
+            {...register('confirm_password', {
               required: FIELD_REQUIRED_MESSAGE,
               pattern: { value: PASSWORD_RULE, message: PASSWORD_RULE_MESSAGE },
               validate: (value) =>
-                value === watch('newPassword') || 'Passwords do not match'
+                value === watch('new_password') || 'Passwords do not match'
             })}
-            error={!!errors['repeatPassword']}
+            error={!!errors['confirm_password']}
             label="Confirm password"
             fullWidth
           />
-          <FieldErrorAlert errors={errors} fieldName={'repeatPassword'} />
+          <FieldErrorAlert errors={errors} fieldName={'confirm_password'} />
         </Box>
       </Box>
     </form>

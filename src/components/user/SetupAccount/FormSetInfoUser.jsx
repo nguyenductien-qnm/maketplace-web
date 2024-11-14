@@ -6,13 +6,14 @@ import {
   Select,
   Typography
 } from '@mui/material'
+import TextField from '@mui/material/TextField'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import Logo from '~/layouts/user/Header/Logo'
-import TextField from '@mui/material/TextField'
 import { Controller, useForm } from 'react-hook-form'
 import { forwardRef, useImperativeHandle } from 'react'
+
 const FormSetInfoUser = forwardRef((props, ref) => {
   const { register, handleSubmit, control } = useForm()
 
@@ -74,7 +75,7 @@ const FormSetInfoUser = forwardRef((props, ref) => {
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <Controller
-            name="dayOfBirth"
+            name="user_day_of_birth"
             control={control}
             defaultValue={null}
             render={({ field }) => (

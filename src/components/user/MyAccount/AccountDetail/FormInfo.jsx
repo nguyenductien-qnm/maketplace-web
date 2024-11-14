@@ -56,8 +56,8 @@ function FormInfo() {
 
   useEffect(() => {
     const getUserInfo = async () => {
-      const result = await getUserInfoAPI()
-      const userInfo = result.data.metadata
+      const res = await getUserInfoAPI()
+      const userInfo = res.data.metadata
       setFieldData(userInfo)
       setAvatarUrl(userInfo.user_avatar)
     }
@@ -67,12 +67,11 @@ function FormInfo() {
   const [avatarUrl, setAvatarUrl] = useState(null)
 
   const updateUserInfo = async (data) => {
-    const result = await dispatch(updateUserInfoAPI(data))
-    setFieldData(result.payload.metadata)
+    const res = await dispatch(updateUserInfoAPI(data))
+    setFieldData(res.payload.data.metadata)
   }
 
   const setFieldData = (userInfo) => {
-    console.log(userInfo)
     reset({
       user_email: userInfo.user_email,
       user_name: userInfo.user_name,

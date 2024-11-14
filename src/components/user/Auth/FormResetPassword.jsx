@@ -12,13 +12,12 @@ import CircularProgress from '@mui/material/CircularProgress'
 
 import { useDispatch } from 'react-redux'
 import { useEffect, useState } from 'react'
-import { checkTokenResetPassword, resetPassword } from '~/api/auth'
+import { checkTokenResetPasswordAPI, resetPasswordAPI } from '~/api/auth.api'
 import { useNavigate } from 'react-router-dom'
 
 function FormResetPassword({ token }) {
-  const dispatch = useDispatch()
   const navigate = useNavigate()
-  const [stateVerify, setStateVeify] = useState(false)
+  const [stateVerify, setStateVerify] = useState(false)
 
   const {
     register,
@@ -27,32 +26,32 @@ function FormResetPassword({ token }) {
     watch
   } = useForm()
 
-  const onSubmitLogin = async (data) => {
+  useEffect(() => {
+    const handleCheckToken = async () => {
+      const result = await checkTokenResetPasswordAPI({ token })
+      if (result.status !== 200) {
+        setTimeout(() => {
+          navigate('/auth/login')
+        }, 1000)
+      } else {
+        setStateVerify(true)
+      }
+    }
+    handleCheckToken()
+  }, [token])
+
+  const handleSubmitResetPassword = async (data) => {
     data.token = token
-    const result = await resetPassword(data)
-    if (result) {
+    const res = await resetPasswordAPI(data)
+    if (res.status === 404 || res.status === 200) {
       setTimeout(() => {
         navigate('/auth/login')
       }, 1000)
     }
   }
 
-  useEffect(() => {
-    const handleCheckToken = async () => {
-      const result = await checkTokenResetPassword({ token })
-      if (result.status !== 200) {
-        setTimeout(() => {
-          navigate('/auth/login')
-        }, 1000)
-      } else {
-        setStateVeify(true)
-      }
-    }
-    handleCheckToken()
-  }, [token])
-
   return (
-    <form onSubmit={handleSubmit(onSubmitLogin)}>
+    <form onSubmit={handleSubmit(handleSubmitResetPassword)}>
       <Zoom in={true} style={{ transitionDelay: '200ms' }}>
         {stateVerify === false ? (
           <Box>
@@ -95,8 +94,8 @@ function FormResetPassword({ token }) {
                 label="New password"
                 type="text"
                 variant="outlined"
-                error={!!errors['newPassword']}
-                {...register('newPassword', {
+                error={!!errors['new_password']}
+                {...register('new_password', {
                   required: FIELD_REQUIRED_MESSAGE,
                   pattern: {
                     value: PASSWORD_RULE,
@@ -112,10 +111,10 @@ function FormResetPassword({ token }) {
                 label="Confirm password"
                 type="password"
                 fullWidth
-                {...register('repeatPassword', {
+                {...register('confirm_password', {
                   required: FIELD_REQUIRED_MESSAGE,
                   pattern: {
-                    value: watch('newPassword'),
+                    value: watch('new_password'),
                     message: PASSWORD_RULE_MESSAGE
                   }
                 })}

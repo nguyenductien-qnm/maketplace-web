@@ -10,26 +10,30 @@ import {
   PASSWORD_RULE,
   PASSWORD_RULE_MESSAGE
 } from '~/utils/validators'
-import { Link } from 'react-router-dom'
 
 import { loginAPI } from '~/redux/user.slice'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 
 function FormLogin() {
   const dispatch = useDispatch()
-
+  const navigate = useNavigate()
   const {
     register,
     formState: { errors },
     handleSubmit
   } = useForm()
 
-  const onSubmitLogin = (data) => {
-    dispatch(loginAPI(data))
+  const handleSubmitLogin = async (data) => {
+    const res = await dispatch(loginAPI(data))
+    if (res.payload?.status === 200)
+      setTimeout(() => {
+        navigate('/home')
+      }, 500)
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmitLogin)}>
+    <form onSubmit={handleSubmit(handleSubmitLogin)}>
       <Zoom in={true} style={{ transitionDelay: '200ms' }}>
         <Box
           sx={{

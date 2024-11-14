@@ -1,16 +1,15 @@
 import { Box, Button, TextField, Typography } from '@mui/material'
 import { blue } from '@mui/material/colors'
 import Zoom from '@mui/material/Zoom'
-import axios from 'axios'
-import { useForm } from 'react-hook-form'
 import FieldErrorAlert from '~/components/FieldErrorAlert'
-import { registerAccountAPI } from '~/api/auth'
-import { Link } from 'react-router-dom'
+import { registerAccountAPI } from '~/api/auth.api'
 import {
   FIELD_REQUIRED_MESSAGE,
   EMAIL_RULE,
   EMAIL_RULE_MESSAGE
 } from '~/utils/validators'
+import { useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom'
 
 function FormRegister() {
   const {
@@ -19,8 +18,8 @@ function FormRegister() {
     handleSubmit
   } = useForm()
 
-  const handleSubmitRegister = ({ email }) => {
-    registerAccountAPI({ email })
+  const handleSubmitRegister = (data) => {
+    registerAccountAPI(data)
   }
 
   return (

@@ -9,35 +9,32 @@ const initialState = {
 export const loginAPI = createAsyncThunk(
   'user/loginAPI',
   async ({ email, password }) => {
-    const response = await authorizedAxios.post(
-      `${API_ROOT}/v1/api/auth/sign-in`,
-      {
-        email,
-        password
-      }
-    )
-    return response.data
+    const res = await authorizedAxios.post(`${API_ROOT}/v1/api/auth/sign-in`, {
+      email,
+      password
+    })
+    return res
   }
 )
 
-export const verifyAccount = createAsyncThunk(
+export const verifyAccountAPI = createAsyncThunk(
   'user/verifyAccount',
   async ({ otp }) => {
     const res = await authorizedAxios.get(
       `${API_ROOT}/v1/api/auth/verify-account/${otp}`
     )
-    return { status: res.status, metadata: res.data.metadata }
+    return res
   }
 )
 
-export const setupAccount = createAsyncThunk(
+export const setupAccountAPI = createAsyncThunk(
   'user/setupAccount',
   async (data) => {
-    const result = await authorizedAxios.post(
+    const res = await authorizedAxios.post(
       `${API_ROOT}/v1/api/user/setup-account`,
-      rest
+      data
     )
-    return result.data
+    return res
   }
 )
 
@@ -49,8 +46,7 @@ export const updateUserInfoAPI = createAsyncThunk(
       `${API_ROOT}/v1/api/user/update-info`,
       data
     )
-    console.log('resultAPI::::', result)
-    return result.data
+    return result
   }
 )
 
@@ -61,20 +57,20 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loginAPI.fulfilled, (state, action) => {
-        state.currentUser = action.payload.metadata.user
+        state.currentUser = action.payload.data.metadata
       })
 
-      .addCase(verifyAccount.fulfilled, (state, action) => {
-        state.currentUser = action.payload.metadata
+      .addCase(verifyAccountAPI.fulfilled, (state, action) => {
+        state.currentUser = action.payload.data.metadata
       })
 
-      .addCase(setupAccount.fulfilled, (state, action) => {
-        state.currentUser = action.payload.metadata
+      .addCase(setupAccountAPI.fulfilled, (state, action) => {
+        state.currentUser = action.payload.data.metadata
       })
 
       .addCase(updateUserInfoAPI.fulfilled, (state, action) => {
-        state.currentUser.user_name = action.payload.metadata.user_name
-        state.currentUser.user_avatar = action.payload.metadata.user_avatar
+        state.currentUser.user_name = action.payload.data.metadata.user_name
+        state.currentUser.user_avatar = action.payload.data.metadata.user_avatar
       })
   }
 })
