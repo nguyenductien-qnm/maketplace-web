@@ -8,6 +8,7 @@ import Orders from '~/components/user/MyAccount/Orders/Orders'
 import Wish from '~/components/user/MyAccount/Wish/Wish'
 import AccountDetail from '~/components/user/MyAccount/AccountDetail/AccountDetail'
 import Addresses from '~/components/user/MyAccount/Addresses/Addresses'
+import AccountMigration from '~/components/user/MyAccount/AccountMigration/AccountMigration'
 function MyAccount() {
   const { page } = useParams()
 
@@ -24,6 +25,7 @@ function MyAccount() {
           {page === 'wish-list' && <Wish />}
           {page === 'account-details' && <AccountDetail />}
           {page === 'addresses' && <Addresses />}
+          {page === 'account-migration' && <AccountMigration />}
         </Grid>
       </Grid>
     </UserLayout>

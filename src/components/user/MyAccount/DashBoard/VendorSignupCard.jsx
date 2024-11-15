@@ -1,5 +1,6 @@
 import { Box, Button, Typography } from '@mui/material'
 import { grey } from '@mui/material/colors'
+import { Link } from 'react-router-dom'
 
 function VendorSignupCard() {
   return (
@@ -22,16 +23,18 @@ function VendorSignupCard() {
           Vendors can sell products and manage a store with a vendor dashboard.
         </Typography>
       </Box>
-      <Button
-        sx={{
+      <Link
+        to="/my-account/account-migration"
+        style={{
           backgroundColor: grey[200],
           color: 'black',
           fontWeight: '600',
-          padding: '5px 10px'
+          padding: '5px 10px',
+          borderRadius: '5px'
         }}
       >
         Become a vendor
-      </Button>
+      </Link>
     </Box>
   )
 }

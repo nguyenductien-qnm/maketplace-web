@@ -1,9 +1,9 @@
-import { Button } from '@mui/material'
 import { blue } from '@mui/material/colors'
+import { Link } from 'react-router-dom'
 
 function VendorDashboardButton() {
   return (
-    <Button
+    <Link
       sx={{
         fontSize: '14px',
         padding: '10px 20px',
@@ -13,7 +13,7 @@ function VendorDashboardButton() {
       }}
     >
       Go to vendor dashboard
-    </Button>
+    </Link>
   )
 }
 export default VendorDashboardButton
