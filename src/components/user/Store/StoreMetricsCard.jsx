@@ -17,9 +17,8 @@ function StoreMetricsCard() {
     fontWeight: '600'
   })
   return (
-    <Grid sx={{ width: '100%', paddingTop: '80px' }} container>
+    <Grid container sx={{ width: '100%', paddingTop: '80px' }}>
       <Grid
-        item
         size={6}
         sx={{
           display: 'flex',
@@ -39,8 +38,8 @@ function StoreMetricsCard() {
           <CustomTypography>1879</CustomTypography>
         </CustomBox>
       </Grid>
+
       <Grid
-        item
         size={6}
         sx={{
           display: 'flex',

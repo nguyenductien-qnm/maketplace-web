@@ -5,13 +5,13 @@ import { Box, Typography } from '@mui/material'
 function Comment() {
   return (
     <Grid container sx={{ height: '150px', alignItems: 'center' }}>
-      <Grid item size={1}>
+      <Grid size={1}>
         <img
           style={{ maxWidth: '50%', borderRadius: '9999px' }}
           src="https://secure.gravatar.com/avatar/3384f98a21c5dce2051e8f5a20928b05?s=120&d=mm&r=g"
         />
       </Grid>
-      <Grid item size={11}>
+      <Grid size={11}>
         {[...Array(5)].map((_, index) => (
           <StarIcon sx={{ color: yellow[700], fontSize: '18px' }} key={index} />
         ))}

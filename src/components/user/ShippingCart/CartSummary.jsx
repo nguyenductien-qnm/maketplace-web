@@ -37,13 +37,13 @@ function CartSummary() {
           justifyContent="space-between"
           sx={{ marginTop: '15px', marginBottom: '15px' }}
         >
-          <Grid item size={9}>
+          <Grid size={9}>
             <Typography sx={{ fontSize: '12px' }}>
               SAMSUNG 75_ Class QN85C Neo QLED 4K Smart TV QN75QN85CAFXZA 2023
               x1
             </Typography>
           </Grid>
-          <Grid item size={3}>
+          <Grid size={3}>
             $980.99
           </Grid>
         </Grid>

@@ -11,10 +11,10 @@ function Store() {
     <UserLayout>
       <StoreOverviewCard />
       <Grid container>
-        <Grid item size={3} sx={{ marginTop: '10px' }}>
+        <Grid size={3} sx={{ marginTop: '10px' }}>
           <StoreProductCategory />
         </Grid>
-        <Grid item size={9}>
+        <Grid size={9}>
           <Box
             sx={{
               display: 'flex',
@@ -29,19 +29,19 @@ function Store() {
           </Box>
           <Divider />
           <Grid container spacing={2} sx={{ marginTop: '30px' }}>
-            <Grid item size={3}>
+            <Grid size={3}>
               <Product />
             </Grid>
-            <Grid item size={3}>
+            <Grid size={3}>
               <Product />
             </Grid>
-            <Grid item size={3}>
+            <Grid size={3}>
               <Product />
             </Grid>
-            <Grid item size={3}>
+            <Grid size={3}>
               <Product />
             </Grid>
-            <Grid item size={3}>
+            <Grid size={3}>
               <Product />
             </Grid>
           </Grid>

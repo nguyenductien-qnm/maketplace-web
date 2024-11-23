@@ -28,7 +28,7 @@ axios.interceptors.response.use(
       toast.error('An unexpected error occurred.')
     }
 
-    return Promise.resolve(error.response)
+    return Promise.reject(error.response)
   }
 )
 

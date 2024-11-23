@@ -11,7 +11,7 @@ function Categories() {
         {Array.from({ length: 12 }, (_, index) => (
           <div key={index}>
             <Grid container spacing={2}>
-              <Grid item xl={2} style={{ margin: '0 10px' }}>
+              <Grid xl={2} style={{ margin: '0 10px' }}>
                 <Box
                   sx={{
                     maxWidth: '100%',

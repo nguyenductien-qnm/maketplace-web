@@ -10,7 +10,7 @@ function AccountOverview() {
     fontWeight: '600'
   })
   return (
-    <Box>
+    <Box sx={{ marginBottom: '50px' }}>
       <Typography sx={{ fontSize: '14px', display: 'flex' }}>
         Hello
         <Typography sx={{ fontWeight: '600', fontSize: '14px', mx: '4px' }}>

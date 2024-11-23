@@ -20,10 +20,10 @@ function StoreOverviewCard() {
       }}
     >
       <Grid container sx={{ minHeight: '100%' }}>
-        <Grid item size={3}>
+        <Grid size={3}>
           <StoreInfoCard />
         </Grid>
-        <Grid item size={9} direction="column">
+        <Grid size={9}>
           <StoreMetricsCard />
           <ActionButton />
         </Grid>

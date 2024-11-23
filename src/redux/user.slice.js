@@ -42,11 +42,22 @@ export const updateUserInfoAPI = createAsyncThunk(
   'user/updateUserInfoAPI',
   async (data) => {
     delete data.user_email
-    const result = await authorizedAxios.post(
+    const res = await authorizedAxios.post(
       `${API_ROOT}/v1/api/user/update-info`,
       data
     )
-    return result
+    return res
+  }
+)
+
+export const accountMigrationAPI = createAsyncThunk(
+  'user/accountMigrationAPI',
+  async (data) => {
+    const res = await authorizedAxios.post(
+      `${API_ROOT}/v1/api/user/account-migration`,
+      data
+    )
+    return res
   }
 )
 
@@ -71,6 +82,10 @@ export const userSlice = createSlice({
       .addCase(updateUserInfoAPI.fulfilled, (state, action) => {
         state.currentUser.user_name = action.payload.data.metadata.user_name
         state.currentUser.user_avatar = action.payload.data.metadata.user_avatar
+      })
+
+      .addCase(accountMigrationAPI.fulfilled, (state) => {
+        state.currentUser.user_role.push('shop')
       })
   }
 })

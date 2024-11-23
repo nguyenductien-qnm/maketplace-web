@@ -45,15 +45,15 @@ function ProductInfo() {
       <Divider sx={{ marginTop: '10px' }} />
 
       <Grid container spacing={1} sx={{ marginTop: '20px' }}>
-        <Grid item size={2}>
+        <Grid  size={2}>
           <QuantitySelector />
         </Grid>
 
-        <Grid item size={5}>
+        <Grid size={5}>
           <AddToCartButton />
         </Grid>
 
-        <Grid item size={5}>
+        <Grid size={5}>
           <BuyNowButton />
         </Grid>
       </Grid>

@@ -10,7 +10,7 @@ import {
   PASSWORD_RULE_MESSAGE
 } from '~/utils/validators'
 
-import { changePasswordAPI } from '~/api/user'
+import { changePasswordAPI } from '~/api/user.api'
 
 function FormChangePassword() {
   const TypographyCustom = styled(Typography)({

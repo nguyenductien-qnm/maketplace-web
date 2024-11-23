@@ -18,7 +18,7 @@ function StoreInfo() {
       container
       spacing={2}
     >
-      <Grid item size={2}>
+      <Grid size={2}>
         <img
           src="https://klbtheme.com/bevesi/wp-content/uploads/2024/05/cropped-style-3.png"
           style={{
@@ -30,13 +30,13 @@ function StoreInfo() {
           }}
         />
       </Grid>
-      <Grid item size={7} sx={{ marginTop: '15px' }}>
+      <Grid size={7} sx={{ marginTop: '15px' }}>
         <Typography sx={{ fontSize: '14px', color: grey[500] }}>
           Store
         </Typography>
         <Typography sx={{ fontWeight: '600' }}>Djewno</Typography>
       </Grid>
-      <Grid item size={3} sx={{ marginTop: '20px' }}>
+      <Grid size={3} sx={{ marginTop: '20px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <Box sx={{ display: 'flex', justifyContent: 'center', marginY: 1 }}>
             {[...Array(5)].map((_, index) => (

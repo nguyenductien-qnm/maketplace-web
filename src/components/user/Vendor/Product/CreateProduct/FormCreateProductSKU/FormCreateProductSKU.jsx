@@ -1,6 +1,5 @@
 import { Box, InputLabel, Paper, TextField, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import styled from 'styled-components'
 import Grid from '@mui/material/Grid2'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
 import {
@@ -10,6 +9,7 @@ import {
   handleChangeOptionValue
 } from '~/redux/formCreateProduct.slice'
 import { red } from '@mui/material/colors'
+import TypographyLabel from '~/components/user/Common/TypographyLabel'
 function FormCreateProductSKU() {
   const variations = useSelector(
     (state) => state.formCreateProduct.productVariation
@@ -23,16 +23,14 @@ function FormCreateProductSKU() {
 
   const dispatch = useDispatch()
 
-  const CustomInputLabel = styled(InputLabel)({
-    fontSize: '14px',
-    fontWeight: '600',
-    marginBottom: '5px'
-  })
-
   return (
     <Box sx={{ marginBottom: '5px' }}>
       {Array.from({ length: quantityProductSKU }, (_, index) => (
-        <Paper element={2} sx={{ padding: '10px', marginTop: '20px' }}>
+        <Paper
+          element={2}
+          sx={{ padding: '10px', marginTop: '20px' }}
+          key={index}
+        >
           <Box
             sx={{
               display: 'flex',
@@ -53,8 +51,8 @@ function FormCreateProductSKU() {
           </Box>
 
           <Grid container spacing={2} rowSpacing={2} sx={{ marginTop: '20px' }}>
-            <Grid item size={4}>
-              <CustomInputLabel>Product price</CustomInputLabel>
+            <Grid size={4}>
+              <TypographyLabel>Product price</TypographyLabel>
               <TextField
                 onChange={(e) => {
                   dispatch(
@@ -68,8 +66,8 @@ function FormCreateProductSKU() {
                 value={productsSKU[index].price}
               ></TextField>
             </Grid>
-            <Grid item size={4}>
-              <CustomInputLabel>Product Stock</CustomInputLabel>
+            <Grid size={4}>
+              <TypographyLabel>Product Stock</TypographyLabel>
               <TextField
                 onChange={(e) => {
                   dispatch(
@@ -84,8 +82,8 @@ function FormCreateProductSKU() {
               ></TextField>
             </Grid>
             {variations.map((variation) => (
-              <Grid item size={4}>
-                <CustomInputLabel>{variation}</CustomInputLabel>
+              <Grid size={4} key={variation}>
+                <TypographyLabel>{variation}</TypographyLabel>
                 <TextField
                   size="small"
                   value={productsSKU[index][variation]}

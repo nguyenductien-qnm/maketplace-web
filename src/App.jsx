@@ -17,15 +17,15 @@ function App() {
   const currentUser = useSelector((state) => state.user.currentUser)
   return (
     <Routes>
-      <Route path="/home" element={<Home />} />
-      <Route path="/product" element={<DetailProduct />} />
-      <Route path="/store" element={<Store />} />
-      <Route path="/cart" element={<ShoppingCart />} />
+      <Route path="/home" element={<Home />} /> {/* Checked */}
+      <Route path="/product" element={<DetailProduct />} /> {/* Checked */}
+      <Route path="/store" element={<Store />} /> {/* Checked */}
+      <Route path="/cart" element={<ShoppingCart />} /> {/* Checked */}
       <Route path="/my-account/:page" element={<MyAccount />} />
-      <Route path="/auth/:page" element={<Auth />} />
+      <Route path="/auth/:page" element={<Auth />} /> {/* Checked */}
       <Route path="/auth/reset-password/:token" element={<Auth />} />
       <Route path="/auth/verify-account/:otp" element={<VerifyAccount />} />
-      <Route path="/vendor/:page" element={<Vendor />} />
+      <Route path="/vendor/:page" element={<Vendor />} /> {/* Checked */}
       <Route
         path="/setup-account"
         element={

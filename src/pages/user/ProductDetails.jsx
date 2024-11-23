@@ -27,10 +27,10 @@ function ProductDetails() {
   return (
     <UserLayout>
       <Grid container spacing={3}>
-        <Grid item size={6}>
+        <Grid size={6}>
           <ProductImageGallery />
         </Grid>
-        <Grid item size={6}>
+        <Grid size={6}>
           <ProductInfo />
         </Grid>
       </Grid>

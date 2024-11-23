@@ -45,8 +45,8 @@ function AttributeInput() {
       </InputLabel>
       <Grid container spacing={2} rowSpacing={3}>
         {Array.from({ length: spuAttribute.length }, (_, index) => (
-          <Grid item size={12}>
-            <Paper elevation={2} sx={{ padding: '10px' }} key={index}>
+          <Grid size={12} key={index}>
+            <Paper elevation={2} sx={{ padding: '10px' }}>
               <Box
                 sx={{
                   display: 'flex',

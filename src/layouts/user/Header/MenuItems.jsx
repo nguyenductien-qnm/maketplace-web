@@ -16,7 +16,7 @@ function MenuItem() {
         height: '50px'
       }}
     >
-      <Grid item size={3}>
+      <Grid size={3}>
         <Box
           onClick={() => dispatch(handleCategories())}
           sx={{
@@ -41,7 +41,7 @@ function MenuItem() {
         </Box>
       </Grid>
 
-      <Grid item size={7} display="flex" justifyContent="start">
+      <Grid size={7} display="flex" justifyContent="start">
         <Box
           sx={{
             display: 'flex',
@@ -58,7 +58,7 @@ function MenuItem() {
         </Box>
       </Grid>
 
-      <Grid item size={2} display="flex" justifyContent="end">
+      <Grid size={2} display="flex" justifyContent="end">
         <Box
           sx={{
             display: 'flex',

@@ -4,12 +4,13 @@ import { Link } from 'react-router-dom'
 function VendorDashboardButton() {
   return (
     <Link
-      sx={{
+      style={{
         fontSize: '14px',
         padding: '10px 20px',
         fontWeight: '600',
         color: 'white',
-        backgroundColor: blue[600]
+        backgroundColor: blue[600],
+        borderRadius: '5px',
       }}
     >
       Go to vendor dashboard

@@ -9,15 +9,14 @@ function Vendor() {
   return (
     <UserLayout>
       <Grid container spacing={4}>
-        <Grid item size={3}>
+        <Grid size={3}>
           <VendorSideBar page={page} />
         </Grid>
-        <Grid item size={9}>
+        <Grid size={9}>
           {page === 'products' && <VendorProduct />}
           {page === 'create-product' && <VendorCreateProduct />}
         </Grid>
       </Grid>
-      s
     </UserLayout>
   )
 }

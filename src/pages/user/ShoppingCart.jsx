@@ -8,7 +8,7 @@ function ShoppingCart() {
   return (
     <UserLayout>
       <Grid container spacing={2}>
-        <Grid item size={9}>
+        <Grid size={9}>
           <ShippingBanner />
           <CartTable />
           <Box sx={{ textAlign: 'end' }}>
@@ -27,7 +27,7 @@ function ShoppingCart() {
             </Button>
           </Box>
         </Grid>
-        <Grid item size={3}>
+        <Grid size={3}>
           <CartSummary />
         </Grid>
       </Grid>

@@ -46,7 +46,7 @@ function SectionGalleryUpLoad() {
             sx={{ height: '100%', width: '100%' }}
           >
             {spuGallery.map((image, index) => (
-              <Grid item spacing={4} sx={{ position: 'relative' }}>
+              <Grid spacing={4} sx={{ position: 'relative' }}>
                 <HighlightOffOutlinedIcon
                   onClick={() =>
                     dispatch(handleDeleteGallery({ index: index }))

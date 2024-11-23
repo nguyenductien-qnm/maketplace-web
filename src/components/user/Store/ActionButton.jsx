@@ -10,7 +10,7 @@ function ActionButton() {
       container
       sx={{ width: '100%', marginTop: '80px', padding: '40px' }}
     >
-      <Grid item size={6}>
+      <Grid size={6}>
         <Button
           fullWidth
           sx={{
@@ -23,7 +23,7 @@ function ActionButton() {
           Follow
         </Button>
       </Grid>
-      <Grid item size={6}>
+      <Grid size={6}>
         <Button fullWidth sx={{ textTransform: 'none', border: '1px solid' }}>
           <ChatBubbleOutlineOutlinedIcon
             fontSize="small"

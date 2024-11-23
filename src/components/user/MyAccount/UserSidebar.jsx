@@ -3,7 +3,9 @@ import { blue } from '@mui/material/colors'
 import { Link } from 'react-router-dom'
 
 function UserSideBar({ page }) {
-  const CustomLink = styled(Link)(({ isActive }) => ({
+  const CustomLink = styled(Link, {
+    shouldForwardProp: (prop) => prop !== 'isActive' //isActive chỉ cần để tính toán style, không cần xuất hiện trong DOM.
+  })(({ isActive }) => ({
     minWidth: '100%',
     padding: '15px 20px',
     color: isActive ? 'white' : 'black',

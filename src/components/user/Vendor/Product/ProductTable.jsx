@@ -12,16 +12,18 @@ function ProductTable() {
   return (
     <Table>
       <TableHead>
-        <TableCell>
-          <Checkbox size="small" />
-        </TableCell>
-        <TableCell>Image</TableCell>
-        <TableCell>Name</TableCell>
-        <TableCell>Status</TableCell>
-        <TableCell>SKU</TableCell>
-        <TableCell>Stock</TableCell>
-        <TableCell>Price</TableCell>
-        <TableCell>Date</TableCell>
+        <TableRow>
+          <TableCell>
+            <Checkbox size="small" />
+          </TableCell>
+          <TableCell>Image</TableCell>
+          <TableCell>Name</TableCell>
+          <TableCell>Status</TableCell>
+          <TableCell>SKU</TableCell>
+          <TableCell>Stock</TableCell>
+          <TableCell>Price</TableCell>
+          <TableCell>Date</TableCell>
+        </TableRow>
       </TableHead>
       <TableBody>
         {Array.from({ length: 5 }, (_, index) => (

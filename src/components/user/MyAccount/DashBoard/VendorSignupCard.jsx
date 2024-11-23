@@ -14,7 +14,6 @@ function VendorSignupCard() {
         padding: '10px 20px',
         borderRadius: '5px',
         borderColor: grey[300],
-        marginTop: '50px'
       }}
     >
       <Box>

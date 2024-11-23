@@ -17,7 +17,11 @@ const store = configureStore({
     categories: categoriesReducer,
     formCreateProduct: formCreateProductReducer,
     user: persistedReducer
-  }
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false
+    })
 })
 
 const persistor = persistStore(store)

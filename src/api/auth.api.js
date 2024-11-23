@@ -21,6 +21,5 @@ export const resetPasswordAPI = async (data) => {
     `${API_ROOT}/v1/api/auth/reset-password/${data.token}`,
     data
   )
-  console.log(res)
   return res
 }

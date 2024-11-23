@@ -1,8 +1,57 @@
-import { Box, Button, Divider, Typography } from '@mui/material'
-
+import { Box, Divider, Typography } from '@mui/material'
 import AddressCard from './AddressCard'
 import AddressModal from './AddressModal'
+import { useEffect, useState } from 'react'
+import { getAddressListAPI } from '~/api/user.api'
+import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 function Addresses() {
+  const [userAddressList, setUserAddressList] = useState([])
+
+  useEffect(() => {
+    const getAndSetAddressList = async () => {
+      const res = await getAddressListAPI()
+      let data = res.data?.metadata
+      data = sortAddressByDefault(data)
+      setUserAddressList(data)
+    }
+    getAndSetAddressList()
+  }, [])
+
+  const handleAddAddress = (data) => {
+    if (data.default === true) {
+      let updateAddresList = userAddressList.map((item) => {
+        return { ...item, default: false }
+      })
+      updateAddresList.push(data)
+      setUserAddressList(sortAddressByDefault(updateAddresList))
+      return
+    }
+    setUserAddressList((prevList) => [...prevList, data])
+  }
+
+  const handleSetDefaultAddress = (_id) => {
+    let updateAddresList = userAddressList.map((item) => ({
+      ...item,
+      default: item._id === _id
+    }))
+
+    setUserAddressList(sortAddressByDefault(updateAddresList))
+  }
+
+  const handleUpdateAddress = (data) => {
+    setUserAddressList((prev) => {
+      return prev.map((item) =>
+        item._id === data._id ? { ...item, ...data } : item
+      )
+    })
+  }
+
+  const handleDeleteAddress = async (_id) => {
+    setUserAddressList((prev) => {
+      return prev.filter((item) => item._id !== _id)
+    })
+  }
+
   return (
     <Box>
       <Box
@@ -14,25 +63,26 @@ function Addresses() {
         }}
       >
         <Typography sx={{ fontSize: '20px' }}>My Addresses</Typography>
-        <AddressModal />
+        <AddressModal
+          handleAddAddress={handleAddAddress}
+          actionType="create"
+          address={null}
+        />
       </Box>
       <Divider />
       <Box>
-        <AddressCard />
-        <Divider />
-        <AddressCard />
-        <Divider />
-        <AddressCard />
-        <Divider />
-        <AddressCard />
-        <Divider />
-        <AddressCard />
-        <Divider />
-        <AddressCard />
-        <Divider />
-        <AddressCard />
-        <Divider />
-        <AddressCard />
+        {userAddressList &&
+          userAddressList.map((item, index) => (
+            <Box key={index}>
+              <AddressCard
+                addressItem={item}
+                handleSetDefaultAddress={handleSetDefaultAddress}
+                handleDeleteAddress={handleDeleteAddress}
+                handleUpdateAddress={handleUpdateAddress}
+              />
+              <Divider />
+            </Box>
+          ))}
       </Box>
     </Box>
   )

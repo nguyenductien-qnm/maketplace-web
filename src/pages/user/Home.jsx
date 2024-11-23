@@ -34,13 +34,13 @@ function Home() {
   return (
     <UserLayout>
       <Grid container spacing={2}>
-        <Grid item size={3}>
+        <Grid size={3}>
           <CategoriesNavbar open={openCategories} handle={handleCategories} />
         </Grid>
-        <Grid item size={9}>
+        <Grid size={9}>
           <Carousel />
           <Grid container spacing={3} sx={{ marginTop: '20px' }}>
-            <Grid item size={6}>
+            <Grid size={6}>
               <Box
                 sx={{
                   backgroundColor: green[50],
@@ -86,7 +86,7 @@ function Home() {
               </Box>
             </Grid>
 
-            <Grid item size={6}>
+            <Grid size={6}>
               <Box
                 sx={{
                   backgroundColor: red[50],

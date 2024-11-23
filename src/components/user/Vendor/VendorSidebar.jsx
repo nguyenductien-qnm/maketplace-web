@@ -1,6 +1,6 @@
 import { Box, Divider, styled } from '@mui/material'
 import { blue } from '@mui/material/colors'
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import DashboardCustomizeOutlinedIcon from '@mui/icons-material/DashboardCustomizeOutlined'
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
@@ -8,7 +8,9 @@ import PaymentOutlinedIcon from '@mui/icons-material/PaymentOutlined'
 import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined'
 import LocalGroceryStoreOutlinedIcon from '@mui/icons-material/LocalGroceryStoreOutlined'
 function VendorSideBar({ page }) {
-  const CustomLink = styled(Link)(({ isActive }) => ({
+  const CustomLink = styled(Link, {
+    shouldForwardProp: (prop) => prop !== 'isActive' //isActive chỉ cần để tính toán style, không cần xuất hiện trong DOM.
+  })(({ isActive }) => ({
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
@@ -52,11 +54,8 @@ function VendorSideBar({ page }) {
         Payment
       </CustomLink>
       <Divider />
-      <CustomLink>
-        <AttachMoneyOutlinedIcon
-          to="/vendor/withdraw"
-          isActive={checkUrl('withdraw')}
-        />
+      <CustomLink to="/vendor/withdraw" isActive={checkUrl('withdraw')}>
+        <AttachMoneyOutlinedIcon />
         Withdraw
       </CustomLink>
     </Box>

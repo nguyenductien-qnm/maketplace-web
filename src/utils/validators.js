@@ -1,14 +1,26 @@
 export const FIELD_REQUIRED_MESSAGE = 'This field is required.'
+// ==================== email ============================
 export const EMAIL_RULE = /^\S+@\S+\.\S+$/
 export const EMAIL_RULE_MESSAGE = 'Email is invalid'
+
+// ==================== password ============================
 export const PASSWORD_RULE =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\W]{8,256}$/
+
 export const PASSWORD_RULE_MESSAGE =
   'Password must include at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long.'
 export const PASSWORD_CONFIRMATION_MESSAGE =
   'Password confirmation does not match!'
 
-// Liên quan đến Validate File
+// ==================== name ============================
+export const NAME_RULE = /^[a-zA-ZÀ-ỹ\s]{3,50}$/
+export const NAME_RULE_MESSAGE = 'Invalid name'
+
+// ==================== phone ============================
+export const PHONE_RULE = /^[0-9]{10}$/
+export const PHONE_RULE_MESSAGE = 'Invalid phone number.'
+
+// ==================== file ============================
 export const LIMIT_COMMON_FILE_SIZE = 10485760 // byte = 10 MB
 export const ALLOW_COMMON_FILE_TYPES = ['image/jpg', 'image/jpeg', 'image/png']
 export const singleFileValidator = (file) => {
