@@ -7,13 +7,14 @@ import Select from '@mui/material/Select'
 import Chip from '@mui/material/Chip'
 
 const variations = ['Type', 'Size', 'Color', 'Material']
-import { handleSelectVariation } from '~/redux/formCreateProduct.slice'
+import { handleSelectVariation } from '~/redux/formProduct.slice'
 import { useDispatch, useSelector } from 'react-redux'
+import TypographyLabel from '~/components/user/Common/TypographyLabel'
 export default function MultipleSelectVariation() {
   const dispatch = useDispatch()
 
   const variationSelected = useSelector(
-    (state) => state.formCreateProduct.productVariation
+    (state) => state.formProduct.product_classifications
   )
 
   const handleChange = (event) => {
@@ -22,15 +23,7 @@ export default function MultipleSelectVariation() {
 
   return (
     <Box sx={{ marginTop: '20px' }}>
-      <InputLabel
-        sx={{
-          fontSize: '14px',
-          fontWeight: '600',
-          marginBottom: '5px'
-        }}
-      >
-        Product variations
-      </InputLabel>
+      <TypographyLabel> Product variations</TypographyLabel>
       <FormControl fullWidth>
         <Select
           size="small"

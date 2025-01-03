@@ -26,6 +26,7 @@ function App() {
       <Route path="/auth/reset-password/:token" element={<Auth />} />
       <Route path="/auth/verify-account/:otp" element={<VerifyAccount />} />
       <Route path="/vendor/:page" element={<Vendor />} /> {/* Checked */}
+      <Route path="/vendor/:page/:_id" element={<Vendor />} /> {/* Checked */}
       <Route
         path="/setup-account"
         element={

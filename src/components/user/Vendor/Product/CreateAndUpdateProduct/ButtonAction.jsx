@@ -1,7 +1,7 @@
 import { Box, Button } from '@mui/material'
 import { blue } from '@mui/material/colors'
 import { useDispatch } from 'react-redux'
-import { handleIncreaseQuantityProductSKU } from '~/redux/formCreateProduct.slice'
+import { handleIncreaseQuantityProductSKU } from '~/redux/formProduct.slice'
 
 function ButtonAddProductSKU() {
   const dispatch = useDispatch()

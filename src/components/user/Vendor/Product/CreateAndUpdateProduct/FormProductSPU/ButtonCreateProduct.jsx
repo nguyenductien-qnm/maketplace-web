@@ -1,9 +1,12 @@
 import { Button } from '@mui/material'
 import { blue } from '@mui/material/colors'
-
+import { useDispatch } from 'react-redux'
+import { createProductAPI } from '~/redux/formProduct.slice'
 function ButtonCreateProduct() {
+  const dispatch = useDispatch()
   return (
     <Button
+      onClick={() => dispatch(createProductAPI())}
       fullWidth
       sx={{
         fontWeight: '600',

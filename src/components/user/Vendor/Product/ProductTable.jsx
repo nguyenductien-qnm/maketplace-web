@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import ProductRow from './ProductRow'
 
-function ProductTable() {
+function ProductTable({ listProduct }) {
   return (
     <Table>
       <TableHead>
@@ -23,11 +23,12 @@ function ProductTable() {
           <TableCell>Stock</TableCell>
           <TableCell>Price</TableCell>
           <TableCell>Date</TableCell>
+          <TableCell>Action</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {Array.from({ length: 5 }, (_, index) => (
-          <ProductRow key={index} />
+        {listProduct.map((productItem, index) => (
+          <ProductRow productItem={productItem} key={index} />
         ))}
       </TableBody>
     </Table>

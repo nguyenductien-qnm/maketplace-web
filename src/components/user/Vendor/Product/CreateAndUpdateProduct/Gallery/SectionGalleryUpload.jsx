@@ -1,14 +1,17 @@
-import { Box, InputLabel } from '@mui/material'
+import { Box, Skeleton } from '@mui/material'
 import Grid from '@mui/material/Grid2'
 import { grey, red } from '@mui/material/colors'
 import InputGalleryUpload from './InputGalleryUpload'
 import { useDispatch, useSelector } from 'react-redux'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
-import { handleDeleteGallery } from '~/redux/formCreateProduct.slice'
+import { handleDeleteGallery } from '~/redux/formProduct.slice'
+import TypographyLabel from '~/components/user/Common/TypographyLabel'
 
 function SectionGalleryUpLoad() {
   const dispatch = useDispatch()
-  const spuGallery = useSelector((state) => state.formCreateProduct.spuGallery)
+  const productGallery = useSelector(
+    (state) => state.formProduct.product_gallery
+  )
 
   const resizeImage = (url, width = 60, height = 60) => {
     return url.replace('/upload/', `/upload/w_${width},h_${height},c_fill/`)
@@ -16,15 +19,12 @@ function SectionGalleryUpLoad() {
 
   return (
     <Box sx={{ marginTop: '65px' }}>
-      <InputLabel
-        sx={{
-          fontSize: '14px',
-          fontWeight: '600',
-          marginBottom: '5px'
-        }}
-      >
-        Product Gallery
-      </InputLabel>
+      {productGallery.length != 0 ? (
+        <TypographyLabel> Product Gallery</TypographyLabel>
+      ) : (
+        <Skeleton variant="rounded" width="40%" sx={{ marginBottom: '10px' }} />
+      )}
+
       <Box
         sx={{
           minWidth: '100%',
@@ -37,16 +37,19 @@ function SectionGalleryUpLoad() {
           alignItems: 'center'
         }}
       >
-        {spuGallery.length === 0 && <InputGalleryUpload />}
-        {spuGallery.length != 0 && (
+        {productGallery.length === 0 && (
+          //  <InputGalleryUpload />
+          <Skeleton variant="rounded" width="100%" height="100%" />
+        )}
+        {productGallery.length != 0 && (
           <Grid
             container
             spacing={1}
             rowSpacing={1}
             sx={{ height: '100%', width: '100%' }}
           >
-            {spuGallery.map((image, index) => (
-              <Grid spacing={4} sx={{ position: 'relative' }}>
+            {productGallery.map((image, index) => (
+              <Grid sx={{ position: 'relative' }} key={index}>
                 <HighlightOffOutlinedIcon
                   onClick={() =>
                     dispatch(handleDeleteGallery({ index: index }))
@@ -69,7 +72,7 @@ function SectionGalleryUpLoad() {
         )}
       </Box>
 
-      {spuGallery.length != 0 && (
+      {productGallery.length != 0 && (
         <Box
           sx={{
             display: 'flex',

@@ -8,7 +8,7 @@ import { styled } from '@mui/material'
 import Filter from './Filter/Filter'
 import ProductTable from '../ProductTable'
 
-export default function TabProduct() {
+export default function TabProduct({ listProduct }) {
   const [value, setValue] = useState('1')
 
   const handleChange = (event, newValue) => {
@@ -33,7 +33,7 @@ export default function TabProduct() {
         </Box>
         <TabPanel value="1">
           <Filter />
-          <ProductTable />
+          <ProductTable listProduct={listProduct} />
         </TabPanel>
         <TabPanel value="2">Pending Review</TabPanel>
         <TabPanel value="3">In stock</TabPanel>

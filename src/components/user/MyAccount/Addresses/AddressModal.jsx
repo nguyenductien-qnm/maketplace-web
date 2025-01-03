@@ -18,7 +18,13 @@ import {
   deleteAddressAPI
 } from '~/api/user.api'
 import FieldErrorAlert from '~/components/FieldErrorAlert'
-import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
+import {
+  FIELD_REQUIRED_MESSAGE,
+  NAME_RULE,
+  NAME_RULE_MESSAGE,
+  PHONE_RULE,
+  PHONE_RULE_MESSAGE
+} from '~/utils/validators'
 
 const style = {
   position: 'absolute',
@@ -162,20 +168,32 @@ function AddressModal({
                 <TextField
                   size="small"
                   {...register('full_name', {
-                    required: FIELD_REQUIRED_MESSAGE
+                    required: FIELD_REQUIRED_MESSAGE,
+                    pattern: {
+                      value: NAME_RULE,
+                      message: NAME_RULE_MESSAGE
+                    }
                   })}
                   error={!!errors['full_name']}
                 />
                 <FieldErrorAlert errors={errors} fieldName="full_name" />
               </Box>
+
               <Box>
                 <TypographyLabel>Phone number</TypographyLabel>
                 <TextField
                   size="small"
                   {...register('phone_number', {
-                    required: FIELD_REQUIRED_MESSAGE
+                    required: FIELD_REQUIRED_MESSAGE,
+                    pattern: {
+                      value: PHONE_RULE,
+                      message: PHONE_RULE_MESSAGE
+                    }
                   })}
                   error={!!errors['phone_number']}
+                  onInput={(e) => {
+                    e.target.value = e.target.value.replace(/[^0-9]/g, '')
+                  }}
                 />
                 <FieldErrorAlert errors={errors} fieldName="phone_number" />
               </Box>
@@ -199,6 +217,7 @@ function AddressModal({
                 handleAddressChange={handleAddressChange}
               />
             </Box>
+
             {actionType === 'create' && (
               <FormControlLabel
                 control={

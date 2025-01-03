@@ -17,8 +17,11 @@ export const NAME_RULE = /^[a-zA-ZÀ-ỹ\s]{3,50}$/
 export const NAME_RULE_MESSAGE = 'Invalid name'
 
 // ==================== phone ============================
-export const PHONE_RULE = /^[0-9]{10}$/
-export const PHONE_RULE_MESSAGE = 'Invalid phone number.'
+export const PHONE_RULE = /^\d{10}$/
+export const PHONE_RULE_MESSAGE = 'Invalid phone.'
+
+export const NUMBER_RULE = /^\d+$/
+export const NUMBER_RULE_MESSAGE = 'Only numbers are allowed.'
 
 // ==================== file ============================
 export const LIMIT_COMMON_FILE_SIZE = 10485760 // byte = 10 MB

@@ -1,17 +1,16 @@
 import Grid from '@mui/material/Grid2'
-import { Box, Checkbox, FormControlLabel } from '@mui/material'
+import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import { handleMultiVariation } from '~/redux/formCreateProduct.slice'
+import { handleMultiVariation } from '~/redux/formProduct.slice'
 import InputStatusProduct from './InputStatusProduct'
 import NameInput from './NameInput'
 import StockInput from './StockInput'
 import PriceInput from './PriceInput'
 import ButtonAddAttribute from './ButtonAddAttribute'
 import AttributeInput from './AttributeInput'
+import CategoriesSelected from './CategoriesSelected'
 
-function FormCreateProductSPU() {
-  const spuStatus = useSelector((state) => state.formCreateProduct.spuStatus)
-
+function FormProductSPU() {
   const dispatch = useDispatch()
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
@@ -33,6 +32,10 @@ function FormCreateProductSPU() {
           </Grid>
         </Grid>
 
+        <Grid size={12}>
+          <CategoriesSelected />
+        </Grid>
+
         {/* attribute  */}
         <Grid size={12}>
           <AttributeInput />
@@ -52,11 +55,15 @@ function FormCreateProductSPU() {
                 onClick={() => dispatch(handleMultiVariation())}
               />
             }
-            label="Multi variation"
+            label={
+              <Typography style={{ fontSize: '14px' }}>
+                Multi variation
+              </Typography>
+            }
           />
         </Grid>
       </Grid>
     </Box>
   )
 }
-export default FormCreateProductSPU
+export default FormProductSPU

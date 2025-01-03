@@ -10,8 +10,9 @@ function VendorDashboardButton() {
         fontWeight: '600',
         color: 'white',
         backgroundColor: blue[600],
-        borderRadius: '5px',
+        borderRadius: '5px'
       }}
+      to="/vendor/dashboard"
     >
       Go to vendor dashboard
     </Link>

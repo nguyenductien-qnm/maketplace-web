@@ -8,7 +8,6 @@ import {
 import TypographyLabel from './user/Common/TypographyLabel'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import FieldErrorAlert from './FieldErrorAlert'
-import { useForm } from 'react-hook-form'
 
 function FormAddress({
   register,

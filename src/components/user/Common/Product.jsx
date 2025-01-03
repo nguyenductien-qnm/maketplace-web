@@ -1,10 +1,18 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Container, Typography } from '@mui/material'
 import StarIcon from '@mui/icons-material/Star'
 import { green, grey, red, yellow } from '@mui/material/colors'
-
+import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined'
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
+import FavoriteIcon from '@mui/icons-material/Favorite'
+import { useState } from 'react'
 function Product() {
+  const [hoverFavorite, setHoverFavorite] = useState(false)
+  const [hoverProduct, setHoverProduct] = useState(false)
+
   return (
     <Box
+      onMouseEnter={() => setHoverProduct(true)}
+      onMouseLeave={() => setHoverProduct(false)}
       sx={{
         maxWidth: '100%',
         borderRadius: '8px',
@@ -16,11 +24,26 @@ function Product() {
         }
       }}
     >
+      <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+        <Box
+          onMouseEnter={() => setHoverFavorite(true)}
+          onMouseLeave={() => setHoverFavorite(false)}
+          sx={{ maxWidth: '20px' }}
+        >
+          {hoverFavorite ? (
+            <FavoriteIcon fontSize="small" />
+          ) : (
+            <FavoriteBorderOutlinedIcon fontSize="small" />
+          )}
+        </Box>
+      </Box>
+
       <img
         style={{ width: '100%', borderRadius: '8px' }}
         src="https://klbtheme.com/bevesi/wp-content/uploads/2024/04/1-18.jpg"
         alt="Product"
       />
+
       <Box
         sx={{
           display: 'flex',
@@ -79,24 +102,40 @@ function Product() {
         </Typography>
       </Box>
 
-      <Box sx={{ display: 'flex' }}>
-        <Typography
-          sx={{ fontWeight: '600', fontSize: '12px', color: grey[400] }}
+      <Box
+        sx={{
+          display: 'flex',
+          gap: '5px',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          opacity: hoverProduct ? 1 : 0
+        }}
+      >
+        <Box sx={{ border: '1px solid black', borderRadius: '5px' }}>
+          <Typography
+            sx={{
+              fontSize: '11px',
+              color: 'black',
+              padding: '5px 30px',
+              fontWeight: 'bold'
+            }}
+          >
+            Add to cart
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            border: '1px solid black',
+            borderRadius: '5px',
+            width: '35px',
+            height: '28px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
         >
-          Store:
-        </Typography>
-        <Typography sx={{ fontWeight: '700', fontSize: '12px' }}>
-          Blonwe
-        </Typography>
-      </Box>
-
-      <Box sx={{ display: 'flex' }}>
-        <Typography
-          sx={{ fontWeight: '600', fontSize: '12px', color: grey[400] }}
-        >
-          Available only:
-        </Typography>
-        <Typography sx={{ fontWeight: '700', fontSize: '12px' }}>31</Typography>
+          <RemoveRedEyeOutlinedIcon fontSize="small" />
+        </Box>
       </Box>
     </Box>
   )

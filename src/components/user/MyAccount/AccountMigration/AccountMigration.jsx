@@ -23,33 +23,32 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 function AccountMigration() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   const {
     register,
-    formState: { errors },
-    handleSubmit,
-    reset,
     watch,
+    formState: { errors },
+    reset,
+    handleSubmit,
+    setValue,
+    clearErrors,
     setError,
-    getValues,
-    clearErrors
+    getValues
   } = useForm()
 
   const [unavaibleShopName, setUnavaibleShopName] = useState(false)
 
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const [tempAddress, setTempAddress] = useState({
+    selectedProvince: {},
+    selectedDistrict: {},
+    selectedWard: {}
+  })
 
-  useEffect(() => {
-    const getAndSetUserInfo = async () => {
-      const res = await getUserInfoAPI()
-      const userInfo = res.data.metadata
-      reset({
-        user_name: userInfo.user_name,
-        user_phone: userInfo.user_phone
-      })
-    }
-    getAndSetUserInfo()
-  }, [])
+  const handleAddressChange = (address) => {
+    setTempAddress(address)
+  }
 
   const handleChangeShopName = async (e) => {
     if (!e.target.value) {
@@ -87,6 +86,10 @@ function AccountMigration() {
       toast.error('This shop name is unavaible.')
       return
     }
+    
+    data.province = tempAddress?.selectedProvince
+    data.district = tempAddress?.selectedDistrict
+    data.ward = tempAddress?.selectedWard
 
     const res = await dispatch(accountMigrationAPI(data))
     if (res.payload.status == 200) {
@@ -182,7 +185,16 @@ function AccountMigration() {
           />
         </Box>
 
-        <FormAddress register={register} watch={watch} errors={errors} />
+        <FormAddress
+          clearErrors={clearErrors}
+          register={register}
+          watch={watch}
+          errors={errors}
+          reset={reset}
+          setValue={setValue}
+          handleAddressChange={handleAddressChange}
+          actionType="create"
+        />
 
         <Button
           type="submit"
