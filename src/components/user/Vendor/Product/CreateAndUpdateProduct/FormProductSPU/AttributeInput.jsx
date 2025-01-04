@@ -1,4 +1,4 @@
-import { Box, TextField, Paper } from '@mui/material'
+import { Box, TextField, Paper, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid2'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -11,7 +11,9 @@ import TypographyLabel from '~/components/user/Common/TypographyLabel'
 import { useFormContext } from 'react-hook-form'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import Skeleton from '@mui/material/Skeleton'
+import { useParams } from 'react-router-dom'
 function AttributeInput() {
+  const { page } = useParams()
   const spuAttribute = useSelector((state) => state.formProduct.product_specs)
   const dispatch = useDispatch()
 
@@ -41,80 +43,76 @@ function AttributeInput() {
 
   return (
     <Box>
-      {spuAttribute[0].key != '' ? (
-        <TypographyLabel>Product Attribute</TypographyLabel>
-      ) : (
-        <Skeleton variant="text" width="20%" />
-      )}
-      <Grid container spacing={2} rowSpacing={3}>
-        {Array.from({ length: spuAttribute.length }, (_, index) => (
-          <Grid size={12} key={index}>
-            <Paper elevation={2} sx={{ padding: '10px' }}>
-              <Grid container spacing={3}>
-                <Grid size={5}>
-                  {spuAttribute[index].key != '' ? (
-                    <TextField
-                      {...register(`attribute_key_index_${index}`, {
-                        required: FIELD_REQUIRED_MESSAGE,
-                        onChange: (e) => hanldeChangeKey(e, index)
-                      })}
-                      error={!!errors[`attribute_key_index_${index}`]}
-                      fullWidth
-                      size="small"
-                      placeholder="Key"
-                      value={spuAttribute[index].key}
-                      helperText={
-                        errors[`attribute_key_index_${index}`]?.message
-                      }
-                    ></TextField>
-                  ) : (
-                    <Skeleton variant="rounded" height={40} />
-                  )}
-                </Grid>
+      {page === 'create-product' || spuAttribute?.[0].key ? (
+        <Box>
+          <TypographyLabel>Product Attribute</TypographyLabel>
+          <Grid container spacing={2} rowSpacing={3}>
+            {Array.from({ length: spuAttribute.length }, (_, index) => (
+              <Grid size={12} key={index}>
+                <Paper elevation={2} sx={{ padding: '10px' }}>
+                  <Grid container spacing={3}>
+                    <Grid size={5}>
+                      <TextField
+                        {...register(`attribute_key_index_${index}`, {
+                          required: FIELD_REQUIRED_MESSAGE,
+                          onChange: (e) => hanldeChangeKey(e, index)
+                        })}
+                        error={!!errors[`attribute_key_index_${index}`]}
+                        fullWidth
+                        size="small"
+                        placeholder="Key"
+                        value={spuAttribute[index].key}
+                        helperText={
+                          errors[`attribute_key_index_${index}`]?.message
+                        }
+                      ></TextField>
+                    </Grid>
 
-                <Grid size={5}>
-                  {spuAttribute[index].key != '' ? (
-                    <TextField
-                      {...register(`attribute_value_index_${index}`, {
-                        required: FIELD_REQUIRED_MESSAGE,
-                        onChange: (e) => hanldeChangeValue(e, index)
-                      })}
-                      error={!!errors[`attribute_value_index_${index}`]}
-                      fullWidth
-                      size="small"
-                      placeholder="Value"
-                      value={spuAttribute[index].value}
-                      helperText={
-                        errors[`attribute_value_index_${index}`]?.message
-                      }
-                    ></TextField>
-                  ) : (
-                    <Skeleton variant="rounded" height={40} />
-                  )}
-                </Grid>
+                    <Grid size={5}>
+                      <TextField
+                        {...register(`attribute_value_index_${index}`, {
+                          required: FIELD_REQUIRED_MESSAGE,
+                          onChange: (e) => hanldeChangeValue(e, index)
+                        })}
+                        error={!!errors[`attribute_value_index_${index}`]}
+                        fullWidth
+                        size="small"
+                        placeholder="Value"
+                        value={spuAttribute[index].value}
+                        helperText={
+                          errors[`attribute_value_index_${index}`]?.message
+                        }
+                      ></TextField>
+                    </Grid>
 
-                <Grid
-                  size={1}
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}
-                >
-                  <HighlightOffOutlinedIcon
-                    onClick={() => {
-                      dispatch(handleDeleteSPUAttribute({ index: index }))
-                    }}
-                    sx={{
-                      color: red[600],
-                      '&:hover': { cursor: 'pointer' }
-                    }}
-                  />
-                </Grid>
+                    <Grid
+                      size={1}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <HighlightOffOutlinedIcon
+                        onClick={() => {
+                          dispatch(handleDeleteSPUAttribute({ index: index }))
+                        }}
+                        sx={{
+                          color: red[600],
+                          '&:hover': { cursor: 'pointer' }
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
               </Grid>
-            </Paper>
+            ))}
           </Grid>
-        ))}
-      </Grid>
+        </Box>
+      ) : (
+        <Box>
+          <Skeleton variant="rectangular" height={100} />
+        </Box>
+      )}
     </Box>
   )
 }

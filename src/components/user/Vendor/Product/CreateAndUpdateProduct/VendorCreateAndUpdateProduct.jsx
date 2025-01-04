@@ -31,11 +31,9 @@ function VendorCreateProduct({ shopId }) {
 
   const handleActionProduct = async () => {
     if (page === 'create-product') {
-      console.log('1')
-      const res = await dispatch(createProductAPI())
+      await dispatch(createProductAPI())
     } else if (page === 'update-product') {
-      console.log('2')
-      const res = await dispatch(updateProductAPI(_id))
+      await dispatch(updateProductAPI(_id))
     }
   }
 
@@ -68,7 +66,7 @@ function VendorCreateProduct({ shopId }) {
           <Divider sx={{ mt: '10px', mb: '30px' }} />
           <Grid container spacing={2}>
             <Grid size={9}>
-              <FormProductSPU />
+              <FormProductSPU page={page} />
 
               {productData?.isMultiVariation && (
                 <Box>

@@ -7,8 +7,11 @@ import { handleDeleteThumb } from '~/redux/formProduct.slice'
 import TypographyLabel from '~/components/user/Common/TypographyLabel'
 import FieldErrorAlert from '~/components/FieldErrorAlert'
 import { useFormContext } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 
 function SectionThumbUpLoad() {
+  const { page } = useParams()
+
   const dispatch = useDispatch()
 
   const urlThumb = useSelector((state) => state.formProduct.product_thumb)
@@ -21,48 +24,59 @@ function SectionThumbUpLoad() {
   } = useFormContext()
   return (
     <Box>
-      {urlThumb ? (
-        <TypographyLabel> Product Thumb</TypographyLabel>
-      ) : (
-        <Skeleton variant="rounded" width="40%" sx={{ marginBottom: '10px' }} />
-      )}
-      <Box
-        sx={{
-          minWidth: '100%',
-          height: '200px',
-          border: '3px',
-          borderStyle: 'dashed',
-          borderColor: errors?.['product_thumb'] ? red[400] : grey[400],
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          position: 'relative'
-        }}
-      >
-        {urlThumb === '' && (
-          // <InputThumbUpload />
-          <Skeleton variant="rounded" width="100%" height="100%" />
-        )}
-        {urlThumb !== '' && (
-          <Box>
-            <img src={resizedImageUrl} sx={{ height: '100%', width: '100%' }} />
-            <HighlightOffOutlinedIcon
-              fontSize="small"
-              onClick={() => dispatch(handleDeleteThumb())}
-              sx={{
-                position: 'absolute',
-                right: '0',
-                top: '0',
-                backgroundColor: 'white',
-                borderRadius: '9999px',
-                color: red[600],
-                '&:hover': { cursor: 'pointer' }
-              }}
-            />
+      {page === 'create-product' || urlThumb ? (
+        <Box>
+          <TypographyLabel> Product Thumb</TypographyLabel>
+          <Box
+            sx={{
+              minWidth: '100%',
+              height: '200px',
+              border: '3px',
+              borderStyle: 'dashed',
+              borderColor: errors?.['product_thumb'] ? red[400] : grey[400],
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              position: 'relative'
+            }}
+          >
+            {urlThumb !== '' ? (
+              <Box>
+                <img
+                  src={resizedImageUrl}
+                  sx={{ height: '100%', width: '100%' }}
+                />
+                <HighlightOffOutlinedIcon
+                  fontSize="small"
+                  onClick={() => dispatch(handleDeleteThumb())}
+                  sx={{
+                    position: 'absolute',
+                    right: '0',
+                    top: '0',
+                    backgroundColor: 'white',
+                    borderRadius: '9999px',
+                    color: red[600],
+                    '&:hover': { cursor: 'pointer' }
+                  }}
+                />
+              </Box>
+            ) : (
+              <InputThumbUpload />
+            )}
           </Box>
-        )}
-      </Box>
-      <FieldErrorAlert errors={errors} fieldName="product_thumb" />
+          <FieldErrorAlert errors={errors} fieldName="product_thumb" />
+        </Box>
+      ) : (
+        <Box>
+          <Skeleton
+            variant="rounded"
+            width="40%"
+            sx={{ marginBottom: '10px' }}
+          />
+
+          <Skeleton variant="rounded" height={200} width={200} />
+        </Box>
+      )}
     </Box>
   )
 }

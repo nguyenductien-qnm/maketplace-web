@@ -4,8 +4,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import TypographyLabel from '~/components/user/Common/TypographyLabel'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import { handleChangeProductDescription } from '~/redux/formProduct.slice'
+import { useParams } from 'react-router-dom'
+import SkeletonLoaderInput from '~/components/SkeletonLoaderInput'
 
 function InputDescription() {
+  const { page } = useParams()
+
   const product_description = useSelector(
     (state) => state.formProduct.product_description
   )
@@ -15,31 +19,37 @@ function InputDescription() {
     register,
     formState: { errors }
   } = useFormContext()
+
+  const input = (
+    <Box>
+      <TypographyLabel> Product Desciption</TypographyLabel>
+      <TextField
+        {...register('product_description', {
+          required: FIELD_REQUIRED_MESSAGE,
+          onChange: (e) => {
+            dispatch(handleChangeProductDescription(e.target.value))
+          }
+        })}
+        error={!!errors['product_description']}
+        value={product_description}
+        fullWidth
+        multiline
+        rows={10}
+      ></TextField>
+    </Box>
+  )
+
   return (
     <Box>
-      {product_description ? (
-        <Box>
-          <TypographyLabel> Product Desciption</TypographyLabel>
-          <TextField
-            {...register('product_description', {
-              required: FIELD_REQUIRED_MESSAGE,
-              onChange: (e) => {
-                dispatch(handleChangeProductDescription(e.target.value))
-              }
-            })}
-            error={!!errors['product_description']}
-            value={product_description}
-            fullWidth
-            multiline
-            rows={10}
-          ></TextField>
-        </Box>
-      ) : (
-        <Box>
-          <Skeleton variant="text" width="20%" />
-          <Skeleton variant="rounded" height={300} />
-        </Box>
-      )}
+      <Box>
+        {page == 'create-product' ? (
+          input
+        ) : product_description ? (
+          input
+        ) : (
+          <SkeletonLoaderInput />
+        )}
+      </Box>
     </Box>
   )
 }

@@ -10,7 +10,7 @@ const initialState = {
   product_price: 0,
   product_stock: 0,
   product_categories: [],
-  product_status: 'Draft',
+  product_status: '',
   product_specs: [
     { key: '', value: '' },
     { key: '', value: '' },

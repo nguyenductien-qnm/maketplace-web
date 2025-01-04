@@ -5,32 +5,40 @@ import Select from '@mui/material/Select'
 import TypographyLabel from '~/components/user/Common/TypographyLabel'
 import { useDispatch, useSelector } from 'react-redux'
 import { handleChangeProductStatus } from '~/redux/formProduct.slice'
+import SkeletonLoaderInput from '~/components/SkeletonLoaderInput'
 
-export default function InputStatusProduct() {
+export default function InputStatusProduct({ page }) {
   const product_status = useSelector(
     (state) => state.formProduct.product_status
   )
 
   const dispatch = useDispatch()
+
+  const input = (
+    <Box>
+      <TypographyLabel>Product Status</TypographyLabel>
+      <Select
+        value={product_status}
+        onChange={(e) => {
+          dispatch(handleChangeProductStatus(e.target?.value))
+        }}
+        fullWidth
+        size="small"
+      >
+        <MenuItem value={'Draft'}>Draft</MenuItem>
+        <MenuItem value={'Publish'}>Publish</MenuItem>
+      </Select>
+    </Box>
+  )
+
   return (
     <Box>
-      {product_status ? (
-        <Box>
-          <TypographyLabel>Product Status</TypographyLabel>
-          <Select
-            value={product_status}
-            onChange={(e) => {
-              dispatch(handleChangeProductStatus(e.target?.value))
-            }}
-            fullWidth
-            size="small"
-          >
-            <MenuItem value={'Draft'}>Draft</MenuItem>
-            <MenuItem value={'Publish'}>Publish</MenuItem>
-          </Select>
-        </Box>
+      {page == 'create-product' ? (
+        input
+      ) : product_status ? (
+        input
       ) : (
-        <Skeleton variant="rounded" height={40} />
+        <SkeletonLoaderInput />
       )}
     </Box>
   )

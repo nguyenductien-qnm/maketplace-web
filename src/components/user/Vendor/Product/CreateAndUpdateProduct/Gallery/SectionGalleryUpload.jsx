@@ -6,8 +6,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
 import { handleDeleteGallery } from '~/redux/formProduct.slice'
 import TypographyLabel from '~/components/user/Common/TypographyLabel'
+import { useParams } from 'react-router-dom'
 
 function SectionGalleryUpLoad() {
+  const { page } = useParams()
   const dispatch = useDispatch()
   const productGallery = useSelector(
     (state) => state.formProduct.product_gallery
@@ -17,60 +19,69 @@ function SectionGalleryUpLoad() {
     return url.replace('/upload/', `/upload/w_${width},h_${height},c_fill/`)
   }
 
+  console.log(productGallery)
+
   return (
     <Box sx={{ marginTop: '65px' }}>
-      {productGallery.length != 0 ? (
-        <TypographyLabel> Product Gallery</TypographyLabel>
-      ) : (
-        <Skeleton variant="rounded" width="40%" sx={{ marginBottom: '10px' }} />
-      )}
-
-      <Box
-        sx={{
-          minWidth: '100%',
-          height: '220px',
-          border: '3px',
-          borderStyle: 'dashed',
-          borderColor: grey[400],
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
-        {productGallery.length === 0 && (
-          //  <InputGalleryUpload />
-          <Skeleton variant="rounded" width="100%" height="100%" />
-        )}
-        {productGallery.length != 0 && (
-          <Grid
-            container
-            spacing={1}
-            rowSpacing={1}
-            sx={{ height: '100%', width: '100%' }}
+      {page === 'create-product' || productGallery.length != 0 ? (
+        <Box>
+          <TypographyLabel> Product Thumb</TypographyLabel>
+          <Box
+            sx={{
+              minWidth: '100%',
+              height: '220px',
+              border: '3px',
+              borderStyle: 'dashed',
+              borderColor: grey[400],
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
           >
-            {productGallery.map((image, index) => (
-              <Grid sx={{ position: 'relative' }} key={index}>
-                <HighlightOffOutlinedIcon
-                  onClick={() =>
-                    dispatch(handleDeleteGallery({ index: index }))
-                  }
-                  sx={{
-                    fontSize: '16px',
-                    position: 'absolute',
-                    right: '0',
-                    top: '0',
-                    backgroundColor: 'white',
-                    borderRadius: '9999px',
-                    color: red[600],
-                    '&:hover': { cursor: 'pointer' }
-                  }}
-                />
-                <img src={resizeImage(image)} />
+            {productGallery.length != 0 ? (
+              <Grid
+                container
+                spacing={1}
+                rowSpacing={1}
+                sx={{ height: '100%', width: '100%' }}
+              >
+                {productGallery.map((image, index) => (
+                  <Grid sx={{ position: 'relative' }} key={index}>
+                    <HighlightOffOutlinedIcon
+                      onClick={() =>
+                        dispatch(handleDeleteGallery({ index: index }))
+                      }
+                      sx={{
+                        fontSize: '16px',
+                        position: 'absolute',
+                        right: '0',
+                        top: '0',
+                        backgroundColor: 'white',
+                        borderRadius: '9999px',
+                        color: red[600],
+                        '&:hover': { cursor: 'pointer' }
+                      }}
+                    />
+                    <img src={resizeImage(image)} />
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
-        )}
-      </Box>
+            ) : (
+              <InputGalleryUpload />
+            )}
+          </Box>
+        </Box>
+      ) : (
+        <Box>
+          <Skeleton
+            variant="rounded"
+            width="40%"
+            sx={{ marginBottom: '10px' }}
+          />
+
+          <Skeleton variant="rounded" height={200} width={200} />
+        </Box>
+      )}
 
       {productGallery.length != 0 && (
         <Box

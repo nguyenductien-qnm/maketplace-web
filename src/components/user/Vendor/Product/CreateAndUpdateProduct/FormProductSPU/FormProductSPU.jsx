@@ -10,30 +10,30 @@ import ButtonAddAttribute from './ButtonAddAttribute'
 import AttributeInput from './AttributeInput'
 import CategoriesSelected from './CategoriesSelected'
 
-function FormProductSPU() {
+function FormProductSPU({ page }) {
   const dispatch = useDispatch()
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
       <Grid container spacing={2} rowSpacing={2}>
         {/* name  */}
         <Grid size={12}>
-          <NameInput />
+          <NameInput page={page} />
         </Grid>
 
         {/* price & stock  */}
         <Grid size={12}>
           <Grid container spacing={2}>
             <Grid size={6}>
-              <PriceInput />
+              <PriceInput page={page} />
             </Grid>
             <Grid size={6}>
-              <StockInput />
+              <StockInput page={page} />
             </Grid>
           </Grid>
         </Grid>
 
         <Grid size={12}>
-          <CategoriesSelected />
+          <CategoriesSelected page={page} />
         </Grid>
 
         {/* attribute  */}
@@ -44,7 +44,7 @@ function FormProductSPU() {
 
         {/* status  */}
         <Grid size={12}>
-          <InputStatusProduct />
+          <InputStatusProduct page={page} />
         </Grid>
 
         <Grid size={12}>
