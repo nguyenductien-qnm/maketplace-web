@@ -10,47 +10,50 @@ import ButtonAddAttribute from './ButtonAddAttribute'
 import AttributeInput from './AttributeInput'
 import CategoriesSelected from './CategoriesSelected'
 
-function FormProductSPU({ page }) {
+function FormProductSPU({ isLoading }) {
   const dispatch = useDispatch()
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
       <Grid container spacing={2} rowSpacing={2}>
         {/* name  */}
         <Grid size={12}>
-          <NameInput page={page} />
+          <NameInput isLoading={isLoading} />
         </Grid>
 
         {/* price & stock  */}
         <Grid size={12}>
           <Grid container spacing={2}>
             <Grid size={6}>
-              <PriceInput page={page} />
+              <PriceInput isLoading={isLoading} />
             </Grid>
             <Grid size={6}>
-              <StockInput page={page} />
+              <StockInput isLoading={isLoading} />
             </Grid>
           </Grid>
         </Grid>
 
         <Grid size={12}>
-          <CategoriesSelected page={page} />
+          <CategoriesSelected isLoading={isLoading} />
         </Grid>
 
         {/* attribute  */}
         <Grid size={12}>
-          <AttributeInput />
+          <AttributeInput isLoading={isLoading} />
           <ButtonAddAttribute />
         </Grid>
 
         {/* status  */}
         <Grid size={12}>
-          <InputStatusProduct page={page} />
+          <InputStatusProduct isLoading={isLoading} />
         </Grid>
 
         <Grid size={12}>
           <FormControlLabel
             control={
               <Checkbox
+                checked={useSelector(
+                  (state) => state.formProduct.isMultiVariation
+                )}
                 size="small"
                 onClick={() => dispatch(handleMultiVariation())}
               />

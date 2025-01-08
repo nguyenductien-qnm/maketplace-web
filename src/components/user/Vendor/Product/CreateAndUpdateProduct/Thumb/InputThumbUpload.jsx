@@ -4,7 +4,7 @@ import Button from '@mui/material/Button'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 
 import { useDispatch } from 'react-redux'
-import { uploadIamge } from '~/redux/formProduct.slice'
+import { uploadImage } from '~/redux/formProduct.slice'
 import { useFormContext } from 'react-hook-form'
 import FieldErrorAlert from '~/components/FieldErrorAlert'
 const VisuallyHiddenInput = styled('input')({
@@ -22,7 +22,15 @@ const VisuallyHiddenInput = styled('input')({
 export default function InputThumbUpload() {
   const dispatch = useDispatch()
 
-  const { register } = useFormContext()
+  const { register, setValue, clearErrors } = useFormContext()
+
+  const handleChange = async (e) => {
+    const res = await dispatch(
+      uploadImage({ file: e.target.files[0], type: 'thumb' })
+    )
+    setValue('product_thumb', res.payload.url)
+    clearErrors('product_thumb')
+  }
 
   return (
     <Button
@@ -38,9 +46,7 @@ export default function InputThumbUpload() {
           required: 'Thumb is required'
         })}
         type="file"
-        onChange={(e) => {
-          dispatch(uploadIamge({ file: e.target.files[0], type: 'thumb' }))
-        }}
+        onChange={handleChange}
         multiple
       />
     </Button>

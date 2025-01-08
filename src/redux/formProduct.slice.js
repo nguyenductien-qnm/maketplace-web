@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { toast } from 'react-toastify'
 import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT } from '~/utils/constants'
@@ -21,8 +22,8 @@ const initialState = {
   product_sku: []
 }
 
-export const uploadIamge = createAsyncThunk(
-  'formProduct/uploadIamge',
+export const uploadImage = createAsyncThunk(
+  'formProduct/uploadImage',
   async ({ file, type }) => {
     const response = await uploadImageToCloudinary(file)
     return { type, url: response }
@@ -107,9 +108,14 @@ export const formProductSlice = createSlice({
 
     handleSelectVariation: (state, action) => {
       state.product_classifications = action.payload
+      if (state.product_classifications.length === 0) state.product_sku = []
     },
 
     handleIncreaseQuantityProductSKU: (state) => {
+      if (state.product_classifications.length === 0) {
+        toast.error('Please select variation first')
+        return
+      }
       let newProductSKu = { price: '', stock: '' }
 
       for (let i = 0; i < state.product_classifications.length; i++) {
@@ -193,7 +199,7 @@ export const formProductSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(uploadIamge.fulfilled, (state, action) => {
+    builder.addCase(uploadImage.fulfilled, (state, action) => {
       if (action.payload.type === 'thumb') {
         state.product_thumb = action.payload.url
       } else {

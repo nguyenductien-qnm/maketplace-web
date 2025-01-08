@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { useDispatch } from 'react-redux'
-import { uploadIamge } from '~/redux/formProduct.slice'
+import { uploadImage } from '~/redux/formProduct.slice'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -32,7 +32,7 @@ export default function InputGalleryUpload() {
         type="file"
         webkitdirectory="true"
         onChange={(e) =>
-          dispatch(uploadIamge({ file: e.target.files[0], type: 'gallery' }))
+          dispatch(uploadImage({ file: e.target.files[0], type: 'gallery' }))
         }
         multiple
       />

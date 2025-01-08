@@ -13,7 +13,7 @@ import {
   NUMBER_RULE_MESSAGE
 } from '~/utils/validators'
 
-function PriceInput({ page }) {
+function PriceInput({ isLoading }) {
   const product_price = useSelector((state) => state.formProduct.product_price)
   const dispatch = useDispatch()
 
@@ -44,16 +44,6 @@ function PriceInput({ page }) {
     </Box>
   )
 
-  return (
-    <Box>
-      {page == 'create-product' ? (
-        input
-      ) : product_price ? (
-        input
-      ) : (
-        <SkeletonLoaderInput />
-      )}
-    </Box>
-  )
+  return <Box>{isLoading ? <SkeletonLoaderInput /> : input}</Box>
 }
 export default PriceInput

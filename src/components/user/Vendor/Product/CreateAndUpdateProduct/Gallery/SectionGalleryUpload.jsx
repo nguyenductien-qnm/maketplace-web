@@ -8,7 +8,7 @@ import { handleDeleteGallery } from '~/redux/formProduct.slice'
 import TypographyLabel from '~/components/user/Common/TypographyLabel'
 import { useParams } from 'react-router-dom'
 
-function SectionGalleryUpLoad() {
+function SectionGalleryUpLoad({ isLoading }) {
   const { page } = useParams()
   const dispatch = useDispatch()
   const productGallery = useSelector(
@@ -19,11 +19,19 @@ function SectionGalleryUpLoad() {
     return url.replace('/upload/', `/upload/w_${width},h_${height},c_fill/`)
   }
 
-  console.log(productGallery)
-
   return (
     <Box sx={{ marginTop: '65px' }}>
-      {page === 'create-product' || productGallery.length != 0 ? (
+      {isLoading ? (
+        <Box>
+          <Skeleton
+            variant="rounded"
+            width="40%"
+            sx={{ marginBottom: '10px' }}
+          />
+
+          <Skeleton variant="rounded" height={200} width={200} />
+        </Box>
+      ) : (
         <Box>
           <TypographyLabel> Product Thumb</TypographyLabel>
           <Box
@@ -70,16 +78,6 @@ function SectionGalleryUpLoad() {
               <InputGalleryUpload />
             )}
           </Box>
-        </Box>
-      ) : (
-        <Box>
-          <Skeleton
-            variant="rounded"
-            width="40%"
-            sx={{ marginBottom: '10px' }}
-          />
-
-          <Skeleton variant="rounded" height={200} width={200} />
         </Box>
       )}
 

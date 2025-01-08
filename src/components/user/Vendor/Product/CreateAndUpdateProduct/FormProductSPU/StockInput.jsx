@@ -11,7 +11,7 @@ import {
   NUMBER_RULE_MESSAGE
 } from '~/utils/validators'
 
-function StockInput({ page }) {
+function StockInput({ isLoading }) {
   const product_stock = useSelector((state) => state.formProduct.product_stock)
 
   const {
@@ -44,16 +44,6 @@ function StockInput({ page }) {
       <FieldErrorAlert errors={errors} fieldName="product_stock" />
     </Box>
   )
-  return (
-    <Box>
-      {page == 'create-product' ? (
-        input
-      ) : product_stock ? (
-        input
-      ) : (
-        <SkeletonLoaderInput />
-      )}
-    </Box>
-  )
+  return <Box>{isLoading ? <SkeletonLoaderInput /> : input}</Box>
 }
 export default StockInput

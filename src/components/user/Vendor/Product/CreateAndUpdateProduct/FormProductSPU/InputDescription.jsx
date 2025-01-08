@@ -4,12 +4,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import TypographyLabel from '~/components/user/Common/TypographyLabel'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import { handleChangeProductDescription } from '~/redux/formProduct.slice'
-import { useParams } from 'react-router-dom'
 import SkeletonLoaderInput from '~/components/SkeletonLoaderInput'
+import FieldErrorAlert from '~/components/FieldErrorAlert'
 
-function InputDescription() {
-  const { page } = useParams()
-
+function InputDescription({ isLoading }) {
   const product_description = useSelector(
     (state) => state.formProduct.product_description
   )
@@ -36,18 +34,19 @@ function InputDescription() {
         multiline
         rows={10}
       ></TextField>
+      <FieldErrorAlert errors={errors} fieldName="product_description" />
     </Box>
   )
 
   return (
     <Box>
       <Box>
-        {page == 'create-product' ? (
-          input
-        ) : product_description ? (
-          input
+        {isLoading ? (
+          <Box>
+            <Skeleton variant="rectangular" height={300} />
+          </Box>
         ) : (
-          <SkeletonLoaderInput />
+          input
         )}
       </Box>
     </Box>

@@ -16,18 +16,19 @@ import {
   updateProductAPI
 } from '~/redux/formProduct.slice'
 import { useParams } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
-function VendorCreateProduct({ shopId }) {
-  const productData = useSelector((state) => state.formProduct)
-
+function VendorCreateProduct() {
   const dispatch = useDispatch()
-
   const { page } = useParams()
   const { _id } = useParams()
-
+  const isMultiVariation = useSelector(
+    (state) => state.formProduct.isMultiVariation
+  )
   const methods = useForm()
   const { reset } = methods
+
+  const [isLoading, setIsLoading] = useState(page !== 'create-product')
 
   const handleActionProduct = async () => {
     if (page === 'create-product') {
@@ -40,8 +41,9 @@ function VendorCreateProduct({ shopId }) {
   useEffect(() => {
     const getProductAPI = async () => {
       if (_id) {
-        const data = await dispatch(getProductByIdAPI(_id))
-        reset(data.payload.data.metadata)
+        const res = await dispatch(getProductByIdAPI(_id))
+        reset(res.payload.data.metadata)
+        setIsLoading(false)
       }
     }
     if (page === 'update-product') getProductAPI()
@@ -66,9 +68,9 @@ function VendorCreateProduct({ shopId }) {
           <Divider sx={{ mt: '10px', mb: '30px' }} />
           <Grid container spacing={2}>
             <Grid size={9}>
-              <FormProductSPU page={page} />
+              <FormProductSPU isLoading={isLoading} />
 
-              {productData?.isMultiVariation && (
+              {isMultiVariation && (
                 <Box>
                   <MultipleSelectVariation />
 
@@ -78,7 +80,7 @@ function VendorCreateProduct({ shopId }) {
                 </Box>
               )}
 
-              <InputDescription />
+              <InputDescription isLoading={isLoading} />
               {/* <ButtonCreateProduct /> */}
               <Button
                 type="submit"
@@ -94,8 +96,8 @@ function VendorCreateProduct({ shopId }) {
               </Button>
             </Grid>
             <Grid size={3}>
-              <SectionThumbUpLoad />
-              <SectionGalleryUpLoad />
+              <SectionThumbUpLoad isLoading={isLoading} />
+              <SectionGalleryUpLoad isLoading={isLoading} />
             </Grid>
           </Grid>
         </form>

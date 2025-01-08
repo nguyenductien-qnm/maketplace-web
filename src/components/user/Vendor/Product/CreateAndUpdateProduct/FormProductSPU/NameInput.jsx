@@ -12,7 +12,7 @@ import {
   NAME_RULE_MESSAGE
 } from '~/utils/validators'
 
-function NameInput({ page }) {
+function NameInput({ isLoading }) {
   const product_name = useSelector((state) => state.formProduct.product_name)
   const dispatch = useDispatch()
 
@@ -20,6 +20,7 @@ function NameInput({ page }) {
     register,
     formState: { errors }
   } = useFormContext()
+
 
   const input = (
     <Box>
@@ -40,21 +41,11 @@ function NameInput({ page }) {
         fullWidth
         size="small"
       ></TextField>
-      <FieldErrorAlert errors={errors} fiel dName="product_name" />
+      <FieldErrorAlert errors={errors} fieldName="product_name" />
     </Box>
   )
 
-  return (
-    <Box>
-      {page == 'create-product' ? (
-        input
-      ) : product_name ? (
-        input
-      ) : (
-        <SkeletonLoaderInput />
-      )}
-    </Box>
-  )
+  return <Box>{isLoading ? <SkeletonLoaderInput /> : input}</Box>
 }
 
 export default NameInput

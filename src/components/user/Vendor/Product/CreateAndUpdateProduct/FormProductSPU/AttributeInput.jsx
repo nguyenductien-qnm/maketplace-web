@@ -12,7 +12,7 @@ import { useFormContext } from 'react-hook-form'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import Skeleton from '@mui/material/Skeleton'
 import { useParams } from 'react-router-dom'
-function AttributeInput() {
+function AttributeInput({ isLoading }) {
   const { page } = useParams()
   const spuAttribute = useSelector((state) => state.formProduct.product_specs)
   const dispatch = useDispatch()
@@ -26,6 +26,7 @@ function AttributeInput() {
       })
     )
   }
+
   const hanldeChangeValue = (e, index) => {
     dispatch(
       handleChangeSPUAttribute({
@@ -43,7 +44,11 @@ function AttributeInput() {
 
   return (
     <Box>
-      {page === 'create-product' || spuAttribute?.[0].key ? (
+      {isLoading ? (
+        <Box>
+          <Skeleton variant="rectangular" height={200} />
+        </Box>
+      ) : (
         <Box>
           <TypographyLabel>Product Attribute</TypographyLabel>
           <Grid container spacing={2} rowSpacing={3}>
@@ -107,10 +112,6 @@ function AttributeInput() {
               </Grid>
             ))}
           </Grid>
-        </Box>
-      ) : (
-        <Box>
-          <Skeleton variant="rectangular" height={100} />
         </Box>
       )}
     </Box>

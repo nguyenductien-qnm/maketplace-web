@@ -9,7 +9,7 @@ import FieldErrorAlert from '~/components/FieldErrorAlert'
 import { useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 
-function SectionThumbUpLoad() {
+function SectionThumbUpLoad({ isLoading }) {
   const { page } = useParams()
 
   const dispatch = useDispatch()
@@ -24,7 +24,17 @@ function SectionThumbUpLoad() {
   } = useFormContext()
   return (
     <Box>
-      {page === 'create-product' || urlThumb ? (
+      {isLoading ? (
+        <Box>
+          <Skeleton
+            variant="rounded"
+            width="40%"
+            sx={{ marginBottom: '10px' }}
+          />
+
+          <Skeleton variant="rounded" height={200} width={200} />
+        </Box>
+      ) : (
         <Box>
           <TypographyLabel> Product Thumb</TypographyLabel>
           <Box
@@ -65,16 +75,6 @@ function SectionThumbUpLoad() {
             )}
           </Box>
           <FieldErrorAlert errors={errors} fieldName="product_thumb" />
-        </Box>
-      ) : (
-        <Box>
-          <Skeleton
-            variant="rounded"
-            width="40%"
-            sx={{ marginBottom: '10px' }}
-          />
-
-          <Skeleton variant="rounded" height={200} width={200} />
         </Box>
       )}
     </Box>

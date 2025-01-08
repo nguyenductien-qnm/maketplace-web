@@ -7,7 +7,7 @@ import { hanldeSelectedCategories } from '~/redux/formProduct.slice'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import SkeletonLoaderInput from '~/components/SkeletonLoaderInput'
 
-function CategoriesSelected({ page }) {
+function CategoriesSelected({ isLoading }) {
   const product_categories = useSelector(
     (state) => state.formProduct.product_categories
   )
@@ -16,10 +16,17 @@ function CategoriesSelected({ page }) {
 
   const {
     register,
-    formState: { errors }
+    formState: { errors },
+    setValue
   } = useFormContext()
 
   const categories = useSelector((state) => state.categories.categories)
+
+  const handleChange = (e) => {
+    const value = e.target.value
+    setValue('product_categories', value)
+    dispatch(hanldeSelectedCategories(value))
+  }
 
   const input = (
     <Box>
@@ -27,9 +34,7 @@ function CategoriesSelected({ page }) {
       <Select
         {...register('product_categories', {
           required: FIELD_REQUIRED_MESSAGE,
-          onChange: (e) => {
-            dispatch(hanldeSelectedCategories(e.target.value))
-          }
+          onChange: handleChange
         })}
         error={!!errors['product_categories']}
         size="small"
@@ -59,16 +64,6 @@ function CategoriesSelected({ page }) {
     </Box>
   )
 
-  return (
-    <Box>
-      {page == 'create-product' ? (
-        input
-      ) : product_categories.length != 0 ? (
-        input
-      ) : (
-        <SkeletonLoaderInput />
-      )}
-    </Box>
-  )
+  return <Box>{isLoading ? <SkeletonLoaderInput /> : input}</Box>
 }
 export default CategoriesSelected
