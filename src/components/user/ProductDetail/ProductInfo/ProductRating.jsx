@@ -8,7 +8,6 @@ function ProductRating() {
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
-        marginTop: '10px'
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'center', marginY: 1 }}>

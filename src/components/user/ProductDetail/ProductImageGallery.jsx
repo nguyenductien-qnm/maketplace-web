@@ -1,7 +1,20 @@
 import { Box } from '@mui/material'
+import { useEffect, useState } from 'react'
 import Slider from 'react-slick'
+import resizeImage from '~/helpers/resizeImage.js'
 
-function ProductImageGallery() {
+function ProductImageGallery({ productGallerys }) {
+  const [resizedGallery, setResizedGallery] = useState([])
+
+  useEffect(() => {
+    if (productGallerys) {
+      const resizedImages = productGallerys.map((img) => {
+        return resizeImage(img, 2000, 2000)
+      })
+      setResizedGallery(resizedImages)
+    }
+  }, [productGallerys])
+
   const settings = {
     dots: true,
     infinite: true,
@@ -11,7 +24,7 @@ function ProductImageGallery() {
     customPaging: (i) => (
       <Box sx={{ position: 'absolute', top: '10px' }}>
         <img
-          src={items[i].iamgeUrl}
+          src={resizedGallery?.[i]}
           style={{
             height: '50px',
             objectFit: 'cover',
@@ -22,31 +35,13 @@ function ProductImageGallery() {
     )
   }
 
-  const items = [
-    {
-      id: 1,
-      iamgeUrl:
-        'https://klbtheme.com/bevesi/wp-content/uploads/2024/04/3-13.jpg'
-    },
-    {
-      id: 2,
-      iamgeUrl:
-        'https://klbtheme.com/bevesi/wp-content/uploads/2024/04/1-16.jpg'
-    },
-    {
-      id: 3,
-      iamgeUrl:
-        'https://klbtheme.com/bevesi/wp-content/uploads/2024/04/2-15.jpg'
-    }
-  ]
-
   return (
     <Box sx={{ position: 'relative', textAlign: 'center' }}>
       <Slider {...settings}>
-        {items.map((item) => (
-          <Box key={item.id}>
+        {resizedGallery?.map((productGallery) => (
+          <Box key={productGallery}>
             <img
-              src={item.iamgeUrl}
+              src={productGallery}
               style={{ maxWidth: '100%', borderRadius: '5px' }}
             />
           </Box>

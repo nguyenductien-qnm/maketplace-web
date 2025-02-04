@@ -7,18 +7,14 @@ import { handleDeleteThumb } from '~/redux/formProduct.slice'
 import TypographyLabel from '~/components/user/Common/TypographyLabel'
 import FieldErrorAlert from '~/components/FieldErrorAlert'
 import { useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
-
+import resizeImage from '~/helpers/resizeImage'
 function SectionThumbUpLoad({ isLoading }) {
-  const { page } = useParams()
-
   const dispatch = useDispatch()
 
   const urlThumb = useSelector((state) => state.formProduct.product_thumb)
-  const resizeImage = (url, width, height) => {
-    return url.replace('/upload/', `/upload/w_${width},h_${height},c_fill/`)
-  }
+
   const resizedImageUrl = urlThumb ? resizeImage(urlThumb, 180, 180) : ''
+
   const {
     formState: { errors }
   } = useFormContext()

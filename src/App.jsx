@@ -18,7 +18,7 @@ function App() {
   return (
     <Routes>
       <Route path="/home" element={<Home />} /> {/* Checked */}
-      <Route path="/product" element={<DetailProduct />} /> {/* Checked */}
+      <Route path="/product/:_id" element={<DetailProduct />} /> {/* Checked */}
       <Route path="/store" element={<Store />} /> {/* Checked */}
       <Route path="/cart" element={<ShoppingCart />} /> {/* Checked */}
       <Route path="/my-account/:page" element={<MyAccount />} />

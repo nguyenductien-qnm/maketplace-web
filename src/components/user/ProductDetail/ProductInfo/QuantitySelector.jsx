@@ -3,7 +3,7 @@ import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
 import { useState } from 'react'
 
-function QuantitySelector() {
+function QuantitySelector({ disableAction }) {
   const [quantity, setQuantity] = useState(1)
 
   const handleReduceQuantity = () => {
@@ -33,6 +33,7 @@ function QuantitySelector() {
       setQuantity(1)
     }
   }
+
   return (
     <Box
       sx={{
@@ -42,7 +43,9 @@ function QuantitySelector() {
         height: '40px',
         borderRadius: '5px',
         justifyContent: 'space-around',
-        padding: '0 5px'
+        padding: '0 5px',
+        pointerEvents: disableAction ? 'none' : 'auto',
+        opacity: disableAction ? 0.5 : 1
       }}
     >
       <RemoveIcon

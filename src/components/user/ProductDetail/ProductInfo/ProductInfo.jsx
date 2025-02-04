@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid2'
 import { Link } from 'react-router-dom'
 import { green, grey } from '@mui/material/colors'
 
-import ProductTitle from './ProductTitle'
+import ProductName from './ProductName'
 import ProductRating from './ProductRating'
 import PriceDisplay from './PriceDisplay'
 import ShippingInfo from './ShippingInfo'
@@ -12,18 +12,41 @@ import StoreInfo from './StoreInfo'
 import QuantitySelector from './QuantitySelector'
 import AddToCartButton from './AddToCartButton'
 import BuyNowButton from './BuyNowButton'
+import Variation from './Variation'
+import { useEffect, useState } from 'react'
 
-function ProductInfo() {
+function ProductInfo({ product }) {
   const StyledLink = styled(Link)({
     fontSize: '12px',
     color: grey[400],
     '&:hover': { color: grey[600] }
   })
+
+  const [productSelected, setProductSelected] = useState()
+
+  const handleSelecteProduct = (product) => {
+    setProductSelected(product)
+  }
+
+  const [disableAction, setDisableAction] = useState(false)
+
+  useEffect(() => {
+    if (product?.product_sku && !productSelected) {
+      setDisableAction(true)
+    } else {
+      setDisableAction(false)
+    }
+  }, [productSelected, product])
+
+  useEffect(() => {
+    console.log(disableAction)
+  }, [disableAction])
+
   return (
     <Box sx={{ width: '100%' }}>
       <StyledLink to="/home">Electronics</StyledLink>
 
-      <ProductTitle />
+      <ProductName productName={product?.product_name} />
 
       <ProductRating />
 
@@ -35,7 +58,11 @@ function ProductInfo() {
           marginTop: '10px'
         }}
       >
-        <PriceDisplay />
+        <PriceDisplay
+          price={
+            productSelected ? productSelected.sku_price : product?.product_price
+          }
+        />
 
         <Typography sx={{ color: green[700], fontWeight: '600' }}>
           In Stock
@@ -44,17 +71,23 @@ function ProductInfo() {
 
       <Divider sx={{ marginTop: '10px' }} />
 
-      <Grid container spacing={1} sx={{ marginTop: '20px' }}>
-        <Grid  size={2}>
-          <QuantitySelector />
+      <Variation
+        variation={product?.product_classifications}
+        productSKU={product?.product_sku}
+        handleSelecteProduct={handleSelecteProduct}
+      />
+
+      <Grid container spacing={1} sx={{ marginTop: '30px' }}>
+        <Grid size={2}>
+          <QuantitySelector disableAction={disableAction} />
         </Grid>
 
         <Grid size={5}>
-          <AddToCartButton />
+          <AddToCartButton disableAction={disableAction} />
         </Grid>
 
         <Grid size={5}>
-          <BuyNowButton />
+          <BuyNowButton disableAction={disableAction} />
         </Grid>
       </Grid>
 

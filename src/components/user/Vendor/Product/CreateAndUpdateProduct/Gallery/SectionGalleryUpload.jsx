@@ -6,18 +6,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
 import { handleDeleteGallery } from '~/redux/formProduct.slice'
 import TypographyLabel from '~/components/user/Common/TypographyLabel'
-import { useParams } from 'react-router-dom'
+import resizeImage from '~/helpers/resizeImage'
 
 function SectionGalleryUpLoad({ isLoading }) {
-  const { page } = useParams()
   const dispatch = useDispatch()
   const productGallery = useSelector(
     (state) => state.formProduct.product_gallery
   )
-
-  const resizeImage = (url, width = 60, height = 60) => {
-    return url.replace('/upload/', `/upload/w_${width},h_${height},c_fill/`)
-  }
 
   return (
     <Box sx={{ marginTop: '65px' }}>
@@ -70,7 +65,7 @@ function SectionGalleryUpLoad({ isLoading }) {
                         '&:hover': { cursor: 'pointer' }
                       }}
                     />
-                    <img src={resizeImage(image)} />
+                    <img src={resizeImage(image, 60, 60)} />
                   </Grid>
                 ))}
               </Grid>

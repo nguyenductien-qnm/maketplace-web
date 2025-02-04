@@ -1,7 +1,6 @@
-import { Box, Button } from '@mui/material'
-import { blue } from '@mui/material/colors'
+import { Button } from '@mui/material'
 
-function BuyNowButton() {
+function BuyNowButton({ disableAction }) {
   return (
     <Button
       sx={{
@@ -10,7 +9,9 @@ function BuyNowButton() {
         textTransform: 'none',
         fontWeight: '600',
         border: '1px solid black',
-        height: '40px'
+        height: '40px',
+        pointerEvents: disableAction ? 'none' : 'auto',
+        opacity: disableAction ? 0.5 : 1
       }}
     >
       Buy Now

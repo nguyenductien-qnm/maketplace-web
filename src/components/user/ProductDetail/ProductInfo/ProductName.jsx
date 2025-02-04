@@ -1,11 +1,10 @@
 import Typography from '@mui/material/Typography'
 
-function ProductTitle() {
+function ProductName({ productName }) {
   return (
     <Typography sx={{ fontSize: '28px', fontWeight: '700', marginTop: '10px' }}>
-      Apple Watch Series 9 GPS 45mm Midnight Aluminum Case with Midnight Sport
-      Band – M_L
+      {productName}
     </Typography>
   )
 }
-export default ProductTitle
+export default ProductName

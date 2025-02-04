@@ -6,8 +6,10 @@ import { Box, Divider, styled, Typography } from '@mui/material'
 import Description from '~/components/user/ProductDetail/Description'
 import Review from '~/components/user/ProductDetail/Review/Review'
 import { grey } from '@mui/material/colors'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ProductRelated from '~/components/user/ProductDetail/Review/ProductRelated'
+import { useParams } from 'react-router-dom'
+import { getProductByIdAPIForClient } from '~/api/product.api'
 
 function ProductDetails() {
   const UnderLine = styled(Box)({
@@ -19,23 +21,34 @@ function ProductDetails() {
     backgroundColor: grey[900]
   })
 
+  const [product, setProduct] = useState({})
+
+  const { _id } = useParams()
+
   const [selectedTab, setSelectedTab] = useState('description')
 
   const handleTabClick = (tab) => {
     setSelectedTab(tab)
   }
+
+  useEffect(() => {
+    getProductByIdAPIForClient(_id).then((res) => {
+      setProduct(res.data.metadata)
+    })
+  }, [_id])
+
   return (
     <UserLayout>
       <Grid container spacing={3}>
         <Grid size={6}>
-          <ProductImageGallery />
+          <ProductImageGallery productGallerys={product.product_gallery} />
         </Grid>
         <Grid size={6}>
-          <ProductInfo />
+          <ProductInfo product={product} />
         </Grid>
       </Grid>
 
-      <Box sx={{ marginTop: '30px' }}>
+      <Box sx={{ marginTop: '100px' }}>
         <Box
           sx={{
             display: 'flex',
@@ -86,7 +99,9 @@ function ProductDetails() {
           </Box>
         </Box>
         <Divider sx={{ marginTop: '10px', marginBottom: '20px' }} />
-        {selectedTab === 'description' && <Description />}
+        {selectedTab === 'description' && (
+          <Description productDescription={product.product_description} />
+        )}
         {selectedTab === 'review' && <Review />}
       </Box>
 
