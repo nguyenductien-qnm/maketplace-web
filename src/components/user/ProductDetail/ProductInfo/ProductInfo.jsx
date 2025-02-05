@@ -2,7 +2,6 @@ import { Box, Divider, styled, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid2'
 import { Link } from 'react-router-dom'
 import { green, grey } from '@mui/material/colors'
-
 import ProductName from './ProductName'
 import ProductRating from './ProductRating'
 import PriceDisplay from './PriceDisplay'
@@ -14,6 +13,7 @@ import AddToCartButton from './AddToCartButton'
 import BuyNowButton from './BuyNowButton'
 import Variation from './Variation'
 import { useEffect, useState } from 'react'
+import { addToCartAPI } from '~/api/cart.api'
 
 function ProductInfo({ product }) {
   const StyledLink = styled(Link)({
@@ -23,9 +23,22 @@ function ProductInfo({ product }) {
   })
 
   const [productSelected, setProductSelected] = useState()
+  const [quantitySelected, setQuantitySelected] = useState(1)
 
   const handleSelecteProduct = (product) => {
     setProductSelected(product)
+  }
+
+  const addProductToCart = () => {
+    let product1 = {}
+    if (product?.product_sku?.length > 0) {
+      product1._id = productSelected._id
+      product1.quantitySelected = quantitySelected
+    } else {
+      product1._id = product?._id
+      product1.quantitySelected = quantitySelected
+    }
+    if (product1) addToCartAPI(product1)
   }
 
   const [disableAction, setDisableAction] = useState(false)
@@ -37,10 +50,6 @@ function ProductInfo({ product }) {
       setDisableAction(false)
     }
   }, [productSelected, product])
-
-  useEffect(() => {
-    console.log(disableAction)
-  }, [disableAction])
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -79,11 +88,18 @@ function ProductInfo({ product }) {
 
       <Grid container spacing={1} sx={{ marginTop: '30px' }}>
         <Grid size={2}>
-          <QuantitySelector disableAction={disableAction} />
+          <QuantitySelector
+            disableAction={disableAction}
+            quantitySelected={quantitySelected}
+            setQuantitySelected={setQuantitySelected}
+          />
         </Grid>
 
         <Grid size={5}>
-          <AddToCartButton disableAction={disableAction} />
+          <AddToCartButton
+            addProductToCart={addProductToCart}
+            disableAction={disableAction}
+          />
         </Grid>
 
         <Grid size={5}>

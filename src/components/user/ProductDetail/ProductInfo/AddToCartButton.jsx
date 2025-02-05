@@ -1,9 +1,10 @@
 import { Button } from '@mui/material'
 import { blue } from '@mui/material/colors'
 
-function AddToCartButton({disableAction}) {
+function AddToCartButton({ disableAction, addProductToCart }) {
   return (
     <Button
+      onClick={() => addProductToCart()}
       sx={{
         width: '100%',
         backgroundColor: blue[500],
