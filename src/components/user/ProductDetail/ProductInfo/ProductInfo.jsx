@@ -34,9 +34,11 @@ function ProductInfo({ product }) {
     if (product?.product_sku?.length > 0) {
       product1._id = productSelected._id
       product1.quantitySelected = quantitySelected
+      product1.product_type = 'product_sku'
     } else {
       product1._id = product?._id
       product1.quantitySelected = quantitySelected
+      product1.product_type = 'product_spu'
     }
     if (product1) addToCartAPI(product1)
   }

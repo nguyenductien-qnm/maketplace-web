@@ -1,0 +1,119 @@
+CREATE TABLE SinhVien (
+    MaSV INT PRIMARY KEY,
+    HoTen VARCHAR(100),
+    NgaySinh DATE,
+    GioiTinh VARCHAR(10),
+    DiaChi VARCHAR(255)
+);
+
+CREATE TABLE MonHoc (
+    MaMH INT PRIMARY KEY,
+    TenMH VARCHAR(100),
+    SoTiet INT,
+    HeSoMon FLOAT
+);
+
+CREATE TABLE Diem (
+    MaSV INT,
+    MaMH INT,
+    DiemThi FLOAT,
+    PRIMARY KEY (MaSV, MaMH),
+    FOREIGN KEY (MaSV) REFERENCES SinhVien(MaSV),
+    FOREIGN KEY (MaMH) REFERENCES MonHoc(MaMH)
+);
+
+1
+SELECT * FROM SinhVien;
+
+2
+SELECT HoTen, DiaChi FROM SinhVien WHERE MaSV = 1;
+
+3
+SELECT SV.* 
+FROM SinhVien SV 
+JOIN Diem D ON SV.MaSV = D.MaSV
+WHERE D.MaMH = 101 AND D.DiemThi > 8;
+
+4
+UPDATE Diem 
+SET DiemThi = 7 
+WHERE MaSV = 2 AND MaMH = 103;
+
+5
+DELETE FROM SinhVien WHERE MaSV = 3;
+
+6
+SELECT * FROM SinhVien 
+WHERE GioiTinh LIKE 'Nữ' OR YEAR(CURDATE()) - YEAR(NgaySinh) < 18;
+
+7
+INSERT INTO SinhVien (MaSV, HoTen, NgaySinh, GioiTinh, DiaChi) 
+VALUES (6, 'Nguyen Van A', '2006-12-05', 'Nam', 'Da Nang');
+
+8
+SELECT TenMH FROM MonHoc WHERE SoTiet > 30;
+
+9
+SELECT SV.*
+FROM SinhVien SV
+JOIN Diem D ON SV.MaSV = D.MaSV
+GROUP BY SV.MaSV
+HAVING AVG(D.DiemThi) >= 7;
+
+10
+SELECT SV.* 
+FROM SinhVien SV
+WHERE SV.MaSV NOT IN (SELECT MaSV FROM Diem WHERE MaMH = 102);
+
+11
+SELECT SUM(SoTiet) AS TongSoTiet FROM MonHoc;
+
+12
+SELECT * FROM SinhVien ORDER BY HoTen ASC;
+
+13
+SELECT SV.* 
+FROM SinhVien SV
+JOIN Diem D ON SV.MaSV = D.MaSV
+WHERE D.MaMH = 103 AND D.DiemThi < 6;
+
+14
+UPDATE SinhVien 
+SET DiaChi = 'Bắc Ninh' 
+WHERE MaSV = 1;
+
+15
+SELECT SV.*
+FROM SinhVien SV
+JOIN Diem D1 ON SV.MaSV = D1.MaSV AND D1.MaMH = 101
+JOIN Diem D2 ON SV.MaSV = D2.MaSV AND D2.MaMH = 102
+WHERE D1.DiemThi > 8 AND D2.DiemThi > 8;
+
+16
+INSERT INTO MonHoc (MaMH, TenMH, SoTiet, HeSoMon)
+VALUES (104, 'Lịch sử Sinh học', 35, 1.2);
+
+17
+SELECT SV.*, D.DiemThi 
+FROM SinhVien SV
+JOIN Diem D ON SV.MaSV = D.MaSV
+WHERE D.MaMH = 102 
+ORDER BY D.DiemThi ASC 
+LIMIT 1;
+
+18
+DELETE FROM MonHoc WHERE MaMH = 103;
+
+19
+SELECT SV.*, D.DiemThi 
+FROM SinhVien SV
+JOIN Diem D ON SV.MaSV = D.MaSV
+WHERE D.MaMH = 101 
+ORDER BY D.DiemThi DESC 
+LIMIT 1;
+
+20
+SELECT D.MaMH, M.TenMH, AVG(D.DiemThi) AS DiemTrungBinh
+FROM Diem D
+JOIN MonHoc M ON D.MaMH = M.MaMH
+GROUP BY D.MaMH, M.TenMH;
