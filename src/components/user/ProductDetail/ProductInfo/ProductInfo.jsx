@@ -32,12 +32,12 @@ function ProductInfo({ product }) {
   const addProductToCart = () => {
     let product1 = {}
     if (product?.product_sku?.length > 0) {
-      product1._id = productSelected._id
-      product1.quantitySelected = quantitySelected
+      product1.product_id = productSelected._id
+      product1.quantity = quantitySelected
       product1.product_type = 'product_sku'
     } else {
-      product1._id = product?._id
-      product1.quantitySelected = quantitySelected
+      product1.product_id = product?._id
+      product1.quantity = quantitySelected
       product1.product_type = 'product_spu'
     }
     if (product1) addToCartAPI(product1)

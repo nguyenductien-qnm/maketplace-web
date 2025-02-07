@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import Paper from '@mui/material/Paper'
 import CartItemRow from './CartItemRow'
-function CartTable() {
+function CartTable({ products }) {
   return (
     <TableContainer component={Paper} sx={{ marginTop: '40px' }}>
       <Table sx={{ minWidth: '100%' }}>
@@ -23,11 +23,9 @@ function CartTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          <CartItemRow />
-          <CartItemRow />
-          <CartItemRow />
-          <CartItemRow />
-          <CartItemRow />
+          {products?.map((product) => (
+            <CartItemRow product={product} />
+          ))}
         </TableBody>
       </Table>
     </TableContainer>

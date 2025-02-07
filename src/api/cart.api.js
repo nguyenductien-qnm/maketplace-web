@@ -9,4 +9,11 @@ const addToCartAPI = async (data) => {
   return res
 }
 
-export { addToCartAPI }
+const getCartProductsAPI = async () => {
+  const res = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/cart/get-cart-products`
+  )
+  return res
+}
+
+export { addToCartAPI, getCartProductsAPI }
