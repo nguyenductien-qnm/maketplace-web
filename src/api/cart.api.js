@@ -16,4 +16,40 @@ const getCartProductsAPI = async () => {
   return res
 }
 
-export { addToCartAPI, getCartProductsAPI }
+const removeProductAPI = async (_id) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/cart/remove-product`,
+    _id
+  )
+  return res
+}
+
+const updateQuantityProductCartAPI = async (product, newQuantity) => {
+  try {
+    const res = await authorizedAxios.post(
+      `${API_ROOT}/v1/api/cart/update-quantity-product-cart`,
+      { product, newQuantity }
+    )
+    return res
+  } catch (error) {
+    return {
+      status: error.response ? error.response.status : 500,
+      message: error.data.message
+    }
+  }
+}
+
+const clearCartAPI = async (selectedProducts) => {
+  const res = await authorizedAxios.post(`${API_ROOT}/v1/api/cart/clear-cart`, {
+    selectedProducts
+  })
+  return res
+}
+
+export {
+  addToCartAPI,
+  getCartProductsAPI,
+  removeProductAPI,
+  updateQuantityProductCartAPI,
+  clearCartAPI
+}

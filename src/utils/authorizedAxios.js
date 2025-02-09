@@ -20,12 +20,24 @@ axios.interceptors.response.use(
   (error) => {
     const messages = error.response?.data?.message
 
-    if (Array.isArray(messages)) {
-      messages.forEach((msg) => toast.error(msg))
-    } else if (messages) {
-      toast.error(messages)
-    } else {
-      toast.error('An unexpected error occurred.')
+    //   if (Array.isArray(messages)) {
+    //     messages.forEach((msg) => toast.error(msg))
+    //   } else if (messages) {
+    //     toast.error(messages)
+    //   } else {
+    //     toast.error('An unexpected error occurred.')
+    //   }
+
+    //   return Promise.reject(error.response)
+    // }
+    if (!error.config.url.includes('update-quantity-product-cart')) {
+      if (Array.isArray(messages)) {
+        messages.forEach((msg) => toast.error(msg))
+      } else if (messages) {
+        toast.error(messages)
+      } else {
+        toast.error('An unexpected error occurred.')
+      }
     }
 
     return Promise.reject(error.response)

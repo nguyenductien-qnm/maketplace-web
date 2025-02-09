@@ -1,7 +1,6 @@
 import { Box, TextField } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
-import { useState } from 'react'
 
 function QuantitySelector({
   disableAction,
@@ -9,11 +8,11 @@ function QuantitySelector({
   setQuantitySelected
 }) {
   const handleReduceQuantity = () => {
-    setQuantitySelected(quantitySelected + 1)
+    if (quantitySelected > 1) setQuantitySelected(quantitySelected - 1)
   }
 
   const handleAddQuantity = () => {
-    if (quantitySelected > 1) setQuantitySelected(quantitySelected - 1)
+    setQuantitySelected(quantitySelected + 1)
   }
 
   const handleAdjustQuantity = (e) => {
@@ -58,7 +57,7 @@ function QuantitySelector({
         }}
         fontSize="small"
         onClick={() => {
-          handleAddQuantity()
+          handleReduceQuantity()
         }}
       />
       <TextField
@@ -89,7 +88,7 @@ function QuantitySelector({
         }}
         fontSize="small"
         onClick={() => {
-          handleReduceQuantity()
+          handleAddQuantity()
         }}
       />
     </Box>
