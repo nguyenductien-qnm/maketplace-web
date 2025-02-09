@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, Skeleton } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Slider from 'react-slick'
 import resizeImage from '~/helpers/resizeImage.js'
@@ -36,17 +36,23 @@ function ProductImageGallery({ productGallerys }) {
   }
 
   return (
-    <Box sx={{ position: 'relative', textAlign: 'center' }}>
-      <Slider {...settings}>
-        {resizedGallery?.map((productGallery) => (
-          <Box key={productGallery}>
-            <img
-              src={productGallery}
-              style={{ maxWidth: '100%', borderRadius: '5px' }}
-            />
-          </Box>
-        ))}
-      </Slider>
+    <Box>
+      {resizedGallery[0] ? (
+        <Box sx={{ position: 'relative', textAlign: 'center' }}>
+          <Slider {...settings}>
+            {resizedGallery?.map((productGallery) => (
+              <Box key={productGallery}>
+                <img
+                  src={productGallery}
+                  style={{ maxWidth: '100%', borderRadius: '5px' }}
+                />
+              </Box>
+            ))}
+          </Slider>
+        </Box>
+      ) : (
+        <Skeleton variant="rounded" width={565} height={565} />
+      )}
     </Box>
   )
 }

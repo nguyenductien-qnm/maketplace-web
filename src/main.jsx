@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
-import { GlobalStyles } from '@mui/material'
+import { colors, GlobalStyles } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -15,7 +15,7 @@ createRoot(document.getElementById('root')).render(
       <PersistGate loading={null} persistor={persistor}>
         <GlobalStyles
           styles={{
-            a: { textDecoration: 'none' },
+            a: { textDecoration: 'none', color: 'inherit' },
             '.MuiButton-root': {
               textTransform: 'none !important'
             }

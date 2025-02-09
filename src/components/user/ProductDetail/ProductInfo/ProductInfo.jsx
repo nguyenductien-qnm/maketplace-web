@@ -1,4 +1,4 @@
-import { Box, Divider, styled, Typography } from '@mui/material'
+import { Box, Divider, Skeleton, styled, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid2'
 import { Link } from 'react-router-dom'
 import { green, grey } from '@mui/material/colors'
@@ -15,7 +15,7 @@ import Variation from './Variation'
 import { useEffect, useState } from 'react'
 import { addToCartAPI } from '~/api/cart.api'
 
-function ProductInfo({ product }) {
+function ProductInfo({ product, shop }) {
   const StyledLink = styled(Link)({
     fontSize: '12px',
     color: grey[400],
@@ -59,7 +59,7 @@ function ProductInfo({ product }) {
 
       <ProductName productName={product?.product_name} />
 
-      <ProductRating />
+      <ProductRating productRating={product?.product_rating_average} />
 
       <Box
         sx={{
@@ -90,26 +90,38 @@ function ProductInfo({ product }) {
 
       <Grid container spacing={1} sx={{ marginTop: '30px' }}>
         <Grid size={2}>
-          <QuantitySelector
-            disableAction={disableAction}
-            quantitySelected={quantitySelected}
-            setQuantitySelected={setQuantitySelected}
-          />
+          {product?.product_name ? (
+            <QuantitySelector
+              disableAction={disableAction}
+              quantitySelected={quantitySelected}
+              setQuantitySelected={setQuantitySelected}
+            />
+          ) : (
+            <Skeleton variant="rounded" width={87} height={40} />
+          )}
         </Grid>
 
         <Grid size={5}>
-          <AddToCartButton
-            addProductToCart={addProductToCart}
-            disableAction={disableAction}
-          />
+          {product?.product_name ? (
+            <AddToCartButton
+              addProductToCart={addProductToCart}
+              disableAction={disableAction}
+            />
+          ) : (
+            <Skeleton variant="rounded" width={230} height={40} />
+          )}
         </Grid>
 
         <Grid size={5}>
-          <BuyNowButton disableAction={disableAction} />
+          {product?.product_name ? (
+            <BuyNowButton disableAction={disableAction} />
+          ) : (
+            <Skeleton variant="rounded" width={230} height={40} />
+          )}
         </Grid>
       </Grid>
 
-      <StoreInfo />
+      <StoreInfo shop={shop} />
 
       <ShippingInfo />
 

@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import ProductRelated from '~/components/user/ProductDetail/Review/ProductRelated'
 import { useParams } from 'react-router-dom'
 import { getProductByIdAPIForClient } from '~/api/product.api'
+import CustomBreadcrumbs from '~/components/CustomBreadcrumbs'
 
 function ProductDetails() {
   const UnderLine = styled(Box)({
@@ -22,6 +23,8 @@ function ProductDetails() {
   })
 
   const [product, setProduct] = useState({})
+  const [shop, setShop] = useState({})
+  const [breakCrumbs, setBreakCrumbs] = useState()
 
   const { _id } = useParams()
 
@@ -33,18 +36,27 @@ function ProductDetails() {
 
   useEffect(() => {
     getProductByIdAPIForClient(_id).then((res) => {
-      setProduct(res.data.metadata)
+      setProduct(res.data?.metadata?.product)
+      setShop(res.data?.metadata?.shop)
     })
   }, [_id])
 
+  useEffect(() => {
+    setBreakCrumbs([
+      { name: 'Home', url: '/home' },
+      { name: product.product_name, _id: product._id }
+    ])
+  }, [product])
+
   return (
     <UserLayout>
-      <Grid container spacing={3}>
+      <CustomBreadcrumbs breakCrumbs={breakCrumbs} />
+      <Grid container spacing={3} sx={{ marginTop: '15px' }}>
         <Grid size={6}>
           <ProductImageGallery productGallerys={product.product_gallery} />
         </Grid>
         <Grid size={6}>
-          <ProductInfo product={product} />
+          <ProductInfo product={product} shop={shop} />
         </Grid>
       </Grid>
 
