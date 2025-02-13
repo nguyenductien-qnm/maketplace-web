@@ -43,10 +43,6 @@ function ShoppingCart() {
     })
   }
 
-  useEffect(() => {
-    console.log(selectedProducts)
-  }, [selectedProducts])
-
   const handleClearCartAPI = async () => {
     if (selectedProducts.length === 0) {
       toast.warn('Please select product(s)!')
@@ -108,7 +104,7 @@ function ShoppingCart() {
   return (
     <UserLayout>
       <Grid container spacing={2}>
-        <Grid size={selectedProducts.length > 0 ? 8 : 12}>
+        <Grid size={selectedProducts.length > 0 ? 9 : 12}>
           <ShippingBanner />
           <CartTable
             products={products}
@@ -133,7 +129,7 @@ function ShoppingCart() {
             </Button>
           </Box>
         </Grid>
-        <Grid size={selectedProducts.length > 0 ? 4 : 0}>
+        <Grid size={selectedProducts.length > 0 ? 3 : 0}>
           <CartSummary selectedProducts={selectedProducts} />
         </Grid>
       </Grid>

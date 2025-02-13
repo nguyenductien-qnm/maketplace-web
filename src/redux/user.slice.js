@@ -13,7 +13,6 @@ export const loginAPI = createAsyncThunk(
       email,
       password
     })
-    console.log('res::::', res)
     return res
   }
 )

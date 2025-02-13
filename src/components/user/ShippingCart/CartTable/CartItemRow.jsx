@@ -1,6 +1,8 @@
-import { Checkbox, TableCell, TableRow } from '@mui/material'
+import { Checkbox, TableCell, TableRow, Typography } from '@mui/material'
 import CancelIcon from '@mui/icons-material/Cancel'
 import QuantitySelector from '../../ProductDetail/ProductInfo/QuantitySelector'
+import formatCurrency from '~/utils/formatCurrency'
+import { Link } from 'react-router-dom'
 
 function CartItemRow({
   handleSelectedProduct,
@@ -22,10 +24,32 @@ function CartItemRow({
           src={product?.product_thumb}
         />
       </TableCell>
-      <TableCell sx={{ fontSize: '14px', fontWeight: '600' }}>
-        {product?.product_name}
+      <TableCell>
+        <Link
+          sx={{
+            fontSize: '14px',
+            fontWeight: '600',
+            '&:hover': { textDecoration: true, cursor: 'pointer' }
+          }}
+          to={`/product/${
+            product?.product_parent_id
+              ? product.product_parent_id
+              : product.product_id
+          }`}
+        >
+          {product?.product_name}
+        </Link>
       </TableCell>
-      <TableCell sx={{ fontSize: '14px' }}>${product?.product_price}</TableCell>
+      <TableCell>
+        {product?.product_variation?.map((i, index) => (
+          <Typography variant="body2" key={index}>
+            {i}
+          </Typography>
+        ))}
+      </TableCell>
+      <TableCell sx={{ fontSize: '14px' }}>
+        {formatCurrency(product?.product_price)}
+      </TableCell>
       <TableCell>
         <QuantitySelector
           disableAction={false}
@@ -34,7 +58,7 @@ function CartItemRow({
         />
       </TableCell>
       <TableCell sx={{ fontSize: '14px', fontWeight: '600' }}>
-        ${product?.product_price * product?.quantity}
+        {formatCurrency(product?.product_price * product?.quantity)}
       </TableCell>
       <TableCell>
         <CancelIcon
