@@ -7,7 +7,7 @@ import {
   TableRow,
   Paper
 } from '@mui/material'
-import { blue } from '@mui/material/colors'
+import { blue, grey } from '@mui/material/colors'
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
 function OrderItem() {
   return (
@@ -30,7 +30,9 @@ function OrderItem() {
           >
             <img src="https://down-vn.img.susercontent.com/file/97183342b884f3448ebc5a00a5fb93de@resize_w80_nl.webp" />
             <Typography>Sạc Anker 1 cổng PowerPort III Pod Lite 65w</Typography>
-            <Typography>Variation: Trắng</Typography>
+            <Typography variant="body2" sx={{ color: grey[600] }}>
+              Variation: Trắng
+            </Typography>
           </TableCell>
           <TableCell sx={{ width: '13.33%', textAlign: 'start' }}>
             ₫305,500

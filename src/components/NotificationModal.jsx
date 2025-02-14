@@ -1,4 +1,3 @@
-import * as React from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
@@ -19,37 +18,35 @@ const style = {
 
 function NotificationModal({ header, content, open, onClose }) {
   return (
-    <div>
-      <Modal
-        open={open}
-        onClose={onClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            {header}
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            {content}
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <Button
-              sx={{
-                backgroundColor: 'gray',
-                color: 'white',
-                ':hover': {
-                  backgroundColor: 'darkgray'
-                }
-              }}
-              onClick={onClose}
-            >
-              Close
-            </Button>
-          </Box>
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          {header}
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          {content}
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+          <Button
+            sx={{
+              backgroundColor: 'gray',
+              color: 'white',
+              ':hover': {
+                backgroundColor: 'darkgray'
+              }
+            }}
+            onClick={onClose}
+          >
+            Close
+          </Button>
         </Box>
-      </Modal>
-    </div>
+      </Box>
+    </Modal>
   )
 }
 

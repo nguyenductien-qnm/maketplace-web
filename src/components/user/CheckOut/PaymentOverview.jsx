@@ -1,11 +1,11 @@
 import { Box, Button, Divider, Paper, Typography } from '@mui/material'
-import { blue } from '@mui/material/colors'
+import { blue, grey } from '@mui/material/colors'
 
 function PaymentOverview() {
   return (
     <Paper sx={{ padding: '30px 16px' }}>
       <Box sx={{ padding: '0 0 30px 0' }}>
-        <Typography>Payment Method</Typography>
+        <Typography>Payment Summary</Typography>
       </Box>
       <Divider />
 
@@ -25,7 +25,9 @@ function PaymentOverview() {
             justifyContent: 'space-between'
           }}
         >
-          <Typography variant="body2">Merchandise Subtotal</Typography>
+          <Typography sx={{ color: grey[600] }} variant="body2">
+            Merchandise Subtotal
+          </Typography>
           <Typography variant="body2">₫465.500</Typography>
         </Box>
         <Box
@@ -35,7 +37,9 @@ function PaymentOverview() {
             justifyContent: 'space-between'
           }}
         >
-          <Typography variant="body2">Shipping Subtotal</Typography>
+          <Typography sx={{ color: grey[600] }} variant="body2">
+            Shipping Subtotal
+          </Typography>
           <Typography variant="body2">₫92.600</Typography>
         </Box>
         <Box
@@ -45,17 +49,22 @@ function PaymentOverview() {
             justifyContent: 'space-between'
           }}
         >
-          <Typography variant="body2">Voucher Discount</Typography>
+          <Typography sx={{ color: grey[600] }} variant="body2">
+            Voucher Discount
+          </Typography>
           <Typography variant="body2">-₫45.000</Typography>
         </Box>
         <Box
           sx={{
             minWidth: '300px',
             display: 'flex',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            alignItems: 'center'
           }}
         >
-          <Typography variant="body2">Total Payment</Typography>
+          <Typography sx={{ color: grey[600] }} variant="body2">
+            Total Payment
+          </Typography>
           <Typography fontSize="25px" sx={{ color: blue[600] }}>
             ₫513.100
           </Typography>
