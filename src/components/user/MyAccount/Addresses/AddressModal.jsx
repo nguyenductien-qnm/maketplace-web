@@ -36,7 +36,9 @@ const style = {
   boxShadow: 24,
   p: 4,
   maxHeight: '80vh',
-  overflow: 'auto'
+  overflow: 'auto',
+  scrollbarWidth: 'none'
+  // msOverflowStyle: 'none'
 }
 
 function AddressModal({

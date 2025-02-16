@@ -14,7 +14,7 @@ import { grey, blue } from '@mui/material/colors'
 import { useEffect, useState } from 'react'
 import formatCurrency from '~/utils/formatCurrency'
 
-function CartSummary({ selectedProducts }) {
+function CartSummary({ selectedProducts, handleCheckOut }) {
   const [total, setTotal] = useState(0)
   useEffect(() => {
     let totalTmp = 0
@@ -94,6 +94,7 @@ function CartSummary({ selectedProducts }) {
         </Typography>
 
         <Button
+          onClick={() => handleCheckOut()}
           sx={{
             marginTop: '20px',
             minWidth: '100%',

@@ -82,7 +82,7 @@ const FormSetInfoUser = forwardRef((props, ref) => {
               <DatePicker
                 {...field}
                 label="Day of birth"
-                renderInput={(params) => <TextField {...params} />}
+                slotProps={{ textField: { label: 'Day of birth' } }}
                 onChange={(date) => field.onChange(date)}
               />
             )}

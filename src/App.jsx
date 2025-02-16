@@ -22,7 +22,7 @@ function App() {
       <Route path="/product/:_id" element={<DetailProduct />} /> {/* Checked */}
       <Route path="/store" element={<Store />} /> {/* Checked */}
       <Route path="/cart" element={<ShoppingCart />} /> {/* Checked */}
-      <Route path="/checkout/:_id" element={<CheckOut />} /> {/* Checked */}
+      <Route path="/checkout" element={<CheckOut />} /> {/* Checked */}
       <Route path="/my-account/:page" element={<MyAccount />} />
       <Route path="/auth/:page" element={<Auth />} /> {/* Checked */}
       <Route path="/auth/reset-password/:token" element={<Auth />} />

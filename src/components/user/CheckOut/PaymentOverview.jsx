@@ -1,7 +1,8 @@
 import { Box, Button, Divider, Paper, Typography } from '@mui/material'
 import { blue, grey } from '@mui/material/colors'
+import formatCurrency from '~/utils/formatCurrency'
 
-function PaymentOverview() {
+function PaymentOverview({ price, handlePlaceOrder }) {
   return (
     <Paper sx={{ padding: '30px 16px' }}>
       <Box sx={{ padding: '0 0 30px 0' }}>
@@ -28,7 +29,9 @@ function PaymentOverview() {
           <Typography sx={{ color: grey[600] }} variant="body2">
             Merchandise Subtotal
           </Typography>
-          <Typography variant="body2">₫465.500</Typography>
+          <Typography variant="body2">
+            {formatCurrency(price?.total_merchandise_price)}
+          </Typography>
         </Box>
         <Box
           sx={{
@@ -40,7 +43,9 @@ function PaymentOverview() {
           <Typography sx={{ color: grey[600] }} variant="body2">
             Shipping Subtotal
           </Typography>
-          <Typography variant="body2">₫92.600</Typography>
+          <Typography variant="body2">
+            {formatCurrency(price?.shipping_price)}
+          </Typography>
         </Box>
         <Box
           sx={{
@@ -52,7 +57,7 @@ function PaymentOverview() {
           <Typography sx={{ color: grey[600] }} variant="body2">
             Voucher Discount
           </Typography>
-          <Typography variant="body2">-₫45.000</Typography>
+          <Typography variant="body2">{formatCurrency(0)}</Typography>
         </Box>
         <Box
           sx={{
@@ -66,13 +71,12 @@ function PaymentOverview() {
             Total Payment
           </Typography>
           <Typography fontSize="25px" sx={{ color: blue[600] }}>
-            ₫513.100
+            {formatCurrency(price?.total_price)}
           </Typography>
         </Box>
       </Box>
 
       <Divider />
-
       <Box
         sx={{
           display: 'flex',
@@ -80,7 +84,11 @@ function PaymentOverview() {
           padding: '30px 0 10px 0'
         }}
       >
-        <Button variant="contained" sx={{ width: '210px', height: '40px' }}>
+        <Button
+          onClick={() => handlePlaceOrder()}
+          variant="contained"
+          sx={{ width: '210px', height: '40px' }}
+        >
           Place Order
         </Button>
       </Box>

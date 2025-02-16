@@ -1,4 +1,3 @@
-import * as React from 'react'
 import Box from '@mui/material/Box'
 import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
@@ -10,12 +9,14 @@ import FormSetPassword from '~/components/user/SetupAccount/FormSetPassword'
 import { setupAccountAPI } from '~/redux/user.slice'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { Fragment, useRef, useState } from 'react'
+import dayjs from 'dayjs'
 const steps = ['CHANGE YOUR PASSWORD', 'INFORMATION USER']
 
-export default function SetupAccount() {
-  const [activeStep, setActiveStep] = React.useState(0)
-  const [skipped, setSkipped] = React.useState(new Set())
-  const [formData, setFormData] = React.useState({
+function SetupAccount() {
+  const [activeStep, setActiveStep] = useState(0)
+  const [skipped, setSkipped] = useState(new Set())
+  const [formData, setFormData] = useState({
     new_password: '',
     confirm_password: '',
     userInfo: {}
@@ -25,7 +26,7 @@ export default function SetupAccount() {
 
   const dispatch = useDispatch()
 
-  const formRef = React.useRef(null)
+  const formRef = useRef(null)
 
   const isStepSkipped = (step) => {
     return skipped.has(step)
@@ -62,15 +63,21 @@ export default function SetupAccount() {
   }
 
   const handleSubmitInfo = async (data) => {
+    const convertedData = {
+      ...data,
+      user_date_of_birth: dayjs(data.user_date_of_birth).format('MM/DD/YYYY')
+    }
+    console.log(data)
     await new Promise((resolve) => {
       setFormData((prevData) => {
         resolve()
         return {
           ...prevData,
-          userInfo: data
+          userInfo: convertedData
         }
       })
     })
+
     setActiveStep((prevActiveStep) => prevActiveStep + 1)
   }
 
@@ -109,7 +116,7 @@ export default function SetupAccount() {
         </Stepper>
 
         {activeStep === steps.length ? (
-          <React.Fragment>
+          <Fragment>
             <Typography sx={{ mt: 2, mb: 1 }}>
               All steps completed - you&apos;re finished
             </Typography>
@@ -117,9 +124,9 @@ export default function SetupAccount() {
               <Box sx={{ flex: '1 1 auto' }} />
               <Button onClick={() => finishProgress()}>Confirm</Button>
             </Box>
-          </React.Fragment>
+          </Fragment>
         ) : (
-          <React.Fragment>
+          <Fragment>
             {activeStep == 0 ? (
               <FormSetPassword
                 ref={formRef}
@@ -150,9 +157,11 @@ export default function SetupAccount() {
                 {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
               </Button>
             </Box>
-          </React.Fragment>
+          </Fragment>
         )}
       </Box>
     </Box>
   )
 }
+
+export default SetupAccount

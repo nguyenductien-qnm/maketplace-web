@@ -1,15 +1,9 @@
 import { Box, TextField, Typography } from '@mui/material'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Paper
-} from '@mui/material'
+import { Table, TableBody, TableCell, TableRow, Paper } from '@mui/material'
 import { blue, grey } from '@mui/material/colors'
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
-function OrderItem() {
+import formatCurrency from '~/utils/formatCurrency'
+function OrderItem({ product }) {
   return (
     <Paper sx={{ padding: '25px 0' }}>
       <Box
@@ -21,27 +15,31 @@ function OrderItem() {
         }}
       >
         <StorefrontOutlinedIcon sx={{ color: blue[600] }} />
-        <Typography variant="h6">LAMINO OFFICIAL STORE</Typography>
+        <Typography variant="h6">{product?.shop_name}</Typography>
       </Box>
       <Table>
-        <TableRow>
-          <TableCell
-            sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}
-          >
-            <img src="https://down-vn.img.susercontent.com/file/97183342b884f3448ebc5a00a5fb93de@resize_w80_nl.webp" />
-            <Typography>Sạc Anker 1 cổng PowerPort III Pod Lite 65w</Typography>
-            <Typography variant="body2" sx={{ color: grey[600] }}>
-              Variation: Trắng
-            </Typography>
-          </TableCell>
-          <TableCell sx={{ width: '13.33%', textAlign: 'start' }}>
-            ₫305,500
-          </TableCell>
-          <TableCell sx={{ width: '13.33%', textAlign: 'end' }}>1</TableCell>
-          <TableCell sx={{ width: '13.33%', textAlign: 'end' }}>
-            ₫305,500
-          </TableCell>
-        </TableRow>
+        <TableBody>
+          <TableRow>
+            <TableCell
+              sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+            >
+              <img src={product?.product_thumb} style={{ maxWidth: '50px' }} />
+              <Typography>{product?.product_name}</Typography>
+              <Typography variant="body2" sx={{ color: grey[600] }}>
+                Variation: Trắng
+              </Typography>
+            </TableCell>
+            <TableCell sx={{ width: '13.33%', textAlign: 'start' }}>
+              {formatCurrency(product?.product_price)}
+            </TableCell>
+            <TableCell sx={{ width: '13.33%', textAlign: 'end' }}>
+              {product?.quantity}
+            </TableCell>
+            <TableCell sx={{ width: '13.33%', textAlign: 'end' }}>
+              {formatCurrency(product?.product_price * product?.quantity)}
+            </TableCell>
+          </TableRow>
+        </TableBody>
       </Table>
       <Box
         sx={{
@@ -68,9 +66,9 @@ function OrderItem() {
             gap: '20px'
           }}
         >
-          <Typography>Order Total (1 Item): </Typography>
+          <Typography>Order Total ({product?.quantity} Item): </Typography>
           <Typography sx={{ color: blue[600] }} fontWeight="bold">
-            ₫313.000
+            {formatCurrency(product?.product_price * product?.quantity)}
           </Typography>
         </Box>
       </Box>

@@ -5,10 +5,12 @@ import { Button, Checkbox, Divider } from '@mui/material'
 import DividerVertical from '../Common/DividerVertical'
 import { blue, grey } from '@mui/material/colors'
 import { useEffect, useState } from 'react'
+import AddressModal from '../MyAccount/Addresses/AddressModal'
 function AddressOptionModal({
   open,
   onClose,
   addresses,
+  handleAddAddress,
   addressSelected,
   setAddressSelected
 }) {
@@ -17,7 +19,7 @@ function AddressOptionModal({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 450,
+    width: 500,
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -45,7 +47,7 @@ function AddressOptionModal({
 
         <Box sx={{ marginTop: '15px' }}>
           {addresses?.map((address, index) => (
-            <Box>
+            <Box key={index}>
               <Divider sx={{ marginBottom: '10px', marginTop: '10px' }} />
               <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Checkbox
@@ -99,7 +101,7 @@ function AddressOptionModal({
           ))}
         </Box>
 
-        <Divider />
+        <Divider sx={{ mt: '10px' }} />
         <Box
           sx={{
             display: 'flex',
@@ -108,6 +110,11 @@ function AddressOptionModal({
             justifyContent: 'end'
           }}
         >
+          <AddressModal
+            handleAddAddress={handleAddAddress}
+            actionType="create"
+            address={null}
+          />
           <Button
             onClick={() => {
               onClose()

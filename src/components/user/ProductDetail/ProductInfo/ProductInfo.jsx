@@ -69,11 +69,7 @@ function ProductInfo({ product, shop }) {
           marginTop: '10px'
         }}
       >
-        <PriceDisplay
-          price={
-            productSelected ? productSelected.sku_price : product?.product_price
-          }
-        />
+        <PriceDisplay price={product?.product_price} />
 
         <Typography sx={{ color: green[700], fontWeight: '600' }}>
           In Stock

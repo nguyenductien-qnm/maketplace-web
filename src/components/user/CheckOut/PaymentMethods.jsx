@@ -19,23 +19,25 @@ function PaymentMethods({
       <Box sx={{ display: 'flex', gap: '5px' }}>
         {paymentMethods?.map((i) => (
           <Box
+            key={i.id}
             sx={{
               border: '2px solid',
               borderColor:
-                paymentMethodSelected === i.id ? blue[600] : grey[300],
-              color: paymentMethodSelected === i.id ? blue[600] : grey[300],
+                paymentMethodSelected?.id === i.id ? blue[600] : grey[300],
+              color: paymentMethodSelected?.id === i.id ? blue[600] : grey[300],
               padding: '0px 30px',
               borderRadius: '5px',
               '&:hover': {
                 cursor: 'pointer',
                 borderColor:
-                  paymentMethodSelected === i.id ? blue[700] : grey[400],
-                color: paymentMethodSelected === i.id ? blue[700] : grey[400]
+                  paymentMethodSelected?.id === i.id ? blue[700] : grey[400],
+                color:
+                  paymentMethodSelected?.id === i.id ? blue[700] : grey[400]
               },
               display: 'flex'
             }}
             onClick={() => {
-              setPaymentMethodSelected(i?.id)
+              setPaymentMethodSelected({ id: i?.id })
             }}
           >
             <img style={{ maxWidth: '40px', minWidth: '40px' }} src={i.img} />

@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
+const notToast = ['update-quantity-product-cart', 'checkout']
+
 axios.defaults.withCredentials = true
 
 axios.interceptors.request.use(
@@ -30,7 +32,10 @@ axios.interceptors.response.use(
 
     //   return Promise.reject(error.response)
     // }
-    if (!error.config.url.includes('update-quantity-product-cart')) {
+    if (
+      error.config?.url &&
+      !notToast.some((path) => error.config.url.includes(path))
+    ) {
       if (Array.isArray(messages)) {
         messages.forEach((msg) => toast.error(msg))
       } else if (messages) {

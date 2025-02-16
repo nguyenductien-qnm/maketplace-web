@@ -86,7 +86,7 @@ function AccountMigration() {
       toast.error('This shop name is unavaible.')
       return
     }
-    
+
     data.province = tempAddress?.selectedProvince
     data.district = tempAddress?.selectedDistrict
     data.ward = tempAddress?.selectedWard

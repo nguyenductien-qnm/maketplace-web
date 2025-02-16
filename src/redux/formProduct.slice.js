@@ -31,15 +31,10 @@ export const uploadImage = createAsyncThunk(
 )
 
 export const createProductAPI = createAsyncThunk(
-  'formProduct/uploadImage',
+  'formProduct/createProductAPI',
   async (_, { getState }) => {
     const state = getState()
-    const user = state.user.currentUser
-    const productData = {
-      ...state.formProduct,
-      product_shop: user.shop_id
-    }
-
+    const productData = { ...state.formProduct }
     if (productData.isMultiVariation) {
       const variations = productData.product_classifications
       const skuProduct = productData.product_sku
@@ -56,7 +51,6 @@ export const createProductAPI = createAsyncThunk(
       delete productData.product_classifications
       delete productData.product_sku
     }
-
     const res = await authorizedAxios.post(
       `${API_ROOT}/v1/api/productSPU/create`,
       productData
@@ -243,7 +237,8 @@ export const formProductSlice = createSlice({
           state.product_classifications = product_classifications
           state.isMultiVariation = true
         }
-      })
+      }),
+      builder.addCase(createProductAPI.fulfilled, (state, action) => {})
   }
 })
 

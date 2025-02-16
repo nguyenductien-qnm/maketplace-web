@@ -32,9 +32,7 @@ function CartItemRow({
             '&:hover': { textDecoration: true, cursor: 'pointer' }
           }}
           to={`/product/${
-            product?.product_parent_id
-              ? product.product_parent_id
-              : product.product_id
+            product?.product_parent_id ? product.product_parent_id : product._id
           }`}
         >
           {product?.product_name}

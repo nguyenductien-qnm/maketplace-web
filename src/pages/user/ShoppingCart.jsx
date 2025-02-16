@@ -6,6 +6,7 @@ import CartSummary from '~/components/user/ShippingCart/CartSummary'
 import { Box, Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import {
+  checkoutAPI,
   clearCartAPI,
   getCartProductsAPI,
   removeProductAPI,
@@ -13,7 +14,9 @@ import {
 } from '~/api/cart.api'
 import NotificationModal from '~/components/NotificationModal'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 function ShoppingCart() {
+  const navigate = useNavigate()
   const [products, setProducts] = useState()
   const [openModal, setOpenModal] = useState(false)
   const [modalContent, setModalContent] = useState({ header: '', content: '' })
@@ -87,7 +90,7 @@ function ShoppingCart() {
     )
 
     const res = await updateQuantityProductCartAPI(product, newQuantity)
-    console.log(res)
+
     if (res.status !== 200) {
       handleOpenModal('Notification', res.message)
       setProducts((prevProducts) =>
@@ -100,6 +103,43 @@ function ShoppingCart() {
       )
     }
   }
+
+  const handleCheckOut = async () => {
+    const data = { products: selectedProducts }
+    const res = await checkoutAPI(data)
+    if (res.status == 200) {
+      navigate(res.data?.metadata?.checkoutUrl)
+    } else {
+      handleOpenModal('Notification', res.message)
+      setProducts((prevProducts) =>
+        prevProducts.map((p) =>
+          p.product_id === res?.metadata?.updatedProduct.product_id
+            ? res?.metadata.updatedProduct
+            : p
+        )
+      )
+    }
+  }
+
+  useEffect(() => {
+    if (selectedProducts.length > 0) {
+      const updatedProducts = selectedProducts.map((selectedItem) => {
+        const latestProduct = products.find(
+          (p) => p.product_id === selectedItem.product_id
+        )
+        return latestProduct &&
+          JSON.stringify(latestProduct) !== JSON.stringify(selectedItem)
+          ? latestProduct
+          : selectedItem
+      })
+
+      if (
+        JSON.stringify(updatedProducts) !== JSON.stringify(selectedProducts)
+      ) {
+        setSelectedProducts(updatedProducts)
+      }
+    }
+  }, [products])
 
   return (
     <UserLayout>
@@ -130,7 +170,10 @@ function ShoppingCart() {
           </Box>
         </Grid>
         <Grid size={selectedProducts.length > 0 ? 3 : 0}>
-          <CartSummary selectedProducts={selectedProducts} />
+          <CartSummary
+            handleCheckOut={handleCheckOut}
+            selectedProducts={selectedProducts}
+          />
         </Grid>
       </Grid>
       <NotificationModal
