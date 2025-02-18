@@ -15,6 +15,7 @@ import { jwtDecode } from 'jwt-decode'
 import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 import { checkoutAPI } from '~/api/cart.api'
 import NotificationModal from '~/components/NotificationModal'
+import { placeOrderAPI } from '~/api/order.api'
 
 function CheckOut() {
   const firstRender = useRef(true)
@@ -111,9 +112,7 @@ function CheckOut() {
   }, [addressSelected, paymentMethodSelected])
 
   const handlePlaceOrder = async () => {
-    console.log('addressSelected::::', addressSelected)
-    console.log('paymentMethodSelected::::', paymentMethodSelected)
-    console.log('products::::', products)
+    const res = await placeOrderAPI({ token })
   }
 
   return (

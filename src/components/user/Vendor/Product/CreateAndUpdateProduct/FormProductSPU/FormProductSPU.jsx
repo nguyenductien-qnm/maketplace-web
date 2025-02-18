@@ -9,6 +9,7 @@ import PriceInput from './PriceInput'
 import ButtonAddAttribute from './ButtonAddAttribute'
 import AttributeInput from './AttributeInput'
 import CategoriesSelected from './CategoriesSelected'
+import DimensionsInput from './DimensionsInput'
 
 function FormProductSPU({ isLoading }) {
   const dispatch = useDispatch()
@@ -30,6 +31,10 @@ function FormProductSPU({ isLoading }) {
               <StockInput isLoading={isLoading} />
             </Grid>
           </Grid>
+        </Grid>
+
+        <Grid size={12}>
+          <DimensionsInput isLoading={isLoading} />
         </Grid>
 
         <Grid size={12}>

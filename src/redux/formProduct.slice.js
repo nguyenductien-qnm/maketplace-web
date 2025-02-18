@@ -19,7 +19,13 @@ const initialState = {
   ],
   product_description: '',
   product_classifications: [],
-  product_sku: []
+  product_sku: [],
+  product_dimensions: {
+    length: 0,
+    width: 0,
+    height: 0,
+    weight: 0
+  }
 }
 
 export const uploadImage = createAsyncThunk(
@@ -188,8 +194,25 @@ export const formProductSlice = createSlice({
     handleChangeProductDescription: (state, action) => {
       state.product_description = action.payload
     },
+
     handleChangeProductStatus: (state, action) => {
       state.product_status = action.payload
+    },
+
+    handleChangeProductLength: (state, action) => {
+      state.product_dimensions.length = action.payload
+    },
+
+    handleChangeProductWidth: (state, action) => {
+      state.product_dimensions.width = action.payload
+    },
+
+    handleChangeProductHeight: (state, action) => {
+      state.product_dimensions.height = action.payload
+    },
+
+    handleChangeProductWeight: (state, action) => {
+      state.product_dimensions.weight = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -260,7 +283,11 @@ export const {
   handleDeleteGallery,
   hanldeSelectedCategories,
   handleChangeProductDescription,
-  handleChangeProductStatus
+  handleChangeProductStatus,
+  handleChangeProductLength,
+  handleChangeProductWidth,
+  handleChangeProductHeight,
+  handleChangeProductWeight
 } = formProductSlice.actions
 
 export default formProductSlice.reducer
