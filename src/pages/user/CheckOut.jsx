@@ -16,6 +16,8 @@ import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 import { checkoutAPI } from '~/api/cart.api'
 import NotificationModal from '~/components/NotificationModal'
 import { placeOrderAPI } from '~/api/order.api'
+import PayPalButton from '~/components/user/CheckOut/PayPalButton'
+import { PayPalButtons } from '@paypal/react-paypal-js'
 
 function CheckOut() {
   const firstRender = useRef(true)
@@ -25,6 +27,7 @@ function CheckOut() {
     { id: 2, name: 'VnPay', img: VnPaySvg },
     { id: 3, name: 'Cash on Delivery', img: CodSvg }
   ]
+
   const [searchParams] = useSearchParams()
   const token = searchParams.get('token')
   const [decodedToken, setDecodedToken] = useState(null)
@@ -112,7 +115,31 @@ function CheckOut() {
   }, [addressSelected, paymentMethodSelected])
 
   const handlePlaceOrder = async () => {
-    const res = await placeOrderAPI({ token })
+    // const res = await placeOrderAPI({ token })
+    if (window.paypal) {
+      window.paypal
+        .Buttons({
+          createOrder: (data, actions) => {
+            return actions.order.create({
+              purchase_units: [
+                {
+                  amount: { value: decodedToken?.price?.total_price }
+                }
+              ]
+            })
+          },
+          onApprove: async (data, actions) => {
+            const order = await actions.order.capture()
+            console.log('Order:', order)
+            alert('Thanh toán thành công!')
+          },
+          onError: (err) => {
+            console.error(err)
+            alert('Có lỗi xảy ra trong quá trình thanh toán')
+          }
+        })
+        .render('#paypal-button-container')
+    }
   }
 
   return (
@@ -159,6 +186,7 @@ function CheckOut() {
         <PaymentOverview
           handlePlaceOrder={handlePlaceOrder}
           price={decodedToken?.price}
+          paymentMethodSelected={paymentMethodSelected}
         />
       </Box>
       <NotificationModal

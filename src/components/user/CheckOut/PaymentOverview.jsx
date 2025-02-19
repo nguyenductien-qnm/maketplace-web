@@ -1,8 +1,9 @@
 import { Box, Button, Divider, Paper, Typography } from '@mui/material'
 import { blue, grey } from '@mui/material/colors'
+import { PayPalButtons } from '@paypal/react-paypal-js'
 import formatCurrency from '~/utils/formatCurrency'
 
-function PaymentOverview({ price, handlePlaceOrder }) {
+function PaymentOverview({ price, handlePlaceOrder, paymentMethodSelected }) {
   return (
     <Paper sx={{ padding: '30px 16px' }}>
       <Box sx={{ padding: '0 0 30px 0' }}>
@@ -84,13 +85,21 @@ function PaymentOverview({ price, handlePlaceOrder }) {
           padding: '30px 0 10px 0'
         }}
       >
-        <Button
-          onClick={() => handlePlaceOrder()}
-          variant="contained"
-          sx={{ width: '210px', height: '40px' }}
-        >
-          Place Order
-        </Button>
+        {paymentMethodSelected?.id === 1 ? (
+          <Box sx={{ minWidth: '300px', minHeight: '46px' }}>
+            <PayPalButtons style={{ layout: 'horizontal', color: 'blue' }} />
+          </Box>
+        ) : (
+          <Box>
+            <Button
+              onClick={() => handlePlaceOrder()}
+              variant="contained"
+              sx={{ minWidth: '300px', minHeight: '46px' }}
+            >
+              Place Order
+            </Button>
+          </Box>
+        )}
       </Box>
     </Paper>
   )

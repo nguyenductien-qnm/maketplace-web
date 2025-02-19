@@ -13,8 +13,17 @@ import { useSelector } from 'react-redux'
 import CheckOut from './pages/user/CheckOut'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 
 function App() {
+  const initialOptions = {
+    clientId:
+      // 'AV5KU2_o20hZoef5KR-DdFk23NwUs3hiZS9g7bll7kxcaPgVJLowzRlRoh-gJIi2-bCskORbRq2RUghf',
+      'test',
+    currency: 'USD',
+    intent: 'capture'
+  }
+
   const currentUser = useSelector((state) => state.user.currentUser)
   return (
     <Routes>
@@ -22,7 +31,15 @@ function App() {
       <Route path="/product/:_id" element={<DetailProduct />} /> {/* Checked */}
       <Route path="/store" element={<Store />} /> {/* Checked */}
       <Route path="/cart" element={<ShoppingCart />} /> {/* Checked */}
-      <Route path="/checkout" element={<CheckOut />} /> {/* Checked */}
+      <Route
+        path="/checkout"
+        element={
+          <PayPalScriptProvider options={initialOptions}>
+            <CheckOut />
+          </PayPalScriptProvider>
+        }
+      />{' '}
+      {/* Checked */}
       <Route path="/my-account/:page" element={<MyAccount />} />
       <Route path="/auth/:page" element={<Auth />} /> {/* Checked */}
       <Route path="/auth/reset-password/:token" element={<Auth />} />
