@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableRow, Paper } from '@mui/material'
 import { blue, grey } from '@mui/material/colors'
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
 import formatCurrency from '~/utils/formatCurrency'
-function OrderItem({ product }) {
+function CheckoutItem({ product }) {
   return (
     <Paper sx={{ padding: '25px 0' }}>
       <Box
@@ -75,4 +75,4 @@ function OrderItem({ product }) {
     </Paper>
   )
 }
-export default OrderItem
+export default CheckoutItem

@@ -1,6 +1,6 @@
 import UserLayout from '~/layouts/user/UserLayout'
 import ShippingAddress from '~/components/user/CheckOut/ShippingAddress'
-import OrderItem from '~/components/user/CheckOut/OrderItem'
+import CheckoutItem from '~/components/user/CheckOut/CheckoutItem'
 import { Box, Table, TableCell, TableHead, TableRow } from '@mui/material'
 import PaymentOverview from '~/components/user/CheckOut/PaymentOverview'
 import PaymentMethods from '~/components/user/CheckOut/PaymentMethods'
@@ -8,7 +8,6 @@ import { useEffect, useRef, useState } from 'react'
 import { getAddressListAPI } from '~/api/user.api'
 import { grey } from '@mui/material/colors'
 import PayPalSvg from '~/assets/user/svgIcon/paypal.svg'
-import VnPaySvg from '~/assets/user/svgIcon/vnpay.svg'
 import CodSvg from '~/assets/user/svgIcon/cod.svg'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
@@ -16,16 +15,13 @@ import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 import { checkoutAPI } from '~/api/cart.api'
 import NotificationModal from '~/components/NotificationModal'
 import { placeOrderAPI } from '~/api/order.api'
-import PayPalButton from '~/components/user/CheckOut/PayPalButton'
-import { PayPalButtons } from '@paypal/react-paypal-js'
 
 function CheckOut() {
   const firstRender = useRef(true)
   const navigate = useNavigate()
   const paymentMethods = [
     { id: 1, name: 'Paypal', img: PayPalSvg },
-    { id: 2, name: 'VnPay', img: VnPaySvg },
-    { id: 3, name: 'Cash on Delivery', img: CodSvg }
+    { id: 2, name: 'Cash on Delivery', img: CodSvg }
   ]
 
   const [searchParams] = useSearchParams()
@@ -115,32 +111,13 @@ function CheckOut() {
   }, [addressSelected, paymentMethodSelected])
 
   const handlePlaceOrder = async () => {
-    // const res = await placeOrderAPI({ token })
-    if (window.paypal) {
-      window.paypal
-        .Buttons({
-          createOrder: (data, actions) => {
-            return actions.order.create({
-              purchase_units: [
-                {
-                  amount: { value: decodedToken?.price?.total_price }
-                }
-              ]
-            })
-          },
-          onApprove: async (data, actions) => {
-            const order = await actions.order.capture()
-            console.log('Order:', order)
-            alert('Thanh toán thành công!')
-          },
-          onError: (err) => {
-            console.error(err)
-            alert('Có lỗi xảy ra trong quá trình thanh toán')
-          }
-        })
-        .render('#paypal-button-container')
-    }
+    const res = await placeOrderAPI({ token })
+    return res
   }
+
+  useEffect(() => {
+    console.log('decodedToken:::', decodedToken)
+  }, [decodedToken])
 
   return (
     <UserLayout>
@@ -176,7 +153,7 @@ function CheckOut() {
           </TableHead>
         </Table>
         {products?.map((p) => (
-          <OrderItem key={p.product_id} product={p} />
+          <CheckoutItem key={p.product_id} product={p} />
         ))}
         <PaymentMethods
           paymentMethods={paymentMethods}
