@@ -40,8 +40,11 @@ function UserSideBar({ page }) {
         Account details
       </CustomLink>
       <Divider />
-      <CustomLink to="/my-account/wish-list" isActive={checkUrl('wish-list')}>
-        Wishlist
+      <CustomLink
+        to="/my-account/notifications"
+        isActive={checkUrl('notifications')}
+      >
+        Notifications
       </CustomLink>
       <Divider />
       <CustomLink>Log out</CustomLink>

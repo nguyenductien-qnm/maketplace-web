@@ -213,7 +213,9 @@ export const formProductSlice = createSlice({
 
     handleChangeProductWeight: (state, action) => {
       state.product_dimensions.weight = action.payload
-    }
+    },
+
+    resetProductState: () => initialState
   },
   extraReducers: (builder) => {
     builder.addCase(uploadImage.fulfilled, (state, action) => {
@@ -287,7 +289,8 @@ export const {
   handleChangeProductLength,
   handleChangeProductWidth,
   handleChangeProductHeight,
-  handleChangeProductWeight
+  handleChangeProductWeight,
+  resetProductState
 } = formProductSlice.actions
 
 export default formProductSlice.reducer

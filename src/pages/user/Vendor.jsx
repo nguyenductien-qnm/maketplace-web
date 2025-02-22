@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux'
 function Vendor() {
   const { page } = useParams()
   const { _id } = useParams()
-  const user = useSelector((state) => state.user.currentUser)
   return (
     <UserLayout>
       <Grid container spacing={4}>
@@ -16,13 +15,9 @@ function Vendor() {
           <VendorSideBar page={page} />
         </Grid>
         <Grid size={10}>
-          {page === 'products' && <VendorProduct shopId={user.shop_id} />}
-          {page === 'create-product' && (
-            <VendorCreateProduct shopId={user.shop_id} />
-          )}
-          {page === 'update-product' && _id && (
-            <VendorCreateProduct shopId={user.shop_id} />
-          )}
+          {page === 'products' && <VendorProduct />}
+          {page === 'create-product' && <VendorCreateProduct />}
+          {page === 'update-product' && _id && <VendorCreateProduct />}
         </Grid>
       </Grid>
     </UserLayout>

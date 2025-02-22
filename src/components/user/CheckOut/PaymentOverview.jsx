@@ -1,56 +1,8 @@
 import { Box, Button, Divider, Paper, Typography } from '@mui/material'
 import { blue, grey } from '@mui/material/colors'
-import { PayPalButtons } from '@paypal/react-paypal-js'
-import axios from 'axios'
-import { updatePayPalOrderIdAPI } from '~/api/order.api'
-import { API_ROOT } from '~/utils/constants'
 import formatCurrency from '~/utils/formatCurrency'
 
 function PaymentOverview({ price, handlePlaceOrder, paymentMethodSelected }) {
-  //   const createOrderWithAPI = async (actions) => {
-  //     try {
-  //       const res = await handlePlaceOrder()
-
-  //       if (res.status === 200) {
-  //         const orderID = await actions.order.create({
-  //           purchase_units: [
-  //             {
-  //               amount: {
-  //                 value: price?.total_price,
-  //                 currency_code: 'USD'
-  //               },
-  //               description: 'Pay for order'
-  //             }
-  //           ]
-  //         })
-
-  //         // const data = {
-  //         //   _id: ,
-  //         //   oder_paypal_id : orderID
-  //         // }
-  //         // const checkUpdatePayPalOrderId = await updatePayPalOrderIdAPI(data)
-
-  //         return orderID
-  //       } else {
-  //         throw new Error('Please try again')
-  //       }
-  //     } catch (error) {
-  //       console.error('❌ Error creating order:', error)
-  //       throw error
-  //     }
-  //   }
-  //   <PayPalButtons
-  //   style={{ layout: 'horizontal', color: 'blue' }}
-  //   createOrder={(data, actions) => createOrderWithAPI(actions)}
-  //   onApprove={(data, actions) =>
-  //     actions.order.capture().then((details) => {
-  //       console.log('Thông tin thanh toán:', details)
-  //       console.log('Payer Info:', details.payer)
-  //       console.log('Order ID:', data.orderID)
-  //     })
-  //   }
-  // />
-
   return (
     <Paper sx={{ padding: '30px 16px' }}>
       <Box sx={{ padding: '0 0 30px 0' }}>

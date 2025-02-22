@@ -1,17 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
 import TabContext from '@mui/lab/TabContext'
 import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
 import { styled } from '@mui/material'
-import { getOrdersByUserAPI } from '~/api/order.api'
 
 import OrderItem from './OrderItem'
 
-function TabOrder() {
+function TabOrder({ orders, setOrders }) {
   const [value, setValue] = useState('1')
-  const [orders, setOrders] = useState()
 
   const handleChange = (event, newValue) => {
     setValue(newValue)
@@ -22,18 +20,6 @@ function TabOrder() {
       textTransform: 'none'
     }
   })
-
-  useEffect(() => {
-    const getOrder = async () => {
-      const res = await getOrdersByUserAPI()
-      setOrders(res.data?.metadata)
-    }
-    getOrder()
-  }, [])
-
-  useEffect(() => {
-    console.log(orders)
-  }, [orders])
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -59,7 +45,7 @@ function TabOrder() {
         </Box>
         <TabPanel value="1">
           {orders?.map((order) => (
-            <OrderItem key={order?._id} order={order} />
+            <OrderItem key={order?._id} order={order} setOrders={setOrders} />
           ))}
         </TabPanel>
         <TabPanel value="2">Pending Review</TabPanel>

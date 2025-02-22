@@ -8,37 +8,40 @@ import Vendor from './pages/user/Vendor'
 import SetupAccount from './pages/user/SetupAccount'
 import VerifyAccount from './pages/user/VerifyAccount'
 import PrivateRoute from './components/PrivateRoute'
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import CheckOut from './pages/user/CheckOut'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import { PayPalScriptProvider } from '@paypal/react-paypal-js'
+import { useEffect, useRef } from 'react'
+import { resetProductState } from './redux/formProduct.slice'
 
 function App() {
-  const initialOptions = {
-    clientId:
-      'AV5KU2_o20hZoef5KR-DdFk23NwUs3hiZS9g7bll7kxcaPgVJLowzRlRoh-gJIi2-bCskORbRq2RUghf',
-    // 'test',
-    currency: 'USD',
-    intent: 'capture'
-  }
-
   const currentUser = useSelector((state) => state.user.currentUser)
+  const dispatch = useDispatch()
+  const location = useLocation()
+  const prevPath = useRef(location.pathname)
+
+  useEffect(() => {
+    if (
+      (prevPath.current.includes('/create-product') ||
+        prevPath.current.includes('/update-product')) &&
+      !location.pathname.includes('/create-product') &&
+      !location.pathname.includes('/update-product')
+    ) {
+      dispatch(resetProductState())
+    }
+
+    prevPath.current = location.pathname
+  }, [location.pathname, dispatch])
+
   return (
     <Routes>
       <Route path="/home" element={<Home />} /> {/* Checked */}
       <Route path="/product/:_id" element={<DetailProduct />} /> {/* Checked */}
       <Route path="/store" element={<Store />} /> {/* Checked */}
       <Route path="/cart" element={<ShoppingCart />} /> {/* Checked */}
-      <Route
-        path="/checkout"
-        element={
-          <PayPalScriptProvider options={initialOptions}>
-            <CheckOut />
-          </PayPalScriptProvider>
-        }
-      />{' '}
+      <Route path="/checkout" element={<CheckOut />} />
       {/* Checked */}
       <Route path="/my-account/:page" element={<MyAccount />} />
       <Route path="/auth/:page" element={<Auth />} /> {/* Checked */}

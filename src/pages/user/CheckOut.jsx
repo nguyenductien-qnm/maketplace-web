@@ -112,12 +112,10 @@ function CheckOut() {
 
   const handlePlaceOrder = async () => {
     const res = await placeOrderAPI({ token })
-    return res
+    if (res?.status === 200) {
+      navigate('/my-account/orders')
+    }
   }
-
-  useEffect(() => {
-    console.log('decodedToken:::', decodedToken)
-  }, [decodedToken])
 
   return (
     <UserLayout>

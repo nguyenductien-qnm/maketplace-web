@@ -2,11 +2,16 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 
 import { Box, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 function UserProfile() {
   const userInfo = useSelector((state) => state.user.currentUser)
+  const navigate = useNavigate()
   return (
-    <Box sx={{ display: 'flex', '& :hover': { cursor: 'pointer' } }}>
+    <Box
+      onClick={() => navigate('/my-account/account-details')}
+      sx={{ display: 'flex', '& :hover': { cursor: 'pointer' } }}
+    >
       <PersonOutlineOutlinedIcon fontSize="large" />
       <Box>
         <Typography sx={{ fontSize: '10px' }}>Welcome</Typography>

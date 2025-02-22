@@ -1,13 +1,25 @@
-import { Box, Paper, Typography, Divider, Button } from '@mui/material'
+import { Box, Divider, Paper, Typography, Button } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { getOrderDetailAPI, updatePayPalOrderIdAPI } from '~/api/order.api'
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
+import { useNavigate } from 'react-router-dom'
 import { blue, grey } from '@mui/material/colors'
 import formatCurrency from '~/utils/formatCurrency'
+import formatDate from '~/utils/formatDate'
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js'
-import { updatePayPalOrderIdAPI } from '~/api/order.api'
-import { useNavigate } from 'react-router-dom'
-function OrderItem({ order, setOrders }) {
+
+function OrderDetail({ _id }) {
   const navigate = useNavigate()
+  const [order, setOrder] = useState()
+  useEffect(() => {
+    const getOrderDetail = async () => {
+      const res = await getOrderDetailAPI({ _id })
+      setOrder(res.data?.metadata)
+    }
+    getOrderDetail()
+  }, [_id])
+
   const customCreateOrder = async (actions) => {
     try {
       const orderID = await actions.order.create({
@@ -37,11 +49,7 @@ function OrderItem({ order, setOrders }) {
       }
       const res = await updatePayPalOrderIdAPI(payloads)
       if (res?.status === 200) {
-        setOrders((prev) =>
-          prev.map((o) =>
-            o._id === res?.data?.metadata._id ? { ...res.data.metadata } : o
-          )
-        )
+        navigate('/my-account/orders')
       }
     } catch (error) {
       console.error('❌ Error creating order:', error)
@@ -58,7 +66,57 @@ function OrderItem({ order, setOrders }) {
 
   return (
     <Paper sx={{ padding: '20px 10px', mb: '20px' }}>
-      <Box key={order._id}>
+      <Box sx={{ mt: '10px', display: 'flex', gap: '40px' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography variant="h6">Delivery Address</Typography>
+          <Typography>{order?.order_address?.full_name}</Typography>
+          <Typography variant="caption" sx={{ color: grey[600] }}>
+            {order?.order_address?.phone_number}
+          </Typography>
+          <Typography variant="caption" sx={{ color: grey[600] }}>
+            {order?.order_address?.street}
+          </Typography>
+          <Typography variant="caption" sx={{ color: grey[600] }}>
+            {order?.order_address?.ward_name}
+          </Typography>
+          <Typography variant="caption" sx={{ color: grey[600] }}>
+            {order?.order_address?.district_name}
+          </Typography>
+          <Typography variant="caption" sx={{ color: grey[600] }}>
+            {order?.order_address?.province_name}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            width: '2px',
+            height: '145px',
+            backgroundColor: grey[300],
+            mt: '8px'
+          }}
+        ></Box>
+        <Box>
+          <Box sx={{ display: 'flex' }}>
+            <Typography>GHN:</Typography>
+            <Typography sx={{ color: grey[600] }}>
+              {order?.order_tracking_number}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', mt: '5px' }}>
+            <Typography>Order at:</Typography>
+            <Typography sx={{ color: grey[600] }}>
+              {formatDate(order?.createdAt)}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', mt: '5px' }}>
+            <Typography>Status from GHN:</Typography>
+            <Typography sx={{ color: blue[600], textTransform: 'uppercase' }}>
+              {order?.status_from_ghn}
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+      <Divider sx={{ mt: '20px', mb: '20px' }} />
+      <Box>
         <Box
           sx={{
             display: 'flex',
@@ -91,8 +149,9 @@ function OrderItem({ order, setOrders }) {
           </Typography>
         </Box>
         <Divider sx={{ mt: '15px', mb: '15px' }} />
-        {order?.order_products.map((p) => (
+        {order?.order_products?.map((p) => (
           <Box
+            key={p?.product_id}
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -144,17 +203,105 @@ function OrderItem({ order, setOrders }) {
         <Box
           sx={{
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'end',
+            flexDirection: 'column',
+            alignItems: 'end',
+            justifyContent: 'center',
             mt: '15px',
             gap: '10px'
           }}
         >
-          <Typography> Order Total:</Typography>
-          <Typography variant="h6" sx={{ color: blue[600] }}>
-            {formatCurrency(order.order_total_price)}
-          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              width: '400px',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <Typography variant="caption" sx={{ color: grey[600] }}>
+              {' '}
+              Merchandise total
+            </Typography>
+            <Typography variant="body2" sx={{ color: grey[600] }}>
+              {formatCurrency(
+                order?.order_total_price - order?.order_shipping_price
+              )}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              width: '400px',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <Typography variant="caption" sx={{ color: grey[600] }}>
+              {' '}
+              Shipping Fee
+            </Typography>
+            <Typography variant="body2" sx={{ color: grey[600] }}>
+              {formatCurrency(order?.order_shipping_price)}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              width: '400px',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <Typography variant="caption" sx={{ color: grey[600] }}>
+              {' '}
+              Voucher Applied
+            </Typography>
+            <Typography variant="body2" sx={{ color: grey[600] }}>
+              {formatCurrency(0)}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              width: '400px',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <Typography variant="caption" sx={{ color: grey[600] }}>
+              {' '}
+              Order Total
+            </Typography>
+            <Typography variant="h6" sx={{ color: blue[600] }}>
+              {formatCurrency(order?.order_total_price)}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              width: '400px',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mt: '15px'
+            }}
+          >
+            <Typography variant="caption" sx={{ color: grey[600] }}>
+              {' '}
+              Payment Method
+            </Typography>
+            <Typography
+              sx={{
+                color: blue[600],
+                textTransform: 'uppercase',
+                fontWeight: 'bold'
+              }}
+            >
+              {order?.order_payment_method}
+            </Typography>
+          </Box>
         </Box>
+        {/* button  */}
+        <Divider sx={{ mb: '15px', mt: '20px' }} />
         <Box
           sx={{
             display: 'flex',
@@ -206,4 +353,4 @@ function OrderItem({ order, setOrders }) {
     </Paper>
   )
 }
-export default OrderItem
+export default OrderDetail

@@ -1,8 +1,9 @@
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import { Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import ReturnButton from '../ReturnButton'
-function EmptyWishList() {
+import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
+import { blue } from '@mui/material/colors'
+function EmptyNotification() {
   return (
     <Box
       sx={{
@@ -14,12 +15,14 @@ function EmptyWishList() {
         minHeight: '100%'
       }}
     >
-      <FavoriteBorderOutlinedIcon sx={{ fontSize: '100px' }} />
+      <NotificationsActiveOutlinedIcon
+        sx={{ fontSize: '100px', color: blue[600] }}
+      />
       <Typography sx={{ fontSize: '14px' }}>
-        The wishlist table is empty.
+        The notification is empty.
       </Typography>
       <ReturnButton />
     </Box>
   )
 }
-export default EmptyWishList
+export default EmptyNotification

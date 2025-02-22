@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT } from '~/utils/constants'
 
@@ -24,4 +25,16 @@ const getOrdersByUserAPI = async () => {
   return res
 }
 
-export { placeOrderAPI, updatePayPalOrderIdAPI, getOrdersByUserAPI }
+const getOrderDetailAPI = async (data) => {
+  return await authorizedAxios.post(
+    `${API_ROOT}/v1/api/order/order-detail`,
+    data
+  )
+}
+
+export {
+  placeOrderAPI,
+  updatePayPalOrderIdAPI,
+  getOrdersByUserAPI,
+  getOrderDetailAPI
+}

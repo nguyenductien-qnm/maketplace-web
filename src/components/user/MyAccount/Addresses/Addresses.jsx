@@ -4,8 +4,10 @@ import AddressModal from './AddressModal'
 import { useEffect, useState } from 'react'
 import { getAddressListAPI } from '~/api/user.api'
 import sortAddressByDefault from '~/helpers/sortAddressByDefault'
+import CircularIndeterminate from '~/components/CircularIndeterminate'
 function Addresses() {
   const [userAddressList, setUserAddressList] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const getAndSetAddressList = async () => {
@@ -13,6 +15,7 @@ function Addresses() {
       let data = res.data?.metadata
       data = sortAddressByDefault(data)
       setUserAddressList(data)
+      setLoading(false)
     }
     getAndSetAddressList()
   }, [])
@@ -53,37 +56,48 @@ function Addresses() {
   }
 
   return (
-    <Box>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: '20px'
-        }}
-      >
-        <Typography sx={{ fontSize: '20px' }}>My Addresses</Typography>
-        <AddressModal
-          handleAddAddress={handleAddAddress}
-          actionType="create"
-          address={null}
-        />
-      </Box>
-      <Divider />
-      <Box>
-        {userAddressList &&
-          userAddressList.map((item, index) => (
-            <Box key={index}>
-              <AddressCard
-                addressItem={item}
-                handleSetDefaultAddress={handleSetDefaultAddress}
-                handleDeleteAddress={handleDeleteAddress}
-                handleUpdateAddress={handleUpdateAddress}
-              />
-              <Divider />
-            </Box>
-          ))}
-      </Box>
+    <Box
+      sx={{
+        display: loading ? 'flex' : 'block',
+        justifyContent: 'center'
+      }}
+    >
+      {loading ? (
+        <CircularIndeterminate />
+      ) : (
+        <Box>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '20px'
+            }}
+          >
+            <Typography sx={{ fontSize: '20px' }}>My Addresses</Typography>
+            <AddressModal
+              handleAddAddress={handleAddAddress}
+              actionType="create"
+              address={null}
+            />
+          </Box>
+          <Divider />
+          <Box>
+            {userAddressList &&
+              userAddressList.map((item, index) => (
+                <Box key={index}>
+                  <AddressCard
+                    addressItem={item}
+                    handleSetDefaultAddress={handleSetDefaultAddress}
+                    handleDeleteAddress={handleDeleteAddress}
+                    handleUpdateAddress={handleUpdateAddress}
+                  />
+                  <Divider />
+                </Box>
+              ))}
+          </Box>
+        </Box>
+      )}
     </Box>
   )
 }

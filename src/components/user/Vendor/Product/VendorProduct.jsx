@@ -4,12 +4,12 @@ import TabProduct from './TabProduct/TabProduct'
 import { getProductSPUAPI } from '~/api/productSPU.api'
 import { Box } from '@mui/material'
 import CircularIndeterminate from '~/components/CircularIndeterminate'
-function VendorProduct({ shopId }) {
+function VendorProduct() {
   const [listProduct, setListProduct] = useState([])
   const [loading, setLoading] = useState(true)
   useEffect(() => {
     const getAndSetProduct = async () => {
-      const res = await getProductSPUAPI({ shop_id: shopId })
+      const res = await getProductSPUAPI()
       setListProduct(res.data.metadata)
       setLoading(false)
     }
@@ -20,8 +20,7 @@ function VendorProduct({ shopId }) {
     <Box
       sx={{
         display: loading ? 'flex' : 'block',
-        justifyContent: 'center',
-        marginTop: '50px'
+        justifyContent: 'center'
       }}
     >
       {loading ? (
