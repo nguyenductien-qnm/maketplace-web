@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT } from '~/utils/constants'
 
 const getProductByIdAPIForClient = async (_id) => {
@@ -9,4 +10,12 @@ const getProductByIdAPIForClient = async (_id) => {
   return res
 }
 
-export { getProductByIdAPIForClient }
+const searchProductByOwnerAPI = async (payload) => {
+  const res = await axios.post(
+    `${API_ROOT}/v1/api/productSPU/get-product-by-id-for-customer`,
+    payload
+  )
+  return res
+}
+
+export { getProductByIdAPIForClient, searchProductByOwnerAPI }

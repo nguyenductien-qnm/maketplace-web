@@ -5,6 +5,7 @@ import VendorSideBar from '~/components/user/Vendor/VendorSidebar'
 import UserLayout from '~/layouts/user/UserLayout'
 import VendorCreateProduct from '~/components/user/Vendor/Product/CreateAndUpdateProduct/VendorCreateAndUpdateProduct'
 import { useSelector } from 'react-redux'
+import VendorOrder from '~/components/user/Vendor/Orders/VendorOrder'
 function Vendor() {
   const { page } = useParams()
   const { _id } = useParams()
@@ -18,6 +19,8 @@ function Vendor() {
           {page === 'products' && <VendorProduct />}
           {page === 'create-product' && <VendorCreateProduct />}
           {page === 'update-product' && _id && <VendorCreateProduct />}
+          {page === 'orders' && <VendorOrder />}
+          {page === 'order-detail' && <VendorOrder />}
         </Grid>
       </Grid>
     </UserLayout>

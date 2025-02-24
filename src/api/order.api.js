@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT } from '~/utils/constants'
 
@@ -32,9 +31,25 @@ const getOrderDetailAPI = async (data) => {
   )
 }
 
+const queryOrderByOwnerAPI = async (data) => {
+  return await authorizedAxios.post(
+    `${API_ROOT}/v1/api/order/query-order-by-owner`,
+    data
+  )
+}
+
+const updateOrderStatusByOwnerAPI = async (data) => {
+  return await authorizedAxios.post(
+    `${API_ROOT}/v1/api/order/update-order-status-by-owner`,
+    data
+  )
+}
+
 export {
   placeOrderAPI,
   updatePayPalOrderIdAPI,
   getOrdersByUserAPI,
-  getOrderDetailAPI
+  getOrderDetailAPI,
+  queryOrderByOwnerAPI,
+  updateOrderStatusByOwnerAPI
 }

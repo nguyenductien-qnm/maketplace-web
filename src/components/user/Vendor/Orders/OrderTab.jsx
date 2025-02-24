@@ -4,14 +4,13 @@ import Tab from '@mui/material/Tab'
 import TabContext from '@mui/lab/TabContext'
 import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
-import { Button, styled } from '@mui/material'
-import ProductTable from '../ProductTable'
-import { Link } from 'react-router-dom'
-import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined'
+import { styled } from '@mui/material'
 import SearchInput from './SearchInput'
-import EmptyProduct from '../EmptyProduct'
 import CircularIndeterminate from '~/components/CircularIndeterminate'
-function TabProduct({ listProduct, getProducts }) {
+import OrderTable from './OrderTable'
+import EmptyOrder from './EmptyOrder'
+import dayjs from 'dayjs'
+function OrderTab({ orders, getOrders, updateOrderStatus }) {
   const [value, setValue] = useState('ALL')
   const [loading, setLoading] = useState(true)
   const handleChange = (event, newValue) => {
@@ -25,35 +24,42 @@ function TabProduct({ listProduct, getProducts }) {
     }
   })
 
-  const customHandleSearch = async (searchValue) => {
+  const customHandleSearch = async (searchData) => {
+    console.log(searchData)
     setLoading(true)
     const data = {
       status: value,
-      search: searchValue
+      search: searchData?.search
     }
-    await getProducts(data)
+    if (searchData.startDate) {
+      data.startDate = searchData.startDate
+    }
+    if (searchData.endDate) {
+      data.endDate = searchData.endDate
+    }
+    await getOrders(data)
     setLoading(false)
   }
 
   useEffect(() => {
     const fetchProducts = async () => {
-      await getProducts({ status: value })
+      await getOrders({ status: value })
       setLoading(false)
     }
     fetchProducts()
   }, [value])
 
-  const ProductTabContent = () => (
+  const OrderTabContent = () => (
     <>
       <SearchInput customHandleSearch={customHandleSearch} />
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: '50px' }}>
           <CircularIndeterminate />
         </Box>
-      ) : listProduct?.length === 0 ? (
-        <EmptyProduct />
+      ) : orders?.length === 0 ? (
+        <EmptyOrder />
       ) : (
-        <ProductTable listProduct={listProduct} />
+        <OrderTable orders={orders} updateOrderStatus={updateOrderStatus} />
       )}
     </>
   )
@@ -72,39 +78,33 @@ function TabProduct({ listProduct, getProducts }) {
         >
           <TabList onChange={handleChange} aria-label="lab API tabs example">
             <CustomTab label="All" value="ALL" />
-            <CustomTab label="Approved" value="PUBLIC" />
-            <CustomTab label="Pending Review" value="PENDING_REVIEW" />
-            <CustomTab label="In Of Stock" value="IN_OF_STOCK" />
-            <CustomTab label="Out Of Stock" value="OUT_OF_STOCK" />
-            <CustomTab label="Draft" value="DRAFT" />
+            <CustomTab label="Pending" value="PENDING" />
+            <CustomTab label="Confirm" value="CONFIRM" />
+            <CustomTab label="Shipped" value="SHIPPED" />
+            <CustomTab label="Cancelled" value="CANCELLED" />
+            <CustomTab label="Delivered" value="DELIVERED" />
           </TabList>
-          <Link to="/vendor/create-product">
-            <Button variant="contained" color="primary" sx={{ height: '30px' }}>
-              <BusinessCenterOutlinedIcon />
-              Add new product
-            </Button>
-          </Link>
         </Box>
         <TabPanel value="ALL">
-          <ProductTabContent />
+          <OrderTabContent />
         </TabPanel>
-        <TabPanel value="PUBLIC">
-          <ProductTabContent />
+        <TabPanel value="PENDING">
+          <OrderTabContent />
         </TabPanel>
-        <TabPanel value="PENDING_REVIEW">
-          <ProductTabContent />
+        <TabPanel value="CONFIRM">
+          <OrderTabContent />
         </TabPanel>
-        <TabPanel value="IN_OF_STOCK">
-          <ProductTabContent />
+        <TabPanel value="SHIPPED">
+          <OrderTabContent />
         </TabPanel>
-        <TabPanel value="OUT_OF_STOCK">
-          <ProductTabContent />
+        <TabPanel value="CANCELLED">
+          <OrderTabContent />
         </TabPanel>
-        <TabPanel value="DRAFT">
-          <ProductTabContent />
+        <TabPanel value="DELIVERED">
+          <OrderTabContent />
         </TabPanel>
       </TabContext>
     </Box>
   )
 }
-export default TabProduct
+export default OrderTab

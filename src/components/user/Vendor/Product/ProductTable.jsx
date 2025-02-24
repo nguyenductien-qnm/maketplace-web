@@ -27,7 +27,7 @@ function ProductTable({ listProduct }) {
         </TableRow>
       </TableHead>
       <TableBody>
-        {listProduct.map((productItem, index) => (
+        {listProduct?.map((productItem, index) => (
           <ProductRow productItem={productItem} key={index} />
         ))}
       </TableBody>
