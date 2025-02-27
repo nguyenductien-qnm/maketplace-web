@@ -7,6 +7,8 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import PaymentOutlinedIcon from '@mui/icons-material/PaymentOutlined'
 import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined'
 import LocalGroceryStoreOutlinedIcon from '@mui/icons-material/LocalGroceryStoreOutlined'
+import LoyaltyOutlinedIcon from '@mui/icons-material/LoyaltyOutlined'
+
 function VendorSideBar({ page }) {
   const CustomLink = styled(Link, {
     shouldForwardProp: (prop) => prop !== 'isActive' //isActive chỉ cần để tính toán style, không cần xuất hiện trong DOM.
@@ -44,11 +46,15 @@ function VendorSideBar({ page }) {
         Orders
       </CustomLink>
       <Divider />
-      <CustomLink to="/vendor/store" isActive={checkUrl('store')}>
+      <CustomLink to="/vendor/profile" isActive={checkUrl('profile')}>
         <SettingsOutlinedIcon />
-        Store
+        Profile
       </CustomLink>
       <Divider />
+      <CustomLink to="/vendor/vouchers" isActive={checkUrl('vouchers')}>
+        <AttachMoneyOutlinedIcon />
+        Vouchers
+      </CustomLink>
       <CustomLink to="/vendor/payment" isActive={checkUrl('payment')}>
         <PaymentOutlinedIcon />
         Payment

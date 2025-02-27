@@ -8,3 +8,7 @@ export const checkShopURLAPI = async (data) => {
   )
   return res
 }
+
+export const getShopByOwnerAPI = async () => {
+  return await authorizedAxios.get(`${API_ROOT}/v1/api/shop/get-shop-by-owner`)
+}

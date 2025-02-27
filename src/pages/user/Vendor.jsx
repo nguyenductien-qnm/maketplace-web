@@ -4,8 +4,9 @@ import VendorProduct from '~/components/user/Vendor/Product/VendorProduct'
 import VendorSideBar from '~/components/user/Vendor/VendorSidebar'
 import UserLayout from '~/layouts/user/UserLayout'
 import VendorCreateProduct from '~/components/user/Vendor/Product/CreateAndUpdateProduct/VendorCreateAndUpdateProduct'
-import { useSelector } from 'react-redux'
 import VendorOrder from '~/components/user/Vendor/Orders/VendorOrder'
+import VendorProfile from '~/components/user/Vendor/Profile/VendorProfile'
+import VendorVoucher from '~/components/user/Vendor/VendorVoucher/VendorVoucher'
 function Vendor() {
   const { page } = useParams()
   const { _id } = useParams()
@@ -21,6 +22,9 @@ function Vendor() {
           {page === 'update-product' && _id && <VendorCreateProduct />}
           {page === 'orders' && <VendorOrder />}
           {page === 'order-detail' && <VendorOrder />}
+          {page === 'order-detail' && <VendorOrder />}
+          {page === 'profile' && <VendorProfile />}
+          {page === 'vouchers' && <VendorVoucher />}
         </Grid>
       </Grid>
     </UserLayout>
