@@ -9,14 +9,19 @@ import {
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import { Controller, set, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useEffect, useState } from 'react'
 import { grey } from '@mui/material/colors'
-import FormAddress from '~/components/FormAddress'
-import { getShopByOwnerAPI } from '~/api/shop.api'
-import AddressModal from '../../MyAccount/Addresses/AddressModal'
-import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
-import { getAddressListAPI } from '~/api/user.api'
+import {
+  checkShopURLAPI,
+  getShopByOwnerAPI,
+  updateProfileShopAPI
+} from '~/api/shop.api'
+import {
+  FIELD_REQUIRED_MESSAGE,
+  NUMBER_RULE,
+  NUMBER_RULE_MESSAGE
+} from '~/utils/validators'
 import {
   apiGetDistricts,
   apiGetProvinces,
@@ -24,17 +29,21 @@ import {
 } from '~/helpers/getAddress'
 import FieldErrorAlert from '~/components/FieldErrorAlert'
 import TypographyLabel from '../../Common/TypographyLabel'
+import generateURL from '~/utils/generateURL'
+import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
+import resizeImage from '~/helpers/resizeImage'
+
 function VendorProfile() {
   const {
     register,
-    watch,
     formState: { errors },
     handleSubmit,
     reset,
-    control,
-    getValues,
+    watch,
+    clearErrors,
+    setError,
     setValue,
-    clearErrors
+    getValues
   } = useForm()
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -57,14 +66,16 @@ function VendorProfile() {
     color: 'black',
     fontWeight: '600'
   })
-  const [isFirstLoad, setIsFirstLoad] = useState(true)
   const [provinces, setProvinces] = useState()
   const [districts, setDistricts] = useState()
   const [wards, setWards] = useState()
-
   const [selectedProvince, setSelectedProvince] = useState()
   const [selectedDistrict, setSelectedDistrict] = useState()
   const [selectedWard, setSelectedWard] = useState()
+  let selectShopStatus = watch('shop_status')
+  const [availableShopSlug, setAvailableShopSlug] = useState(true)
+  let shopAvatar = watch('shop_avatar')
+  let shopBanner = watch('shop_banner')
 
   const getAndSetProvinces = async () => {
     setProvinces(await apiGetProvinces())
@@ -88,6 +99,8 @@ function VendorProfile() {
       shop_slug: shop.shop_slug,
       shop_status: shop.shop_status,
       shop_intro: shop.shop_intro,
+      shop_avatar: shop.shop_avatar,
+      shop_banner: shop.shop_banner,
       province: shop.shop_address.shop_province,
       district: shop.shop_address.shop_district,
       ward: shop.shop_address.shop_ward,
@@ -125,22 +138,12 @@ function VendorProfile() {
 
   useEffect(() => {
     if (selectedProvince && selectedProvince.ProvinceID) {
-      if (!isFirstLoad) {
-        setValue('ward', '')
-        setValue('district', '')
-        setDistricts([])
-        setWards([])
-      }
       getAndSetDistricts(selectedProvince.ProvinceID)
     }
   }, [selectedProvince])
 
   useEffect(() => {
     if (selectedDistrict && selectedDistrict.DistrictID) {
-      if (!isFirstLoad) {
-        setValue('ward', '')
-        setWards([])
-      }
       getAndSetWards(selectedDistrict.DistrictID)
     }
   }, [selectedDistrict])
@@ -154,26 +157,92 @@ function VendorProfile() {
     getShopAndAddress()
   }, [])
 
-  const updateShopInfo = async (data) => {
-    const province = provinces.find(
-      (p) => p.ProvinceID === selectedProvince.ProvinceID
-    )
-    const district = districts.find(
-      (p) => p.DistrictID === selectedDistrict.DistrictID
-    )
-    const ward = wards.find((p) => p.WardCode === selectedWard.WardCode)
-    console.log('province:::', province)
-    console.log('district:::', district)
-    console.log('ward:::', ward)
+  const handleChangeShopName = async (e) => {
+    const shopName = e.target.value.trim()
+
+    if (!shopName) {
+      setValue('shop_slug', '')
+      return
+    }
+
+    const shopSlug = generateURL(shopName)
+    setValue('shop_slug', shopSlug)
+    await checkShopURL()
+  }
+
+  const checkShopURL = async () => {
+    try {
+      const currentSlug = getValues('shop_slug')
+      if (!currentSlug) return
+      const res = await checkShopURLAPI({ shop_slug: currentSlug })
+      if (res) {
+        clearErrors(['shop_slug'])
+        setAvailableShopSlug(true)
+      }
+    } catch (error) {
+      setError('shop_slug', {
+        type: 'manual',
+        message: 'This URL is already taken.'
+      })
+      setAvailableShopSlug(false)
+    }
+  }
+
+  const handleUploadAvatar = async (e) => {
+    const url = await uploadImageToCloudinary(e.target.files[0])
+    if (url) {
+      const resize = resizeImage(url, 80, 80)
+      setValue('shop_avatar', resize)
+    }
+  }
+
+  const handleUploadBanner = async (e) => {
+    const url = await uploadImageToCloudinary(e.target.files[0])
+    if (url) {
+      const resize = resizeImage(url, 1000, 200)
+      setValue('shop_banner', resize)
+    }
+  }
+
+  const updateShopProfile = async (data) => {
+    if (!availableShopSlug) {
+      setError('shop_slug', {
+        type: 'manual',
+        message: 'This URL is already taken.'
+      })
+      return
+    }
+
+    const province = selectedProvince
+      ? provinces.find((p) => p.ProvinceID === selectedProvince.ProvinceID)
+      : null
+    const district = selectedDistrict
+      ? districts.find((p) => p.DistrictID === selectedDistrict.DistrictID)
+      : null
+    const ward = selectedWard
+      ? wards.find((p) => p.WardCode === selectedWard.WardCode)
+      : null
+
+    const { province: _, district: __, ward: ___, ...filteredData } = data
+
+    console.log(filteredData)
+    const updatedData = {
+      ...filteredData,
+      shop_address: { province, district, ward, street: filteredData.street }
+    }
+    await updateProfileShopAPI(updatedData)
   }
 
   return (
     <Box>
-      <form onSubmit={handleSubmit(updateShopInfo)}>
+      <form onSubmit={handleSubmit(updateShopProfile)}>
         <Box sx={{ position: 'relative' }}>
           <img
             style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-            src="https://i.pinimg.com/736x/58/c3/33/58c33377dfcbb3022493dec49d098b02.jpg"
+            src={
+              shopBanner ||
+              'https://i.pinimg.com/736x/58/c3/33/58c33377dfcbb3022493dec49d098b02.jpg'
+            }
           />
           <Avatar
             sx={{
@@ -183,9 +252,10 @@ function VendorProfile() {
               bottom: 30,
               left: 30
             }}
+            src={shopAvatar || undefined}
           ></Avatar>
         </Box>
-        <Box>
+        <Box sx={{ display: 'flex', gap: '10px' }}>
           <Button
             component="label"
             role={undefined}
@@ -196,10 +266,10 @@ function VendorProfile() {
             Upload Avatar
             <VisuallyHiddenInput
               type="file"
-              onChange={(event) => console.log(event.target.files)}
+              onChange={(e) => handleUploadAvatar(e)}
               multiple
             />
-          </Button>{' '}
+          </Button>
           <Button
             component="label"
             role={undefined}
@@ -210,7 +280,7 @@ function VendorProfile() {
             Upload Banner
             <VisuallyHiddenInput
               type="file"
-              onChange={(event) => console.log(event.target.files)}
+              onChange={(e) => handleUploadBanner(e)}
               multiple
             />
           </Button>
@@ -229,49 +299,67 @@ function VendorProfile() {
               {...register('shop_email')}
               size="small"
               fullWidth
+              InputProps={{ readOnly: true }}
             ></TextField>
           </BoxCustom>
 
           <BoxCustom>
             <FormLabelCustom>Shop phone</FormLabelCustom>
             <TextField
-              {...register('shop_phone')}
+              {...register('shop_phone', {
+                required: FIELD_REQUIRED_MESSAGE,
+                pattern: {
+                  value: NUMBER_RULE,
+                  message: NUMBER_RULE_MESSAGE
+                }
+              })}
+              error={!!errors['shop_phone']}
               size="small"
               fullWidth
             ></TextField>
+            <FieldErrorAlert errors={errors} fieldName="shop_phone" />
           </BoxCustom>
 
           <BoxCustom>
             <FormLabelCustom>Shop name *</FormLabelCustom>
             <TextField
-              {...register('shop_name')}
+              {...register('shop_name', { required: FIELD_REQUIRED_MESSAGE })}
               size="small"
               fullWidth
+              error={!!errors['shop_name']}
+              onBlur={(e) => {
+                handleChangeShopName(e)
+              }}
             ></TextField>
+            <FieldErrorAlert errors={errors} fieldName="shop_name" />
           </BoxCustom>
 
           <BoxCustom>
             <FormLabelCustom>Shop URL *</FormLabelCustom>
             <TextField
-              {...register('shop_slug')}
+              {...register('shop_slug', { required: FIELD_REQUIRED_MESSAGE })}
+              error={!!errors['shop_slug']}
               size="small"
               fullWidth
+              onBlur={(e) => {
+                checkShopURL()
+              }}
             ></TextField>
+            <FieldErrorAlert errors={errors} fieldName="shop_slug" />
           </BoxCustom>
 
           <BoxCustom>
             <FormLabelCustom>Shop status</FormLabelCustom>
-            <Controller
-              name="shop_status"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <Select {...field} labelId="gender-label" size="small">
-                  <MenuItem value="active">Active</MenuItem>
-                  <MenuItem value="paused">Pause</MenuItem>
-                </Select>
-              )}
-            />
+            <Select
+              size="small"
+              fullWidth
+              {...register('shop_status')}
+              error={!!errors['shop_status']}
+              value={selectShopStatus}
+            >
+              <MenuItem value="active">Active</MenuItem>
+              <MenuItem value="paused">Paused</MenuItem>
+            </Select>
           </BoxCustom>
 
           <Box>

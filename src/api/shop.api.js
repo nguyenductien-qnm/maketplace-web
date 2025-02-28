@@ -12,3 +12,7 @@ export const checkShopURLAPI = async (data) => {
 export const getShopByOwnerAPI = async () => {
   return await authorizedAxios.get(`${API_ROOT}/v1/api/shop/get-shop-by-owner`)
 }
+
+export const updateProfileShopAPI = async (data) => {
+  return await authorizedAxios.post(`${API_ROOT}/v1/api/shop/update`, data)
+}

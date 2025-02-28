@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import VoucherRow from './VoucherRow'
 
-function VoucherTable() {
+function VoucherTable({ vouchers, shopUpdateVoucher, shopDeleteVoucher }) {
   return (
     <Table>
       <TableHead>
@@ -21,13 +21,23 @@ function VoucherTable() {
           <TableCell>Start date</TableCell>
           <TableCell>End date</TableCell>
           <TableCell>Quantity</TableCell>
+          <TableCell>Used</TableCell>
           <TableCell>Type</TableCell>
           <TableCell>Value</TableCell>
           <TableCell>Action</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        <VoucherRow />
+        {vouchers &&
+          vouchers.map((voucher, index) => (
+            <VoucherRow
+              key={index}
+              voucher={voucher}
+              index={index}
+              shopUpdateVoucher={shopUpdateVoucher}
+              shopDeleteVoucher={shopDeleteVoucher}
+            />
+          ))}
       </TableBody>
     </Table>
   )

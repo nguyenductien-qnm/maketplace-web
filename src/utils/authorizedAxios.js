@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
-const notToast = ['update-quantity-product-cart', 'checkout']
+const notToast = ['update-quantity-product-cart', 'checkout', 'check-url']
 
 axios.defaults.withCredentials = true
 

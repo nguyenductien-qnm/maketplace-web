@@ -14,7 +14,7 @@ import {
   Paper
 } from '@mui/material'
 import { queryProductByOwnerAPI } from '~/api/productSPU.api'
-import SearchInput from '../Product/TabProduct/SearchInput'
+import SearchInput from '~/components/SearchInput'
 import { blue } from '@mui/material/colors'
 import { useForm } from 'react-hook-form'
 import {
@@ -23,8 +23,16 @@ import {
   NUMBER_RULE_MESSAGE
 } from '~/utils/validators'
 import FieldErrorAlert from '~/components/FieldErrorAlert'
+import formatDateForInput from '~/utils/formatDateForInput'
 
-const VoucherModal = ({ open, handleClose, action }) => {
+const VoucherModal = ({
+  open,
+  handleClose,
+  action,
+  voucher,
+  shopCreateVoucher,
+  shopUpdateVoucher
+}) => {
   const {
     register,
     formState: { errors },
@@ -57,6 +65,22 @@ const VoucherModal = ({ open, handleClose, action }) => {
     getProduct()
   }, [voucherApplies])
 
+  useEffect(() => {
+    if (voucher) {
+      reset({
+        voucher_name: voucher?.voucher_name,
+        voucher_code: voucher?.voucher_code,
+        voucher_type: voucher?.voucher_type,
+        voucher_value: voucher?.voucher_value,
+        voucher_quantity: voucher?.voucher_quantity,
+        voucher_min_order_value: voucher?.voucher_min_order_value,
+        voucher_applies: voucher?.voucher_applies,
+        voucher_start_date: formatDateForInput(voucher?.voucher_start_date),
+        voucher_end_date: formatDateForInput(voucher?.voucher_end_date)
+      })
+    }
+  }, [voucher])
+
   const customHandleSearch = async (searchValue) => {
     const res = await queryProductByOwnerAPI({
       status: 'PUBLIC',
@@ -77,7 +101,18 @@ const VoucherModal = ({ open, handleClose, action }) => {
   }
 
   const createVoucher = async (data) => {
-    console.log('Dữ liệu form:', data)
+    if (voucherApplies === 'SPECIFIC') {
+      data.voucher_applies_to = selectProduct
+    }
+    console.log('action', action)
+    let res = null
+    if (action === 'CREATE') {
+      res = await shopCreateVoucher(data)
+    } else if (action === 'UPDATE') {
+      data._id = voucher._id
+      res = await shopUpdateVoucher(data)
+    }
+    if (res.status === 200) handleCloseWithReset()
   }
 
   const handleCloseWithReset = () => {
@@ -308,7 +343,7 @@ const VoucherModal = ({ open, handleClose, action }) => {
             Cancel
           </Button>
           <Button variant="contained" color="primary" type="submit">
-            Create
+            {action === 'CREATE' ? 'Create' : 'Update'}
           </Button>
         </DialogActions>
       </form>

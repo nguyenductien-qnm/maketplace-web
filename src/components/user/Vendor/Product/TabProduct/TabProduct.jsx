@@ -8,7 +8,7 @@ import { Button, styled } from '@mui/material'
 import ProductTable from '../ProductTable'
 import { Link } from 'react-router-dom'
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined'
-import SearchInput from './SearchInput'
+import SearchInput from '~/components/SearchInput'
 import EmptyProduct from '../EmptyProduct'
 import CircularIndeterminate from '~/components/CircularIndeterminate'
 function TabProduct({ listProduct, getProducts }) {

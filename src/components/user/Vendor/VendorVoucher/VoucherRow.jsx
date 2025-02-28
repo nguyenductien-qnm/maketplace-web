@@ -1,47 +1,35 @@
 import { Box, Checkbox, TableCell, TableRow } from '@mui/material'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
-import { blue, green, red } from '@mui/material/colors'
+import { green, red } from '@mui/material/colors'
 import { useState } from 'react'
-import VoucherDetailModal from './VoucherDetailModal'
 import VoucherModal from './VoucherModal'
+import formatDate from '~/utils/formatDate'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
 
-function VoucherRow({ voucherData }) {
+function VoucherRow({ voucher, shopUpdateVoucher, shopDeleteVoucher }) {
   const [openModal, setOpenModal] = useState(false)
-  const [openModalDetail, setOpenModalDetail] = useState(false)
-  const [selectedVoucher, setSelectedVoucher] = useState(null)
-
-  const handleOpenEditModal = () => {
-    setSelectedVoucher(voucherData)
-    setOpenModal(true)
-  }
-
-  const handleCloseModal = () => {
-    setOpenModal(false)
-    setSelectedVoucher(null)
-  }
-
-  const handleCloseModalDetail = () => setOpenModalDetail(false)
+  const [openDeleteModal, setOpenDeleteModal] = useState(false)
 
   return (
     <TableRow>
       <TableCell>
         <Checkbox size="small" />
       </TableCell>
-      <TableCell>{voucherData?.voucher_code || 'N/A'}</TableCell>
+      <TableCell>{voucher?.voucher_code || 'N/A'}</TableCell>
       <TableCell sx={{ maxWidth: '200px' }}>
-        {voucherData?.voucher_name || 'N/A'}
+        {voucher?.voucher_name || 'N/A'}
       </TableCell>
-      <TableCell>{voucherData?.start_date || 'N/A'}</TableCell>
-      <TableCell>{voucherData?.end_date || 'N/A'}</TableCell>
-      <TableCell>{voucherData?.quantity || 0}</TableCell>
-      <TableCell>{voucherData?.voucher_type || 'N/A'}</TableCell>
-      <TableCell>{voucherData?.discount_value || 0}</TableCell>
+      <TableCell>{formatDate(voucher?.voucher_start_date) || 'N/A'}</TableCell>
+      <TableCell>{formatDate(voucher?.voucher_end_date) || 'N/A'}</TableCell>
+      <TableCell>{voucher?.voucher_quantity || 0}</TableCell>
+      <TableCell>{voucher?.voucher_uses_count || 0}</TableCell>
+      <TableCell>{voucher?.voucher_type || 'N/A'}</TableCell>
+      <TableCell>{voucher?.voucher_value || 0}</TableCell>
       <TableCell sx={{ height: '100%' }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           <ModeOutlinedIcon
-            onClick={handleOpenEditModal}
+            onClick={() => setOpenModal(true)}
             sx={{
               fontSize: 24,
               color: green[600],
@@ -50,17 +38,8 @@ function VoucherRow({ voucherData }) {
               }
             }}
           />
-          <InfoOutlinedIcon
-            onClick={() => setOpenModalDetail(true)}
-            sx={{
-              fontSize: 24,
-              color: blue[600],
-              '&:hover': {
-                cursor: 'pointer'
-              }
-            }}
-          />
           <HighlightOffOutlinedIcon
+            onClick={() => setOpenDeleteModal(true)}
             sx={{
               fontSize: 24,
               color: red[600],
@@ -71,17 +50,18 @@ function VoucherRow({ voucherData }) {
           />
         </Box>
       </TableCell>
-
-      <VoucherDetailModal
-        open={openModalDetail}
-        handleClose={handleCloseModalDetail}
+      <ConfirmDeleteModal
+        open={openDeleteModal}
+        handleClose={() => setOpenDeleteModal(false)}
+        shopDeleteVoucher={shopDeleteVoucher}
+        _id={voucher._id}
       />
-
       <VoucherModal
         action="UPDATE"
         open={openModal}
-        handleClose={handleCloseModal}
-        voucherData={selectedVoucher}
+        handleClose={() => setOpenModal(false)}
+        voucher={voucher}
+        shopUpdateVoucher={shopUpdateVoucher}
       />
     </TableRow>
   )

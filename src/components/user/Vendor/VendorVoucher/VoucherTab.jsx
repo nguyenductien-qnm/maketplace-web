@@ -9,10 +9,17 @@ import { Button, styled } from '@mui/material'
 import VoucherTable from './VoucherTable'
 import LoyaltyOutlinedIcon from '@mui/icons-material/LoyaltyOutlined'
 import VoucherModal from './VoucherModal'
-// import SearchInput from './SearchInput'
+import SearchInput from '~/components/SearchInput'
+import CircularIndeterminate from '~/components/CircularIndeterminate'
+import EmptyProduct from '../Product/EmptyProduct'
 // import EmptyProduct from '../EmptyProduct'
-// import CircularIndeterminate from '~/components/CircularIndeterminate'
-function VoucherTab({ listProduct, getProducts }) {
+function VoucherTab({
+  vouchers,
+  shopGetVoucher,
+  shopCreateVoucher,
+  shopUpdateVoucher,
+  shopDeleteVoucher
+}) {
   const [openModal, setOpenModal] = useState(false)
   const [value, setValue] = useState('ACTIVE')
   const [loading, setLoading] = useState(true)
@@ -37,28 +44,32 @@ function VoucherTab({ listProduct, getProducts }) {
     setLoading(false)
   }
 
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     await getProducts({ status: value })
-  //     setLoading(false)
-  //   }
-  //   fetchProducts()
-  // }, [value])
+  useEffect(() => {
+    const fetchVouchers = async () => {
+      await shopGetVoucher({ status: value })
+      setLoading(false)
+    }
+    fetchVouchers()
+  }, [value])
 
-  //   const ProductTabContent = () => (
-  //     <>
-  //       <SearchInput customHandleSearch={customHandleSearch} />
-  //       {loading ? (
-  //         <Box sx={{ display: 'flex', justifyContent: 'center', mt: '50px' }}>
-  //           <CircularIndeterminate />
-  //         </Box>
-  //       ) : listProduct?.length === 0 ? (
-  //         <EmptyProduct />
-  //       ) : (
-  //         <ProductTable listProduct={listProduct} />
-  //       )}
-  //     </>
-  //   )
+  const VoucherTabContent = () => (
+    <>
+      <SearchInput customHandleSearch={customHandleSearch} />
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: '50px' }}>
+          <CircularIndeterminate />
+        </Box>
+      ) : vouchers?.length === 0 ? (
+        <EmptyProduct />
+      ) : (
+        <VoucherTable
+          vouchers={vouchers}
+          shopUpdateVoucher={shopUpdateVoucher}
+          shopDeleteVoucher={shopDeleteVoucher}
+        />
+      )}
+    </>
+  )
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -87,16 +98,18 @@ function VoucherTab({ listProduct, getProducts }) {
           </Button>
         </Box>
         <TabPanel value="ACTIVE">
-          <VoucherTable />
+          <VoucherTabContent />
         </TabPanel>
         <TabPanel value="INACTIVE">
-          <VoucherTable />
+          <VoucherTabContent />
         </TabPanel>
       </TabContext>
       <VoucherModal
+        voucher={null}
         open={openModal}
         handleClose={() => setOpenModal(false)}
         action="CREATE"
+        shopCreateVoucher={shopCreateVoucher}
       />
     </Box>
   )
