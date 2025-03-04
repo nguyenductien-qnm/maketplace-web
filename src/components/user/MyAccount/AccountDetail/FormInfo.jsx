@@ -17,7 +17,9 @@ import { getUserInfoAPI } from '~/api/user.api'
 import { updateUserInfoAPI } from '~/redux/user.slice'
 import { useDispatch } from 'react-redux'
 import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
-
+import formatDateTimeForInput from '~/utils/formatDateTimeForInput'
+import formatDateForInput from '~/utils/formatDateForInput'
+import interceptorLoadingElements from '~/utils/interceptorLoading'
 function FormInfo() {
   const BoxCustom = styled(Box)({
     display: 'flex',
@@ -67,22 +69,27 @@ function FormInfo() {
   const [avatarUrl, setAvatarUrl] = useState(null)
 
   const updateUserInfo = async (data) => {
-    const res = await dispatch(updateUserInfoAPI(data))
+    const res = await dispatch(
+      updateUserInfoAPI({ data, loadingClass: '.btn-user-update-info' })
+    )
     setFieldData(res.payload.data.metadata)
   }
 
   const setFieldData = (userInfo) => {
     reset({
+      user_avatar: userInfo.user_avatar,
       user_email: userInfo.user_email,
       user_name: userInfo.user_name,
       user_phone: userInfo.user_phone,
       user_gender: userInfo.user_gender,
       user_intro: userInfo.user_intro,
-      user_date_of_birth: userInfo.user_date_of_birth
+      user_date_of_birth: formatDateForInput(userInfo.user_date_of_birth)
     })
   }
 
-  const handleSelecteAvatar = async (event) => {
+  const handleUploadFileAvatar = async (event) => {
+    interceptorLoadingElements(true, '.btn-user-upload-avatar')
+    interceptorLoadingElements(true, '.btn-user-update-info')
     const url = await uploadImageToCloudinary(event.target.files[0])
     if (url) setAvatarUrl(url)
 
@@ -91,6 +98,8 @@ function FormInfo() {
       ...currentValue,
       user_avatar: url
     })
+    interceptorLoadingElements(false, '.btn-user-upload-avatar')
+    interceptorLoadingElements(false, '.btn-user-update-info')
   }
 
   return (
@@ -111,6 +120,7 @@ function FormInfo() {
             sx={{ height: '80px', width: '80px' }}
           ></Avatar>
           <Button
+            className="btn-user-upload-avatar"
             component="label"
             role={undefined}
             variant="contained"
@@ -123,7 +133,7 @@ function FormInfo() {
               type="file"
               {...register('user_avatar')}
               onChange={(e) => {
-                handleSelecteAvatar(e)
+                handleUploadFileAvatar(e)
               }}
               multiple
             />
@@ -136,6 +146,7 @@ function FormInfo() {
             {...register('user_email')}
             size="small"
             fullWidth
+            disabled
           ></TextField>
         </BoxCustom>
 
@@ -177,6 +188,8 @@ function FormInfo() {
         <BoxCustom>
           <FormLabelCustom>Intro</FormLabelCustom>
           <TextField
+            multiline
+            rows={3}
             {...register('user_intro')}
             size="small"
             fullWidth
@@ -186,6 +199,7 @@ function FormInfo() {
         <BoxCustom>
           <FormLabelCustom>Date of birth</FormLabelCustom>
           <TextField
+            type="date"
             {...register('user_date_of_birth')}
             size="small"
             fullWidth
@@ -193,6 +207,7 @@ function FormInfo() {
         </BoxCustom>
 
         <Button
+          className="btn-user-update-info"
           type="submit"
           sx={{
             textTransform: 'none',

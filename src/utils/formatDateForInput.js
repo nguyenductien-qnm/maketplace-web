@@ -1,6 +1,5 @@
-const formatDateForInput = (date) => {
-  const d = new Date(date)
-  return d.toISOString().slice(0, 16)
+const formatDateForInput = (isoString) => {
+  return new Date(isoString).toISOString().split('T')[0]
 }
 
 export default formatDateForInput

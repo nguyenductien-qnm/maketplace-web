@@ -49,6 +49,7 @@ const FormSetPassword = forwardRef((props, ref) => {
 
         <Box>
           <TextField
+            type="password"
             {...register('new_password', {
               required: FIELD_REQUIRED_MESSAGE,
               pattern: { value: PASSWORD_RULE, message: PASSWORD_RULE_MESSAGE }
@@ -62,6 +63,7 @@ const FormSetPassword = forwardRef((props, ref) => {
 
         <Box>
           <TextField
+            type="password"
             {...register('confirm_password', {
               required: FIELD_REQUIRED_MESSAGE,
               pattern: { value: PASSWORD_RULE, message: PASSWORD_RULE_MESSAGE },

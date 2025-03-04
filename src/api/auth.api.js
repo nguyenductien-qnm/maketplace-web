@@ -1,12 +1,16 @@
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT } from '~/utils/constants'
 
-export const registerAccountAPI = async (data) => {
-  await authorizedAxios.post(`${API_ROOT}/v1/api/auth/sign-up`, data)
+export const registerAccountAPI = async (data, loadingClass) => {
+  await authorizedAxios.post(`${API_ROOT}/v1/api/auth/sign-up`, data, {
+    loadingClass
+  })
 }
 
-export const forgotPasswordAPI = async (data) => {
-  await authorizedAxios.post(`${API_ROOT}/v1/api/auth/forgot-password`, data)
+export const forgotPasswordAPI = async (data, loadingClass) => {
+  await authorizedAxios.post(`${API_ROOT}/v1/api/auth/forgot-password`, data, {
+    loadingClass
+  })
 }
 
 export const checkTokenResetPasswordAPI = async (data) => {
@@ -16,10 +20,11 @@ export const checkTokenResetPasswordAPI = async (data) => {
   return res
 }
 
-export const resetPasswordAPI = async (data) => {
+export const resetPasswordAPI = async (data, loadingClass) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/auth/reset-password/${data.token}`,
-    data
+    data,
+    { loadingClass }
   )
   return res
 }

@@ -23,7 +23,7 @@ import {
   NUMBER_RULE_MESSAGE
 } from '~/utils/validators'
 import FieldErrorAlert from '~/components/FieldErrorAlert'
-import formatDateForInput from '~/utils/formatDateForInput'
+import formatDateTimeForInput from '~/utils/formatDateTimeForInput'
 
 const VoucherModal = ({
   open,
@@ -75,8 +75,8 @@ const VoucherModal = ({
         voucher_quantity: voucher?.voucher_quantity,
         voucher_min_order_value: voucher?.voucher_min_order_value,
         voucher_applies: voucher?.voucher_applies,
-        voucher_start_date: formatDateForInput(voucher?.voucher_start_date),
-        voucher_end_date: formatDateForInput(voucher?.voucher_end_date)
+        voucher_start_date: formatDateTimeForInput(voucher?.voucher_start_date),
+        voucher_end_date: formatDateTimeForInput(voucher?.voucher_end_date)
       })
     }
   }, [voucher])

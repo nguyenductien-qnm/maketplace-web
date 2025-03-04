@@ -6,10 +6,11 @@ const getUserInfoAPI = async () => {
   return res
 }
 
-const changePasswordAPI = async (data) => {
+const changePasswordAPI = async (data, loadingClass) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/auth/change-password`,
-    data
+    data,
+    { loadingClass }
   )
   return res
 }

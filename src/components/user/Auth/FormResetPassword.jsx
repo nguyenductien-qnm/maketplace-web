@@ -42,7 +42,7 @@ function FormResetPassword({ token }) {
 
   const handleSubmitResetPassword = async (data) => {
     data.token = token
-    const res = await resetPasswordAPI(data)
+    const res = await resetPasswordAPI(data, '.btn-auth-reset-password')
     if (res.status === 404 || res.status === 200) {
       setTimeout(() => {
         navigate('/auth/login')
@@ -71,7 +71,7 @@ function FormResetPassword({ token }) {
         ) : (
           <Box
             sx={{
-              height: '400px',
+              minHeight: '400px',
               width: '500px',
               borderRadius: '10px',
               display: 'flex',
@@ -103,7 +103,7 @@ function FormResetPassword({ token }) {
                   }
                 })}
               />
-              <FieldErrorAlert errors={errors} fieldName={'email'} />
+              <FieldErrorAlert errors={errors} fieldName={'new_password'} />
             </Box>
 
             <Box sx={{ width: '100%' }}>
@@ -119,10 +119,11 @@ function FormResetPassword({ token }) {
                   }
                 })}
               />
-              <FieldErrorAlert errors={errors} fieldName={'password'} />
+              <FieldErrorAlert errors={errors} fieldName={'confirm_password'} />
             </Box>
 
             <Button
+              className="btn-auth-reset-password"
               type="submit"
               fullWidth
               sx={{

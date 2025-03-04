@@ -35,24 +35,94 @@ function App() {
     prevPath.current = location.pathname
   }, [location.pathname, dispatch])
 
+  const ProtectedRoute = ({ children }) => {
+    if (currentUser?.user_status === 'pending_setup') {
+      return <Navigate to="/setup-account" />
+    }
+    return children
+  }
+
   return (
     <Routes>
-      <Route path="/home" element={<Home />} /> {/* Checked */}
-      <Route path="/product/:_id" element={<DetailProduct />} /> {/* Checked */}
-      <Route path="/store" element={<Store />} /> {/* Checked */}
-      <Route path="/cart" element={<ShoppingCart />} /> {/* Checked */}
-      <Route path="/checkout" element={<CheckOut />} />
-      {/* Checked */}
-      <Route path="/my-account/:page" element={<MyAccount />} />
-      <Route path="/auth/:page" element={<Auth />} /> {/* Checked */}
+      {/* HOME  */}
+      <Route
+        path="/home"
+        element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        }
+      />
+      {/* PRODUCT DETAIL  */}
+      <Route
+        path="/product/:_id"
+        element={
+          <ProtectedRoute>
+            <DetailProduct />
+          </ProtectedRoute>
+        }
+      />
+      {/* STORE  */}
+      <Route
+        path="/store"
+        element={
+          <ProtectedRoute>
+            <Store />
+          </ProtectedRoute>
+        }
+      />
+      {/* CART  */}
+      <Route
+        path="/cart"
+        element={
+          <ProtectedRoute>
+            <ShoppingCart />
+          </ProtectedRoute>
+        }
+      />
+      {/* CHECKOUT  */}
+      <Route
+        path="/checkout"
+        element={
+          <ProtectedRoute>
+            <CheckOut />
+          </ProtectedRoute>
+        }
+      />
+      {/* MY ACCOUNT  */}
+      <Route
+        path="/my-account/:page"
+        element={
+          <ProtectedRoute>
+            <MyAccount />
+          </ProtectedRoute>
+        }
+      />
+      {/* AUTH  */}
+      <Route path="/auth/:page" element={<Auth />} />
       <Route path="/auth/reset-password/:token" element={<Auth />} />
       <Route path="/auth/verify-account/:otp" element={<VerifyAccount />} />
-      <Route path="/vendor/:page" element={<Vendor />} /> {/* Checked */}
-      <Route path="/vendor/:page/:_id" element={<Vendor />} /> {/* Checked */}
+      {/* VENDOR  */}
+      <Route
+        path="/vendor/:page"
+        element={
+          <ProtectedRoute>
+            <Vendor />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/vendor/:page/:_id"
+        element={
+          <ProtectedRoute>
+            <Vendor />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/setup-account"
         element={
-          currentUser?.user_status === 'pendingSetup' ? (
+          currentUser?.user_status === 'pending_setup' ? (
             <SetupAccount />
           ) : (
             <Navigate to="/home" />

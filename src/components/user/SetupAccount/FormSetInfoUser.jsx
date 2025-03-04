@@ -57,37 +57,26 @@ const FormSetInfoUser = forwardRef((props, ref) => {
             fullWidth
           />
         </Box>
-
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Gender</InputLabel>
-          <Controller
-            name="user_gender"
-            control={control}
+          <Select
+            label="Gender"
+            labelId="demo-simple-select-label"
+            {...register('user_gender')}
             defaultValue=""
-            render={({ field }) => (
-              <Select {...field} labelId="gender-label" label="Gender">
-                <MenuItem value="Male">Male</MenuItem>
-                <MenuItem value="Female">Female</MenuItem>
-              </Select>
-            )}
-          />
+          >
+            <MenuItem value="Male">Male</MenuItem>
+            <MenuItem value="Female">Female</MenuItem>
+          </Select>
         </FormControl>
 
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Controller
-            name="user_day_of_birth"
-            control={control}
-            defaultValue={null}
-            render={({ field }) => (
-              <DatePicker
-                {...field}
-                label="Day of birth"
-                slotProps={{ textField: { label: 'Day of birth' } }}
-                onChange={(date) => field.onChange(date)}
-              />
-            )}
-          />
-        </LocalizationProvider>
+        <TextField
+          {...register('user_date_of_birth')}
+          type="date"
+          label="Day of birth"
+          fullWidth
+          InputLabelProps={{ shrink: true }}
+        />
       </Box>
     </form>
   )

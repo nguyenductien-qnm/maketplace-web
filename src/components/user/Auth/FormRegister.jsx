@@ -19,7 +19,7 @@ function FormRegister() {
   } = useForm()
 
   const handleSubmitRegister = (data) => {
-    registerAccountAPI(data)
+    registerAccountAPI(data, '.btn-auth-register')
   }
 
   return (
@@ -27,7 +27,7 @@ function FormRegister() {
       <Zoom in={true} style={{ transitionDelay: '200ms' }}>
         <Box
           sx={{
-            height: '400px',
+            minHeight: '400px',
             width: '500px',
             borderRadius: '10px',
             display: 'flex',
@@ -68,6 +68,7 @@ function FormRegister() {
           <Button
             type="submit"
             fullWidth
+            className="btn-auth-register"
             sx={{
               backgroundColor: blue[600],
               fontWeight: '600',

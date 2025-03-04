@@ -25,7 +25,9 @@ function FormLogin() {
   } = useForm()
 
   const handleSubmitLogin = async (data) => {
-    const res = await dispatch(loginAPI(data))
+    const res = await dispatch(
+      loginAPI({ data, loadingClass: '.btn-auth-login' })
+    )
     if (res.payload?.status === 200)
       setTimeout(() => {
         navigate('/home')
@@ -37,7 +39,7 @@ function FormLogin() {
       <Zoom in={true} style={{ transitionDelay: '200ms' }}>
         <Box
           sx={{
-            height: '400px',
+            minHeight: '400px',
             width: '500px',
             borderRadius: '10px',
             display: 'flex',
@@ -46,7 +48,7 @@ function FormLogin() {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#fff',
-            padding: '0 40px'
+            padding: '10px 40px'
           }}
         >
           <Typography sx={{ fontSize: '35px', fontWeight: '600' }}>
@@ -91,6 +93,7 @@ function FormLogin() {
             Forgot password?
           </Link>
           <Button
+            className="btn-auth-login"
             type="submit"
             fullWidth
             sx={{

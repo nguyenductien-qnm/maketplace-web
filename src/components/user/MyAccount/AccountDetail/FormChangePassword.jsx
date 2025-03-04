@@ -29,7 +29,7 @@ function FormChangePassword() {
   } = useForm()
 
   const handleChangePassword = async (data) => {
-    const result = await changePasswordAPI(data)
+    const result = await changePasswordAPI(data, '.btn-user-change-password')
     if (result.status === 200) reset({})
   }
 
@@ -49,6 +49,7 @@ function FormChangePassword() {
             </TypographyCustom>
             <Box>
               <TextField
+                type="password"
                 {...register('password', {
                   required: FIELD_REQUIRED_MESSAGE,
                   pattern: {
@@ -68,6 +69,7 @@ function FormChangePassword() {
               New password (leave blank to leave unchanged)
             </TypographyCustom>
             <TextField
+              type="password"
               {...register('new_password', {
                 required: FIELD_REQUIRED_MESSAGE,
                 pattern: {
@@ -84,6 +86,7 @@ function FormChangePassword() {
           <Box>
             <TypographyCustom>Confirm new password</TypographyCustom>
             <TextField
+              type="password"
               {...register('confirm_password', {
                 required: FIELD_REQUIRED_MESSAGE,
                 pattern: {
@@ -100,6 +103,7 @@ function FormChangePassword() {
             <FieldErrorAlert errors={errors} fieldName="confirm_password" />
           </Box>
           <Button
+            className="btn-user-change-password"
             type="submit"
             sx={{
               textTransform: 'none',

@@ -8,11 +8,12 @@ const initialState = {
 
 export const loginAPI = createAsyncThunk(
   'user/loginAPI',
-  async ({ email, password }) => {
-    const res = await authorizedAxios.post(`${API_ROOT}/v1/api/auth/sign-in`, {
-      email,
-      password
-    })
+  async ({ data, loadingClass }) => {
+    const res = await authorizedAxios.post(
+      `${API_ROOT}/v1/api/auth/sign-in`,
+      data,
+      { loadingClass }
+    )
     return res
   }
 )
@@ -29,10 +30,11 @@ export const verifyAccountAPI = createAsyncThunk(
 
 export const setupAccountAPI = createAsyncThunk(
   'user/setupAccount',
-  async (data) => {
+  async ({ data, loadingClass }) => {
     const res = await authorizedAxios.post(
       `${API_ROOT}/v1/api/user/setup-account`,
-      data
+      data,
+      { loadingClass }
     )
     return res
   }
@@ -40,11 +42,12 @@ export const setupAccountAPI = createAsyncThunk(
 
 export const updateUserInfoAPI = createAsyncThunk(
   'user/updateUserInfoAPI',
-  async (data) => {
+  async ({ data, loadingClass }) => {
     delete data.user_email
     const res = await authorizedAxios.post(
       `${API_ROOT}/v1/api/user/update-info`,
-      data
+      data,
+      { loadingClass }
     )
     return res
   }

@@ -82,7 +82,12 @@ function SetupAccount() {
   }
 
   const finishProgress = async () => {
-    const res = await dispatch(setupAccountAPI(formData))
+    const res = await dispatch(
+      setupAccountAPI({
+        data: formData,
+        loadingClass: '.btn-auth-setup-account'
+      })
+    )
     if (res.payload?.status === 200)
       setTimeout(() => {
         navigate('/home')
@@ -122,7 +127,12 @@ function SetupAccount() {
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
               <Box sx={{ flex: '1 1 auto' }} />
-              <Button onClick={() => finishProgress()}>Confirm</Button>
+              <Button
+                className="btn-auth-setup-account"
+                onClick={() => finishProgress()}
+              >
+                Confirm
+              </Button>
             </Box>
           </Fragment>
         ) : (

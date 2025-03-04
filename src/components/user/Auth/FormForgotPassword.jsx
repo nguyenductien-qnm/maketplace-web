@@ -19,7 +19,7 @@ function FormForgotPassword() {
   } = useForm()
 
   const onSubmitLogin = (data) => {
-    forgotPasswordAPI(data)
+    forgotPasswordAPI(data, '.btn-auth-forgot-password')
   }
 
   return (
@@ -27,7 +27,7 @@ function FormForgotPassword() {
       <Zoom in={true} style={{ transitionDelay: '200ms' }}>
         <Box
           sx={{
-            height: '400px',
+            minHeight: '400px',
             width: '500px',
             borderRadius: '10px',
             display: 'flex',
@@ -59,6 +59,7 @@ function FormForgotPassword() {
           </Box>
 
           <Button
+            className="btn-auth-forgot-password"
             type="submit"
             fullWidth
             sx={{
