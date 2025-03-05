@@ -1,15 +1,11 @@
 const interceptorLoadingElements = (calling, loadingClass) => {
-  if (loadingClass) {
-    const element = document.querySelector(loadingClass)
-    if (element) {
-      if (calling) {
-        element.style.opacity = '0.5'
-        element.style.pointerEvents = 'none'
-      } else {
-        element.style.opacity = 'initial'
-        element.style.pointerEvents = 'initial'
-      }
-    }
-  }
+  const classList = Array.isArray(loadingClass) ? loadingClass : [loadingClass]
+  classList.forEach((cls) => {
+    document.querySelectorAll(cls).forEach((element) => {
+      element.style.opacity = calling ? '0.5' : 'initial'
+      element.style.pointerEvents = calling ? 'none' : 'initial'
+    })
+  })
 }
+
 export default interceptorLoadingElements

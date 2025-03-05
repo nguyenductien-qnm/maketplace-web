@@ -15,10 +15,11 @@ const changePasswordAPI = async (data, loadingClass) => {
   return res
 }
 
-const addNewAddressAPI = async (data) => {
+const addNewAddressAPI = async ({ data, loadingClass }) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/user/add-new-address`,
-    data
+    data,
+    { loadingClass }
   )
   return res
 }
@@ -28,26 +29,29 @@ const getAddressListAPI = async () => {
   return res
 }
 
-const setDefaultAddressAPI = async (data) => {
+const setDefaultAddressAPI = async (data, loadingClass) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/user/set-default-address`,
-    data
+    data,
+    { loadingClass }
   )
   return res
 }
 
-const deleteAddressAPI = async (data) => {
+const deleteAddressAPI = async ({ data, loadingClass }) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/user/delete-address`,
-    data
+    data,
+    { loadingClass }
   )
   return res
 }
 
-const updateAddressAPI = async (data) => {
+const updateAddressAPI = async ({ data, loadingClass }) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/user/update-address`,
-    data
+    data,
+    { loadingClass }
   )
   return res
 }

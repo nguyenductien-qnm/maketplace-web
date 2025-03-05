@@ -22,23 +22,23 @@ function Addresses() {
 
   const handleAddAddress = (data) => {
     if (data.default === true) {
-      let updateAddresList = userAddressList.map((item) => {
+      let updateAddressList = userAddressList.map((item) => {
         return { ...item, default: false }
       })
-      updateAddresList.push(data)
-      setUserAddressList(sortAddressByDefault(updateAddresList))
+      updateAddressList.push(data)
+      setUserAddressList(sortAddressByDefault(updateAddressList))
       return
     }
     setUserAddressList((prevList) => [...prevList, data])
   }
 
   const handleSetDefaultAddress = (_id) => {
-    let updateAddresList = userAddressList.map((item) => ({
+    let updateAddressList = userAddressList.map((item) => ({
       ...item,
       default: item._id === _id
     }))
 
-    setUserAddressList(sortAddressByDefault(updateAddresList))
+    setUserAddressList(sortAddressByDefault(updateAddressList))
   }
 
   const handleUpdateAddress = (data) => {

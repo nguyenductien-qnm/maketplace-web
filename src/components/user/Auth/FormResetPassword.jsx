@@ -92,7 +92,7 @@ function FormResetPassword({ token }) {
                 autoFocus
                 fullWidth
                 label="New password"
-                type="text"
+                type="password"
                 variant="outlined"
                 error={!!errors['new_password']}
                 {...register('new_password', {

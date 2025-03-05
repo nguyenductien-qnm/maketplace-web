@@ -2,12 +2,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import interceptorLoadingElements from './interceptorLoading'
 
-const notToast = [
-  'update-quantity-product-cart',
-  'checkout',
-  'check-url',
-  'verify-account'
-]
+const notToast = ['update-quantity-product-cart', 'checkout', 'check-url']
 
 axios.defaults.withCredentials = true
 

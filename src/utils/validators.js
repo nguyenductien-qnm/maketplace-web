@@ -5,7 +5,7 @@ export const EMAIL_RULE_MESSAGE = 'Email is invalid'
 
 // ==================== password ============================
 export const PASSWORD_RULE =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\W]{8,256}$/
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!.@#$%^&*])(?=.{8,})/
 
 export const PASSWORD_RULE_MESSAGE =
   'Password must include at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long.'

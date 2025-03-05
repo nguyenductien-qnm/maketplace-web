@@ -81,7 +81,13 @@ function AddressModal({
     data.ward = tempAddress?.selectedWard
 
     if (actionType === 'create') {
-      const res = await addNewAddressAPI(data)
+      const res = await addNewAddressAPI({
+        data,
+        loadingClass: [
+          '.btn-user-add-update-address',
+          '.btn-user-address-cancel'
+        ]
+      })
       if (res.status === 201) {
         handleClose()
         handleAddAddress(res.data?.metadata)
@@ -89,7 +95,14 @@ function AddressModal({
       }
     } else if (actionType === 'update') {
       data._id = addressItem?._id
-      const res = await updateAddressAPI(data)
+      const res = await updateAddressAPI({
+        data,
+        loadingClass: [
+          '.btn-user-add-update-address',
+          '.btn-user-delete-address',
+          '.btn-user-address-cancel'
+        ]
+      })
       if (res.status === 200) {
         handleClose()
         handleUpdateAddress(res.data?.metadata)
@@ -98,8 +111,15 @@ function AddressModal({
     }
   }
 
-  const deleteAddress = async (data) => {
-    const res = await deleteAddressAPI({ _id: data })
+  const deleteAddress = async (_id) => {
+    const res = await deleteAddressAPI({
+      data: { _id },
+      loadingClass: [
+        '.btn-user-add-update-address',
+        '.btn-user-delete-address',
+        '.btn-user-address-cancel'
+      ]
+    })
     if (res.status === 200) {
       handleClose()
       reset()
@@ -249,6 +269,7 @@ function AddressModal({
               }}
             >
               <Button
+                className="btn-user-address-cancel"
                 onClick={() => handleClose()}
                 sx={{
                   backgroundColor: grey[200],
@@ -261,6 +282,7 @@ function AddressModal({
 
               {actionType === 'update' && (
                 <Button
+                  className="btn-user-delete-address"
                   onClick={() => deleteAddress(addressItem._id)}
                   sx={{
                     backgroundColor: red[500],
@@ -273,6 +295,7 @@ function AddressModal({
               )}
 
               <Button
+                className="btn-user-add-update-address"
                 type="submit"
                 sx={{
                   backgroundColor: blue[600],

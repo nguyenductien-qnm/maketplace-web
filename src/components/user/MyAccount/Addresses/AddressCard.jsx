@@ -11,7 +11,10 @@ function AddressCard({
   handleUpdateAddress
 }) {
   const setDefaultAddress = async (data) => {
-    const res = await setDefaultAddressAPI(data)
+    const res = await setDefaultAddressAPI(
+      data,
+      '.btn-user-set-default-address'
+    )
     if (res.status === 200) {
       handleSetDefaultAddress(data._id)
     }
@@ -69,6 +72,7 @@ function AddressCard({
         />
         {!addressItem?.default && (
           <Button
+            className="btn-user-set-default-address"
             onClick={() => {
               setDefaultAddress(addressItem)
             }}
