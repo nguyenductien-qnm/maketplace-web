@@ -6,8 +6,6 @@ import { useSelector } from 'react-redux'
 
 function DashBoard() {
   const userRole = useSelector((state) => state.user.currentUser.user_role)
-  console.log(userRole)
-  console.log(userRole)
   return (
     <Box>
       <AccountOverview />

@@ -1,8 +1,7 @@
 import { Box, Button, TextField, Typography } from '@mui/material'
 import { blue } from '@mui/material/colors'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { getUserInfoAPI } from '~/api/user.api'
 import FormAddress from '~/components/FormAddress'
 import TypographyLabel from '../../Common/TypographyLabel'
 import generateURL from '~/utils/generateURL'
@@ -38,7 +37,7 @@ function AccountMigration() {
     getValues
   } = useForm()
 
-  const [unavaibleShopName, setUnavaibleShopName] = useState(false)
+  const [availableShopSlug, setAvailableShopSlug] = useState(true)
 
   const [tempAddress, setTempAddress] = useState({
     selectedProvince: {},
@@ -51,39 +50,21 @@ function AccountMigration() {
   }
 
   const handleChangeShopName = async (e) => {
-    if (!e.target.value) {
-      reset({
-        shop_slug: ''
-      })
-    } else {
-      const shopSlug = generateURL(e.target.value)
-      reset({
-        shop_slug: shopSlug
-      })
-      try {
-        const res = await checkShopURLAPI({ shop_slug: getValues('shop_slug') })
-        if (res) {
-          clearErrors('shop_slug')
-          setUnavaibleShopName(false)
-        }
-      } catch (error) {
-        setError('shop_name', {
-          type: 'manual',
-          message: error?.response?.data?.message || 'This name is unavaiable.'
-        })
-        setError('shop_slug', {
-          type: 'manual',
-          message:
-            error?.response?.data?.message || 'This URL is already taken.'
-        })
-        setUnavaibleShopName(true)
-      }
+    const shopName = e.target.value.trim()
+
+    if (!shopName) {
+      setValue('shop_slug', '')
+      return
     }
+
+    const shopSlug = generateURL(shopName)
+    setValue('shop_slug', shopSlug)
+    await checkShopURL()
   }
 
-  const hanldeAccountMigration = async (data) => {
-    if (unavaibleShopName) {
-      toast.error('This shop name is unavaible.')
+  const handleAccountMigration = async (data) => {
+    if (!availableShopSlug) {
+      toast.error('This shop name is available.')
       return
     }
 
@@ -96,6 +77,24 @@ function AccountMigration() {
       setTimeout(() => {
         navigate('/my-account/dashboard')
       }, 500)
+    }
+  }
+
+  const checkShopURL = async () => {
+    try {
+      const currentSlug = getValues('shop_slug')
+      if (!currentSlug) return
+      const res = await checkShopURLAPI({ shop_slug: currentSlug })
+      if (res) {
+        clearErrors(['shop_slug'])
+        setAvailableShopSlug(true)
+      }
+    } catch (error) {
+      setError('shop_slug', {
+        type: 'manual',
+        message: 'This URL is already taken.'
+      })
+      setAvailableShopSlug(false)
     }
   }
 
@@ -113,7 +112,7 @@ function AccountMigration() {
           gap: '15px',
           marginTop: '30px'
         }}
-        onSubmit={handleSubmit(hanldeAccountMigration)}
+        onSubmit={handleSubmit(handleAccountMigration)}
       >
         <Box>
           <TypographyLabel>Shop email</TypographyLabel>
@@ -179,8 +178,8 @@ function AccountMigration() {
             })}
             helperText={errors['shop_slug']?.message || ''}
             error={!!errors['shop_slug']}
-            InputProps={{
-              readOnly: true
+            onBlur={(e) => {
+              checkShopURL()
             }}
           />
         </Box>

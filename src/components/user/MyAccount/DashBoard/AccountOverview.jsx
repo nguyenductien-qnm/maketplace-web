@@ -11,13 +11,21 @@ function AccountOverview() {
   })
   return (
     <Box sx={{ marginBottom: '50px' }}>
-      <Typography sx={{ fontSize: '14px', display: 'flex' }}>
+      <Typography
+        sx={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}
+      >
         Hello
-        <Typography sx={{ fontWeight: '600', fontSize: '14px', mx: '4px' }}>
+        <Typography
+          component="span"
+          sx={{ fontWeight: '600', fontSize: '14px', mx: '4px' }}
+        >
           ndtien317@gmail.com
         </Typography>
         (not
-        <Typography sx={{ fontWeight: '600', fontSize: '14px', mx: '4px' }}>
+        <Typography
+          component="span"
+          sx={{ fontWeight: '600', fontSize: '14px', mx: '4px' }}
+        >
           ndtien317@gmail.com?
         </Typography>
         <CustomLink>Log out</CustomLink>)

@@ -123,7 +123,7 @@ function AddressModal({
     if (res.status === 200) {
       handleClose()
       reset()
-      handleDeleteAddress(data)
+      handleDeleteAddress(_id)
     }
   }
 

@@ -32,7 +32,7 @@ export const setupAccountAPI = createAsyncThunk(
   'user/setupAccount',
   async ({ data, loadingClass }) => {
     const res = await authorizedAxios.post(
-      `${API_ROOT}/v1/api/user/setup-account`,
+      `${API_ROOT}/v1/api/auth/setup-account`,
       data,
       { loadingClass }
     )

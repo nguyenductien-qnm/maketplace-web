@@ -5,17 +5,20 @@ import { useEffect, useState } from 'react'
 import { getAddressListAPI } from '~/api/user.api'
 import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 import CircularIndeterminate from '~/components/CircularIndeterminate'
+import EmptyAddress from './EmptyAddress'
 function Addresses() {
-  const [userAddressList, setUserAddressList] = useState([])
+  const [userAddressList, setUserAddressList] = useState()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const getAndSetAddressList = async () => {
-      const res = await getAddressListAPI()
-      let data = res.data?.metadata
-      data = sortAddressByDefault(data)
-      setUserAddressList(data)
-      setLoading(false)
+      await getAddressListAPI()
+        .then((res) => {
+          let data = res.data?.metadata
+          data = sortAddressByDefault(data)
+          setUserAddressList(data)
+        })
+        .finally(setLoading(false))
     }
     getAndSetAddressList()
   }, [])
@@ -55,6 +58,27 @@ function Addresses() {
     })
   }
 
+  const AddressPanel = () => (
+    <Box>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '20px'
+        }}
+      >
+        <Typography sx={{ fontSize: '20px' }}>My Addresses</Typography>
+        <AddressModal
+          handleAddAddress={handleAddAddress}
+          actionType="create"
+          address={null}
+        />
+      </Box>
+      <Divider />
+    </Box>
+  )
+
   return (
     <Box
       sx={{
@@ -62,43 +86,31 @@ function Addresses() {
         justifyContent: 'center'
       }}
     >
-      {loading ? (
-        <CircularIndeterminate />
-      ) : (
+      {loading && <CircularIndeterminate />}
+      {!loading && userAddressList?.length === 0 && (
         <Box>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '20px'
-            }}
-          >
-            <Typography sx={{ fontSize: '20px' }}>My Addresses</Typography>
-            <AddressModal
-              handleAddAddress={handleAddAddress}
-              actionType="create"
-              address={null}
-            />
-          </Box>
-          <Divider />
-          <Box>
-            {userAddressList &&
-              userAddressList.map((item, index) => (
-                <Box key={index}>
-                  <AddressCard
-                    addressItem={item}
-                    handleSetDefaultAddress={handleSetDefaultAddress}
-                    handleDeleteAddress={handleDeleteAddress}
-                    handleUpdateAddress={handleUpdateAddress}
-                  />
-                  <Divider />
-                </Box>
-              ))}
-          </Box>
+          <AddressPanel />
+          <EmptyAddress />
+        </Box>
+      )}
+      {!loading && userAddressList?.length > 0 && (
+        <Box>
+          <AddressPanel />
+          {userAddressList.map((item, index) => (
+            <Box key={index}>
+              <AddressCard
+                addressItem={item}
+                handleSetDefaultAddress={handleSetDefaultAddress}
+                handleDeleteAddress={handleDeleteAddress}
+                handleUpdateAddress={handleUpdateAddress}
+              />
+              <Divider />
+            </Box>
+          ))}
         </Box>
       )}
     </Box>
   )
 }
+
 export default Addresses
