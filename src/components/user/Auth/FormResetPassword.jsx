@@ -28,14 +28,17 @@ function FormResetPassword({ token }) {
 
   useEffect(() => {
     const handleCheckToken = async () => {
-      const result = await checkTokenResetPasswordAPI({ token })
-      if (result.status !== 200) {
-        setTimeout(() => {
-          navigate('/auth/login')
-        }, 1000)
-      } else {
-        setStateVerify(true)
-      }
+      await checkTokenResetPasswordAPI({ token })
+        .then((res) => {
+          if (res.status === 200) {
+            setStateVerify(true)
+          }
+        })
+        .catch(() => {
+          setTimeout(() => {
+            navigate('/auth/login')
+          }, 1000)
+        })
     }
     handleCheckToken()
   }, [token])

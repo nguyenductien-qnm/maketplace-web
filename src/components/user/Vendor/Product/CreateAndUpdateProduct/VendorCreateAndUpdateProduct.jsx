@@ -32,9 +32,9 @@ function VendorCreateProduct() {
 
   const handleActionProduct = async () => {
     if (page === 'create-product') {
-      await dispatch(createProductAPI())
+      await dispatch(createProductAPI('.btn-shop-create-product'))
     } else if (page === 'update-product') {
-      await dispatch(updateProductAPI(_id))
+      await dispatch(updateProductAPI(_id, '.btn-shop-create-product'))
     }
   }
 
@@ -83,6 +83,7 @@ function VendorCreateProduct() {
               <InputDescription isLoading={isLoading} />
               {/* <ButtonCreateProduct /> */}
               <Button
+                className="btn-shop-create-product"
                 type="submit"
                 fullWidth
                 sx={{

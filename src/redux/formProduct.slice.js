@@ -38,7 +38,7 @@ export const uploadImage = createAsyncThunk(
 
 export const createProductAPI = createAsyncThunk(
   'formProduct/createProductAPI',
-  async (_, { getState }) => {
+  async (_, { getState }, loadingClass) => {
     const state = getState()
     const productData = { ...state.formProduct }
     if (productData.isMultiVariation) {
@@ -58,8 +58,9 @@ export const createProductAPI = createAsyncThunk(
       delete productData.product_sku
     }
     const res = await authorizedAxios.post(
-      `${API_ROOT}/v1/api/productSPU/create`,
-      productData
+      `${API_ROOT}/v1/api/product/create`,
+      productData,
+      { loadingClass }
     )
     return res
   }
@@ -69,7 +70,7 @@ export const getProductByIdAPI = createAsyncThunk(
   'formProduct/getProductByIdAPI',
   async (_id) => {
     const res = await authorizedAxios.post(
-      `${API_ROOT}/v1/api/productSPU/get-product-by-id`,
+      `${API_ROOT}/v1/api/product/get-product-by-id`,
       { _id }
     )
     return res
@@ -78,7 +79,7 @@ export const getProductByIdAPI = createAsyncThunk(
 
 export const updateProductAPI = createAsyncThunk(
   'formProduct/updateProductAPI',
-  async (_id, { getState }) => {
+  async (_id, { getState }, loadingClass) => {
     const state = getState()
     const user = state.user.currentUser
     const productData = {
@@ -87,8 +88,9 @@ export const updateProductAPI = createAsyncThunk(
     }
     productData._id = _id
     const res = await authorizedAxios.post(
-      `${API_ROOT}/v1/api/productSPU/update`,
-      productData
+      `${API_ROOT}/v1/api/product/update`,
+      productData,
+      { loadingClass }
     )
     return res
   }
@@ -187,7 +189,7 @@ export const formProductSlice = createSlice({
       state.product_gallery.splice(index, 1)
     },
 
-    hanldeSelectedCategories: (state, action) => {
+    handleSelectedCategories: (state, action) => {
       state.product_categories = action.payload
     },
 
@@ -247,14 +249,10 @@ export const formProductSlice = createSlice({
                 const i = skuItem?.sku_tier_indices[index]
                 skuItem[`${classificationName}`] = classification?.options[i]
               }
-              skuItem.price = skuItem.sku_price
-              skuItem.stock = skuItem.sku_stock
+              skuItem.price = skuItem.product_price
+              skuItem.stock = skuItem.product_stock
             })
-            // delete skuItem.sku_price
-            // delete skuItem.sku_stock
-            // delete skuItem.sku_tier_indices
           })
-
           const product_classifications = data.product_classifications.map(
             (e) => e.name
           )
@@ -283,7 +281,7 @@ export const {
   handleChangeOptionValue,
   handleDeleteThumb,
   handleDeleteGallery,
-  hanldeSelectedCategories,
+  handleSelectedCategories,
   handleChangeProductDescription,
   handleChangeProductStatus,
   handleChangeProductLength,

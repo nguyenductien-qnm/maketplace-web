@@ -88,7 +88,7 @@ export const userSlice = createSlice({
       })
 
       .addCase(accountMigrationAPI.fulfilled, (state) => {
-        state.currentUser.user_role.push('shop')
+        state.currentUser.user_role.push('SHOP')
       })
   }
 })

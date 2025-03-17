@@ -9,7 +9,7 @@ function DashBoard() {
   return (
     <Box>
       <AccountOverview />
-      {userRole?.includes('shop') ? (
+      {userRole?.includes('SHOP') ? (
         <VendorDashboardButton />
       ) : (
         <VendorSignupCard />

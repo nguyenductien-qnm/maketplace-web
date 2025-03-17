@@ -10,7 +10,6 @@ import { setupAccountAPI } from '~/redux/user.slice'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Fragment, useRef, useState } from 'react'
-import dayjs from 'dayjs'
 const steps = ['CHANGE YOUR PASSWORD', 'INFORMATION USER']
 
 function SetupAccount() {
@@ -63,17 +62,13 @@ function SetupAccount() {
   }
 
   const handleSubmitInfo = async (data) => {
-    const convertedData = {
-      ...data,
-      user_date_of_birth: dayjs(data.user_date_of_birth).format('MM/DD/YYYY')
-    }
-    console.log(data)
+
     await new Promise((resolve) => {
       setFormData((prevData) => {
         resolve()
         return {
           ...prevData,
-          userInfo: convertedData
+          userInfo: data
         }
       })
     })

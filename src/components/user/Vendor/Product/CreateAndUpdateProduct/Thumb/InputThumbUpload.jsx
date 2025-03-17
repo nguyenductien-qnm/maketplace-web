@@ -6,7 +6,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { useDispatch } from 'react-redux'
 import { uploadImage } from '~/redux/formProduct.slice'
 import { useFormContext } from 'react-hook-form'
-import FieldErrorAlert from '~/components/FieldErrorAlert'
+import interceptorLoadingElements from '~/utils/interceptorLoading'
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -25,15 +25,24 @@ export default function InputThumbUpload() {
   const { register, setValue, clearErrors } = useFormContext()
 
   const handleChange = async (e) => {
+    interceptorLoadingElements(true, [
+      '.btn-shop-upload-product-thumb',
+      '.btn-shop-create-product'
+    ])
     const res = await dispatch(
       uploadImage({ file: e.target.files[0], type: 'thumb' })
     )
     setValue('product_thumb', res.payload.url)
     clearErrors('product_thumb')
+    interceptorLoadingElements(false, [
+      '.btn-shop-upload-product-thumb',
+      '.btn-shop-create-product'
+    ])
   }
 
   return (
     <Button
+      className="btn-shop-upload-product-thumb"
       component="label"
       role={undefined}
       variant="contained"

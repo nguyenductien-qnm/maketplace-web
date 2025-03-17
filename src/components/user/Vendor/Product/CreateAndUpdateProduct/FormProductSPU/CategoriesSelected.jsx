@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import TypographyLabel from '~/components/user/Common/TypographyLabel'
 import { useFormContext } from 'react-hook-form'
 import FieldErrorAlert from '~/components/FieldErrorAlert'
-import { hanldeSelectedCategories } from '~/redux/formProduct.slice'
+import { handleSelectedCategories } from '~/redux/formProduct.slice'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import SkeletonLoaderInput from '~/components/SkeletonLoaderInput'
 
@@ -25,7 +25,7 @@ function CategoriesSelected({ isLoading }) {
   const handleChange = (e) => {
     const value = e.target.value
     setValue('product_categories', value)
-    dispatch(hanldeSelectedCategories(value))
+    dispatch(handleSelectedCategories(value))
   }
 
   const input = (
@@ -44,10 +44,12 @@ function CategoriesSelected({ isLoading }) {
         input={<OutlinedInput />}
         renderValue={(selected) => (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-            {selected.map((id) => {
-              const category = categories.find((c) => c._id === id)
+            {selected.map((category_code) => {
+              const category = categories.find(
+                (c) => c.category_code === category_code
+              )
               return category ? (
-                <Chip key={id} label={category.category_name} />
+                <Chip key={category_code} label={category.category_name} />
               ) : null
             })}
           </Box>
@@ -55,7 +57,10 @@ function CategoriesSelected({ isLoading }) {
       >
         {categories.length > 0 &&
           categories.map((category) => (
-            <MenuItem key={category._id} value={category._id}>
+            <MenuItem
+              key={category.category_code}
+              value={category.category_code}
+            >
               {category.category_name}
             </MenuItem>
           ))}

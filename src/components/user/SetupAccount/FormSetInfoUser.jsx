@@ -11,11 +11,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import Logo from '~/layouts/user/Header/Logo'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { forwardRef, useImperativeHandle } from 'react'
 
 const FormSetInfoUser = forwardRef((props, ref) => {
-  const { register, handleSubmit, control } = useForm()
+  const { register, handleSubmit } = useForm()
 
   const onSubmit = (data) => {
     props.handleSubmitInfo(data)

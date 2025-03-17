@@ -4,6 +4,7 @@ import Button from '@mui/material/Button'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { useDispatch } from 'react-redux'
 import { uploadImage } from '~/redux/formProduct.slice'
+import interceptorLoadingElements from '~/utils/interceptorLoading'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -19,21 +20,33 @@ const VisuallyHiddenInput = styled('input')({
 
 export default function InputGalleryUpload() {
   const dispatch = useDispatch()
+
+  const handleChange = async (e) => {
+    interceptorLoadingElements(true, [
+      '.btn-shop-upload-product-gallery',
+      '.btn-shop-create-product'
+    ])
+    await dispatch(uploadImage({ file: e.target.files[0], type: 'gallery' }))
+    interceptorLoadingElements(false, [
+      '.btn-shop-upload-product-gallery',
+      '.btn-shop-create-product'
+    ])
+  }
+
   return (
     <Button
+      className="btn-shop-upload-product-gallery"
       component="label"
       role={undefined}
       variant="contained"
       tabIndex={-1}
       startIcon={<CloudUploadIcon />}
     >
-      Upload Thumb
+      Upload Gallery
       <VisuallyHiddenInput
         type="file"
         webkitdirectory="true"
-        onChange={(e) =>
-          dispatch(uploadImage({ file: e.target.files[0], type: 'gallery' }))
-        }
+        onChange={handleChange}
         multiple
       />
     </Button>

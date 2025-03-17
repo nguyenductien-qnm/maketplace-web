@@ -111,12 +111,14 @@ function ShoppingCart() {
       navigate(res.data?.metadata?.checkoutUrl)
     } else {
       handleOpenModal('Notification', res.message)
+      const productNeedUpdate = res?.metadata?.updatedProduct
       setProducts((prevProducts) =>
-        prevProducts.map((p) =>
-          p.product_id === res?.metadata?.updatedProduct.product_id
-            ? res?.metadata.updatedProduct
-            : p
-        )
+        prevProducts.map((p) => {
+          const updatedProduct = productNeedUpdate.find(
+            (upd) => upd.product_id === p.product_id
+          )
+          return updatedProduct ? updatedProduct : p
+        })
       )
     }
   }

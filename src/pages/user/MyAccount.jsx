@@ -28,7 +28,7 @@ function MyAccount() {
           {page === 'account-details' && <AccountDetail />}
           {page === 'addresses' && <Addresses />}
           {page === 'account-migration' ? (
-            !user?.user_role?.includes('shop') ? (
+            !user?.user_role?.includes('SHOP') ? (
               <AccountMigration />
             ) : (
               <Navigate to="/my-account/dashboard" />

@@ -42,8 +42,8 @@ export default function InputStatusProduct({ isLoading }) {
         fullWidth
         size="small"
       >
-        <MenuItem value={'Draft'}>Draft</MenuItem>
-        <MenuItem value={'Publish'}>Publish</MenuItem>
+        <MenuItem value={'draft'}>Draft</MenuItem>
+        <MenuItem value={'publish'}>Publish</MenuItem>
       </Select>
       <FieldErrorAlert errors={errors} fieldName="product_status" />
     </Box>
