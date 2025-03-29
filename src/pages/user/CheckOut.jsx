@@ -13,7 +13,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 import { checkoutAPI } from '~/api/cart.api'
-import NotificationModal from '~/components/NotificationModal'
+import NotificationModal from '~/components/common/NotificationModal'
 import { placeOrderAPI } from '~/api/order.api'
 
 function CheckOut() {

@@ -1,4 +1,4 @@
-import CircularIndeterminate from '~/components/CircularIndeterminate'
+import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import EmptyOrder from './EmptyOrder'
 import TabOrder from './TabOrder/TabOrder'
 import { useEffect, useState } from 'react'

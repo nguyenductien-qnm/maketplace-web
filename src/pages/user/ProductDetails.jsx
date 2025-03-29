@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import ProductRelated from '~/components/user/ProductDetail/Review/ProductRelated'
 import { useParams } from 'react-router-dom'
 import { getProductByIdAPIForClient } from '~/api/product.api'
-import CustomBreadcrumbs from '~/components/CustomBreadcrumbs'
+import CustomBreadcrumbs from '~/components/common/CustomBreadcrumbs'
 
 function ProductDetails() {
   const UnderLine = styled(Box)({

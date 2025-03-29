@@ -2,7 +2,7 @@ import { Box, Button, TextField, Typography } from '@mui/material'
 import { blue } from '@mui/material/colors'
 import Zoom from '@mui/material/Zoom'
 import { useForm } from 'react-hook-form'
-import FieldErrorAlert from '~/components/FieldErrorAlert'
+import FieldErrorAlert from '~/components/common/FieldErrorAlert'
 import {
   FIELD_REQUIRED_MESSAGE,
   EMAIL_RULE,

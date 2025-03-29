@@ -9,7 +9,6 @@ import { PersistGate } from 'redux-persist/integration/react'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 
-
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <Provider store={store}>
@@ -25,7 +24,7 @@ createRoot(document.getElementById('root')).render(
         <CssBaseline />
         <App />
         <ToastContainer
-          position="top-right"
+          position="top-center"
           autoClose={5000}
           hideProgressBar={false}
           newestOnTop={true}

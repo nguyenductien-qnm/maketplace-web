@@ -3,7 +3,7 @@ import Button from '@mui/material/Button'
 import { Box, FormControl, FormLabel, styled, Typography } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import { useForm } from 'react-hook-form'
-import FieldErrorAlert from '~/components/FieldErrorAlert'
+import FieldErrorAlert from '~/components/common/FieldErrorAlert'
 import {
   FIELD_REQUIRED_MESSAGE,
   PASSWORD_RULE,

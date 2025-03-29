@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from '@mui/material'
-import DividerVertical from '../../Common/DividerVertical'
+import DividerVertical from '../../../common/DividerVertical'
 import { blue, grey } from '@mui/material/colors'
 import { setDefaultAddressAPI } from '~/api/user.api'
 import AddressModal from './AddressModal'

@@ -7,7 +7,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { blue, grey, red } from '@mui/material/colors'
 import { FormControlLabel, TextField } from '@mui/material'
 import Checkbox from '@mui/material/Checkbox'
-import TypographyLabel from '../../Common/TypographyLabel'
+import TypographyLabel from '../../../common/TypographyLabel'
 
 import FormAddress from '~/components/FormAddress'
 import { useForm } from 'react-hook-form'
@@ -17,7 +17,7 @@ import {
   updateAddressAPI,
   deleteAddressAPI
 } from '~/api/user.api'
-import FieldErrorAlert from '~/components/FieldErrorAlert'
+import FieldErrorAlert from '~/components/common/FieldErrorAlert'
 import {
   FIELD_REQUIRED_MESSAGE,
   NAME_RULE,

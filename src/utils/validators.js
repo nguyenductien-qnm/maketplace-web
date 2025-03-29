@@ -13,7 +13,7 @@ export const PASSWORD_CONFIRMATION_MESSAGE =
   'Password confirmation does not match!'
 
 // ==================== name ============================
-export const NAME_RULE = /^[a-zA-ZÀ-ỹ\s]{3,50}$/
+export const NAME_RULE = /^[a-zA-ZÀ-ỹ0-9\s.,()\-]{3,255}$/
 export const NAME_RULE_MESSAGE = 'Invalid name'
 
 // ==================== phone ============================

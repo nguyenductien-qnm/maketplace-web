@@ -83,7 +83,9 @@ function FormInfo() {
       user_phone: userInfo.user_phone,
       user_gender: userInfo.user_gender,
       user_intro: userInfo.user_intro,
-      user_date_of_birth: formatDateForInput(userInfo.user_date_of_birth)
+      user_date_of_birth:
+        userInfo.user_date_of_birth &&
+        formatDateForInput(userInfo.user_date_of_birth)
     })
   }
 

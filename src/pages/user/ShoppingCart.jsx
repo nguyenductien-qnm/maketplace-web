@@ -12,7 +12,7 @@ import {
   removeProductAPI,
   updateQuantityProductCartAPI
 } from '~/api/cart.api'
-import NotificationModal from '~/components/NotificationModal'
+import NotificationModal from '~/components/common/NotificationModal'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 function ShoppingCart() {

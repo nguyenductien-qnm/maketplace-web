@@ -6,7 +6,7 @@ import {
   FIELD_REQUIRED_MESSAGE
 } from '~/utils/validators'
 import Logo from '~/layouts/user/Header/Logo'
-import FieldErrorAlert from '~/components/FieldErrorAlert'
+import FieldErrorAlert from '~/components/common/FieldErrorAlert'
 import { forwardRef, useImperativeHandle } from 'react'
 import { useForm } from 'react-hook-form'
 

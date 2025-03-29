@@ -4,7 +4,7 @@ import AddressModal from './AddressModal'
 import { useEffect, useState } from 'react'
 import { getAddressListAPI } from '~/api/user.api'
 import sortAddressByDefault from '~/helpers/sortAddressByDefault'
-import CircularIndeterminate from '~/components/CircularIndeterminate'
+import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import EmptyAddress from './EmptyAddress'
 function Addresses() {
   const [userAddressList, setUserAddressList] = useState()

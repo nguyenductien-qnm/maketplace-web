@@ -7,33 +7,15 @@ import Auth from './pages/user/Auth'
 import Vendor from './pages/user/Vendor'
 import SetupAccount from './pages/user/SetupAccount'
 import VerifyAccount from './pages/user/VerifyAccount'
-import PrivateRoute from './components/PrivateRoute'
+import PrivateRoute from './components/common/PrivateRoute'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import CheckOut from './pages/user/CheckOut'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import { useEffect, useRef } from 'react'
-import { resetProductState } from './redux/formProduct.slice'
 
 function App() {
   const currentUser = useSelector((state) => state.user.currentUser)
-  const dispatch = useDispatch()
-  const location = useLocation()
-  const prevPath = useRef(location.pathname)
-
-  useEffect(() => {
-    if (
-      (prevPath.current.includes('/create-product') ||
-        prevPath.current.includes('/update-product')) &&
-      !location.pathname.includes('/create-product') &&
-      !location.pathname.includes('/update-product')
-    ) {
-      dispatch(resetProductState())
-    }
-
-    prevPath.current = location.pathname
-  }, [location.pathname, dispatch])
 
   const ProtectedRoute = ({ children }) => {
     if (currentUser?.user_status === 'pending_setup') {

@@ -5,7 +5,7 @@ import SearchBar from '~/components/user/Store/SearchBar'
 import SortDropdown from '~/components/user/Store/SortDropdown '
 import { Box, Divider } from '@mui/material'
 import StoreProductCategory from '~/components/user/Store/StoreProductCategory'
-import Product from '~/components/user/Common/Product'
+import Product from '~/components/common/Product'
 function Store() {
   return (
     <UserLayout>

@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from '@mui/material'
-import Product from '../../Common/Product'
+import Product from '../../../common/Product'
 import Grid from '@mui/material/Grid2'
 import { blue } from '@mui/material/colors'
 

@@ -1,7 +1,7 @@
 import { Box, Button, TextField, Typography } from '@mui/material'
 import { blue } from '@mui/material/colors'
 import Zoom from '@mui/material/Zoom'
-import FieldErrorAlert from '~/components/FieldErrorAlert'
+import FieldErrorAlert from '~/components/common/FieldErrorAlert'
 import { registerAccountAPI } from '~/api/auth.api'
 import {
   FIELD_REQUIRED_MESSAGE,
