@@ -1,5 +1,5 @@
 import { Box, TableCell, TableRow, Typography } from '@mui/material'
-import formatDate from '~/utils/formatDate.js'
+import { formatDate } from '~/utils/formatDate'
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
 import { green, red } from '@mui/material/colors'

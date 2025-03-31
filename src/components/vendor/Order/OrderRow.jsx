@@ -1,5 +1,5 @@
 import { Button, Checkbox, TableCell, TableRow } from '@mui/material'
-import formatDate from '~/utils/formatDate.js'
+import { formatDate } from '~/utils/formatDate'
 import { green, red } from '@mui/material/colors'
 import { useNavigate } from 'react-router-dom'
 import formatCodeOrder from '~/utils/formatCodeOrder'

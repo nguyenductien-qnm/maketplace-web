@@ -6,7 +6,7 @@ import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
 import { useNavigate } from 'react-router-dom'
 import { blue, grey } from '@mui/material/colors'
 import formatCurrency from '~/utils/formatCurrency'
-import formatDate from '~/utils/formatDate'
+import { formatDate } from '~/utils/formatDate'
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js'
 
 function OrderDetail({ _id }) {

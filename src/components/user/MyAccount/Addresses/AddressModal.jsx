@@ -9,7 +9,7 @@ import { FormControlLabel, TextField } from '@mui/material'
 import Checkbox from '@mui/material/Checkbox'
 import TypographyLabel from '../../../common/TypographyLabel'
 
-import FormAddress from '~/components/FormAddress'
+import FormAddress from '~/components/common/FormAddress'
 import { useForm } from 'react-hook-form'
 
 import {

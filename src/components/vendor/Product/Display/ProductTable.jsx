@@ -27,8 +27,6 @@ function ProductTable({ status }) {
       try {
         const res = await queryProductByOwnerAPI({ status })
         setProducts(res?.data?.metadata || [])
-      } catch (error) {
-        console.error('Error fetching products:', error)
       } finally {
         setLoading(false)
       }
@@ -103,7 +101,7 @@ function ProductTable({ status }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => (
+            {products?.map((product) => (
               <ProductRow
                 key={product._id}
                 productItem={product}

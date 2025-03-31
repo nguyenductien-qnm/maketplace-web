@@ -5,9 +5,9 @@ import {
   apiGetProvinces,
   apiGetWards
 } from '~/helpers/getAddress'
-import TypographyLabel from './user/Common/TypographyLabel'
+import TypographyLabel from './TypographyLabel'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
-import FieldErrorAlert from './common/FieldErrorAlert'
+import FieldErrorAlert from './FieldErrorAlert'
 
 function FormAddress({
   register,

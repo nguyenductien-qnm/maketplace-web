@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getOrderDetailAPI, updateOrderStatusByOwnerAPI } from '~/api/order.api'
 import { grey, blue, red } from '@mui/material/colors'
-import formatDate from '~/utils/formatDate'
+import { formatDate } from '~/utils/formatDate'
 import formatCurrency from '~/utils/formatCurrency'
 
 function OrderDetail({ _id }) {

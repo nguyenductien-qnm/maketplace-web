@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Dialog,
   DialogTitle,
@@ -11,7 +11,8 @@ import {
   Select,
   MenuItem,
   Button,
-  Paper
+  Paper,
+  Divider
 } from '@mui/material'
 import { queryProductByOwnerAPI } from '~/api/productSPU.api'
 import SearchInput from '~/components/common/SearchInput'
@@ -23,15 +24,16 @@ import {
   NUMBER_RULE_MESSAGE
 } from '~/utils/validators'
 import FieldErrorAlert from '~/components/common/FieldErrorAlert'
-import formatDateTimeForInput from '~/utils/formatDateTimeForInput'
+import ProductEmpty from '../Product/Display/ProductEmpty'
+import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 
 const VoucherModal = ({
   open,
   handleClose,
   action,
   voucher,
-  shopCreateVoucher,
-  shopUpdateVoucher
+  handleCreateVoucher,
+  handleUpdateVoucher
 }) => {
   const {
     register,
@@ -40,26 +42,25 @@ const VoucherModal = ({
     watch,
     reset
   } = useForm({
-    defaultValues: {
-      voucher_applies: 'ALL',
-      voucher_type: 'fixed_amount'
-    }
+    shouldUnregister: true
   })
 
   let voucherApplies = watch('voucher_applies')
 
-  const [product, setProduct] = useState()
+  const [product, setProduct] = useState([])
+  const [searchValue, setSearchValue] = useState('')
   const [selectProduct, setSelectProduct] = useState([])
-
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     const getProduct = async () => {
-      if (voucherApplies === 'SPECIFIC') {
-        const res = await queryProductByOwnerAPI({ status: 'PUBLIC' })
-        const clonedProducts = Array.from(
-          { length: 10 },
-          () => res?.data?.metadata[0]
-        )
-        setProduct(clonedProducts)
+      if (voucherApplies === 'specific') {
+        try {
+          setLoading(true)
+          const res = await queryProductByOwnerAPI({ status: 'PUBLIC' })
+          setProduct(res?.data?.metadata)
+        } finally {
+          setLoading(false)
+        }
       }
     }
     getProduct()
@@ -75,18 +76,26 @@ const VoucherModal = ({
         voucher_quantity: voucher?.voucher_quantity,
         voucher_min_order_value: voucher?.voucher_min_order_value,
         voucher_applies: voucher?.voucher_applies,
-        voucher_start_date: formatDateTimeForInput(voucher?.voucher_start_date),
-        voucher_end_date: formatDateTimeForInput(voucher?.voucher_end_date)
+        voucher_start_date: voucher?.voucher_start_date,
+        voucher_end_date: voucher?.voucher_end_date,
+        voucher_status: voucher?.voucher_status
       })
+    } else {
+      reset({})
     }
   }, [voucher])
 
-  const customHandleSearch = async (searchValue) => {
-    const res = await queryProductByOwnerAPI({
-      status: 'PUBLIC',
-      search: searchValue
-    })
-    setProduct(res?.data?.metadata)
+  const handleSearch = async () => {
+    try {
+      setLoading(true)
+      const res = await queryProductByOwnerAPI({
+        status: 'PUBLIC',
+        search: searchValue
+      })
+      setProduct(res?.data?.metadata)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleSelectProduct = (product) => {
@@ -101,16 +110,16 @@ const VoucherModal = ({
   }
 
   const createVoucher = async (data) => {
-    if (voucherApplies === 'SPECIFIC') {
+    if (voucherApplies === 'specific') {
       data.voucher_applies_to = selectProduct
     }
     console.log('action', action)
     let res = null
     if (action === 'CREATE') {
-      res = await shopCreateVoucher(data)
+      res = await handleCreateVoucher(data)
     } else if (action === 'UPDATE') {
       data._id = voucher._id
-      res = await shopUpdateVoucher(data)
+      res = await handleUpdateVoucher(data)
     }
     if (res.status === 200) handleCloseWithReset()
   }
@@ -123,16 +132,18 @@ const VoucherModal = ({
   return (
     <Dialog open={open} onClose={handleCloseWithReset} fullWidth maxWidth="sm">
       <DialogTitle>
-        {action === 'CREATE' ? 'Create Voucher' : 'Update Voucher'}
+        {action === 'CREATE' && 'Create Voucher'}
+        {action === 'UPDATE' && 'Update Voucher'}
       </DialogTitle>
       <form onSubmit={handleSubmit(createVoucher)}>
-        <DialogContent>
+        <DialogContent sx={{ mt: '-20px' }}>
           <Box sx={{ mt: 2 }}>
             <Grid2 container spacing={2}>
               {/* Voucher Code */}
               <Grid2 size={6}>
                 <Typography variant="body2">CODE Voucher</Typography>
                 <TextField
+                  placeholder="8 characters"
                   size="small"
                   fullWidth
                   {...register('voucher_code', {
@@ -275,20 +286,19 @@ const VoucherModal = ({
                 />
               </Grid2>
 
-              {/* Voucher Applies */}
               <Grid2 size={12}>
-                <Typography variant="body2">Voucher Applies</Typography>
+                <Typography variant="body2">Voucher status</Typography>
                 <Select
                   size="small"
                   fullWidth
-                  defaultValue="ALL"
-                  {...register('voucher_applies', {
+                  defaultValue="public"
+                  {...register('voucher_status', {
                     required: FIELD_REQUIRED_MESSAGE
                   })}
-                  error={!!errors['voucher_applies']}
+                  error={!!errors['voucher_status']}
                 >
-                  <MenuItem value="ALL">All</MenuItem>
-                  <MenuItem value="SPECIFIC">Specific</MenuItem>
+                  <MenuItem value="public">Public</MenuItem>
+                  <MenuItem value="draft">Draft</MenuItem>
                 </Select>
                 <FieldErrorAlert
                   errors={errors}
@@ -296,12 +306,61 @@ const VoucherModal = ({
                 />
               </Grid2>
 
-              {voucherApplies === 'SPECIFIC' &&
-                product &&
-                Array.isArray(product) && (
-                  <Grid2 size={12} sx={{ mt: 2 }}>
-                    <SearchInput customHandleSearch={customHandleSearch} />
-                    <Grid2 container spacing={2}>
+              {/* Voucher Applies */}
+              <Grid2 size={12}>
+                <Typography variant="body2">Voucher Applies</Typography>
+                <Select
+                  size="small"
+                  fullWidth
+                  defaultValue="all"
+                  {...register('voucher_applies', {
+                    required: FIELD_REQUIRED_MESSAGE
+                  })}
+                  error={!!errors['voucher_applies']}
+                >
+                  <MenuItem value="all">All</MenuItem>
+                  <MenuItem value="specific">Specific</MenuItem>
+                </Select>
+                <FieldErrorAlert
+                  errors={errors}
+                  fieldName={'voucher_applies'}
+                />
+              </Grid2>
+
+              {voucherApplies === 'specific' && (
+                <Grid2 size={12} sx={{ mt: 2 }}>
+                  <SearchInput
+                    searchValue={searchValue}
+                    setSearchValue={setSearchValue}
+                    handleSearch={handleSearch}
+                  />
+                  {loading && (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        mt: '50px'
+                      }}
+                    >
+                      <CircularIndeterminate />
+                    </Box>
+                  )}
+                  {!loading && product.length == 0 && (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        mt: '50px'
+                      }}
+                    >
+                      <ProductEmpty />
+                    </Box>
+                  )}
+
+                  {!loading && Array.isArray(product) && product.length > 0 && (
+                    <Grid2 container spacing={2} sx={{ mt: '50px' }}>
                       {product.map((p, index) => (
                         <Grid2
                           onClick={() => handleSelectProduct(p)}
@@ -318,7 +377,10 @@ const VoucherModal = ({
                                 : null,
                               borderColor: selectProduct.includes(p._id)
                                 ? blue[600]
-                                : null
+                                : null,
+                              '&:hover': {
+                                cursor: 'pointer'
+                              }
                             }}
                           >
                             <img
@@ -326,24 +388,42 @@ const VoucherModal = ({
                               alt={p.product_name}
                               style={{ maxWidth: '100px', marginRight: '10px' }}
                             />
-                            <Typography variant="body2">
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                display: '-webkit-box',
+                                WebkitBoxOrient: 'vertical',
+                                WebkitLineClamp: 5,
+                                overflow: 'hidden'
+                              }}
+                            >
                               {p.product_name}
                             </Typography>
                           </Paper>
                         </Grid2>
                       ))}
                     </Grid2>
-                  </Grid2>
-                )}
+                  )}
+                </Grid2>
+              )}
             </Grid2>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseWithReset} color="secondary">
+          <Button
+            className="btn-shop-cancel-submit-voucher"
+            onClick={handleCloseWithReset}
+            color="secondary"
+          >
             Cancel
           </Button>
-          <Button variant="contained" color="primary" type="submit">
-            {action === 'CREATE' ? 'Create' : 'Update'}
+          <Button
+            className="btn-shop-submit-voucher"
+            variant="contained"
+            color="primary"
+            type="submit"
+          >
+            Submit
           </Button>
         </DialogActions>
       </form>

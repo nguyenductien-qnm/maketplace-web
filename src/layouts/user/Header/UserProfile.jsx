@@ -9,7 +9,7 @@ function UserProfile() {
   const navigate = useNavigate()
   return (
     <Box
-      onClick={() => navigate('/my-account/account-details')}
+      onClick={() => navigate('/my-account/dashboard')}
       sx={{ display: 'flex', '& :hover': { cursor: 'pointer' } }}
     >
       <PersonOutlineOutlinedIcon fontSize="large" />
