@@ -1,5 +1,4 @@
 import { Box, TableCell, TableRow, Typography } from '@mui/material'
-import { formatDate } from '~/utils/formatDate'
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
 import { green, red } from '@mui/material/colors'
@@ -36,10 +35,13 @@ function ProductRow({ productItem, onOpenModal }) {
         </Typography>
       </TableCell>
       <TableCell>
-        {productItem.product_status === 'public_pending' && 'Pending'}
-        {productItem.product_status === 'public_approved' && 'Approved'}
-        {productItem.product_status === 'draft' && 'Draft'}
+        {productItem.product_status === 'pending' && 'Pending'}
+        {productItem.product_status === 'approved' && 'Approved'}
         {productItem.product_status === 'reject' && 'Reject'}
+      </TableCell>
+      <TableCell>
+        {productItem.product_visibility === 'public' && 'Public'}
+        {productItem.product_visibility === 'private' && 'Private'}
       </TableCell>
       <TableCell>
         {productItem.product_classifications.length > 0 ? 'YES' : 'NO'}
@@ -47,14 +49,7 @@ function ProductRow({ productItem, onOpenModal }) {
       <TableCell>{productItem.product_stock}</TableCell>
       <TableCell>{formatCurrency(productItem.product_min_price)}</TableCell>
       <TableCell>{formatCurrency(productItem.product_max_price)}</TableCell>
-      <TableCell
-        sx={{
-          whiteSpace: 'nowrap',
-          overflow: 'hidden'
-        }}
-      >
-        {formatDate(productItem.createdAt)}
-      </TableCell>
+
       <TableCell sx={{ height: '100%' }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           {productItem.deletedAt ? (

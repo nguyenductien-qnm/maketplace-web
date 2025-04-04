@@ -7,6 +7,7 @@ import VendorOrder from '~/components/vendor/Order/VendorOrder'
 import VendorProfile from '~/components/vendor/Profile/VendorProfile'
 import VendorVoucher from '~/components/vendor/Voucher/VendorVoucher'
 import ProductForm from '~/components/vendor/Product/Form/ProductForm'
+import VendorWallet from '~/components/vendor/Wallet/VendorWallet'
 function Vendor() {
   const { page } = useParams()
   const { _id } = useParams()
@@ -22,9 +23,9 @@ function Vendor() {
           {page === 'update-product' && _id && <ProductForm />}
           {page === 'orders' && <VendorOrder />}
           {page === 'order-detail' && <VendorOrder />}
-          {page === 'order-detail' && <VendorOrder />}
           {page === 'profile' && <VendorProfile />}
           {page === 'vouchers' && <VendorVoucher />}
+          {page === 'wallet' && <VendorWallet />}
         </Grid>
       </Grid>
     </UserLayout>

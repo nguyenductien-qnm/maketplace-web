@@ -92,11 +92,11 @@ function ProductTable({ status }) {
               <TableCell>Image</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Status</TableCell>
+              <TableCell>Visibility</TableCell>
               <TableCell>SKU</TableCell>
               <TableCell>Stock</TableCell>
               <TableCell sx={{ minWidth: '100px' }}>Min price</TableCell>
               <TableCell sx={{ minWidth: '100px' }}>Max price</TableCell>
-              <TableCell>Date</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>

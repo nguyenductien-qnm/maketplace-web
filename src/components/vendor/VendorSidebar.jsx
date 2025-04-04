@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom'
 import DashboardCustomizeOutlinedIcon from '@mui/icons-material/DashboardCustomizeOutlined'
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
-import PaymentOutlinedIcon from '@mui/icons-material/PaymentOutlined'
-import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined'
 import LocalGroceryStoreOutlinedIcon from '@mui/icons-material/LocalGroceryStoreOutlined'
+import DiscountOutlinedIcon from '@mui/icons-material/DiscountOutlined'
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined'
 
 function VendorSideBar({ page }) {
   const CustomLink = styled(Link, {
@@ -56,17 +56,13 @@ function VendorSideBar({ page }) {
       </CustomLink>
       <Divider />
       <CustomLink to="/vendor/vouchers" isActive={checkUrl('vouchers')}>
-        <AttachMoneyOutlinedIcon />
+        <DiscountOutlinedIcon />
         Vouchers
       </CustomLink>
-      <CustomLink to="/vendor/payment" isActive={checkUrl('payment')}>
-        <PaymentOutlinedIcon />
-        Payment
-      </CustomLink>
       <Divider />
-      <CustomLink to="/vendor/withdraw" isActive={checkUrl('withdraw')}>
-        <AttachMoneyOutlinedIcon />
-        Withdraw
+      <CustomLink to="/vendor/wallet" isActive={checkUrl('wallet')}>
+        <AccountBalanceWalletOutlinedIcon />
+        Wallet
       </CustomLink>
     </Box>
   )

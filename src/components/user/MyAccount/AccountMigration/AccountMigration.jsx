@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from '@mui/material'
+import { Box, Button, Grid2, TextField, Typography } from '@mui/material'
 import { blue } from '@mui/material/colors'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -114,59 +114,61 @@ function AccountMigration() {
         }}
         onSubmit={handleSubmit(handleAccountMigration)}
       >
-        <Box>
-          <TypographyLabel>Shop email</TypographyLabel>
-          <TextField
-            size="small"
-            fullWidth
-            {...register('shop_email', {
-              required: FIELD_REQUIRED_MESSAGE,
-              pattern: {
-                value: EMAIL_RULE,
-                message: EMAIL_RULE_MESSAGE
-              }
-            })}
-            error={!!errors['shop_email']}
-          />
-          <FieldErrorAlert errors={errors} fieldName="shop_email" />
-        </Box>
+        <Grid2 container spacing={2}>
+          <Grid2 size={4}>
+            <TypographyLabel>Shop email</TypographyLabel>
+            <TextField
+              size="small"
+              fullWidth
+              {...register('shop_email', {
+                required: FIELD_REQUIRED_MESSAGE,
+                pattern: {
+                  value: EMAIL_RULE,
+                  message: EMAIL_RULE_MESSAGE
+                }
+              })}
+              error={!!errors['shop_email']}
+            />
+            <FieldErrorAlert errors={errors} fieldName="shop_email" />
+          </Grid2>
 
-        <Box>
-          <TypographyLabel>Shop phone</TypographyLabel>
-          <TextField
-            size="small"
-            error={!!errors['shop_phone']}
-            fullWidth
-            {...register('shop_phone', {
-              required: FIELD_REQUIRED_MESSAGE,
-              pattern: {
-                value: PHONE_RULE,
-                message: PHONE_RULE_MESSAGE
-              }
-            })}
-          />
-          <FieldErrorAlert errors={errors} fieldName="shop_phone" />
-        </Box>
+          <Grid2 size={4}>
+            <TypographyLabel>Shop phone</TypographyLabel>
+            <TextField
+              size="small"
+              error={!!errors['shop_phone']}
+              fullWidth
+              {...register('shop_phone', {
+                required: FIELD_REQUIRED_MESSAGE,
+                pattern: {
+                  value: PHONE_RULE,
+                  message: PHONE_RULE_MESSAGE
+                }
+              })}
+            />
+            <FieldErrorAlert errors={errors} fieldName="shop_phone" />
+          </Grid2>
 
-        <Box>
-          <TypographyLabel>Shop name</TypographyLabel>
-          <TextField
-            size="small"
-            error={!!errors['shop_name']}
-            fullWidth
-            {...register('shop_name', {
-              required: FIELD_REQUIRED_MESSAGE,
-              pattern: {
-                value: NAME_RULE,
-                message: NAME_RULE_MESSAGE
-              }
-            })}
-            onBlur={(e) => {
-              handleChangeShopName(e)
-            }}
-          />
-          <FieldErrorAlert errors={errors} fieldName="shop_name" />
-        </Box>
+          <Grid2 size={4}>
+            <TypographyLabel>Shop name</TypographyLabel>
+            <TextField
+              size="small"
+              error={!!errors['shop_name']}
+              fullWidth
+              {...register('shop_name', {
+                required: FIELD_REQUIRED_MESSAGE,
+                pattern: {
+                  value: NAME_RULE,
+                  message: NAME_RULE_MESSAGE
+                }
+              })}
+              onBlur={(e) => {
+                handleChangeShopName(e)
+              }}
+            />
+            <FieldErrorAlert errors={errors} fieldName="shop_name" />
+          </Grid2>
+        </Grid2>
 
         <Box>
           <TypographyLabel>Shop URL</TypographyLabel>

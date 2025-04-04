@@ -28,7 +28,6 @@ import {
   apiGetWards
 } from '~/helpers/getAddress'
 import FieldErrorAlert from '~/components/common/FieldErrorAlert'
-import TypographyLabel from '~/components/common/TypographyLabel'
 import generateURL from '~/utils/generateURL'
 import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
 import resizeImage from '~/helpers/resizeImage'

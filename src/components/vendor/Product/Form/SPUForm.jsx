@@ -52,7 +52,7 @@ function SPUForm() {
   } = useFormContext()
 
   const categories = useSelector((state) => state.categories.categories)
-  const selectedStatus = watch('product_status')
+  const selectedVisibility = watch('product_visibility')
   const productThumb = watch('product_thumb')
   const productGallery = watch('product_gallery')
 
@@ -61,9 +61,9 @@ function SPUForm() {
     name: 'product_specs'
   })
 
-  const statusOptions = [
-    { id: 'draft', name: 'Draft' },
-    { id: 'public_pending', name: 'Public' }
+  const visibilityOptions = [
+    { id: 'private', name: 'Private' },
+    { id: 'public', name: 'Public' }
   ]
 
   const handleUploadThumb = async (e) => {
@@ -368,17 +368,17 @@ function SPUForm() {
           </Grid2>
 
           <Grid2 size={12}>
-            <TypographyLabel>Product status</TypographyLabel>
+            <TypographyLabel>Product visibility</TypographyLabel>
             <Select
-              {...register('product_status', {
-                required: 'Status is required'
+              {...register('product_visibility', {
+                required: 'Visibility is required'
               })}
-              value={selectedStatus || ''}
-              onChange={(e) => setValue('product_status', e.target.value)}
+              value={selectedVisibility || ''}
+              onChange={(e) => setValue('product_visibility', e.target.value)}
               size="small"
               fullWidth
             >
-              {statusOptions.map((status) => (
+              {visibilityOptions.map((status) => (
                 <MenuItem key={status.id} value={status.id}>
                   {status.name}
                 </MenuItem>

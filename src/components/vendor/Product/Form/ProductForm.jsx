@@ -39,7 +39,7 @@ function ProductForm() {
       product_max_price: null,
       product_stock: null,
       product_categories: [],
-      product_status: 'public_pending',
+      product_visibility: 'private',
       product_specs: [
         { key: '', value: '' },
         { key: '', value: '' },
