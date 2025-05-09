@@ -60,6 +60,7 @@ function CartItemRow({
       </TableCell>
       <TableCell>
         <CancelIcon
+          className="btn-user-remove-product"
           sx={{ color: 'red', '&:hover': { cursor: 'pointer' } }}
           onClick={() => removeProduct(product)}
         />

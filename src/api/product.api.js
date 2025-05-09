@@ -2,10 +2,10 @@ import axios from 'axios'
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT } from '~/utils/constants'
 
-const getProductByIdAPIForClient = async (_id) => {
+const getProductDetailForCustomerAPI = async (product_slug) => {
   const res = await axios.post(
     `${API_ROOT}/v1/api/product/get-product-for-customer`,
-    { _id }
+    { product_slug }
   )
   return res
 }
@@ -60,7 +60,7 @@ const updateProductAPI = async (data, loadingClass) => {
 }
 
 export {
-  getProductByIdAPIForClient,
+  getProductDetailForCustomerAPI,
   searchProductByOwnerAPI,
   softDeleteProductAPI,
   deletePermanentProductAPI,

@@ -1,10 +1,11 @@
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT } from '~/utils/constants'
 
-const addToCartAPI = async (data) => {
+const addToCartAPI = async (data, loadingClass) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/cart/add-to-cart`,
-    data
+    data,
+    { loadingClass }
   )
   return res
 }
@@ -16,10 +17,11 @@ const getCartProductsAPI = async () => {
   return res
 }
 
-const removeProductAPI = async (_id) => {
+const removeProductAPI = async (_id, loadingClass) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/cart/remove-product`,
-    _id
+    _id,
+    { loadingClass }
   )
   return res
 }
@@ -39,11 +41,12 @@ const updateQuantityProductCartAPI = async (product, newQuantity) => {
   }
 }
 
-const checkoutAPI = async (data) => {
+const checkoutAPI = async (data, loadingClass) => {
   try {
     const res = await authorizedAxios.post(
       `${API_ROOT}/v1/api/cart/checkout`,
-      data
+      data,
+      { loadingClass }
     )
     return res
   } catch (error) {
@@ -55,10 +58,31 @@ const checkoutAPI = async (data) => {
   }
 }
 
-const clearCartAPI = async (selectedProducts) => {
-  const res = await authorizedAxios.post(`${API_ROOT}/v1/api/cart/clear-cart`, {
-    selectedProducts
-  })
+const prepareCheckoutAPI = async (data, loadingClass) => {
+  try {
+    const res = await authorizedAxios.post(
+      `${API_ROOT}/v1/api/cart/prepare-checkout`,
+      data,
+      { loadingClass }
+    )
+    return res
+  } catch (error) {
+    return {
+      status: error.response ? error.response.status : 500,
+      message: error.data.message,
+      metadata: error.data?.metadata
+    }
+  }
+}
+
+const clearCartAPI = async (selectedProducts, loadingClass) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/cart/clear-cart`,
+    {
+      selectedProducts
+    },
+    { loadingClass }
+  )
   return res
 }
 
@@ -68,5 +92,6 @@ export {
   removeProductAPI,
   updateQuantityProductCartAPI,
   clearCartAPI,
-  checkoutAPI
+  checkoutAPI,
+  prepareCheckoutAPI
 }

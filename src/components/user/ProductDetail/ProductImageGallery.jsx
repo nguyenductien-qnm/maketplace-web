@@ -1,20 +1,7 @@
 import { Box, Skeleton } from '@mui/material'
-import { useEffect, useState } from 'react'
 import Slider from 'react-slick'
-import resizeImage from '~/helpers/resizeImage.js'
 
-function ProductImageGallery({ productGallerys }) {
-  const [resizedGallery, setResizedGallery] = useState([])
-
-  useEffect(() => {
-    if (productGallerys) {
-      const resizedImages = productGallerys.map((img) => {
-        return resizeImage(img, 2000, 2000)
-      })
-      setResizedGallery(resizedImages)
-    }
-  }, [productGallerys])
-
+function ProductImageGallery({ productGalleries }) {
   const settings = {
     dots: true,
     infinite: true,
@@ -24,7 +11,7 @@ function ProductImageGallery({ productGallerys }) {
     customPaging: (i) => (
       <Box sx={{ position: 'absolute', top: '10px' }}>
         <img
-          src={resizedGallery?.[i]}
+          src={productGalleries?.[i]}
           style={{
             height: '50px',
             objectFit: 'cover',
@@ -37,10 +24,10 @@ function ProductImageGallery({ productGallerys }) {
 
   return (
     <Box>
-      {resizedGallery[0] ? (
+      {productGalleries && productGalleries[0] ? (
         <Box sx={{ position: 'relative', textAlign: 'center' }}>
           <Slider {...settings}>
-            {resizedGallery?.map((productGallery) => (
+            {productGalleries?.map((productGallery) => (
               <Box key={productGallery}>
                 <img
                   src={productGallery}

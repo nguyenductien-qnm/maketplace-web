@@ -1,7 +1,14 @@
 import UserLayout from '~/layouts/user/UserLayout'
 import ShippingAddress from '~/components/user/CheckOut/ShippingAddress'
 import CheckoutItem from '~/components/user/CheckOut/CheckoutItem'
-import { Box, Table, TableCell, TableHead, TableRow } from '@mui/material'
+import {
+  Box,
+  Paper,
+  Table,
+  TableCell,
+  TableHead,
+  TableRow
+} from '@mui/material'
 import PaymentOverview from '~/components/user/CheckOut/PaymentOverview'
 import PaymentMethods from '~/components/user/CheckOut/PaymentMethods'
 import { useEffect, useRef, useState } from 'react'
@@ -15,6 +22,8 @@ import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 import { checkoutAPI } from '~/api/cart.api'
 import NotificationModal from '~/components/common/NotificationModal'
 import { placeOrderAPI } from '~/api/order.api'
+import { getVoucherForCustomerAPI } from '~/api/voucher.api'
+import VoucherOverview from '~/components/user/CheckOut/VoucherOverview'
 
 function CheckOut() {
   const firstRender = useRef(true)
@@ -29,11 +38,7 @@ function CheckOut() {
   const [decodedToken, setDecodedToken] = useState(null)
   useEffect(() => {
     if (token) {
-      try {
-        setDecodedToken(jwtDecode(token))
-      } catch (error) {
-        console.error('Invalid token', error)
-      }
+      setDecodedToken(jwtDecode(token))
     }
   }, [token])
 
@@ -41,13 +46,53 @@ function CheckOut() {
   const [paymentMethodSelected, setPaymentMethodSelected] = useState(3)
   const [addresses, setAddresses] = useState()
   const [addressSelected, setAddressSelected] = useState()
+  const [shopVouchers, setShopVouchers] = useState()
+  const [bevesiVouchers, setBevesiVouchers] = useState()
+  const [selectedVouchers, setSelectedVouchers] = useState([])
+
+  const findShopIdByVoucherId = (voucherId) => {
+    for (const shop of shopVouchers) {
+      const found = shop.vouchers.find((v) => v._id === voucherId)
+      if (found) {
+        return shop.shopId
+      }
+    }
+    return null
+  }
+
+  const handleSelectedVouchers = (value) => {
+    const existVoucher = selectedVouchers.some((v) => v.voucher_id === value)
+    if (!existVoucher) {
+      const shopId = findShopIdByVoucherId(value)
+
+      setSelectedVouchers((prev) => {
+        const withoutThisShop = prev.filter((v) => v.shop_voucher !== shopId)
+        return [...withoutThisShop, { shop_voucher: shopId, voucher_id: value }]
+      })
+    }
+  }
+
   useEffect(() => {
-    const getAddresss = async () => {
+    const applyVoucher = async () => {
+      const data = buildOrderData()
+      const res = await checkoutAPI(data, '.btn-user-place-order')
+      if (res.status === 200) {
+        navigate(res.data?.metadata?.checkoutUrl)
+      } else {
+        handleOpenModal('Notification', res.message)
+      }
+    }
+    if (selectedVouchers.length > 0) applyVoucher()
+  }, [selectedVouchers])
+
+  useEffect(() => {
+    const getAddress = async () => {
       const res = await getAddressListAPI()
       setAddresses(sortAddressByDefault(res.data.metadata))
     }
-    getAddresss()
+    getAddress()
   }, [])
+
   useEffect(() => {
     if (
       JSON.stringify(paymentMethodSelected) !==
@@ -64,21 +109,34 @@ function CheckOut() {
     setProducts(decodedToken?.products)
   }, [decodedToken])
 
+  useEffect(() => {
+    const getVoucher = async () => {
+      if (products) {
+        const res = await getVoucherForCustomerAPI(products)
+        setShopVouchers(res?.data?.metadata.shopVouchers || [])
+        setBevesiVouchers(res?.data?.metadata.bevesiVouchers || [])
+      }
+    }
+    if (!shopVouchers || !bevesiVouchers) getVoucher()
+  }, [products])
+
   const handleAddAddress = (data) => {
     if (data.default === true) {
       let addressList = [...addresses]
-      let updateAddresList = []
+      let updateAddressList = []
 
-      updateAddresList = addressList.map((item) => {
+      updateAddressList = addressList.map((item) => {
         return { ...item, default: false }
       })
 
-      updateAddresList.push(data)
-      setAddresses(sortAddressByDefault(updateAddresList))
+      updateAddressList.push(data)
+      setAddresses(sortAddressByDefault(updateAddressList))
+      setAddressSelected(data)
       return
     }
     setAddresses((prevList) => sortAddressByDefault([...prevList, data]))
   }
+
   const handleCloseModal = () => setOpenModal(false)
 
   const handleOpenModal = (header, content) => {
@@ -89,18 +147,29 @@ function CheckOut() {
   const [modalContent, setModalContent] = useState({ header: '', content: '' })
   const [openModal, setOpenModal] = useState(false)
 
+  const buildOrderData = () => {
+    return {
+      products: products.reduce((acc, p) => acc.concat(p.products), []),
+      address: addressSelected,
+      payment_method: paymentMethodSelected,
+      vouchers: selectedVouchers
+    }
+  }
+
   useEffect(() => {
     const handleChangeShippingAddress = async () => {
-      const data = {
-        products: products,
-        address: addressSelected,
-        payment_method: paymentMethodSelected
-      }
-      const res = await checkoutAPI(data)
+      const data = buildOrderData()
+      const res = await checkoutAPI(data, '.btn-user-place-order')
       if (res.status === 200) {
         navigate(res.data?.metadata?.checkoutUrl)
       } else {
         handleOpenModal('Notification', res.message)
+        if (res?.message[0].includes('Shipping is not supported')) {
+          setAddressSelected(addresses.find((a) => a.default === true))
+        }
+        if (res.metadata?.updatedProduct) {
+          navigate('/cart')
+        }
       }
     }
     if (firstRender.current && addressSelected) {
@@ -111,7 +180,12 @@ function CheckOut() {
   }, [addressSelected, paymentMethodSelected])
 
   const handlePlaceOrder = async () => {
-    const res = await placeOrderAPI({ token })
+    const res = await placeOrderAPI(
+      {
+        token
+      },
+      '.btn-user-place-order'
+    )
     if (res?.status === 200) {
       navigate('/my-account/orders')
     }
@@ -150,14 +224,32 @@ function CheckOut() {
             </TableRow>
           </TableHead>
         </Table>
-        {products?.map((p) => (
-          <CheckoutItem key={p.product_id} product={p} />
-        ))}
+
+        {products?.map((p) => {
+          const shopVoucher = shopVouchers?.find(
+            (v) => v.shopId === p.product_shop
+          )
+          return (
+            <CheckoutItem
+              key={p.product_shop}
+              products={p}
+              vouchers={shopVoucher?.vouchers}
+              handleSelectedVouchers={handleSelectedVouchers}
+            />
+          )
+        })}
         <PaymentMethods
           paymentMethods={paymentMethods}
           paymentMethodSelected={paymentMethodSelected}
           setPaymentMethodSelected={setPaymentMethodSelected}
         />
+        <Paper>
+          <VoucherOverview
+            content={'Bevesi Voucher'}
+            vouchers={bevesiVouchers}
+            handleSelectedVouchers={handleSelectedVouchers}
+          />
+        </Paper>
         <PaymentOverview
           handlePlaceOrder={handlePlaceOrder}
           price={decodedToken?.price}

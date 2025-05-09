@@ -3,6 +3,7 @@ import { Button } from '@mui/material'
 function BuyNowButton({ disableAction }) {
   return (
     <Button
+      className="btn-user-buy-now"
       sx={{
         width: '100%',
         color: 'black',

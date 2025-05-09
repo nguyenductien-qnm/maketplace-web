@@ -72,7 +72,7 @@ function SPUForm() {
       '.btn-shop-create-product'
     ])
     const url = await uploadImageToCloudinary(e.target.files[0])
-    setValue('product_thumb', resizeImage(url, 180, 180))
+    setValue('product_thumb', url)
     clearErrors('product_thumb')
     interceptorLoadingElements(false, [
       '.btn-shop-upload-product-thumb',
@@ -91,7 +91,7 @@ function SPUForm() {
       '.btn-shop-create-product'
     ])
     const currentGallery = productGallery
-    setValue('product_gallery', [...currentGallery, resizeImage(url, 60, 60)])
+    setValue('product_gallery', [...currentGallery, url])
   }
 
   const handleDeleteGallery = (index) => {
@@ -425,7 +425,7 @@ function SPUForm() {
               {productThumb !== '' ? (
                 <Box>
                   <img
-                    src={productThumb}
+                    src={resizeImage(productThumb, 180, 180)}
                     sx={{ height: '100%', width: '100%' }}
                   />
                   <HighlightOffOutlinedIcon

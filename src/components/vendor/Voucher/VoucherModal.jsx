@@ -11,8 +11,7 @@ import {
   Select,
   MenuItem,
   Button,
-  Paper,
-  Divider
+  Paper
 } from '@mui/material'
 import { queryProductByOwnerAPI } from '~/api/productSPU.api'
 import SearchInput from '~/components/common/SearchInput'
@@ -45,7 +44,9 @@ const VoucherModal = ({
     shouldUnregister: true
   })
 
-  let voucherApplies = watch('voucher_applies')
+  const voucherApplies = watch('voucher_applies')
+  const voucherStatus = watch('voucher_status')
+  const voucherType = watch('voucher_type')
 
   const [product, setProduct] = useState([])
   const [searchValue, setSearchValue] = useState('')
@@ -68,6 +69,7 @@ const VoucherModal = ({
 
   useEffect(() => {
     if (voucher) {
+      setSelectProduct(voucher?.voucher_product_ids)
       reset({
         voucher_name: voucher?.voucher_name,
         voucher_code: voucher?.voucher_code,
@@ -111,14 +113,16 @@ const VoucherModal = ({
 
   const createVoucher = async (data) => {
     if (voucherApplies === 'specific') {
-      data.voucher_applies_to = selectProduct
+      data.voucher_product_ids = selectProduct
+    } else {
+      delete data.voucher_product_ids
     }
-    console.log('action', action)
     let res = null
     if (action === 'CREATE') {
       res = await handleCreateVoucher(data)
     } else if (action === 'UPDATE') {
       data._id = voucher._id
+
       res = await handleUpdateVoucher(data)
     }
     if (res.status === 200) handleCloseWithReset()
@@ -174,7 +178,7 @@ const VoucherModal = ({
                 <Select
                   size="small"
                   fullWidth
-                  defaultValue="fixed_amount"
+                  value={voucherType || ''}
                   {...register('voucher_type', {
                     required: FIELD_REQUIRED_MESSAGE
                   })}
@@ -290,15 +294,15 @@ const VoucherModal = ({
                 <Typography variant="body2">Voucher status</Typography>
                 <Select
                   size="small"
+                  value={voucherStatus || ''}
                   fullWidth
-                  defaultValue="public"
                   {...register('voucher_status', {
                     required: FIELD_REQUIRED_MESSAGE
                   })}
                   error={!!errors['voucher_status']}
                 >
                   <MenuItem value="public">Public</MenuItem>
-                  <MenuItem value="draft">Draft</MenuItem>
+                  <MenuItem value="private">Private</MenuItem>
                 </Select>
                 <FieldErrorAlert
                   errors={errors}
@@ -312,7 +316,7 @@ const VoucherModal = ({
                 <Select
                   size="small"
                   fullWidth
-                  defaultValue="all"
+                  value={voucherApplies || ''}
                   {...register('voucher_applies', {
                     required: FIELD_REQUIRED_MESSAGE
                   })}

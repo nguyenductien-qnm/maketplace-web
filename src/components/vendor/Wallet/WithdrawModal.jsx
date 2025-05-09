@@ -18,7 +18,13 @@ import { NumericFormat } from 'react-number-format'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 
-function WithdrawModal({ open, onClose, handleRequestWithdraw, balance, accounts }) {
+function WithdrawModal({
+  open,
+  onClose,
+  handleRequestWithdraw,
+  balance,
+  accounts
+}) {
   const {
     register,
     handleSubmit,
@@ -26,7 +32,7 @@ function WithdrawModal({ open, onClose, handleRequestWithdraw, balance, accounts
     formState: { errors }
   } = useForm()
 
-  const defaultAccount = accounts.find((acc) => acc.is_default) || accounts[0]
+  const defaultAccount = accounts?.find((acc) => acc.is_default) || accounts[0]
 
   const onSubmit = (data) => {
     handleRequestWithdraw(data)

@@ -94,6 +94,7 @@ function CartSummary({ selectedProducts, handleCheckOut }) {
         </Typography>
 
         <Button
+          className="btn-user-checkout"
           onClick={() => handleCheckOut()}
           sx={{
             marginTop: '20px',

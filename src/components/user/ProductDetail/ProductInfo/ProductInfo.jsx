@@ -25,7 +25,7 @@ function ProductInfo({ product, shop }) {
   const [productSelected, setProductSelected] = useState()
   const [quantitySelected, setQuantitySelected] = useState(1)
 
-  const handleSelecteProduct = (product) => {
+  const handleSelectProduct = (product) => {
     setProductSelected(product)
   }
 
@@ -40,7 +40,8 @@ function ProductInfo({ product, shop }) {
       product1.quantity = quantitySelected
       product1.product_type = 'product_spu'
     }
-    if (product1) addToCartAPI(product1)
+    if (product1)
+      addToCartAPI(product1, ['.btn-user-add-to-cart', '.btn-user-buy-now'])
   }
 
   const [disableAction, setDisableAction] = useState(false)
@@ -69,11 +70,38 @@ function ProductInfo({ product, shop }) {
           marginTop: '10px'
         }}
       >
-        <PriceDisplay price={product?.product_price} />
+        {productSelected ? (
+          <PriceDisplay price={productSelected.product_price} />
+        ) : product?.product_max_price === product?.product_min_price ? (
+          <PriceDisplay price={product?.product_min_price} />
+        ) : (
+          <Box
+            sx={{
+              display: 'flex',
+              gap: '10px',
+              alignItems: 'center'
+            }}
+          >
+            <PriceDisplay price={product?.product_min_price} />
+            <Typography
+              component="span"
+              sx={{ color: green[700], fontSize: '20px' }}
+            >
+              –
+            </Typography>
+            <PriceDisplay price={product?.product_max_price} />
+          </Box>
+        )}
 
-        <Typography sx={{ color: green[700], fontWeight: '600' }}>
-          In Stock
-        </Typography>
+        {(productSelected ?? product)?.product_stock > 0 ? (
+          <Typography sx={{ color: green[700], fontWeight: 600 }}>
+            In stock&nbsp;({(productSelected ?? product)?.product_stock})
+          </Typography>
+        ) : (
+          <Typography sx={{ color: grey[400], fontWeight: 600 }}>
+            Out of stock
+          </Typography>
+        )}
       </Box>
 
       <Divider sx={{ marginTop: '10px' }} />
@@ -81,13 +109,14 @@ function ProductInfo({ product, shop }) {
       <Variation
         variation={product?.product_classifications}
         productSKU={product?.product_sku}
-        handleSelecteProduct={handleSelecteProduct}
+        handleSelectProduct={handleSelectProduct}
       />
 
       <Grid container spacing={1} sx={{ marginTop: '30px' }}>
         <Grid size={2}>
           {product?.product_name ? (
             <QuantitySelector
+              quantityAvailable={(productSelected ?? product)?.product_stock}
               disableAction={disableAction}
               quantitySelected={quantitySelected}
               setQuantitySelected={setQuantitySelected}

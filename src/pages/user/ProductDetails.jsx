@@ -9,7 +9,7 @@ import { grey } from '@mui/material/colors'
 import { useEffect, useState } from 'react'
 import ProductRelated from '~/components/user/ProductDetail/Review/ProductRelated'
 import { useParams } from 'react-router-dom'
-import { getProductByIdAPIForClient } from '~/api/product.api'
+import { getProductDetailForCustomerAPI } from '~/api/product.api'
 import CustomBreadcrumbs from '~/components/common/CustomBreadcrumbs'
 
 function ProductDetails() {
@@ -26,7 +26,7 @@ function ProductDetails() {
   const [shop, setShop] = useState({})
   const [breakCrumbs, setBreakCrumbs] = useState()
 
-  const { _id } = useParams()
+  const { product_slug } = useParams()
 
   const [selectedTab, setSelectedTab] = useState('description')
 
@@ -35,11 +35,14 @@ function ProductDetails() {
   }
 
   useEffect(() => {
-    getProductByIdAPIForClient(_id).then((res) => {
-      setProduct(res.data?.metadata?.product)
-      setShop(res.data?.metadata?.shop)
-    })
-  }, [_id])
+    const fetchProductDetail = async () => {
+      const res = await getProductDetailForCustomerAPI(product_slug)
+      setProduct(res.data.metadata.product)
+      setShop(res.data.metadata.shop)
+    }
+
+    fetchProductDetail()
+  }, [product_slug])
 
   useEffect(() => {
     setBreakCrumbs([
@@ -53,7 +56,7 @@ function ProductDetails() {
       <CustomBreadcrumbs breakCrumbs={breakCrumbs} />
       <Grid container spacing={3} sx={{ marginTop: '15px' }}>
         <Grid size={6}>
-          <ProductImageGallery productGallerys={product.product_gallery} />
+          <ProductImageGallery productGalleries={product.product_gallery} />
         </Grid>
         <Grid size={6}>
           <ProductInfo product={product} shop={shop} />

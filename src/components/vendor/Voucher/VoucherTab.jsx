@@ -11,8 +11,8 @@ import LoyaltyOutlinedIcon from '@mui/icons-material/LoyaltyOutlined'
 const TAB_LABELS = {
   ALL: 'All',
   ACTIVE: 'Active',
-  INACTIVE: 'Inactive',
-  EXPIRED: 'Expired'
+  EXPIRED: 'Expired',
+  PRIVATE: 'Private'
 }
 const TABS = Object.keys(TAB_LABELS)
 function VoucherTab() {

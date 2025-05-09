@@ -1,9 +1,11 @@
 import { Box, TextField } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
+import { toast } from 'react-toastify'
 
 function QuantitySelector({
   disableAction,
+  quantityAvailable,
   quantitySelected,
   setQuantitySelected
 }) {
@@ -23,7 +25,10 @@ function QuantitySelector({
     }
 
     if (Number(value) === 0) return
-
+    if (Number(value) > quantityAvailable) {
+      toast.error('Not enough quantity available')
+      return
+    }
     if (/^\d*$/.test(value)) {
       setQuantitySelected(Number(value))
     }

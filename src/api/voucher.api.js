@@ -31,9 +31,17 @@ const shopDeleteVoucherAPI = async (data, loadingClass) => {
     { loadingClass }
   )
 }
+
+const getVoucherForCustomerAPI = async (data) => {
+  return await authorizedAxios.post(
+    `${API_ROOT}/v1/api/voucher/get-voucher-for-customer`,
+    data
+  )
+}
 export {
   queryVoucherByOwnerAPI,
   shopUpdateVoucherAPI,
   shopCreateVoucherAPI,
-  shopDeleteVoucherAPI
+  shopDeleteVoucherAPI,
+  getVoucherForCustomerAPI
 }

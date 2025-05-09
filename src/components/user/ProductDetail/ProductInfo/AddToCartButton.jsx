@@ -4,6 +4,7 @@ import { blue } from '@mui/material/colors'
 function AddToCartButton({ disableAction, addProductToCart }) {
   return (
     <Button
+      className="btn-user-add-to-cart"
       onClick={() => addProductToCart()}
       sx={{
         width: '100%',

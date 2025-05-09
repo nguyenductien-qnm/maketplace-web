@@ -24,6 +24,7 @@ import { useEffect, useState } from 'react'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import ProductFormSkeleton from './ProductFormSkeleton'
+import resizeImage from '~/helpers/resizeImage'
 
 const variations = ['Type', 'Size', 'Color', 'Material']
 function ProductForm() {
@@ -232,6 +233,17 @@ function ProductForm() {
       }, false)
       if (hasError) return
     }
+
+    formattedData.product_thumb = resizeImage(
+      formattedData.product_thumb,
+      180,
+      180
+    )
+
+    formattedData.product_gallery = formattedData.product_gallery.map((image) =>
+      resizeImage(image, 2000, 2000)
+    )
+
     if (page === 'update-product' && _id)
       await updateProductAPI(formattedData, '.btn-shop-create-product')
     else await createProductAPI(formattedData, '.btn-shop-create-product')

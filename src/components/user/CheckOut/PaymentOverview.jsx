@@ -2,7 +2,7 @@ import { Box, Button, Divider, Paper, Typography } from '@mui/material'
 import { blue, grey } from '@mui/material/colors'
 import formatCurrency from '~/utils/formatCurrency'
 
-function PaymentOverview({ price, handlePlaceOrder, paymentMethodSelected }) {
+function PaymentOverview({ price, handlePlaceOrder }) {
   return (
     <Paper sx={{ padding: '30px 16px' }}>
       <Box sx={{ padding: '0 0 30px 0' }}>
@@ -57,7 +57,9 @@ function PaymentOverview({ price, handlePlaceOrder, paymentMethodSelected }) {
           <Typography sx={{ color: grey[600] }} variant="body2">
             Voucher Discount
           </Typography>
-          <Typography variant="body2">{formatCurrency(0)}</Typography>
+          <Typography variant="body2">
+            {formatCurrency(price?.voucher_discount)}
+          </Typography>
         </Box>
         <Box
           sx={{
@@ -85,6 +87,7 @@ function PaymentOverview({ price, handlePlaceOrder, paymentMethodSelected }) {
         }}
       >
         <Button
+          className="btn-user-place-order"
           onClick={handlePlaceOrder}
           variant="contained"
           sx={{ minWidth: '300px', minHeight: '46px' }}

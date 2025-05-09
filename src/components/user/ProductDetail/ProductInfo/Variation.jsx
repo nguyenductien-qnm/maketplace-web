@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { blue, grey } from '@mui/material/colors'
 
-const Variation = ({ variation, productSKU, handleSelecteProduct }) => {
+const Variation = ({ variation, productSKU, handleSelectProduct }) => {
   const [indexSelected, setIndexSelected] = useState([])
 
   const handleSelectItem = (optionIndex, valueIndex) => {
@@ -39,9 +39,9 @@ const Variation = ({ variation, productSKU, handleSelecteProduct }) => {
       const selectedSKU = productSKU.find((sku) =>
         sku.sku_tier_indices.every((val, idx) => val === indexSelected[idx])
       )
-      handleSelecteProduct(selectedSKU)
+      handleSelectProduct(selectedSKU)
     } else {
-      handleSelecteProduct(null)
+      handleSelectProduct(null)
     }
   }, [indexSelected])
 
@@ -80,8 +80,9 @@ const Variation = ({ variation, productSKU, handleSelecteProduct }) => {
                         key={indexValue}
                         sx={{
                           display: 'inline-block',
-                          marginRight: '10px',
-                          pointerEvents: isDisabled ? 'none' : 'auto'
+                          mx: '5px',
+                          pointerEvents: isDisabled ? 'none' : 'auto',
+                          marginBottom: '10px'
                         }}
                         onClick={() =>
                           !isDisabled && handleSelectItem(index, indexValue)

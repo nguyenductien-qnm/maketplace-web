@@ -2,9 +2,10 @@ import { Box, Skeleton, Typography } from '@mui/material'
 import { grey, yellow } from '@mui/material/colors'
 import StarIcon from '@mui/icons-material/Star'
 function ProductRating({ productRating }) {
+  console.log('productRating', productRating)
   return (
     <Box>
-      {productRating ? (
+      {productRating !== 'undefined' ? (
         <Box
           sx={{
             display: 'flex',
@@ -23,7 +24,7 @@ function ProductRating({ productRating }) {
             )}
           </Box>
           <Typography sx={{ color: grey[400], fontSize: '12px' }}>
-            {productRating}
+            {productRating == 0 ? 'No rating' : productRating}
           </Typography>
         </Box>
       ) : (

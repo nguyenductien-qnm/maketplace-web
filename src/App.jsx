@@ -37,7 +37,7 @@ function App() {
       />
       {/* PRODUCT DETAIL  */}
       <Route
-        path="/product/:_id"
+        path="/product/:product_slug"
         element={
           <ProtectedRoute>
             <DetailProduct />
