@@ -10,6 +10,7 @@ import Addresses from '~/components/user/MyAccount/Addresses/Addresses'
 import AccountMigration from '~/components/user/MyAccount/AccountMigration/AccountMigration'
 import { useSelector } from 'react-redux'
 import Notifications from '~/components/user/MyAccount/Notifications/Notifications'
+import Wallet from '~/components/user/MyAccount/Wallet/Wallet'
 function MyAccount() {
   const { page } = useParams()
   const user = useSelector((state) => state.user.currentUser)
@@ -27,6 +28,7 @@ function MyAccount() {
           {page === 'notifications' && <Notifications />}
           {page === 'account-details' && <AccountDetail />}
           {page === 'addresses' && <Addresses />}
+          {page === 'wallet' && <Wallet />}
           {page === 'account-migration' ? (
             !user?.user_role?.includes('SHOP') ? (
               <AccountMigration />

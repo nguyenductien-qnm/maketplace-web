@@ -35,7 +35,7 @@ const deletePaymentAccountAPI = async (data, loadingClass) => {
 
 const requestWithdrawAPI = async (data, loadingClass) => {
   const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/wallet/request-withdraw`,
+    `${API_ROOT}/v1/api/request-withdraw/shop`,
     data,
     { loadingClass }
   )

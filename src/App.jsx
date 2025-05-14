@@ -13,6 +13,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import CheckOut from './pages/user/CheckOut'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import ScrollToTop from './components/common/ScrollToTop'
+import AdminLogin from './pages/admin/AdminLogin'
+import Test from './pages/admin/Test'
 
 function App() {
   const currentUser = useSelector((state) => state.user.currentUser)
@@ -25,93 +28,100 @@ function App() {
   }
 
   return (
-    <Routes>
-      {/* HOME  */}
-      <Route
-        path="/home"
-        element={
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        }
-      />
-      {/* PRODUCT DETAIL  */}
-      <Route
-        path="/product/:product_slug"
-        element={
-          <ProtectedRoute>
-            <DetailProduct />
-          </ProtectedRoute>
-        }
-      />
-      {/* STORE  */}
-      <Route
-        path="/store"
-        element={
-          <ProtectedRoute>
-            <Store />
-          </ProtectedRoute>
-        }
-      />
-      {/* CART  */}
-      <Route
-        path="/cart"
-        element={
-          <ProtectedRoute>
-            <ShoppingCart />
-          </ProtectedRoute>
-        }
-      />
-      {/* CHECKOUT  */}
-      <Route
-        path="/checkout"
-        element={
-          <ProtectedRoute>
-            <CheckOut />
-          </ProtectedRoute>
-        }
-      />
-      {/* MY ACCOUNT  */}
-      <Route
-        path="/my-account/:page"
-        element={
-          <ProtectedRoute>
-            <MyAccount />
-          </ProtectedRoute>
-        }
-      />
-      {/* AUTH  */}
-      <Route path="/auth/:page" element={<Auth />} />
-      <Route path="/auth/reset-password/:token" element={<Auth />} />
-      <Route path="/auth/verify-account/:otp" element={<VerifyAccount />} />
-      {/* VENDOR  */}
-      <Route
-        path="/vendor/:page"
-        element={
-          <ProtectedRoute>
-            <Vendor />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/vendor/:page/:_id"
-        element={
-          <ProtectedRoute>
-            <Vendor />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/setup-account"
-        element={
-          currentUser?.user_status === 'pending_setup' ? (
-            <SetupAccount />
-          ) : (
-            <Navigate to="/home" />
-          )
-        }
-      />
-    </Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
+        {/* HOME  */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        {/* PRODUCT DETAIL  */}
+        <Route
+          path="/product/:product_slug"
+          element={
+            <ProtectedRoute>
+              <DetailProduct />
+            </ProtectedRoute>
+          }
+        />
+        {/* STORE  */}
+        <Route
+          path="/store"
+          element={
+            <ProtectedRoute>
+              <Store />
+            </ProtectedRoute>
+          }
+        />
+        {/* CART  */}
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <ShoppingCart />
+            </ProtectedRoute>
+          }
+        />
+        {/* CHECKOUT  */}
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <CheckOut />
+            </ProtectedRoute>
+          }
+        />
+        {/* MY ACCOUNT  */}
+        <Route
+          path="/my-account/:page"
+          element={
+            <ProtectedRoute>
+              <MyAccount />
+            </ProtectedRoute>
+          }
+        />
+        {/* AUTH  */}
+        <Route path="/auth/:page" element={<Auth />} />
+        <Route path="/auth/reset-password/:token" element={<Auth />} />
+        <Route path="/auth/verify-account/:otp" element={<VerifyAccount />} />
+        {/* VENDOR  */}
+        <Route
+          path="/vendor/:page"
+          element={
+            <ProtectedRoute>
+              <Vendor />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/vendor/:page/:_id"
+          element={
+            <ProtectedRoute>
+              <Vendor />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/setup-account"
+          element={
+            currentUser?.user_status === 'pending_setup' ? (
+              <SetupAccount />
+            ) : (
+              <Navigate to="/home" />
+            )
+          }
+        />
+        <Route path="/admin">
+          <Route path="auth" element={<AdminLogin />} />
+          <Route path="test" element={<Test />} />
+        </Route>
+      </Routes>
+    </>
   )
 }
 export default App

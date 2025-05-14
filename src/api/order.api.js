@@ -18,9 +18,10 @@ const updatePayPalOrderIdAPI = async (data) => {
   return res
 }
 
-const getOrdersByUserAPI = async () => {
-  const res = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/order/get-orders-by-user`
+const queryOrderByUserAPI = async (data) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/order/query-order-by-user`,
+    data
   )
   return res
 }
@@ -46,11 +47,20 @@ const updateOrderStatusByOwnerAPI = async (data) => {
   )
 }
 
+const cancelOrderByUserAPI = async (data, loadingClass) => {
+  return await authorizedAxios.post(
+    `${API_ROOT}/v1/api/order/cancel-order-by-user`,
+    data,
+    { loadingClass }
+  )
+}
+
 export {
   placeOrderAPI,
   updatePayPalOrderIdAPI,
-  getOrdersByUserAPI,
+  queryOrderByUserAPI,
   getOrderDetailAPI,
   queryOrderByOwnerAPI,
-  updateOrderStatusByOwnerAPI
+  updateOrderStatusByOwnerAPI,
+  cancelOrderByUserAPI
 }

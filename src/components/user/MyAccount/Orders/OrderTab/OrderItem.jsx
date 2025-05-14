@@ -1,7 +1,7 @@
 import { Box, Paper, Typography, Divider, Button } from '@mui/material'
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
-import { blue, grey } from '@mui/material/colors'
+import { blue, green, grey, red } from '@mui/material/colors'
 import formatCurrency from '~/utils/formatCurrency'
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js'
 import { updatePayPalOrderIdAPI } from '~/api/order.api'
@@ -26,6 +26,12 @@ function OrderItem({ order, setOrders }) {
       console.error('❌ Error creating order:', error)
       throw error
     }
+  }
+
+  const getStatusColor = (status) => {
+    if (status === 'pending') return blue[600]
+    if (status === 'cancelled' || status === 'reject') return red[600]
+    return green[600]
   }
 
   const onApprove = async (actions, data) => {
@@ -86,13 +92,19 @@ function OrderItem({ order, setOrders }) {
               View Shop
             </Button>
           </Box>
-          <Typography sx={{ textTransform: 'uppercase', color: blue[600] }}>
+          <Typography
+            sx={{
+              textTransform: 'uppercase',
+              color: getStatusColor(order?.order_status || '')
+            }}
+          >
             {order?.order_status}
           </Typography>
         </Box>
         <Divider sx={{ mt: '15px', mb: '15px' }} />
         {order?.order_products.map((p) => (
           <Box
+            key={p.product_id}
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -116,20 +128,22 @@ function OrderItem({ order, setOrders }) {
               </Box>
               <Box>
                 <Typography variant="body2">{p?.product_name}</Typography>
-                <Box sx={{ display: 'flex' }}>
-                  <Typography variant="caption" sx={{ color: grey[600] }}>
-                    Variation:{' '}
-                  </Typography>
-                  {p?.product_variation.map((variation, index) => (
-                    <Typography
-                      key={index}
-                      variant="caption"
-                      sx={{ color: grey[600] }}
-                    >
-                      {variation}
+                {p?.product_variation.length > 0 && (
+                  <Box sx={{ display: 'flex' }}>
+                    <Typography variant="caption" sx={{ color: grey[600] }}>
+                      Variation:{' '}
                     </Typography>
-                  ))}
-                </Box>
+                    {p?.product_variation.map((variation, index) => (
+                      <Typography
+                        key={index}
+                        variant="caption"
+                        sx={{ color: grey[600] }}
+                      >
+                        {variation}
+                      </Typography>
+                    ))}
+                  </Box>
+                )}
                 <Typography variant="caption">x{p?.quantity}</Typography>
               </Box>
             </Box>

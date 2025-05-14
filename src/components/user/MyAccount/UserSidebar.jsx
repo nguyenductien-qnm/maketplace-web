@@ -4,8 +4,11 @@ import { Link } from 'react-router-dom'
 
 function UserSideBar({ page }) {
   const CustomLink = styled(Link, {
-    shouldForwardProp: (prop) => prop !== 'isActive' //isActive chỉ cần để tính toán style, không cần xuất hiện trong DOM.
+    shouldForwardProp: (prop) => prop !== 'isActive'
   })(({ isActive }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
     minWidth: '100%',
     padding: '15px 20px',
     color: isActive ? 'white' : 'black',
@@ -17,7 +20,9 @@ function UserSideBar({ page }) {
     }
   }))
 
-  const checkUrl = (url) => url === page
+  const checkUrl = (...paths) => {
+    return paths.some((path) => window.location.pathname.includes(path))
+  }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -25,7 +30,10 @@ function UserSideBar({ page }) {
         Dashboard
       </CustomLink>
       <Divider />
-      <CustomLink to="/my-account/orders" isActive={checkUrl('orders')}>
+      <CustomLink
+        to="/my-account/orders"
+        isActive={checkUrl('orders', 'order-detail')}
+      >
         Orders
       </CustomLink>
       <Divider />
@@ -45,6 +53,10 @@ function UserSideBar({ page }) {
         isActive={checkUrl('notifications')}
       >
         Notifications
+      </CustomLink>
+      <Divider />
+      <CustomLink to="/my-account/wallet" isActive={checkUrl('wallet')}>
+        Wallet
       </CustomLink>
       <Divider />
       <CustomLink>Log out</CustomLink>

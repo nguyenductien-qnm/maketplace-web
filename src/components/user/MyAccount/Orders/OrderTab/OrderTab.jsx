@@ -5,13 +5,15 @@ import TabContext from '@mui/lab/TabContext'
 import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
 import { styled } from '@mui/material'
-import SearchInput from './SearchInput'
+
+import OrderItem from './OrderItem'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
-import OrderTable from './OrderTable'
-import EmptyOrder from './EmptyOrder'
-function OrderTab({ orders, getOrders, updateOrderStatus }) {
+import EmptyOrder from '../EmptyOrder'
+
+function OrderTab({ orders, getOrders, setOrders }) {
   const [value, setValue] = useState('ALL')
   const [loading, setLoading] = useState(true)
+
   const handleChange = (event, newValue) => {
     setLoading(true)
     setValue(newValue)
@@ -23,22 +25,6 @@ function OrderTab({ orders, getOrders, updateOrderStatus }) {
     }
   })
 
-  const customHandleSearch = async (searchData) => {
-    setLoading(true)
-    const data = {
-      status: value,
-      search: searchData?.search
-    }
-    if (searchData.startDate) {
-      data.startDate = searchData.startDate
-    }
-    if (searchData.endDate) {
-      data.endDate = searchData.endDate
-    }
-    await getOrders(data)
-    setLoading(false)
-  }
-
   useEffect(() => {
     const fetchOrders = async () => {
       await getOrders({ status: value })
@@ -49,7 +35,6 @@ function OrderTab({ orders, getOrders, updateOrderStatus }) {
 
   const OrderTabContent = () => (
     <>
-      <SearchInput customHandleSearch={customHandleSearch} />
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: '50px' }}>
           <CircularIndeterminate />
@@ -57,7 +42,9 @@ function OrderTab({ orders, getOrders, updateOrderStatus }) {
       ) : orders?.length === 0 ? (
         <EmptyOrder />
       ) : (
-        <OrderTable orders={orders} updateOrderStatus={updateOrderStatus} />
+        orders?.map((order) => (
+          <OrderItem key={order?._id} order={order} setOrders={setOrders} />
+        ))
       )}
     </>
   )
@@ -77,10 +64,10 @@ function OrderTab({ orders, getOrders, updateOrderStatus }) {
           <TabList onChange={handleChange} aria-label="lab API tabs example">
             <CustomTab label="All" value="ALL" />
             <CustomTab label="Pending" value="PENDING" />
-            <CustomTab label="Confirm" value="CONFIRM" />
-            <CustomTab label="Shipped" value="SHIPPED" />
-            <CustomTab label="Cancelled" value="CANCELLED" />
-            <CustomTab label="Delivered" value="DELIVERED" />
+            <CustomTab label="To Pay" value="PAY" />
+            <CustomTab label="To Ship" value="SHIP" />
+            <CustomTab label="Completed" value="COMPLETE" />
+            <CustomTab label="Cancelled" value="CANCEL" />
           </TabList>
         </Box>
         <TabPanel value="ALL">
@@ -89,16 +76,19 @@ function OrderTab({ orders, getOrders, updateOrderStatus }) {
         <TabPanel value="PENDING">
           <OrderTabContent />
         </TabPanel>
-        <TabPanel value="CONFIRM">
+        <TabPanel value="PAY">
           <OrderTabContent />
         </TabPanel>
-        <TabPanel value="SHIPPED">
+        <TabPanel value="SHIP">
           <OrderTabContent />
         </TabPanel>
-        <TabPanel value="CANCELLED">
+        <TabPanel value="COMPLETE">
           <OrderTabContent />
         </TabPanel>
-        <TabPanel value="DELIVERED">
+        <TabPanel value="CANCEL">
+          <OrderTabContent />
+        </TabPanel>
+        <TabPanel value="REFUND">
           <OrderTabContent />
         </TabPanel>
       </TabContext>
