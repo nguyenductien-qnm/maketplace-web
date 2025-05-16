@@ -65,7 +65,7 @@ function TransactionOverview({ transactions }) {
                       {transaction.type}
                     </TableCell>
                     <TableCell align="right">
-                      {transaction.withdrawal_details.email}
+                      {transaction?.withdrawal_details?.email}
                     </TableCell>
                     <TableCell align="right">
                       {formatCurrency(transaction.amount)}

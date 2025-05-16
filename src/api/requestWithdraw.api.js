@@ -1,8 +1,18 @@
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT } from '~/utils/constants'
 
-const getRequestWithdrawAPI = async () => {
-  const res = await authorizedAxios.get(`${API_ROOT}/v1/api/request-withdraw`)
+const getShopRequestWithdrawAPI = async () => {
+  const res = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/request-withdraw/shop`
+  )
   return res
 }
-export { getRequestWithdrawAPI }
+
+const getUserRequestWithdrawAPI = async () => {
+  const res = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/request-withdraw/user`
+  )
+  return res
+}
+
+export { getShopRequestWithdrawAPI, getUserRequestWithdrawAPI }

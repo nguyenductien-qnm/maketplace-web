@@ -1,18 +1,18 @@
 import { Box } from '@mui/material'
-import BalanceWidget from './BalanceWidget'
-import TransactionOverview from './TransactionOverview'
-import PaymentMethod from './PaymentMethod'
+import BalanceWidget from '../../shared/Wallet/BalanceWidget'
+import TransactionOverview from '../../shared/Wallet/TransactionOverview'
+import PaymentMethod from '../../shared/Wallet/PaymentMethod'
 import { useEffect, useState } from 'react'
 import {
-  addPaymentAccountAPI,
-  deletePaymentAccountAPI,
+  shopAddPaymentAccountAPI,
+  shopDeletePaymentAccountAPI,
   getShopWalletAPI,
-  requestWithdrawAPI,
-  setDefaultPaymentAccountAPI
-} from '~/api/shopWallet.api'
-import VendorWalletSkeleton from './VendorWalletSkeleton'
-import { getTransactionsAPI } from '~/api/transaction.api'
-import { getRequestWithdrawAPI } from '~/api/requestWithdraw.api'
+  shopRequestWithdrawAPI,
+  shopSetDefaultPaymentAccountAPI
+} from '~/api/wallet.api'
+import VendorWalletSkeleton from '../../shared/Wallet/VendorWalletSkeleton'
+import { getShopTransactionsAPI } from '~/api/transaction.api'
+import { getShopRequestWithdrawAPI } from '~/api/requestWithdraw.api'
 
 function VendorWallet() {
   const [shopWallet, setShopWallet] = useState({})
@@ -30,11 +30,11 @@ function VendorWallet() {
       }
     }
     const getTransactions = async () => {
-      const res = await getTransactionsAPI()
+      const res = await getShopTransactionsAPI()
       setTransactions(res?.data?.metadata || [])
     }
     const getRequestWithdraw = async () => {
-      const res = await getRequestWithdrawAPI()
+      const res = await getShopRequestWithdrawAPI()
       setRequestWithdraws(res?.data?.metadata || [])
     }
     getShopWallet()
@@ -44,7 +44,7 @@ function VendorWallet() {
 
   const handleAddAccount = async (data) => {
     data.method = 'paypal'
-    const res = await addPaymentAccountAPI(data, [
+    const res = await shopAddPaymentAccountAPI(data, [
       '.btn-shop-add-payment-method',
       '.btn-shop-cancel-add-payment-method'
     ])
@@ -60,7 +60,7 @@ function VendorWallet() {
 
   const handleSetDefault = async (data) => {
     const { _id } = data
-    const res = await setDefaultPaymentAccountAPI({ _id }, [
+    const res = await shopSetDefaultPaymentAccountAPI({ _id }, [
       '.btn-shop-set-default-payment-method',
       '.btn-shop-delete-payment-method'
     ])
@@ -87,7 +87,7 @@ function VendorWallet() {
 
   const handleDelete = async (data) => {
     const { _id } = data
-    const res = await deletePaymentAccountAPI({ _id }, [
+    const res = await shopDeletePaymentAccountAPI({ _id }, [
       '.btn-shop-set-default-payment-method',
       '.btn-shop-delete-payment-method'
     ])
@@ -106,7 +106,7 @@ function VendorWallet() {
   }
 
   const handleRequestWithdraw = async (data) => {
-    const res = await requestWithdrawAPI(data, [
+    const res = await shopRequestWithdrawAPI(data, [
       '.btn-shop-request-withdraw',
       '.btn-shop-cancel-request-withdraw'
     ])

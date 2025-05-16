@@ -32,7 +32,8 @@ function WithdrawModal({
     formState: { errors }
   } = useForm()
 
-  const defaultAccount = accounts?.find((acc) => acc.is_default) || accounts[0]
+  const defaultAccount =
+    accounts?.find((acc) => acc.is_default) || accounts?.[0]
 
   const onSubmit = (data) => {
     handleRequestWithdraw(data)
@@ -54,7 +55,7 @@ function WithdrawModal({
               error={!!errors.account}
               defaultValue={defaultAccount?._id || ''}
             >
-              {accounts.map((acc) => (
+              {accounts?.map((acc) => (
                 <MenuItem key={acc._id} value={acc._id}>
                   {acc.account}
                 </MenuItem>

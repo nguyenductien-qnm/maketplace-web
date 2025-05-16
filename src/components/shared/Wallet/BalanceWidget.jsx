@@ -57,8 +57,6 @@ function BalanceWidget({
     }
   }
 
-  console.log('requestWithdraws', requestWithdraws)
-
   return (
     <Box>
       <Card sx={{ p: '20px' }}>
