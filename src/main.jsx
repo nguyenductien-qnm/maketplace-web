@@ -1,13 +1,18 @@
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
-import { colors, GlobalStyles } from '@mui/material'
+import { GlobalStyles } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { store, persistor } from './redux/store'
+import { store } from './redux/store'
 import { PersistGate } from 'redux-persist/integration/react'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
+
+import { persistStore } from 'redux-persist'
+const persistor = persistStore(store)
+import { injectStore } from './utils/authorizedAxios'
+injectStore(store)
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>

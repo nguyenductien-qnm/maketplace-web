@@ -26,7 +26,9 @@ function OrderTab({ orders, getOrders, setOrders }) {
   })
 
   useEffect(() => {
+    console.log('chay useEffect nhe')
     const fetchOrders = async () => {
+      console.log('call lấy lại đơn hàng nè e')
       await getOrders({ status: value })
       setLoading(false)
     }

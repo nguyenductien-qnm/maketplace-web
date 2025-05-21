@@ -11,25 +11,20 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 
 function VerifyAccount() {
-  const navigate = useNavigate()
   const dispatch = useDispatch()
   const otp = useParams()
   const [stateVerify, setStateVerify] = useState('pending')
 
   useEffect(() => {
-    const verifyAndNavigate = async () => {
+    const verify = async () => {
       const res = await dispatch(verifyAccountAPI(otp))
       if (res.payload?.status !== 200) {
         setStateVerify('failure')
       } else {
         setStateVerify('success')
-        setTimeout(() => {
-          navigate('/setup-account')
-        }, 2000)
       }
     }
-
-    verifyAndNavigate()
+    verify()
   }, [])
 
   return (

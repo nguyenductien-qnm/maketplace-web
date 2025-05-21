@@ -56,7 +56,10 @@ function ProductDetails() {
       <CustomBreadcrumbs breakCrumbs={breakCrumbs} />
       <Grid container spacing={3} sx={{ marginTop: '15px' }}>
         <Grid size={6}>
-          <ProductImageGallery productGalleries={product.product_gallery} />
+          <ProductImageGallery
+            productGalleries={product.product_gallery}
+            productThumb={product.product_thumb}
+          />
         </Grid>
         <Grid size={6}>
           <ProductInfo product={product} shop={shop} />

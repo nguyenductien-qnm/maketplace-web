@@ -1,3 +1,14 @@
+import { useEffect } from 'react'
+import {
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+  useLocation,
+  useNavigate
+} from 'react-router-dom'
+import { useSelector } from 'react-redux'
+
 import Home from './pages/user/Home'
 import DetailProduct from './pages/user/ProductDetails'
 import Store from './pages/user/Store'
@@ -7,121 +18,80 @@ import Auth from './pages/user/Auth'
 import Vendor from './pages/user/Vendor'
 import SetupAccount from './pages/user/SetupAccount'
 import VerifyAccount from './pages/user/VerifyAccount'
-import PrivateRoute from './components/common/PrivateRoute'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
 import CheckOut from './pages/user/CheckOut'
+
+import ScrollToTop from './components/common/ScrollToTop'
+import { setNavigate } from './helpers/navigation'
+
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import ScrollToTop from './components/common/ScrollToTop'
-import AdminLogin from './pages/admin/AdminLogin'
-import Test from './pages/admin/Test'
+
+function ProtectedRoute({ user }) {
+  return user ? <Outlet /> : <Navigate to="/auth/login" replace />
+}
+
+function UnauthorizedRoute({ user }) {
+  return user ? <Navigate to="/home" replace /> : <Outlet />
+}
 
 function App() {
+  const navigate = useNavigate()
+  const location = useLocation()
   const currentUser = useSelector((state) => state.user.currentUser)
 
-  const ProtectedRoute = ({ children }) => {
-    if (currentUser?.user_status === 'pending_setup') {
-      return <Navigate to="/setup-account" />
-    }
-    return children
+  useEffect(() => {
+    setNavigate(navigate)
+  }, [navigate])
+
+  const isPendingSetup =
+    currentUser?.user_status === 'pending_setup' &&
+    location.pathname !== '/setup-account'
+
+  if (isPendingSetup) {
+    return <Navigate to="/setup-account" replace />
   }
 
   return (
     <>
       <ScrollToTop />
       <Routes>
-        {/* HOME  */}
-        <Route
-          path="/home"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        {/* PRODUCT DETAIL  */}
-        <Route
-          path="/product/:product_slug"
-          element={
-            <ProtectedRoute>
-              <DetailProduct />
-            </ProtectedRoute>
-          }
-        />
-        {/* STORE  */}
-        <Route
-          path="/store"
-          element={
-            <ProtectedRoute>
-              <Store />
-            </ProtectedRoute>
-          }
-        />
-        {/* CART  */}
-        <Route
-          path="/cart"
-          element={
-            <ProtectedRoute>
-              <ShoppingCart />
-            </ProtectedRoute>
-          }
-        />
-        {/* CHECKOUT  */}
-        <Route
-          path="/checkout"
-          element={
-            <ProtectedRoute>
-              <CheckOut />
-            </ProtectedRoute>
-          }
-        />
-        {/* MY ACCOUNT  */}
-        <Route
-          path="/my-account/:page"
-          element={
-            <ProtectedRoute>
-              <MyAccount />
-            </ProtectedRoute>
-          }
-        />
-        {/* AUTH  */}
-        <Route path="/auth/:page" element={<Auth />} />
-        <Route path="/auth/reset-password/:token" element={<Auth />} />
-        <Route path="/auth/verify-account/:otp" element={<VerifyAccount />} />
-        {/* VENDOR  */}
-        <Route
-          path="/vendor/:page"
-          element={
-            <ProtectedRoute>
-              <Vendor />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/vendor/:page/:_id"
-          element={
-            <ProtectedRoute>
-              <Vendor />
-            </ProtectedRoute>
-          }
-        />
+        {/* Redirect root to /home */}
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/home" element={<Home />} />
+
+        {/* Setup Account */}
         <Route
           path="/setup-account"
           element={
             currentUser?.user_status === 'pending_setup' ? (
               <SetupAccount />
             ) : (
-              <Navigate to="/home" />
+              <Navigate to="/home" replace />
             )
           }
         />
-        <Route path="/admin">
-          <Route path="auth" element={<AdminLogin />} />
-          <Route path="test" element={<Test />} />
+
+        {/* Public routes - Only accessible if NOT logged in */}
+        <Route element={<UnauthorizedRoute user={currentUser} />}>
+          <Route path="/auth/:page" element={<Auth />} />
+          <Route path="/auth/reset-password/:token" element={<Auth />} />
+          <Route path="/auth/verify-account/:otp" element={<VerifyAccount />} />
+
+          <Route path="/product/:product_slug" element={<DetailProduct />} />
+          <Route path="/store" element={<Store />} />
+        </Route>
+
+        {/* Private routes - Only accessible if logged in */}
+        <Route element={<ProtectedRoute user={currentUser} />}>
+          <Route path="/my-account/:page" element={<MyAccount />} />
+          <Route path="/cart" element={<ShoppingCart />} />
+          <Route path="/checkout" element={<CheckOut />} />
+          <Route path="/vendor/:page" element={<Vendor />} />
+          <Route path="/vendor/:page/:_id" element={<Vendor />} />
         </Route>
       </Routes>
     </>
   )
 }
+
 export default App

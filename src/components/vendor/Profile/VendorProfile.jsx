@@ -30,7 +30,7 @@ import {
 import FieldErrorAlert from '~/components/common/FieldErrorAlert'
 import generateURL from '~/utils/generateURL'
 import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
-import resizeImage from '~/helpers/resizeImage'
+import { prepareImageForStorage } from '~/helpers/resizeImage'
 import VendorProfileSkeleton from './VendorProfileSkeleton'
 import interceptorLoadingElements from '~/utils/interceptorLoading'
 
@@ -202,7 +202,10 @@ function VendorProfile() {
       '.btn-shop-update-profile'
     ])
     const url = await uploadImageToCloudinary(e.target.files[0])
-    setValue('shop_avatar', resizeImage(url, 80, 80))
+    setValue(
+      'shop_avatar',
+      prepareImageForStorage(url, { width: 180, height: 180 })
+    )
     interceptorLoadingElements(false, [
       '.btn-shop-upload-banner',
       '.btn-shop-upload-avatar',
@@ -217,7 +220,10 @@ function VendorProfile() {
       '.btn-shop-update-profile'
     ])
     const url = await uploadImageToCloudinary(e.target.files[0])
-    setValue('shop_banner', resizeImage(url, 1000, 200))
+    setValue(
+      'shop_banner',
+      prepareImageForStorage(url, { width: 1000, height: 200 })
+    )
     interceptorLoadingElements(false, [
       '.btn-shop-upload-banner',
       '.btn-shop-upload-avatar',

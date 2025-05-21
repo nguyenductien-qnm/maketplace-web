@@ -1,8 +1,11 @@
-import { Box, Button, TextField, Typography } from '@mui/material'
-import { blue } from '@mui/material/colors'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import Zoom from '@mui/material/Zoom'
-import { useForm } from 'react-hook-form'
-import FieldErrorAlert from '~/components/common/FieldErrorAlert'
+import { blue } from '@mui/material/colors'
+import { Link } from 'react-router-dom'
+import { useLogin } from '~/hooks/auth.hook'
 import {
   FIELD_REQUIRED_MESSAGE,
   EMAIL_RULE,
@@ -11,31 +14,15 @@ import {
   PASSWORD_RULE_MESSAGE
 } from '~/utils/validators'
 
-import { loginAPI } from '~/redux/user.slice'
-import { Link, useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-
 function FormLogin() {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
   const {
     register,
-    formState: { errors },
-    handleSubmit
-  } = useForm()
-
-  const handleSubmitLogin = async (data) => {
-    const res = await dispatch(
-      loginAPI({ data, loadingClass: '.btn-auth-login' })
-    )
-    if (res.payload?.status === 200)
-      setTimeout(() => {
-        navigate('/home')
-      }, 500)
-  }
+    onSubmit,
+    formState: { errors }
+  } = useLogin()
 
   return (
-    <form onSubmit={handleSubmit(handleSubmitLogin)}>
+    <form onSubmit={onSubmit}>
       <Zoom in={true} style={{ transitionDelay: '200ms' }}>
         <Box
           sx={{
@@ -66,8 +53,8 @@ function FormLogin() {
                 required: FIELD_REQUIRED_MESSAGE,
                 pattern: { value: EMAIL_RULE, message: EMAIL_RULE_MESSAGE }
               })}
+              helperText={errors.email?.message}
             />
-            <FieldErrorAlert errors={errors} fieldName={'email'} />
           </Box>
 
           <Box sx={{ width: '100%' }}>
@@ -75,6 +62,7 @@ function FormLogin() {
               label="Password"
               type="password"
               fullWidth
+              error={!!errors['password']}
               {...register('password', {
                 required: FIELD_REQUIRED_MESSAGE,
                 pattern: {
@@ -82,8 +70,8 @@ function FormLogin() {
                   message: PASSWORD_RULE_MESSAGE
                 }
               })}
+              helperText={errors.password?.message}
             />
-            <FieldErrorAlert errors={errors} fieldName={'password'} />
           </Box>
 
           <Link

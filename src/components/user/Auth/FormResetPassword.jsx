@@ -1,60 +1,28 @@
-import { Box, Button, TextField, Typography } from '@mui/material'
-import { blue } from '@mui/material/colors'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import Zoom from '@mui/material/Zoom'
-import { useForm } from 'react-hook-form'
-import FieldErrorAlert from '~/components/common/FieldErrorAlert'
+import CircularProgress from '@mui/material/CircularProgress'
 import {
   FIELD_REQUIRED_MESSAGE,
   PASSWORD_RULE,
   PASSWORD_RULE_MESSAGE
 } from '~/utils/validators'
-import CircularProgress from '@mui/material/CircularProgress'
-
-import { useDispatch } from 'react-redux'
-import { useEffect, useState } from 'react'
-import { checkTokenResetPasswordAPI, resetPasswordAPI } from '~/api/auth.api'
-import { useNavigate } from 'react-router-dom'
+import { blue } from '@mui/material/colors'
+import { useResetPassword } from '~/hooks/auth.hook'
 
 function FormResetPassword({ token }) {
-  const navigate = useNavigate()
-  const [stateVerify, setStateVerify] = useState(false)
-
   const {
     register,
     formState: { errors },
-    handleSubmit,
-    watch
-  } = useForm()
-
-  useEffect(() => {
-    const handleCheckToken = async () => {
-      await checkTokenResetPasswordAPI({ token })
-        .then((res) => {
-          if (res.status === 200) {
-            setStateVerify(true)
-          }
-        })
-        .catch(() => {
-          setTimeout(() => {
-            navigate('/auth/login')
-          }, 1000)
-        })
-    }
-    handleCheckToken()
-  }, [token])
-
-  const handleSubmitResetPassword = async (data) => {
-    data.token = token
-    const res = await resetPasswordAPI(data, '.btn-auth-reset-password')
-    if (res.status === 404 || res.status === 200) {
-      setTimeout(() => {
-        navigate('/auth/login')
-      }, 1000)
-    }
-  }
+    onSubmit,
+    watch,
+    stateVerify
+  } = useResetPassword(token)
 
   return (
-    <form onSubmit={handleSubmit(handleSubmitResetPassword)}>
+    <form onSubmit={onSubmit}>
       <Zoom in={true} style={{ transitionDelay: '200ms' }}>
         {stateVerify === false ? (
           <Box>
@@ -98,15 +66,18 @@ function FormResetPassword({ token }) {
                 type="password"
                 variant="outlined"
                 error={!!errors['new_password']}
-                {...register('new_password', {
-                  required: FIELD_REQUIRED_MESSAGE,
-                  pattern: {
-                    value: PASSWORD_RULE,
-                    message: PASSWORD_RULE_MESSAGE
-                  }
-                })}
+                {...register(
+                  'new_password'
+                  //   , {
+                  //   required: FIELD_REQUIRED_MESSAGE,
+                  //   pattern: {
+                  //     value: PASSWORD_RULE,
+                  //     message: PASSWORD_RULE_MESSAGE
+                  //   }
+                  // }
+                )}
+                // helperText={errors?.new_password.message}
               />
-              <FieldErrorAlert errors={errors} fieldName={'new_password'} />
             </Box>
 
             <Box sx={{ width: '100%' }}>
@@ -114,15 +85,18 @@ function FormResetPassword({ token }) {
                 label="Confirm password"
                 type="password"
                 fullWidth
-                {...register('confirm_password', {
-                  required: FIELD_REQUIRED_MESSAGE,
-                  pattern: {
-                    value: watch('new_password'),
-                    message: PASSWORD_RULE_MESSAGE
-                  }
-                })}
+                {...register(
+                  'confirm_password'
+                  //   , {
+                  //   required: FIELD_REQUIRED_MESSAGE,
+                  //   pattern: {
+                  //     value: watch('new_password'),
+                  //     message: PASSWORD_RULE_MESSAGE
+                  //   }
+                  // }
+                )}
+                // helperText={errors?.confirm_password.message}
               />
-              <FieldErrorAlert errors={errors} fieldName={'confirm_password'} />
             </Box>
 
             <Button

@@ -25,9 +25,9 @@ import {
   NUMBER_RULE_MESSAGE
 } from '~/utils/validators'
 import { NumericFormat } from 'react-number-format'
-import resizeImage from '~/helpers/resizeImage'
 import interceptorLoadingElements from '~/utils/interceptorLoading'
 import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
+import { getImageForPreview } from '~/helpers/resizeImage'
 
 function SPUForm() {
   const VisuallyHiddenInput = styled('input')({
@@ -425,7 +425,7 @@ function SPUForm() {
               {productThumb !== '' ? (
                 <Box>
                   <img
-                    src={resizeImage(productThumb, 180, 180)}
+                    src={getImageForPreview(productThumb, { width: 180 })}
                     sx={{ height: '100%', width: '100%' }}
                   />
                   <HighlightOffOutlinedIcon
@@ -501,7 +501,7 @@ function SPUForm() {
                           '&:hover': { cursor: 'pointer' }
                         }}
                       />
-                      <img src={resizeImage(image, 60, 60)} />
+                      <img src={getImageForPreview(image, { width: 60 })} />
                     </Grid2>
                   ))}
                 </Grid2>

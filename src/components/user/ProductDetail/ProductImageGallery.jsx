@@ -1,7 +1,21 @@
 import { Box, Skeleton } from '@mui/material'
+import { useEffect, useState } from 'react'
 import Slider from 'react-slick'
+import { convertThumbToSlide } from '~/helpers/resizeImage'
 
-function ProductImageGallery({ productGalleries }) {
+function ProductImageGallery({ productGalleries, productThumb }) {
+  const [images, setImages] = useState([])
+
+  useEffect(() => {
+    if (!productGalleries || !productGalleries.length || !productThumb) return
+    const resizeThumb = convertThumbToSlide(productThumb)
+    setImages([resizeThumb, ...productGalleries])
+  }, [productGalleries])
+
+  useEffect(() => {
+    console.log('images:::', images)
+  }, [images])
+
   const settings = {
     dots: true,
     infinite: true,
@@ -11,7 +25,7 @@ function ProductImageGallery({ productGalleries }) {
     customPaging: (i) => (
       <Box sx={{ position: 'absolute', top: '10px' }}>
         <img
-          src={productGalleries?.[i]}
+          src={images?.[i]}
           style={{
             height: '50px',
             objectFit: 'cover',
@@ -22,12 +36,14 @@ function ProductImageGallery({ productGalleries }) {
     )
   }
 
+  console.log('productThumb:::', productThumb)
+
   return (
     <Box>
-      {productGalleries && productGalleries[0] ? (
+      {images && images[0] ? (
         <Box sx={{ position: 'relative', textAlign: 'center' }}>
           <Slider {...settings}>
-            {productGalleries?.map((productGallery) => (
+            {images?.map((productGallery) => (
               <Box key={productGallery}>
                 <img
                   src={productGallery}

@@ -1,29 +1,26 @@
-import { Box, Button, TextField, Typography } from '@mui/material'
-import { blue } from '@mui/material/colors'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import Zoom from '@mui/material/Zoom'
-import FieldErrorAlert from '~/components/common/FieldErrorAlert'
-import { registerAccountAPI } from '~/api/auth.api'
 import {
   FIELD_REQUIRED_MESSAGE,
   EMAIL_RULE,
   EMAIL_RULE_MESSAGE
 } from '~/utils/validators'
-import { useForm } from 'react-hook-form'
+import { blue } from '@mui/material/colors'
 import { Link } from 'react-router-dom'
+import { useRegister } from '~/hooks/auth.hook'
 
 function FormRegister() {
   const {
     register,
     formState: { errors },
-    handleSubmit
-  } = useForm()
-
-  const handleSubmitRegister = (data) => {
-    registerAccountAPI(data, '.btn-auth-register')
-  }
+    onSubmit
+  } = useRegister()
 
   return (
-    <form onSubmit={handleSubmit(handleSubmitRegister)}>
+    <form onSubmit={onSubmit}>
       <Zoom in={true} style={{ transitionDelay: '200ms' }}>
         <Box
           sx={{
@@ -61,8 +58,8 @@ function FormRegister() {
                   message: EMAIL_RULE_MESSAGE
                 }
               })}
+              helperText={errors.email?.message}
             />
-            <FieldErrorAlert errors={errors} fieldName={'email'} />
           </Box>
 
           <Button

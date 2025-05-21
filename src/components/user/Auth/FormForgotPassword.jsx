@@ -1,29 +1,25 @@
-import { Box, Button, TextField, Typography } from '@mui/material'
-import { blue } from '@mui/material/colors'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import Zoom from '@mui/material/Zoom'
-import { useForm } from 'react-hook-form'
-import FieldErrorAlert from '~/components/common/FieldErrorAlert'
 import {
   FIELD_REQUIRED_MESSAGE,
   EMAIL_RULE,
   EMAIL_RULE_MESSAGE
 } from '~/utils/validators'
-
-import { forgotPasswordAPI } from '~/api/auth.api'
+import { blue } from '@mui/material/colors'
+import { useForgotPassword } from '~/hooks/auth.hook'
 
 function FormForgotPassword() {
   const {
     register,
-    formState: { errors },
-    handleSubmit
-  } = useForm()
-
-  const onSubmitLogin = (data) => {
-    forgotPasswordAPI(data, '.btn-auth-forgot-password')
-  }
+    onSubmit,
+    formState: { errors }
+  } = useForgotPassword()
 
   return (
-    <form onSubmit={handleSubmit(onSubmitLogin)}>
+    <form onSubmit={onSubmit}>
       <Zoom in={true} style={{ transitionDelay: '200ms' }}>
         <Box
           sx={{
@@ -54,8 +50,8 @@ function FormForgotPassword() {
                 required: FIELD_REQUIRED_MESSAGE,
                 pattern: { value: EMAIL_RULE, message: EMAIL_RULE_MESSAGE }
               })}
+              helperText={errors.email?.message}
             />
-            <FieldErrorAlert errors={errors} fieldName={'email'} />
           </Box>
 
           <Button
