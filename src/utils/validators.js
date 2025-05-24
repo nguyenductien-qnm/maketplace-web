@@ -13,8 +13,9 @@ export const PASSWORD_CONFIRMATION_MESSAGE =
   'Password confirmation does not match!'
 
 // ==================== name ============================
-export const NAME_RULE = /^[a-zA-ZÀ-ỹ0-9\s.,()\-]{3,255}$/
-export const NAME_RULE_MESSAGE = 'Invalid name'
+export const NAME_RULE = /^[A-Za-zÀ-ỹà-ỹ\s]{3,50}$/
+export const NAME_RULE_MESSAGE =
+  'Please enter a valid name (3-50 letters and spaces only).'
 
 // ==================== phone ============================
 export const PHONE_RULE = /^\d{10}$/

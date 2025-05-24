@@ -35,7 +35,7 @@ export const setupAccountAPI = createAsyncThunk(
   'user/setupAccount',
   async ({ data, loadingClass }) => {
     const res = await authorizedAxios.post(
-      `${API_ROOT}/v1/api/auth/setup-account`,
+      `${API_ROOT}/v1/api/user/setup-account`,
       data,
       { loadingClass, ...TOAST_MODE.ALL }
     )
@@ -58,9 +58,9 @@ export const updateUserInfoAPI = createAsyncThunk(
 
 export const logoutAPI = createAsyncThunk(
   'user/logoutAPI',
-  async ({ toastMode }) => {
+  async (toastMode) => {
     const res = await authorizedAxios.get(`${API_ROOT}/v1/api/auth/logout`, {
-      toastMode
+      ...toastMode
     })
     navigate('/auth/login')
     return res
@@ -69,11 +69,11 @@ export const logoutAPI = createAsyncThunk(
 
 export const accountMigrationAPI = createAsyncThunk(
   'user/accountMigrationAPI',
-  async (data) => {
+  async ({ data, loadingClass }) => {
     const res = await authorizedAxios.post(
       `${API_ROOT}/v1/api/user/account-migration`,
       data,
-      { ...TOAST_MODE.ALL }
+      { loadingClass, ...TOAST_MODE.ALL }
     )
     return res
   }

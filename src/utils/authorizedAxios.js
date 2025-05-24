@@ -4,7 +4,6 @@ import interceptorLoadingElements from './interceptorLoading'
 import { refreshTokenAPI } from '~/api/auth.api'
 import { logoutAPI } from '~/redux/user.slice'
 import { TOAST_MODE } from './constants'
-
 let axiosReduxStore
 
 export const injectStore = (mainStore) => {
@@ -34,7 +33,6 @@ authorizeAxiosInstance.interceptors.response.use(
     interceptorLoadingElements(false, loadingClass)
 
     const shouldShowSuccessToast = response.config?.showToastSuccess
-
     if (response?.data?.message && shouldShowSuccessToast) {
       toast.success(response.data.message)
     }

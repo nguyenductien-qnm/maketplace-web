@@ -1,18 +1,19 @@
 import { authorizedAxios } from '~/utils/authorizedAxios'
-import { API_ROOT } from '~/utils/constants'
+import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 
 const addToCartAPI = async (data, loadingClass) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/cart/add-to-cart`,
     data,
-    { loadingClass }
+    { loadingClass, ...TOAST_MODE.ALL }
   )
   return res
 }
 
 const getCartProductsAPI = async () => {
   const res = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/cart/get-cart-products`
+    `${API_ROOT}/v1/api/cart/get-cart-products`,
+    { ...TOAST_MODE.ONLY_ERROR }
   )
   return res
 }
@@ -21,7 +22,7 @@ const removeProductAPI = async (_id, loadingClass) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/cart/remove-product`,
     _id,
-    { loadingClass }
+    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
   )
   return res
 }
@@ -30,13 +31,16 @@ const updateQuantityProductCartAPI = async (product, newQuantity) => {
   try {
     const res = await authorizedAxios.post(
       `${API_ROOT}/v1/api/cart/update-quantity-product-cart`,
-      { product, newQuantity }
+      { product, newQuantity },
+      {
+        ...TOAST_MODE.NONE
+      }
     )
     return res
   } catch (error) {
     return {
       status: error.response ? error.response.status : 500,
-      message: error.data.message
+      message: error.response.data.message
     }
   }
 }
@@ -46,7 +50,7 @@ const checkoutAPI = async (data, loadingClass) => {
     const res = await authorizedAxios.post(
       `${API_ROOT}/v1/api/cart/checkout`,
       data,
-      { loadingClass }
+      { loadingClass, ...TOAST_MODE.ONLY_ERROR }
     )
     return res
   } catch (error) {
@@ -63,7 +67,7 @@ const prepareCheckoutAPI = async (data, loadingClass) => {
     const res = await authorizedAxios.post(
       `${API_ROOT}/v1/api/cart/prepare-checkout`,
       data,
-      { loadingClass }
+      { loadingClass, ...TOAST_MODE.ONLY_ERROR }
     )
     return res
   } catch (error) {
@@ -81,7 +85,7 @@ const clearCartAPI = async (selectedProducts, loadingClass) => {
     {
       selectedProducts
     },
-    { loadingClass }
+    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
   )
   return res
 }

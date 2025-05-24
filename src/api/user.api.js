@@ -17,19 +17,19 @@ const changePasswordAPI = async (data, loadingClass) => {
   return res
 }
 
+const getAddressListAPI = async () => {
+  const res = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/user/address-list`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return res
+}
+
 const addNewAddressAPI = async ({ data, loadingClass }) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/user/add-new-address`,
     data,
     { loadingClass, ...TOAST_MODE.ONLY_ERROR }
-  )
-  return res
-}
-
-const getAddressListAPI = async () => {
-  const res = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/user/address-list`,
-    { ...TOAST_MODE.NONE }
   )
   return res
 }

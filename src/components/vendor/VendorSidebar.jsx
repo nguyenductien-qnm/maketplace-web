@@ -8,7 +8,7 @@ import LocalGroceryStoreOutlinedIcon from '@mui/icons-material/LocalGroceryStore
 import DiscountOutlinedIcon from '@mui/icons-material/DiscountOutlined'
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined'
 
-function VendorSideBar({ page }) {
+function VendorSideBar() {
   const CustomLink = styled(Link, {
     shouldForwardProp: (prop) => prop !== 'isActive'
   })(({ isActive }) => ({

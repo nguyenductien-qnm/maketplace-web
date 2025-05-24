@@ -37,9 +37,10 @@ export const checkTokenResetPasswordAPI = async (data) => {
 }
 
 export const resetPasswordAPI = async (data, loadingClass) => {
+  const { token, ...restData } = data
   const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/auth/reset-password/${data.token}`,
-    data,
+    `${API_ROOT}/v1/api/auth/reset-password/${token}`,
+    restData,
     { loadingClass, ...TOAST_MODE.ALL }
   )
   return res

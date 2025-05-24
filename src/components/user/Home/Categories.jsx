@@ -1,7 +1,7 @@
 import Grid from '@mui/material/Grid2'
 import { Box, Typography } from '@mui/material'
 import { grey } from '@mui/material/colors'
-import settingCarousel from '../Carousel/SettingCarousel'
+import settingCarousel from '~/components/common/Carousel/SettingCarousel'
 import Slider from 'react-slick'
 
 function Categories() {
