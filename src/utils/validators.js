@@ -11,7 +11,10 @@ export const PASSWORD_RULE_MESSAGE =
   'Password must include at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long.'
 export const PASSWORD_CONFIRMATION_MESSAGE =
   'Password confirmation does not match!'
-
+// ==================== product name ============================
+export const PRODUCT_NAME_RULE = /^[A-Za-zÀ-ỹ0-9\s\-_,.()]{3,255}$/
+export const PRODUCT_NAME_RULE_MESSAGE =
+  'Product name can only contain letters, numbers, spaces, hyphens, underscores, commas, periods, and parentheses, and must be between 3 and 255 characters long.'
 // ==================== name ============================
 export const NAME_RULE = /^[A-Za-zÀ-ỹà-ỹ\s]{3,50}$/
 export const NAME_RULE_MESSAGE =
@@ -23,6 +26,10 @@ export const PHONE_RULE_MESSAGE = 'Invalid phone.'
 
 export const NUMBER_RULE = /^\d+$/
 export const NUMBER_RULE_MESSAGE = 'Only numbers are allowed.'
+// ==================== voucher code ============================
+export const VOUCHER_CODE_RULE = /^[A-Za-z0-9]{8}$/
+export const VOUCHER_CODE_RULE_MESSAGE =
+  'Voucher code must contain only letters (A-Z, a-z) and hyphens (-), with exactly 8 characters.'
 
 // ==================== file ============================
 export const LIMIT_COMMON_FILE_SIZE = 10485760 // byte = 10 MB

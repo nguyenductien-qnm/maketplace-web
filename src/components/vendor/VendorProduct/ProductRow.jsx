@@ -1,15 +1,16 @@
-import { Box, TableCell, TableRow, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import TableCell from '@mui/material/TableCell'
+import TableRow from '@mui/material/TableRow'
+import Typography from '@mui/material/Typography'
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
-import { green, red } from '@mui/material/colors'
-import { useNavigate } from 'react-router-dom'
 import RestoreOutlinedIcon from '@mui/icons-material/RestoreOutlined'
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined'
 import formatCurrency from '~/utils/formatCurrency'
+import { green, red } from '@mui/material/colors'
+import { navigate } from '~/helpers/navigation'
 
 function ProductRow({ productItem, onOpenModal }) {
-  const navigate = useNavigate()
-
   return (
     <TableRow>
       <TableCell>

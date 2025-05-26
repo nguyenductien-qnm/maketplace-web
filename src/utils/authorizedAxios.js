@@ -45,7 +45,6 @@ authorizeAxiosInstance.interceptors.response.use(
     interceptorLoadingElements(false, loadingClass)
 
     const status = error.response?.status
-
     if (status === 401) {
       axiosReduxStore.dispatch(logoutAPI({ toastMode: { ...TOAST_MODE.ALL } }))
     }

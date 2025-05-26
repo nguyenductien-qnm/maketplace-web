@@ -3,7 +3,7 @@ import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT } from '~/utils/constants'
 
 const getProductDetailForCustomerAPI = async (product_slug) => {
-  const res = await axios.post(
+  const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/product/get-product-for-customer`,
     { product_slug }
   )
@@ -19,7 +19,7 @@ const getDetailProductByOwnerAPI = async (_id) => {
 }
 
 const searchProductByOwnerAPI = async (payload) => {
-  const res = await axios.post(
+  const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/product/get-product-for-customer`,
     payload
   )
@@ -27,21 +27,27 @@ const searchProductByOwnerAPI = async (payload) => {
 }
 
 const softDeleteProductAPI = async (_id) => {
-  const res = await axios.post(`${API_ROOT}/v1/api/product/soft-delete`, {
-    _id
-  })
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/product/soft-delete`,
+    {
+      _id
+    }
+  )
   return res
 }
 
 const deletePermanentProductAPI = async (_id) => {
-  const res = await axios.post(`${API_ROOT}/v1/api/product/delete-permanent`, {
-    _id
-  })
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/product/delete-permanent`,
+    {
+      _id
+    }
+  )
   return res
 }
 
 const restoreProductAPI = async (_id) => {
-  const res = await axios.post(`${API_ROOT}/v1/api/product/restore`, {
+  const res = await authorizedAxios.post(`${API_ROOT}/v1/api/product/restore`, {
     _id
   })
   return res

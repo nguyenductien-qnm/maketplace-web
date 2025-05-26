@@ -1,30 +1,31 @@
-import { useEffect, useState } from 'react'
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Box,
-  Grid2,
-  Typography,
-  TextField,
-  Select,
-  MenuItem,
-  Button,
-  Paper
-} from '@mui/material'
-import { queryProductByOwnerAPI } from '~/api/productSPU.api'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import TextField from '@mui/material/TextField'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
+import Grid2 from '@mui/material/Grid2'
 import SearchInput from '~/components/common/SearchInput'
-import { blue } from '@mui/material/colors'
-import { useForm } from 'react-hook-form'
-import {
-  FIELD_REQUIRED_MESSAGE,
-  NUMBER_RULE,
-  NUMBER_RULE_MESSAGE
-} from '~/utils/validators'
 import FieldErrorAlert from '~/components/common/FieldErrorAlert'
 import ProductEmpty from '../VendorProduct/ProductEmpty'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
+import {
+  FIELD_REQUIRED_MESSAGE,
+  NAME_RULE,
+  NAME_RULE_MESSAGE,
+  NUMBER_RULE,
+  NUMBER_RULE_MESSAGE,
+  VOUCHER_CODE_RULE,
+  VOUCHER_CODE_RULE_MESSAGE
+} from '~/utils/validators'
+import { blue } from '@mui/material/colors'
+import { useVendorVoucherModal } from '~/hooks/vendor/voucher.hook'
+import { Controller } from 'react-hook-form'
 
 const VoucherModal = ({
   open,
@@ -36,110 +37,34 @@ const VoucherModal = ({
 }) => {
   const {
     register,
-    formState: { errors },
-    handleSubmit,
-    watch,
-    reset
-  } = useForm({
-    shouldUnregister: true
+    errors,
+    onSubmit,
+    voucherStatus,
+    voucherType,
+    voucherApplies,
+    product,
+    loading,
+    searchValue,
+    setSearchValue,
+    handleSearch,
+    handleSelectProduct,
+    selectProduct,
+    control
+  } = useVendorVoucherModal({
+    voucher,
+    action,
+    onClose: handleClose,
+    handleCreateVoucher,
+    handleUpdateVoucher
   })
 
-  const voucherApplies = watch('voucher_applies')
-  const voucherStatus = watch('voucher_status')
-  const voucherType = watch('voucher_type')
-
-  const [product, setProduct] = useState([])
-  const [searchValue, setSearchValue] = useState('')
-  const [selectProduct, setSelectProduct] = useState([])
-  const [loading, setLoading] = useState(false)
-  useEffect(() => {
-    const getProduct = async () => {
-      if (voucherApplies === 'specific') {
-        try {
-          setLoading(true)
-          const res = await queryProductByOwnerAPI({ status: 'PUBLIC' })
-          setProduct(res?.data?.metadata)
-        } finally {
-          setLoading(false)
-        }
-      }
-    }
-    getProduct()
-  }, [voucherApplies])
-
-  useEffect(() => {
-    if (voucher) {
-      setSelectProduct(voucher?.voucher_product_ids)
-      reset({
-        voucher_name: voucher?.voucher_name,
-        voucher_code: voucher?.voucher_code,
-        voucher_type: voucher?.voucher_type,
-        voucher_value: voucher?.voucher_value,
-        voucher_quantity: voucher?.voucher_quantity,
-        voucher_min_order_value: voucher?.voucher_min_order_value,
-        voucher_applies: voucher?.voucher_applies,
-        voucher_start_date: voucher?.voucher_start_date,
-        voucher_end_date: voucher?.voucher_end_date,
-        voucher_status: voucher?.voucher_status
-      })
-    } else {
-      reset({})
-    }
-  }, [voucher])
-
-  const handleSearch = async () => {
-    try {
-      setLoading(true)
-      const res = await queryProductByOwnerAPI({
-        status: 'PUBLIC',
-        search: searchValue
-      })
-      setProduct(res?.data?.metadata)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleSelectProduct = (product) => {
-    setSelectProduct((prev) => {
-      const findProduct = prev.find((p) => p === product._id)
-      if (findProduct) {
-        return prev.filter((p) => p !== product._id)
-      } else {
-        return [...prev, product._id]
-      }
-    })
-  }
-
-  const createVoucher = async (data) => {
-    if (voucherApplies === 'specific') {
-      data.voucher_product_ids = selectProduct
-    } else {
-      delete data.voucher_product_ids
-    }
-    let res = null
-    if (action === 'CREATE') {
-      res = await handleCreateVoucher(data)
-    } else if (action === 'UPDATE') {
-      data._id = voucher._id
-
-      res = await handleUpdateVoucher(data)
-    }
-    if (res.status === 200) handleCloseWithReset()
-  }
-
-  const handleCloseWithReset = () => {
-    reset()
-    handleClose()
-  }
-
   return (
-    <Dialog open={open} onClose={handleCloseWithReset} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle>
         {action === 'CREATE' && 'Create Voucher'}
         {action === 'UPDATE' && 'Update Voucher'}
       </DialogTitle>
-      <form onSubmit={handleSubmit(createVoucher)}>
+      <form onSubmit={onSubmit}>
         <DialogContent sx={{ mt: '-20px' }}>
           <Box sx={{ mt: 2 }}>
             <Grid2 container spacing={2}>
@@ -151,11 +76,15 @@ const VoucherModal = ({
                   size="small"
                   fullWidth
                   {...register('voucher_code', {
-                    required: FIELD_REQUIRED_MESSAGE
+                    required: FIELD_REQUIRED_MESSAGE,
+                    pattern: {
+                      value: VOUCHER_CODE_RULE,
+                      message: VOUCHER_CODE_RULE_MESSAGE
+                    }
                   })}
                   error={!!errors['voucher_code']}
+                  helperText={errors?.voucher_code?.message}
                 />
-                <FieldErrorAlert errors={errors} fieldName={'voucher_code'} />
               </Grid2>
 
               {/* Voucher Name */}
@@ -165,28 +94,37 @@ const VoucherModal = ({
                   size="small"
                   fullWidth
                   {...register('voucher_name', {
-                    required: FIELD_REQUIRED_MESSAGE
+                    required: FIELD_REQUIRED_MESSAGE,
+                    pattern: {
+                      value: NAME_RULE,
+                      message: NAME_RULE_MESSAGE
+                    }
                   })}
                   error={!!errors['voucher_name']}
+                  helperText={errors?.voucher_name?.message}
                 />
-                <FieldErrorAlert errors={errors} fieldName={'voucher_name'} />
               </Grid2>
 
               {/* Voucher Type */}
               <Grid2 size={6}>
                 <Typography variant="body2">Voucher Type</Typography>
-                <Select
-                  size="small"
-                  fullWidth
-                  value={voucherType || ''}
-                  {...register('voucher_type', {
-                    required: FIELD_REQUIRED_MESSAGE
-                  })}
-                  error={!!errors['voucher_type']}
-                >
-                  <MenuItem value="fixed_amount">Fixed Amount</MenuItem>
-                  <MenuItem value="percent">Percent</MenuItem>
-                </Select>
+                <Controller
+                  name="voucher_type"
+                  control={control}
+                  rules={{ required: FIELD_REQUIRED_MESSAGE }}
+                  render={({ field }) => (
+                    <Select
+                      size="small"
+                      fullWidth
+                      {...field}
+                      error={!!errors['voucher_type']}
+                      value={field.value ?? 'percent'}
+                    >
+                      <MenuItem value="fixed_amount">Fixed Amount</MenuItem>
+                      <MenuItem value="percent">Percent</MenuItem>
+                    </Select>
+                  )}
+                />
                 <FieldErrorAlert errors={errors} fieldName={'voucher_type'} />
               </Grid2>
 
@@ -205,8 +143,8 @@ const VoucherModal = ({
                     }
                   })}
                   error={!!errors['voucher_value']}
+                  helperText={errors?.voucher_value?.message}
                 />
-                <FieldErrorAlert errors={errors} fieldName={'voucher_value'} />
               </Grid2>
 
               {/* Voucher Start & End Date & Time */}
@@ -222,10 +160,7 @@ const VoucherModal = ({
                     required: FIELD_REQUIRED_MESSAGE
                   })}
                   error={!!errors['voucher_start_date']}
-                />
-                <FieldErrorAlert
-                  errors={errors}
-                  fieldName={'voucher_start_date'}
+                  helperText={errors?.voucher_start_date?.message}
                 />
               </Grid2>
 
@@ -239,10 +174,7 @@ const VoucherModal = ({
                     required: FIELD_REQUIRED_MESSAGE
                   })}
                   error={!!errors['voucher_end_date']}
-                />
-                <FieldErrorAlert
-                  errors={errors}
-                  fieldName={'voucher_end_date'}
+                  helperText={errors?.voucher_end_date?.message}
                 />
               </Grid2>
 
@@ -261,10 +193,7 @@ const VoucherModal = ({
                     }
                   })}
                   error={!!errors['voucher_quantity']}
-                />
-                <FieldErrorAlert
-                  errors={errors}
-                  fieldName={'voucher_quantity'}
+                  helperText={errors?.voucher_quantity?.message}
                 />
               </Grid2>
 
@@ -283,51 +212,51 @@ const VoucherModal = ({
                     }
                   })}
                   error={!!errors['voucher_min_order_value']}
-                />
-                <FieldErrorAlert
-                  errors={errors}
-                  fieldName={'voucher_min_order_value'}
+                  helperText={errors?.voucher_min_order_value?.message}
                 />
               </Grid2>
 
               <Grid2 size={12}>
                 <Typography variant="body2">Voucher status</Typography>
-                <Select
-                  size="small"
-                  value={voucherStatus || ''}
-                  fullWidth
-                  {...register('voucher_status', {
-                    required: FIELD_REQUIRED_MESSAGE
-                  })}
-                  error={!!errors['voucher_status']}
-                >
-                  <MenuItem value="public">Public</MenuItem>
-                  <MenuItem value="private">Private</MenuItem>
-                </Select>
-                <FieldErrorAlert
-                  errors={errors}
-                  fieldName={'voucher_applies'}
+                <Controller
+                  name="voucher_status"
+                  control={control}
+                  rules={{ required: FIELD_REQUIRED_MESSAGE }}
+                  render={({ field }) => (
+                    <Select
+                      size="small"
+                      fullWidth
+                      {...field}
+                      error={!!errors['voucher_type']}
+                      value={field.value ?? 'public'}
+                    >
+                      <MenuItem value="public">Public</MenuItem>
+                      <MenuItem value="private">Private</MenuItem>
+                    </Select>
+                  )}
                 />
+                <FieldErrorAlert errors={errors} fieldName={'voucher_status'} />
               </Grid2>
 
               {/* Voucher Applies */}
               <Grid2 size={12}>
                 <Typography variant="body2">Voucher Applies</Typography>
-                <Select
-                  size="small"
-                  fullWidth
-                  value={voucherApplies || ''}
-                  {...register('voucher_applies', {
-                    required: FIELD_REQUIRED_MESSAGE
-                  })}
-                  error={!!errors['voucher_applies']}
-                >
-                  <MenuItem value="all">All</MenuItem>
-                  <MenuItem value="specific">Specific</MenuItem>
-                </Select>
-                <FieldErrorAlert
-                  errors={errors}
-                  fieldName={'voucher_applies'}
+                <Controller
+                  name="voucher_applies"
+                  control={control}
+                  rules={{ required: FIELD_REQUIRED_MESSAGE }}
+                  render={({ field }) => (
+                    <Select
+                      size="small"
+                      fullWidth
+                      {...field}
+                      error={!!errors['voucher_type']}
+                      value={field.value ?? 'all'}
+                    >
+                      <MenuItem value="all">All</MenuItem>
+                      <MenuItem value="specific">Specific</MenuItem>
+                    </Select>
+                  )}
                 />
               </Grid2>
 
@@ -416,7 +345,7 @@ const VoucherModal = ({
         <DialogActions>
           <Button
             className="btn-shop-cancel-submit-voucher"
-            onClick={handleCloseWithReset}
+            onClick={handleClose}
             color="secondary"
           >
             Cancel

@@ -1,15 +1,12 @@
-import {
-  Box,
-  IconButton,
-  MenuItem,
-  Popover,
-  Select,
-  TextField,
-  Button,
-  FormControl,
-  InputLabel
-} from '@mui/material'
-import SearchInput from '~/components/common/SearchInput'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import MenuItem from '@mui/material/MenuItem'
+import Popover from '@mui/material/Popover'
+import Select from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import { useState } from 'react'
 
@@ -46,15 +43,29 @@ function VoucherFilter({ handleFilterVoucher }) {
 
   return (
     <Box sx={{ display: 'flex', gap: '10px' }}>
-      <Box sx={{ flexGrow: 1 }}>
-        <SearchInput
-          searchValue={searchValue}
-          setSearchValue={setSearchValue}
-          handleSearch={handleSearch}
-        />
-      </Box>
+      <TextField
+        placeholder="Search by customer name, phone number, or order ID"
+        hiddenLabel
+        size="small"
+        sx={{ height: '100%', width: '90%' }}
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
+      />
+
+      <Button
+        onClick={handleSearch}
+        variant="contained"
+        sx={{ height: '100%', width: '5%' }}
+      >
+        Search
+      </Button>
+
       <Box>
-        <IconButton onClick={handleOpenFilter} color="primary">
+        <IconButton
+          onClick={handleOpenFilter}
+          color="primary"
+          sx={{ width: '5%' }}
+        >
           <FilterListIcon />
         </IconButton>
 
@@ -76,7 +87,6 @@ function VoucherFilter({ handleFilterVoucher }) {
                 onChange={(e) => setVoucherType(e.target.value)}
                 label="Voucher type"
               >
-                <MenuItem value="none">None</MenuItem>
                 <MenuItem value="percent">Percent</MenuItem>
                 <MenuItem value="fixed_amount">Fixed amount</MenuItem>
               </Select>
@@ -90,9 +100,8 @@ function VoucherFilter({ handleFilterVoucher }) {
                 labelId="voucher-applies-label"
                 value={voucherApplies}
                 onChange={(e) => setVoucherApplies(e.target.value)}
-                label="Voucher applies"
+                label="Voucher type"
               >
-                <MenuItem value="none">None</MenuItem>
                 <MenuItem value="all">All</MenuItem>
                 <MenuItem value="specific">Specific</MenuItem>
               </Select>

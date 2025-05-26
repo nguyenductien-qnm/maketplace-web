@@ -1,11 +1,9 @@
-import {
-  Box,
-  IconButton,
-  MenuItem,
-  Popover,
-  Select,
-  Slider
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import MenuItem from '@mui/material/MenuItem'
+import Popover from '@mui/material/Popover'
+import Select from '@mui/material/Select'
+import Slider from '@mui/material/Slider'
 import SearchInput from '~/components/common/SearchInput'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import { useState } from 'react'

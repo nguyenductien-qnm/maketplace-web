@@ -19,8 +19,8 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 
 import {
   FIELD_REQUIRED_MESSAGE,
-  NAME_RULE,
-  NAME_RULE_MESSAGE,
+  PRODUCT_NAME_RULE,
+  PRODUCT_NAME_RULE_MESSAGE,
   NUMBER_RULE,
   NUMBER_RULE_MESSAGE
 } from '~/utils/validators'
@@ -112,8 +112,8 @@ function SPUForm() {
               {...register('product_name', {
                 required: FIELD_REQUIRED_MESSAGE,
                 pattern: {
-                  value: NAME_RULE,
-                  message: NAME_RULE_MESSAGE
+                  value: PRODUCT_NAME_RULE,
+                  message: PRODUCT_NAME_RULE_MESSAGE
                 }
               })}
               error={!!errors['product_name']}

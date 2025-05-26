@@ -4,10 +4,20 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers'
 
-function SearchInput({ customHandleSearch }) {
-  const [searchValue, setSearchValue] = useState()
+function OrderFilter({ handleFilterOrder }) {
+  const [searchValue, setSearchValue] = useState('')
   const [startDate, setStartDate] = useState(null)
   const [endDate, setEndDate] = useState(null)
+
+  const handleSearch = () => {
+    const payloads = {
+      search: searchValue,
+      startDate,
+      endDate
+    }
+    handleFilterOrder(payloads)
+  }
+
   return (
     <Box sx={{ height: '40px', display: 'flex', gap: '7px', mb: '10px' }}>
       <TextField
@@ -23,23 +33,19 @@ function SearchInput({ customHandleSearch }) {
         <DatePicker
           label="From Date"
           value={startDate}
-          onChange={(newValue) => setStartDate(newValue)}
+          onChange={setStartDate}
           slotProps={{ textField: { size: 'small' } }}
-          renderInput={(params) => <TextField {...params} />}
         />
         <DatePicker
           label="To Date"
           value={endDate}
-          onChange={(newValue) => setEndDate(newValue)}
+          onChange={setEndDate}
           slotProps={{ textField: { size: 'small' } }}
-          renderInput={(params) => <TextField {...params} />}
         />
       </LocalizationProvider>
 
       <Button
-        onClick={() =>
-          customHandleSearch({ search: searchValue, startDate, endDate })
-        }
+        onClick={handleSearch}
         variant="contained"
         sx={{ height: '100%', width: '10%' }}
       >
@@ -48,4 +54,5 @@ function SearchInput({ customHandleSearch }) {
     </Box>
   )
 }
-export default SearchInput
+
+export default OrderFilter

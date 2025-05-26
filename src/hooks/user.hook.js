@@ -21,7 +21,7 @@ import formatDateForInput from '~/utils/formatDateForInput'
 import interceptorLoadingElements from '~/utils/interceptorLoading'
 import generateURL from '~/utils/generateURL'
 import { toast } from 'react-toastify'
-import { checkShopURLAPI } from '~/api/shop.api'
+import { checkShopUrlAPI } from '~/api/shop.api'
 import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 
 const steps = ['CHANGE YOUR PASSWORD', 'INFORMATION USER']
@@ -208,7 +208,7 @@ export const useAccountMigration = () => {
     try {
       const currentSlug = methods.getValues('shop_slug')
       if (!currentSlug) return
-      const res = await checkShopURLAPI({ shop_slug: currentSlug })
+      const res = await checkShopUrlAPI({ shop_slug: currentSlug })
       if (res) {
         methods.clearErrors(['shop_slug'])
         setAvailableShopSlug(true)

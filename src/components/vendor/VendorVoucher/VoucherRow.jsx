@@ -1,4 +1,6 @@
-import { Box, TableCell, TableRow } from '@mui/material'
+import Box from '@mui/material/Box'
+import TableCell from '@mui/material/TableCell'
+import TableRow from '@mui/material/TableRow'
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
 import { green, red } from '@mui/material/colors'

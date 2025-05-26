@@ -75,7 +75,7 @@ function WithdrawModal({
                   sx={{ width: '100%' }}
                   {...field}
                   error={!!errors.amount}
-                  helperText={errors?.amount}
+                  helperText={errors?.amount?.message}
                   size="small"
                   allowNegative={false}
                   prefix="$"

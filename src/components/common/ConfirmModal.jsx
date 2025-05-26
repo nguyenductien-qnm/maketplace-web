@@ -1,4 +1,9 @@
-import { Box, Button, Modal, Typography } from '@mui/material'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 
 function ConfirmModal({
   header,
@@ -6,61 +11,24 @@ function ConfirmModal({
   open,
   onClose,
   onConfirm,
-  confirmText = 'Confirm'
+  confirmText = 'Confirm',
+  confirmColor
 }) {
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #fff',
-    borderRadius: '5px',
-    boxShadow: 24,
-    p: 4
-  }
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          {header}
-        </Typography>
-        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          {content}
-        </Typography>
-
-        <Box
-          sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3, gap: 1 }}
-        >
-          <Button
-            className="btn-close-confirm-modal"
-            variant="contained"
-            sx={{
-              backgroundColor: 'gray',
-              color: 'white',
-              ':hover': { backgroundColor: 'darkgray' }
-            }}
-            onClick={onClose}
-          >
-            Close
-          </Button>
-          <Button
-            className="btn-confirm-modal"
-            variant="contained"
-            color="error"
-            onClick={onConfirm}
-          >
-            {confirmText}
-          </Button>
-        </Box>
-      </Box>
-    </Modal>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle>{header}</DialogTitle>
+      <DialogContent>
+        <Typography>{content}</Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} variant="outlined" color="secondary">
+          Cancel
+        </Button>
+        <Button onClick={onConfirm} variant="contained" color={confirmColor}>
+          {confirmText}
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 
