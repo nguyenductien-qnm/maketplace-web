@@ -17,7 +17,7 @@ import {
   PHONE_RULE_MESSAGE
 } from '~/utils/validators'
 import { blue, grey, red } from '@mui/material/colors'
-import { useAddressForm } from '~/hooks/user.hook'
+import { useAddressForm } from '~/hooks/user/user.hook'
 
 const style = {
   position: 'absolute',

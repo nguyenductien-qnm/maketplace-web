@@ -1,13 +1,12 @@
-import { Box, Button, TextField } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
 import { useState } from 'react'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { DatePicker } from '@mui/x-date-pickers'
 
 function OrderFilter({ handleFilterOrder }) {
   const [searchValue, setSearchValue] = useState('')
-  const [startDate, setStartDate] = useState(null)
-  const [endDate, setEndDate] = useState(null)
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
 
   const handleSearch = () => {
     const payloads = {
@@ -21,28 +20,35 @@ function OrderFilter({ handleFilterOrder }) {
   return (
     <Box sx={{ height: '40px', display: 'flex', gap: '7px', mb: '10px' }}>
       <TextField
-        placeholder="Search by customer name, phone number, or order ID"
+        placeholder="Search by customer name, phone number"
         hiddenLabel
         size="small"
-        sx={{ height: '100%', width: '90%' }}
+        sx={{ height: '100%', width: '70%' }}
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
       />
 
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DatePicker
-          label="From Date"
-          value={startDate}
-          onChange={setStartDate}
-          slotProps={{ textField: { size: 'small' } }}
-        />
-        <DatePicker
-          label="To Date"
-          value={endDate}
-          onChange={setEndDate}
-          slotProps={{ textField: { size: 'small' } }}
-        />
-      </LocalizationProvider>
+      <TextField
+        sx={{ height: '100%', width: '20%' }}
+        type="date"
+        size="small"
+        fullWidth
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+        label="Start date"
+        InputLabelProps={{ shrink: true }}
+      />
+
+      <TextField
+        sx={{ height: '100%', width: '20%' }}
+        type="date"
+        size="small"
+        fullWidth
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        label="End date"
+        InputLabelProps={{ shrink: true }}
+      />
 
       <Button
         onClick={handleSearch}

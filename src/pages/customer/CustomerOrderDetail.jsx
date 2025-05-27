@@ -1,86 +1,30 @@
-import { Box, Divider, Paper, Typography, Button } from '@mui/material'
-import { useEffect, useState } from 'react'
-import {
-  cancelOrderByUserAPI,
-  getOrderDetailAPI,
-  updatePayPalOrderIdAPI
-} from '~/api/order.api'
+import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { blue, grey } from '@mui/material/colors'
-import formatCurrency from '~/utils/formatCurrency'
-import { formatDate } from '~/utils/formatDate'
-import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import ConfirmModal from '~/components/common/ConfirmModal'
+import OrderAddressCard from '~/components/shared/OrderDetail/OrderAddressCard'
+import OrderProductList from '~/components/shared/OrderDetail/OrderProductList'
+import OrderSummary from '~/components/shared/OrderDetail/OrderSummary'
+import OrderInfo from '~/components/shared/OrderDetail/OrderInfo'
+import { blue, grey } from '@mui/material/colors'
+import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js'
+import { useCustomerOrderDetail } from '~/hooks/user/orderDetail.hook'
+
 function CustomerOrderDetail() {
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const [order, setOrder] = useState()
-  const [loading, setLoading] = useState(true)
-  const [openModal, setOpenModal] = useState(false)
-  const _id = searchParams.get('_id')
-
-  useEffect(() => {
-    const getOrderDetail = async () => {
-      try {
-        const res = await getOrderDetailAPI({ _id })
-        setOrder(res.data?.metadata)
-      } finally {
-        setLoading(false)
-      }
-    }
-    getOrderDetail()
-  }, [_id])
-
-  const customCreateOrder = async (actions) => {
-    try {
-      const orderID = await actions.order.create({
-        purchase_units: [
-          {
-            amount: {
-              value: order?.order_total_price,
-              currency_code: 'USD'
-            },
-            description: 'Pay for order'
-          }
-        ]
-      })
-      return orderID
-    } catch (error) {
-      console.error('❌ Error creating order:', error)
-      throw error
-    }
-  }
-
-  const onApprove = async (actions, data) => {
-    try {
-      await actions.order.capture()
-      const payloads = {
-        _id: order?._id,
-        order_paypal_id: data?.orderID
-      }
-      const res = await updatePayPalOrderIdAPI(payloads)
-      if (res?.status === 200) {
-        navigate('/my-account/orders')
-      }
-    } catch (error) {
-      console.error('❌ Error creating order:', error)
-      throw error
-    }
-  }
-
-  const handleCancelOrder = async () => {
-    const res = await cancelOrderByUserAPI({ _id }, [
-      '.btn-confirm-modal',
-      '.btn-close-confirm-modal'
-    ])
-    if (res?.status === 200) {
-      setOpenModal(false)
-      navigate('/my-account/orders')
-    }
-  }
+  const {
+    order,
+    loading,
+    openModal,
+    setOpenModal,
+    customCreateOrder,
+    onApprove,
+    handleCancelOrder
+  } = useCustomerOrderDetail()
 
   const initialOptions = {
     clientId:
@@ -100,25 +44,7 @@ function CustomerOrderDetail() {
       {!loading && (
         <Paper sx={{ padding: '20px 10px', mb: '20px' }}>
           <Box sx={{ mt: '10px', display: 'flex', gap: '40px' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Typography variant="h6">Delivery Address</Typography>
-              <Typography>{order?.order_address?.full_name}</Typography>
-              <Typography variant="caption" sx={{ color: grey[600] }}>
-                {order?.order_address?.phone_number}
-              </Typography>
-              <Typography variant="caption" sx={{ color: grey[600] }}>
-                {order?.order_address?.street}
-              </Typography>
-              <Typography variant="caption" sx={{ color: grey[600] }}>
-                {order?.order_address?.ward_name}
-              </Typography>
-              <Typography variant="caption" sx={{ color: grey[600] }}>
-                {order?.order_address?.district_name}
-              </Typography>
-              <Typography variant="caption" sx={{ color: grey[600] }}>
-                {order?.order_address?.province_name}
-              </Typography>
-            </Box>
+            <OrderAddressCard address={order?.order_address} />
             <Box
               sx={{
                 width: '2px',
@@ -127,36 +53,7 @@ function CustomerOrderDetail() {
                 mt: '8px'
               }}
             ></Box>
-            <Box>
-              <Box sx={{ display: 'flex' }}>
-                <Typography>GHN:</Typography>
-                <Typography sx={{ color: grey[600] }}>
-                  {order?.order_tracking_number}
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', mt: '5px' }}>
-                <Typography>Order at:</Typography>
-                <Typography sx={{ color: grey[600] }}>
-                  {formatDate(order?.createdAt)}
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', mt: '5px' }}>
-                <Typography>Status from GHN:</Typography>
-                <Typography
-                  sx={{ color: blue[600], textTransform: 'uppercase' }}
-                >
-                  {order?.status_from_ghn}
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', mt: '5px' }}>
-                <Typography>Payment status:</Typography>
-                <Typography
-                  sx={{ color: blue[600], textTransform: 'uppercase' }}
-                >
-                  {order?.order_payment_status}
-                </Typography>
-              </Box>
-            </Box>
+            <OrderInfo order={order} />
           </Box>
           <Divider sx={{ mt: '20px', mb: '20px' }} />
           <Box>
@@ -192,159 +89,14 @@ function CustomerOrderDetail() {
               </Typography>
             </Box>
             <Divider sx={{ mt: '15px', mb: '15px' }} />
-            {order?.order_products?.map((p) => (
-              <Box
-                key={p?.product_id}
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: '20px',
-                  mb: '10px',
-                  '&:hover': { cursor: 'pointer' }
-                }}
-                onClick={() => {
-                  navigate(`/my-account/order-detail?_id=${order?._id}`)
-                }}
-              >
-                <Box
-                  sx={{
-                    display: 'flex',
-                    gap: '20px'
-                  }}
-                >
-                  <Box>
-                    <img src={p?.product_thumb} style={{ maxWidth: '70px' }} />
-                  </Box>
-                  <Box>
-                    <Typography variant="body2">{p?.product_name}</Typography>
-                    {p?.product_variation?.length > 0 && (
-                      <Box sx={{ display: 'flex' }}>
-                        <Typography variant="caption" sx={{ color: grey[600] }}>
-                          Variation:{' '}
-                        </Typography>
-                        {p?.product_variation.map((variation, index) => (
-                          <Typography
-                            key={index}
-                            variant="caption"
-                            sx={{ color: grey[600] }}
-                          >
-                            {variation}
-                          </Typography>
-                        ))}
-                      </Box>
-                    )}
-                    <Typography variant="caption">x{p?.quantity}</Typography>
-                  </Box>
-                </Box>
-                <Box>
-                  <Typography sx={{ color: blue[600] }}>
-                    {formatCurrency(p?.price)}
-                  </Typography>
-                </Box>
-              </Box>
-            ))}
+            <OrderProductList
+              products={order?.order_products}
+              orderId={order?._id}
+            />
             <Divider />
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'end',
-                justifyContent: 'center',
-                mt: '15px',
-                gap: '10px'
-              }}
-            >
-              <Box
-                sx={{
-                  display: 'flex',
-                  width: '400px',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}
-              >
-                <Typography variant="caption" sx={{ color: grey[600] }}>
-                  {' '}
-                  Merchandise total
-                </Typography>
-                <Typography variant="body2" sx={{ color: grey[600] }}>
-                  {formatCurrency(order?.order_merchandise_price)}
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  width: '400px',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}
-              >
-                <Typography variant="caption" sx={{ color: grey[600] }}>
-                  {' '}
-                  Shipping Fee
-                </Typography>
-                <Typography variant="body2" sx={{ color: grey[600] }}>
-                  {formatCurrency(order?.order_shipping_price)}
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  width: '400px',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}
-              >
-                <Typography variant="caption" sx={{ color: grey[600] }}>
-                  {' '}
-                  Voucher Applied
-                </Typography>
-                <Typography variant="body2" sx={{ color: grey[600] }}>
-                  {formatCurrency(order?.order_voucher_discount)}
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  width: '400px',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}
-              >
-                <Typography variant="caption" sx={{ color: grey[600] }}>
-                  {' '}
-                  Order Total
-                </Typography>
-                <Typography variant="h6" sx={{ color: blue[600] }}>
-                  {formatCurrency(order?.order_total_price)}
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  width: '400px',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  mt: '15px'
-                }}
-              >
-                <Typography variant="caption" sx={{ color: grey[600] }}>
-                  {' '}
-                  Payment Method
-                </Typography>
-                <Typography
-                  sx={{
-                    color: blue[600],
-                    textTransform: 'uppercase',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  {order?.order_payment_method}
-                </Typography>
-              </Box>
-            </Box>
-            {/* button  */}
+            <OrderSummary order={order} />
             <Divider sx={{ mb: '15px', mt: '20px' }} />
+
             <Box
               sx={{
                 display: 'flex',
@@ -409,6 +161,7 @@ function CustomerOrderDetail() {
       <ConfirmModal
         header="Cancel Order"
         content="Are you sure you want to cancel this order? This action cannot be undone."
+        confirmColor="error"
         open={openModal}
         onClose={() => setOpenModal(false)}
         onConfirm={handleCancelOrder}

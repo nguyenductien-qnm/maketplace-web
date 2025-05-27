@@ -1,66 +1,22 @@
-import { Box, Paper, Typography, Divider, Button } from '@mui/material'
+import Box from '@mui/material/Box'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import Divider from '@mui/material/Divider'
+import Button from '@mui/material/Button'
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
-import { blue, green, grey, red } from '@mui/material/colors'
 import formatCurrency from '~/utils/formatCurrency'
+import { blue, grey } from '@mui/material/colors'
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js'
-import { updatePayPalOrderIdAPI } from '~/api/order.api'
-import { useNavigate } from 'react-router-dom'
+import { useCustomerOrderItem } from '~/hooks/user/order.hook'
 function OrderItem({ order, setOrders }) {
-  const navigate = useNavigate()
-  const customCreateOrder = async (actions) => {
-    try {
-      const orderID = await actions.order.create({
-        purchase_units: [
-          {
-            amount: {
-              value: order?.order_total_price,
-              currency_code: 'USD'
-            },
-            description: 'Pay for order'
-          }
-        ]
-      })
-      return orderID
-    } catch (error) {
-      console.error('❌ Error creating order:', error)
-      throw error
-    }
-  }
-
-  const getStatusColor = (status) => {
-    if (status === 'pending') return blue[600]
-    if (status === 'cancelled' || status === 'reject') return red[600]
-    return green[600]
-  }
-
-  const onApprove = async (actions, data) => {
-    try {
-      await actions.order.capture()
-      const payloads = {
-        _id: order?._id,
-        order_paypal_id: data?.orderID
-      }
-      const res = await updatePayPalOrderIdAPI(payloads)
-      if (res?.status === 200) {
-        setOrders((prev) =>
-          prev.map((o) =>
-            o._id === res?.data?.metadata._id ? { ...res.data.metadata } : o
-          )
-        )
-      }
-    } catch (error) {
-      console.error('❌ Error creating order:', error)
-      throw error
-    }
-  }
-
-  const initialOptions = {
-    clientId:
-      'AbfHg6nzfFwqrdvS2iKhKg-bklGMArRl832K2Bh0R3xvj0TX1BPirY_WQkSzSSKfPWybzsh6oavVBV04',
-    currency: 'USD',
-    intent: 'capture'
-  }
+  const {
+    customCreateOrder,
+    onApprove,
+    initialOptions,
+    getStatusColor,
+    goToOrderDetail
+  } = useCustomerOrderItem(order, setOrders)
 
   return (
     <Paper sx={{ padding: '20px 10px', mb: '20px' }}>
@@ -113,9 +69,7 @@ function OrderItem({ order, setOrders }) {
               mb: '10px',
               '&:hover': { cursor: 'pointer' }
             }}
-            onClick={() => {
-              navigate(`/my-account/order-detail?_id=${order?._id}`)
-            }}
+            onClick={goToOrderDetail}
           >
             <Box
               sx={{

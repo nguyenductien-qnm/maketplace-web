@@ -5,7 +5,7 @@ import CustomerAddressCard from '~/components/customer/CustomerAddresses/Custome
 import CustomerAddressModal from '~/components/customer/CustomerAddresses/CustomerAddressModal'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import CustomerEmptyAddress from '~/components/customer/CustomerAddresses/CustomerEmptyAddress'
-import { useAddressList } from '~/hooks/user.hook'
+import { useAddressList } from '~/hooks/user/user.hook'
 function CustomerAddresses() {
   const {
     userAddressList,

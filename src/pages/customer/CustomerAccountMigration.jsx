@@ -15,7 +15,7 @@ import {
   NAME_RULE_MESSAGE
 } from '~/utils/validators'
 import { blue } from '@mui/material/colors'
-import { useAccountMigration } from '~/hooks/user.hook'
+import { useAccountMigration } from '~/hooks/user/user.hook'
 
 function CustomerAccountMigration() {
   const {

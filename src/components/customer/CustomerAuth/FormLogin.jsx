@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography'
 import Zoom from '@mui/material/Zoom'
 import { blue } from '@mui/material/colors'
 import { Link } from 'react-router-dom'
-import { useLogin } from '~/hooks/auth.hook'
+import { useLogin } from '~/hooks/user/auth.hook'
 import {
   FIELD_REQUIRED_MESSAGE,
   EMAIL_RULE,

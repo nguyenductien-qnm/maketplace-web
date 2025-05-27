@@ -10,7 +10,7 @@ import {
 } from '~/utils/validators'
 import { blue } from '@mui/material/colors'
 import { Link } from 'react-router-dom'
-import { useRegister } from '~/hooks/auth.hook'
+import { useRegister } from '~/hooks/user/auth.hook'
 
 function FormRegister() {
   const {

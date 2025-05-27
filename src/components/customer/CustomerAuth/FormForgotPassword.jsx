@@ -9,7 +9,7 @@ import {
   EMAIL_RULE_MESSAGE
 } from '~/utils/validators'
 import { blue } from '@mui/material/colors'
-import { useForgotPassword } from '~/hooks/auth.hook'
+import { useForgotPassword } from '~/hooks/user/auth.hook'
 
 function FormForgotPassword() {
   const {

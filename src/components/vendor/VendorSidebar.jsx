@@ -45,7 +45,10 @@ function VendorSideBar() {
         Products
       </CustomLink>
       <Divider />
-      <CustomLink to="/vendor/orders" isActive={checkUrl('orders')}>
+      <CustomLink
+        to="/vendor/orders"
+        isActive={checkUrl('orders', 'order-detail')}
+      >
         <LocalGroceryStoreOutlinedIcon />
         Orders
       </CustomLink>

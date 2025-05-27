@@ -1,24 +1,21 @@
 import { Button, Checkbox, TableCell, TableRow } from '@mui/material'
-import { formatDate } from '~/utils/formatDate'
 import { green, red } from '@mui/material/colors'
 import { useNavigate } from 'react-router-dom'
 import formatCodeOrder from '~/utils/formatCodeOrder'
 import formatCurrency from '~/utils/formatCurrency'
+
 function OrderRow({ order, updateOrderStatus }) {
   const navigate = useNavigate()
 
   return (
     <TableRow>
-      <TableCell>
-        <Checkbox size="small" />
-      </TableCell>
       <TableCell
         sx={{ '&:hover': { cursor: 'pointer', textDecoration: 'underline' } }}
         onClick={() => navigate(`/vendor/order-detail?_id=${order?._id}`)}
       >
         {formatCodeOrder(order?._id)}
       </TableCell>
-      <TableCell>{formatDate(order?.createdAt)}</TableCell>
+      <TableCell>{order?.createdAt}</TableCell>
       <TableCell sx={{ textTransform: 'uppercase' }}>
         {order?.order_payment_method}
       </TableCell>

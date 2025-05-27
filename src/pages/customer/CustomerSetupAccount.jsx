@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography'
 import FormSetInfoUser from '~/components/customer/CustomerSetupAccount/FormSetInfo'
 import FormSetPassword from '~/components/customer/CustomerSetupAccount/FormSetPassword'
 import { Fragment } from 'react'
-import { useSetupAccount } from '~/hooks/user.hook'
+import { useSetupAccount } from '~/hooks/user/user.hook'
 
 function CustomerSetupAccount() {
   const {

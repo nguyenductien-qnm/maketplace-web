@@ -12,7 +12,7 @@ import { grey } from '@mui/material/colors'
 import { Controller } from 'react-hook-form'
 import Avatar from '@mui/material/Avatar'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import { useUserInfoForm } from '~/hooks/user.hook'
+import { useUserInfoForm } from '~/hooks/user/user.hook'
 import {
   NAME_RULE,
   NAME_RULE_MESSAGE,

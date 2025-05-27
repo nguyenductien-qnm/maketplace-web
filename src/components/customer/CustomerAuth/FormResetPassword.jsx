@@ -10,7 +10,7 @@ import {
   PASSWORD_RULE_MESSAGE
 } from '~/utils/validators'
 import { blue } from '@mui/material/colors'
-import { useResetPassword } from '~/hooks/auth.hook'
+import { useResetPassword } from '~/hooks/user/auth.hook'
 
 function FormResetPassword({ token }) {
   const {

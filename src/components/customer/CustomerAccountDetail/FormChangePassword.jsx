@@ -9,7 +9,7 @@ import {
   PASSWORD_RULE_MESSAGE
 } from '~/utils/validators'
 import { grey } from '@mui/material/colors'
-import { useChangePassword } from '~/hooks/user.hook'
+import { useChangePassword } from '~/hooks/user/user.hook'
 
 function FormChangePassword() {
   const TypographyCustom = styled(Typography)({

@@ -42,7 +42,7 @@ function OrderTable({ status }) {
               <TableCell>Payment</TableCell>
               <TableCell>Total Price</TableCell>
               <TableCell>Fee Shipping</TableCell>
-              <TableCell></TableCell>
+              <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

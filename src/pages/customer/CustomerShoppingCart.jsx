@@ -6,7 +6,7 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import NotificationModal from '~/components/common/NotificationModal'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
-import { useShoppingCart } from '~/hooks/cart.hook'
+import { useShoppingCart } from '~/hooks/user/cart.hook'
 
 function CustomerShoppingCart() {
   const {
