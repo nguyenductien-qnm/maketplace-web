@@ -4,11 +4,12 @@ import FormForgotPassword from '~/components/customer/CustomerAuth/FormForgotPas
 import FormLogin from '~/components/customer/CustomerAuth/FormLogin'
 import FormRegister from '~/components/customer/CustomerAuth/FormRegister'
 import FormResetPassword from '~/components/customer/CustomerAuth/FormResetPassword'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 
 function CustomerAuth() {
   const { page, token } = useParams()
-
+  const { pathname } = useLocation()
+  const isAdmin = pathname?.includes('admin')
   return (
     <Box
       sx={{
@@ -23,7 +24,7 @@ function CustomerAuth() {
         padding: '150px'
       }}
     >
-      {page === 'login' && <FormLogin />}
+      {page === 'login' && <FormLogin isAdmin={isAdmin} />}
       {page === 'register' && <FormRegister />}
       {page === 'forgot-password' && <FormForgotPassword />}
       {token && <FormResetPassword token={token} />}

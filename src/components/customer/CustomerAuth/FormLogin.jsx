@@ -14,7 +14,7 @@ import {
   PASSWORD_RULE_MESSAGE
 } from '~/utils/validators'
 
-function FormLogin() {
+function FormLogin({ isAdmin }) {
   const {
     register,
     onSubmit,
@@ -39,7 +39,7 @@ function FormLogin() {
           }}
         >
           <Typography sx={{ fontSize: '35px', fontWeight: '600' }}>
-            Welcome to Bevesi
+            {isAdmin ? 'Welcome back, Admin' : 'Welcome to Bevesi'}
           </Typography>
           <Box sx={{ width: '100%' }}>
             <TextField
@@ -93,15 +93,17 @@ function FormLogin() {
           >
             Login
           </Button>
-          <Box sx={{ display: 'flex', gap: '4px' }}>
-            <Typography>Don't have an account?</Typography>
-            <Link
-              to="/auth/register"
-              style={{ fontWeight: '600', color: 'black' }}
-            >
-              Register
-            </Link>
-          </Box>
+          {!isAdmin && (
+            <Box sx={{ display: 'flex', gap: '4px' }}>
+              <Typography>Don't have an account?</Typography>
+              <Link
+                to="/auth/register"
+                style={{ fontWeight: '600', color: 'black' }}
+              >
+                Register
+              </Link>
+            </Box>
+          )}
         </Box>
       </Zoom>
     </form>

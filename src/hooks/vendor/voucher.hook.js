@@ -5,7 +5,7 @@ import {
   shopDeleteVoucherAPI,
   shopUpdateVoucherAPI
 } from '~/api/voucher.api'
-import { queryProductByOwnerAPI } from '~/api/productSPU.api'
+import { queryProductByOwnerAPI } from '~/api/product.api'
 import { useForm } from 'react-hook-form'
 
 export const useVendorVoucher = (status) => {

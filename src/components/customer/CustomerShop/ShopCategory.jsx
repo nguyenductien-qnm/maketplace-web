@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import { styled } from '@mui/material'
 
-function StoreProductCategory() {
+function ShopCategory() {
   const CustomTypography = styled(Typography)({
     fontSize: '14px',
     '&:hover': {
@@ -29,4 +29,4 @@ function StoreProductCategory() {
     </Box>
   )
 }
-export default StoreProductCategory
+export default ShopCategory

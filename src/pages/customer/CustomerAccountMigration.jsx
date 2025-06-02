@@ -27,8 +27,6 @@ function CustomerAccountMigration() {
     reset,
     setValue,
     handleAddressChange,
-    handleChangeShopName,
-    checkShopURL
   } = useAccountMigration()
 
   return (
@@ -95,29 +93,10 @@ function CustomerAccountMigration() {
                   message: NAME_RULE_MESSAGE
                 }
               })}
-              onBlur={(e) => {
-                handleChangeShopName(e)
-              }}
               helperText={errors?.shop_name?.message}
             />
           </Grid2>
         </Grid2>
-
-        <Box>
-          <TypographyLabel>Shop URL</TypographyLabel>
-          <TextField
-            size="small"
-            fullWidth
-            {...register('shop_slug', {
-              required: FIELD_REQUIRED_MESSAGE
-            })}
-            helperText={errors['shop_slug']?.message || ''}
-            error={!!errors['shop_slug']}
-            onBlur={() => {
-              checkShopURL()
-            }}
-          />
-        </Box>
 
         <FormAddress
           clearErrors={clearErrors}

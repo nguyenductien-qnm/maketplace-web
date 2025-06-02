@@ -19,9 +19,6 @@ import {
 } from '~/redux/user.slice'
 import formatDateForInput from '~/utils/formatDateForInput'
 import interceptorLoadingElements from '~/utils/interceptorLoading'
-import generateURL from '~/utils/generateURL'
-import { toast } from 'react-toastify'
-import { checkShopUrlAPI } from '~/api/shop.api'
 import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 
 const steps = ['CHANGE YOUR PASSWORD', 'INFORMATION USER']
@@ -178,7 +175,6 @@ export const useUserInfoForm = () => {
 export const useAccountMigration = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const [availableShopSlug, setAvailableShopSlug] = useState(true)
   const [tempAddress, setTempAddress] = useState({
     selectedProvince: {},
     selectedDistrict: {},
@@ -191,46 +187,12 @@ export const useAccountMigration = () => {
     setTempAddress(address)
   }
 
-  const handleChangeShopName = async (e) => {
-    const shopName = e.target.value.trim()
-
-    if (!shopName) {
-      methods.setValue('shop_slug', '')
-      return
-    }
-
-    const shopSlug = generateURL(shopName)
-    methods.setValue('shop_slug', shopSlug)
-    await checkShopURL()
-  }
-
-  const checkShopURL = async () => {
-    try {
-      const currentSlug = methods.getValues('shop_slug')
-      if (!currentSlug) return
-      const res = await checkShopUrlAPI({ shop_slug: currentSlug })
-      if (res) {
-        methods.clearErrors(['shop_slug'])
-        setAvailableShopSlug(true)
-      }
-    } catch (error) {
-      methods.setError('shop_slug', {
-        type: 'manual',
-        message: 'This URL is already taken.'
-      })
-      setAvailableShopSlug(false)
-    }
-  }
-
   const onSubmit = methods.handleSubmit(async (data) => {
-    if (!availableShopSlug) {
-      toast.error('This shop name is available.')
-      return
-    }
-
     data.province = tempAddress?.selectedProvince
     data.district = tempAddress?.selectedDistrict
     data.ward = tempAddress?.selectedWard
+
+    console.log('data:::',data)
 
     const res = await dispatch(
       accountMigrationAPI({ data, loadingClass: '.btn-account-migration' })
@@ -245,9 +207,7 @@ export const useAccountMigration = () => {
   return {
     ...methods,
     handleAddressChange,
-    handleChangeShopName,
     onSubmit,
-    checkShopURL,
     tempAddress
   }
 }

@@ -82,11 +82,6 @@ export const accountMigrationAPI = createAsyncThunk(
 export const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {
-    logout: (state) => {
-      state.currentUser = null
-    }
-  },
   extraReducers: (builder) => {
     builder
       .addCase(loginAPI.fulfilled, (state, action) => {

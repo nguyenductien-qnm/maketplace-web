@@ -1,18 +1,32 @@
 import UserLayout from '~/layouts/user/UserLayout'
 import Grid from '@mui/material/Grid2'
-import StoreOverviewCard from '~/components/user/Store/StoreOverviewCard'
-import SearchBar from '~/components/user/Store/SearchBar'
-import SortDropdown from '~/components/user/Store/SortDropdown '
-import { Box, Divider } from '@mui/material'
-import StoreProductCategory from '~/components/user/Store/StoreProductCategory'
 import Product from '~/components/common/Product'
-function CustomerStore() {
+import { Box, Divider } from '@mui/material'
+import ShopOverviewCard from '~/components/customer/CustomerShop/ShopOverviewCard'
+import ShopCategory from '~/components/customer/CustomerShop/ShopCategory'
+import SearchBar from '~/components/customer/CustomerShop/SearchBar'
+import SortDropdown from '~/components/customer/CustomerShop/SortDropdown'
+import { useCustomerShop } from '~/hooks/user/shop.hook'
+function CustomerShop() {
+  const {
+    shop,
+    followInfo,
+    handleFollowShop,
+    handleUnfollowShop,
+    handleToggleFollowNotification
+  } = useCustomerShop()
   return (
     <UserLayout>
-      <StoreOverviewCard />
+      <ShopOverviewCard
+        shop={shop}
+        handleFollowShop={handleFollowShop}
+        handleUnfollowShop={handleUnfollowShop}
+        handleToggleFollowNotification={handleToggleFollowNotification}
+        followInfo={followInfo}
+      />
       <Grid container>
         <Grid size={3} sx={{ marginTop: '10px' }}>
-          <StoreProductCategory />
+          <ShopCategory />
         </Grid>
         <Grid size={9}>
           <Box
@@ -50,4 +64,4 @@ function CustomerStore() {
     </UserLayout>
   )
 }
-export default CustomerStore
+export default CustomerShop

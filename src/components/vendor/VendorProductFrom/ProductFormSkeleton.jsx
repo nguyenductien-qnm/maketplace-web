@@ -1,4 +1,6 @@
-import { Box, Grid2, Skeleton } from '@mui/material'
+import Box from '@mui/material/Box'
+import Grid2 from '@mui/material/Grid2'
+import Skeleton from '@mui/material/Skeleton'
 import SkeletonLoaderInput from '~/components/common/SkeletonLoaderInput'
 
 function ProductFormSkeleton() {

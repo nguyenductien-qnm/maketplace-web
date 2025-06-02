@@ -5,7 +5,8 @@ import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined'
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined'
 import Grid from '@mui/material/Grid2'
 import { blue, grey } from '@mui/material/colors'
-function StoreMetricsCard() {
+import { formatDate } from '~/utils/formatDate'
+function ShopMetricsCard({shop}) {
   const CustomBox = styled(Box)({
     display: 'flex',
     gap: '10px',
@@ -30,12 +31,12 @@ function StoreMetricsCard() {
         <CustomBox>
           <Inventory2OutlinedIcon fontSize="small" />
           <Typography>Product:</Typography>
-          <CustomTypography>247</CustomTypography>
+          <CustomTypography>{shop?.shop_product_count}</CustomTypography>
         </CustomBox>
         <CustomBox>
           <PeopleAltOutlinedIcon fontSize="small" />
           <Typography>Followers:</Typography>
-          <CustomTypography>1879</CustomTypography>
+          <CustomTypography>{shop?.shop_follower_count}</CustomTypography>
         </CustomBox>
       </Grid>
 
@@ -51,15 +52,15 @@ function StoreMetricsCard() {
         <CustomBox sx={{}}>
           <StarBorderOutlinedIcon fontSize="small" />
           <Typography>Rating:</Typography>
-          <CustomTypography>4.6</CustomTypography>
+          <CustomTypography>{shop?.shop_rating}</CustomTypography>
         </CustomBox>
         <CustomBox sx={{}}>
           <CheckCircleOutlinedIcon fontSize="small" />
           <Typography>Joined:</Typography>
-          <CustomTypography>10-31-2018</CustomTypography>
+          <CustomTypography>{formatDate(shop?.shop_joined_at)}</CustomTypography>
         </CustomBox>
       </Grid>
     </Grid>
   )
 }
-export default StoreMetricsCard
+export default ShopMetricsCard

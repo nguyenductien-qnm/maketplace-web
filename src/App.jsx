@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import {
   Routes,
   Route,
@@ -7,55 +7,78 @@ import {
   useLocation,
   useNavigate
 } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Home from './pages/customer/Home'
-import CustomerAuth from './pages/customer/CustomerAuth'
 
 import ScrollToTop from './components/common/ScrollToTop'
 import { setNavigate } from './helpers/navigation'
 
-import UserAccountLayout from './layouts/user/UserAccountLayout'
-import CustomerDashboard from './pages/customer/CustomerDashBoard'
-import CustomerAccountDetail from './pages/customer/CustomerAccountDetail'
-import CustomerAddresses from './pages/customer/CustomerAddresses'
-import CustomerAccountMigration from './pages/customer/CustomerAccountMigration'
-import CustomerNotifications from './pages/customer/CustomerNotification'
-import CustomerVerifyAccount from './pages/customer/CustomerVerifyAccount'
-import CustomerWallet from './pages/customer/CustomerWallet'
-import CustomerShoppingCart from './pages/customer/CustomerShoppingCart'
-import CustomerSetupAccount from './pages/customer/CustomerSetupAccount'
 import CustomerProductDetails from './pages/customer/CustomerProductDetails'
-import CustomerStore from './pages/customer/Store'
-import CustomerOrders from './pages/customer/CustomerOrders'
-import CustomerOrderDetail from './pages/customer/CustomerOrderDetail'
-import CustomerCheckout from './pages/customer/CustomerCheckout'
-import VendorLayout from './layouts/user/VendorLayoui'
-import VendorProducts from './pages/vendor/VendorProducts'
-import VendorOrders from './pages/vendor/VendorOrders'
-import VendorOrderDetail from './pages/vendor/VendorOrderDetail'
-import VendorProfile from './pages/vendor/VendorProfile'
-import VendorVoucher from './pages/vendor/VendorVouchers'
-import VendorWallet from './pages/vendor/VendorWallet'
-import VendorDashboard from './pages/vendor/VendorDashboard'
-import VendorProductForm from './pages/vendor/VendorProductForm'
+import CustomerShop from './pages/customer/CustomerShop'
 
-function ProtectedRoute({ user }) {
-  return user ? <Outlet /> : <Navigate to="/auth/login" replace />
-}
-
-function UnauthorizedRoute({ user }) {
-  return user ? <Navigate to="/home" replace /> : <Outlet />
-}
+import { io } from 'socket.io-client'
+import {
+  countUnreadNotificationShopAPI,
+  countUnreadNotificationUserAPI,
+  fetchNotificationUserAPI,
+  incrementNotificationUser
+} from './redux/notification.slice'
+import AuthRoutes from './routes/AuthRoutes'
+import CustomerRoutes from './routes/CustomerRoutes'
+import VendorRoutes from './routes/VendorRoutes'
+import AccessDeniedPage from './pages/common/AccessDeniedPage'
 
 function App() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const location = useLocation()
   const currentUser = useSelector((state) => state.user.currentUser)
-
+  const socketRef = useRef(null)
   useEffect(() => {
     setNavigate(navigate)
   }, [navigate])
+
+  useEffect(() => {
+    if (!currentUser?._id) {
+      if (socketRef.current) {
+        socketRef.current.disconnect()
+        socketRef.current = null
+      }
+      return
+    }
+
+    if (!socketRef.current) {
+      socketRef.current = io('http://localhost:3000', {
+        query: {
+          user_id: currentUser._id
+        }
+      })
+
+      const handleSocketConnect = async () => {
+        console.log('✅ Connected to socket.io server')
+        dispatch(fetchNotificationUserAPI())
+        dispatch(countUnreadNotificationUserAPI())
+        if (currentUser.user_role.includes('SHOP'))
+          dispatch(countUnreadNotificationShopAPI())
+      }
+
+      const handleNotification = (data) => {
+        console.log('🔔 Received realtime notification:', data)
+        dispatch(incrementNotificationUser())
+      }
+
+      socketRef.current.on('connect', handleSocketConnect)
+      socketRef.current.on('notification', handleNotification)
+    }
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect()
+        socketRef.current = null
+      }
+    }
+  }, [currentUser?._id])
 
   const isPendingSetup =
     currentUser?.user_status === 'pending_setup' &&
@@ -68,83 +91,24 @@ function App() {
   return (
     <>
       <ScrollToTop />
+
       <Routes>
-        {/* Redirect root to /home */}
-        <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/home" element={<Home />} />
-
-        {/* Setup Account */}
-        <Route
-          path="/setup-account"
-          element={
-            currentUser?.user_status === 'pending_setup' ? (
-              <CustomerSetupAccount />
-            ) : (
-              <Navigate to="/home" replace />
-            )
-          }
-        />
-
+        <Route path="/shop/:shop_slug" element={<CustomerShop />} />
         <Route
           path="/product/:product_slug"
           element={<CustomerProductDetails />}
         />
-        <Route path="/store" element={<CustomerStore />} />
-
-        {/* Public routes - Only accessible if NOT logged in */}
-        <Route element={<UnauthorizedRoute user={currentUser} />}>
-          <Route path="/auth/:page" element={<CustomerAuth />} />
-          <Route
-            path="/auth/reset-password/:token"
-            element={<CustomerAuth />}
-          />
-          <Route
-            path="/auth/verify-account/:otp"
-            element={<CustomerVerifyAccount />}
-          />
+        <Route path="/auth/*" element={<Outlet />}>
+          {AuthRoutes()}
         </Route>
-
-        {/* Private routes - Only accessible if logged in */}
-        <Route element={<ProtectedRoute user={currentUser} />}>
-          <Route path="/my-account" element={<UserAccountLayout />}>
-            <Route index element={<Navigate to="dashboard" />} />
-            <Route path="dashboard" element={<CustomerDashboard />} />
-            <Route path="orders" element={<CustomerOrders />} />
-            <Route path="order-detail" element={<CustomerOrderDetail />} />
-            <Route path="notifications" element={<CustomerNotifications />} />
-            <Route path="account-details" element={<CustomerAccountDetail />} />
-            <Route path="addresses" element={<CustomerAddresses />} />
-            <Route path="wallet" element={<CustomerWallet />} />
-            <Route
-              path="account-migration"
-              element={
-                !currentUser?.user_role?.includes('SHOP') ? (
-                  <CustomerAccountMigration />
-                ) : (
-                  <Navigate to="/my-account/dashboard" />
-                )
-              }
-            />
-          </Route>
-
-          <Route path="/vendor" element={<VendorLayout />}>
-            <Route path="dashboard" element={<VendorDashboard />} />
-            <Route path="products" element={<VendorProducts />} />
-            <Route path="create-product" element={<VendorProductForm />} />
-            <Route path="update-product/:_id" element={<VendorProductForm />} />
-            <Route path="orders" element={<VendorOrders />} />
-            <Route path="order-detail" element={<VendorOrderDetail />} />
-            <Route path="profile" element={<VendorProfile />} />
-            <Route path="vouchers" element={<VendorVoucher />} />
-            <Route path="wallet" element={<VendorWallet />} />
-          </Route>
-
-          {/* <Route path="/:page" element={<Vendor />} />
-          <Route path="/:page/:_id" element={<Vendor />} /> */}
-
-          <Route path="/cart" element={<CustomerShoppingCart />} />
-          <Route path="/checkout" element={<CustomerCheckout />} />
+        <Route path="/my-account/*" element={<Outlet />}>
+          {CustomerRoutes()}
         </Route>
+        <Route path="/vendor/*" element={<Outlet />}>
+          {VendorRoutes()}
+        </Route>
+        <Route path="/unauthorized" element={<AccessDeniedPage />} />
       </Routes>
     </>
   )

@@ -2,7 +2,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
 import { Button } from '@mui/material'
-
+import Markdown from 'react-markdown'
 const style = {
   position: 'absolute',
   top: '50%',
@@ -28,9 +28,9 @@ function NotificationModal({ header, content, open, onClose }) {
         <Typography id="modal-modal-title" variant="h6" component="h2">
           {header}
         </Typography>
-        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          {content}
-        </Typography>
+        <Box sx={{ mt: 2 }}>
+          <Markdown>{content}</Markdown>
+        </Box>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
           <Button
             sx={{

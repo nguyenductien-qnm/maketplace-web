@@ -23,3 +23,14 @@ export const updateProfileShopAPI = async (data, loadingClass) => {
     ...TOAST_MODE.ALL
   })
 }
+
+export const getShopByUserAPI = async (data) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/shop/get-shop-by-user`,
+    data,
+    {
+      ...TOAST_MODE.ONLY_ERROR
+    }
+  )
+  return res
+}

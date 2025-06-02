@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material'
 
-function StoreInfoCard() {
+function ShopInfoCard({ shop }) {
+  const { province, district, ward, street } = shop?.shop_address || {}
   return (
     <Box
       sx={{
@@ -23,21 +24,24 @@ function StoreInfoCard() {
           borderRadius: '9999px',
           marginBottom: '20px'
         }}
-        src="https://klbtheme.com/bevesi/wp-content/uploads/2024/05/cropped-style-3.png"
+        src={
+          shop?.shop_avatar ||
+          'https://klbtheme.com/bevesi/wp-content/uploads/2024/05/cropped-style-3.png'
+        }
       />
       <Typography sx={{ fontSize: '25px', color: 'white', fontWeight: '600' }}>
-        Djewno
+        {shop?.shop_name}
       </Typography>
       <Typography
         sx={{ color: 'white', marginBottom: '20px', textAlign: 'center' }}
       >
-        602nd Pasadena Bulevard, 204th Saints Bulevard Los Santos, California,
-        United States (US), American Samoa
+        {street}, {ward?.WardName}, {district?.DistrictName},{' '}
+        {province?.ProvinceName}
       </Typography>
       <Typography sx={{ fontSize: '20px', fontWeight: '600', color: 'white' }}>
-        0987654321
+        {shop?.shop_phone}
       </Typography>
     </Box>
   )
 }
-export default StoreInfoCard
+export default ShopInfoCard

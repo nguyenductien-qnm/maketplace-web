@@ -10,7 +10,6 @@ import {
   apiGetProvinces,
   apiGetWards
 } from '~/helpers/getAddress'
-import generateURL from '~/utils/generateURL'
 import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
 import { prepareImageForStorage } from '~/helpers/resizeImage'
 import interceptorLoadingElements from '~/utils/interceptorLoading'
@@ -117,33 +116,6 @@ export const useVendorProfile = () => {
     clearErrors('ward')
   }
 
-  const handleChangeShopName = async (e) => {
-    const name = e.target.value.trim()
-    if (!name) {
-      setValue('shop_slug', '')
-      return
-    }
-    const slug = generateURL(name)
-    setValue('shop_slug', slug)
-    await checkShopURL(slug)
-  }
-
-  const checkShopURL = async (slug = null) => {
-    try {
-      const currentSlug = slug || getValues('shop_slug')
-      if (!currentSlug) return
-      await checkShopUrlAPI({ shop_slug: currentSlug })
-      clearErrors('shop_slug')
-      setAvailableShopSlug(true)
-    } catch {
-      setError('shop_slug', {
-        type: 'manual',
-        message: 'This URL is already taken.'
-      })
-      setAvailableShopSlug(false)
-    }
-  }
-
   const handleUploadImage = async (e, type = 'avatar') => {
     interceptorLoadingElements(true, [
       '.btn-shop-upload-banner',
@@ -202,11 +174,9 @@ export const useVendorProfile = () => {
     handleChangeProvince,
     handleChangeDistrict,
     handleChangeWard,
-    handleChangeShopName,
     handleUploadImage,
     shopAvatar,
     shopBanner,
-    shopStatus,
-    checkShopURL
+    shopStatus
   }
 }
