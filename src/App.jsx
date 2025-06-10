@@ -28,6 +28,7 @@ import AuthRoutes from './routes/AuthRoutes'
 import CustomerRoutes from './routes/CustomerRoutes'
 import VendorRoutes from './routes/VendorRoutes'
 import AccessDeniedPage from './pages/common/AccessDeniedPage'
+import AdminRoutes from './routes/AdminRoutes'
 
 function App() {
   const navigate = useNavigate()
@@ -102,12 +103,19 @@ function App() {
         <Route path="/auth/*" element={<Outlet />}>
           {AuthRoutes()}
         </Route>
+
         <Route path="/my-account/*" element={<Outlet />}>
           {CustomerRoutes()}
         </Route>
+
         <Route path="/vendor/*" element={<Outlet />}>
           {VendorRoutes()}
         </Route>
+
+        <Route path="/admin/*" element={<Outlet />}>
+          {AdminRoutes()}
+        </Route>
+
         <Route path="/unauthorized" element={<AccessDeniedPage />} />
       </Routes>
     </>

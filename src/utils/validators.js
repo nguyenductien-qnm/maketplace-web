@@ -20,6 +20,11 @@ export const NAME_RULE = /^[A-Za-zÀ-ỹà-ỹ\s]{3,50}$/
 export const NAME_RULE_MESSAGE =
   'Please enter a valid name (3-50 letters and spaces only).'
 
+// ==================== name ============================
+export const REASON_RULE = /^.{5,255}$/
+export const REASON_RULE_MESSAGE =
+  'Reason must be between 5 and 255 characters.'
+
 // ==================== phone ============================
 export const PHONE_RULE = /^\d{10}$/
 export const PHONE_RULE_MESSAGE = 'Invalid phone.'

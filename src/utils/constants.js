@@ -1,4 +1,5 @@
 export const API_ROOT = 'http://localhost:3000'
+export const WEB_ROOT = 'http://localhost:5173'
 
 export const TOAST_MODE = {
   ALL: { showToastSuccess: true, showToastError: true },

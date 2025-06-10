@@ -34,3 +34,75 @@ export const getShopByUserAPI = async (data) => {
   )
   return res
 }
+
+export const queryShopByAdminAPI = async (data) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/shop/query-shop-by-admin`,
+    data,
+    {
+      ...TOAST_MODE.NONE
+    }
+  )
+  return res
+}
+
+export const banShopAPI = async (data) => {
+  const res = await authorizedAxios.post(`${API_ROOT}/v1/api/shop/ban`, data, {
+    ...TOAST_MODE.ALL
+  })
+  return res
+}
+
+export const unbanShopAPI = async (data) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/shop/unban`,
+    data,
+    {
+      ...TOAST_MODE.ALL
+    }
+  )
+  return res
+}
+
+export const acceptShopAPI = async (data) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/shop/accept`,
+    data,
+    {
+      ...TOAST_MODE.ALL
+    }
+  )
+  return res
+}
+
+export const rejectShopAPI = async (data) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/shop/reject`,
+    data,
+    {
+      ...TOAST_MODE.ALL
+    }
+  )
+  return res
+}
+
+export const exportShopDataAPI = async (data) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/shop/export`,
+    data,
+    {
+      ...TOAST_MODE.ALL,
+      responseType: 'blob'
+    }
+  )
+
+  const blob = res.data
+  const url = window.URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'shops.csv'
+  a.click()
+  window.URL.revokeObjectURL(url)
+
+  return res
+}

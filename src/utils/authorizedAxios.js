@@ -75,11 +75,20 @@ authorizeAxiosInstance.interceptors.response.use(
     const shouldShowErrorToast = originalRequest?.showToastError
 
     if (shouldShowErrorToast) {
-      const messages = error.response?.data?.message
-      if (messages) {
-        toast.error(messages)
+      const data = error.response?.data
+
+      if (data instanceof Blob) {
+        data.text().then((text) => {
+          const json = JSON.parse(text)
+          toast.error(json.message || 'An unexpected error occurred.')
+        })
       } else {
-        toast.error('An unexpected error occurred.')
+        const message = data?.message
+        if (message) {
+          toast.error(message)
+        } else {
+          toast.error('An unexpected error occurred.')
+        }
       }
     }
 
