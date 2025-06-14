@@ -19,15 +19,11 @@ function ReasonModal({
 }) {
   const {
     handleSubmit,
-    watch,
     formState: { errors },
     control
   } = useForm()
 
-  const value = watch('reason')
-
   const submitHandler = (data) => {
-    console.log('ok')
     onSubmit(data.reason)
   }
 

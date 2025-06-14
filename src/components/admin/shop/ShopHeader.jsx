@@ -6,9 +6,11 @@ import Tooltip from '@mui/material/Tooltip'
 function ShopHeader({
   name,
   filters,
+  status,
+  setFilters,
   handleFilter,
-  handleExportData,
-  handleClearFilter
+  handleClearFilter,
+  handleExportData
 }) {
   return (
     <Box
@@ -30,7 +32,9 @@ function ShopHeader({
         <Tooltip title="Advantage filter">
           <Box>
             <ShopFilter
+              status={status}
               filters={filters}
+              setFilters={setFilters}
               handleFilter={handleFilter}
               handleClearFilter={handleClearFilter}
             />

@@ -9,14 +9,19 @@ import { Button, Divider, TextField } from '@mui/material'
 import { apiGetProvinces } from '~/helpers/getAddress'
 import TypographyLabel from '../../common/TypographyLabel'
 
-function ShopFilter({ filters, handleFilter, handleClearFilter }) {
+function ShopFilter({
+  status,
+  filters,
+  setFilters,
+  handleFilter,
+  handleClearFilter
+}) {
   const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
   const [provinces, setProvinces] = useState([])
 
   const handleOpenFilter = (event) => setAnchorEl(event.currentTarget)
   const handleCloseFilter = () => setAnchorEl(null)
-  const [localFilters, setLocalFilters] = useState(filters)
-  const open = Boolean(anchorEl)
 
   useEffect(() => {
     const fetchProvinces = async () => {
@@ -25,43 +30,6 @@ function ShopFilter({ filters, handleFilter, handleClearFilter }) {
     }
     fetchProvinces()
   }, [])
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      handleFilter(localFilters)
-    }, 500)
-
-    return () => clearTimeout(handler)
-  }, [localFilters])
-
-  useEffect(() => {
-    setLocalFilters(filters)
-  }, [filters])
-
-  const handleSearchChange = (e) => {
-    setLocalFilters((prev) => ({ ...prev, search: e.target.value }))
-  }
-
-  const handleProductCountChange = (newValue) => {
-    setLocalFilters((prev) => ({ ...prev, productCountRange: newValue }))
-  }
-
-  const handleFollowerCountChange = (newValue) => {
-    setLocalFilters((prev) => ({ ...prev, followerCountRange: newValue }))
-  }
-
-  const handleRatingChange = (newValue) => {
-    setLocalFilters((prev) => ({ ...prev, ratingRange: newValue }))
-  }
-
-  const handleProvinceChange = (e) => {
-    setLocalFilters((prev) => ({ ...prev, province: e.target.value }))
-  }
-
-  const handleSearch = () => {
-    const data = { ...localFilters }
-    handleFilter(data)
-  }
 
   return (
     <Box>
@@ -92,16 +60,20 @@ function ShopFilter({ filters, handleFilter, handleClearFilter }) {
             fullWidth
             placeholder="Enter shop name, phone, email"
             size="small"
-            value={localFilters.search}
-            onChange={(e) => handleSearchChange(e)}
+            value={filters.search}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, search: e.target.value }))
+            }
           />
           <Box>
             <TypographyLabel>Shop province</TypographyLabel>
             <Select
               size="small"
               fullWidth
-              value={localFilters.province || ''}
-              onChange={(e) => handleProvinceChange(e)}
+              value={filters.province || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, province: e.target.value }))
+              }
               displayEmpty
             >
               {provinces?.map((province) => (
@@ -112,15 +84,52 @@ function ShopFilter({ filters, handleFilter, handleClearFilter }) {
             </Select>
           </Box>
 
+          {status != 'NEW_REGISTRATION' && (
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Box sx={{ flex: 1 }}>
+                <TypographyLabel>Created from</TypographyLabel>
+                <TextField
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      createdFrom: e.target.value
+                    }))
+                  }
+                  value={filters.createdFrom}
+                  size="small"
+                  type="date"
+                  fullWidth
+                />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <TypographyLabel>Created to</TypographyLabel>
+                <TextField
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      createdTo: e.target.value
+                    }))
+                  }
+                  value={filters.createdTo}
+                  size="small"
+                  type="date"
+                  fullWidth
+                />
+              </Box>
+            </Box>
+          )}
+
           <Box width="100%">
             <TypographyLabel>
               Product count range:{' '}
-              {localFilters.productCountRange[0].toLocaleString()} -{' '}
-              {localFilters.productCountRange[1].toLocaleString()} $
+              {filters.productCountRange[0].toLocaleString()} -{' '}
+              {filters.productCountRange[1].toLocaleString()} $
             </TypographyLabel>
             <Slider
-              value={localFilters.productCountRange}
-              onChange={(e, newValue) => handleProductCountChange(newValue)}
+              value={filters.productCountRange}
+              onChange={(e, newValue) =>
+                setFilters((prev) => ({ ...prev, productCountRange: newValue }))
+              }
               valueLabelDisplay="auto"
               min={0}
               max={500}
@@ -131,12 +140,17 @@ function ShopFilter({ filters, handleFilter, handleClearFilter }) {
           <Box width="100%">
             <TypographyLabel>
               Follower count range:{' '}
-              {localFilters.followerCountRange[0].toLocaleString()} -{' '}
-              {localFilters.followerCountRange[1].toLocaleString()} $
+              {filters.followerCountRange[0].toLocaleString()} -{' '}
+              {filters.followerCountRange[1].toLocaleString()} $
             </TypographyLabel>
             <Slider
-              value={localFilters.followerCountRange}
-              onChange={(e, newValue) => handleFollowerCountChange(newValue)}
+              value={filters.followerCountRange}
+              onChange={(e, newValue) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  followerCountRange: newValue
+                }))
+              }
               valueLabelDisplay="auto"
               min={0}
               max={1000}
@@ -146,12 +160,14 @@ function ShopFilter({ filters, handleFilter, handleClearFilter }) {
 
           <Box width="100%">
             <TypographyLabel>
-              Rating range: {localFilters.ratingRange[0].toLocaleString()} -{' '}
-              {localFilters.ratingRange[1].toLocaleString()} $
+              Rating range: {filters.ratingRange[0].toLocaleString()} -{' '}
+              {filters.ratingRange[1].toLocaleString()} $
             </TypographyLabel>
             <Slider
-              value={localFilters.ratingRange}
-              onChange={(e, newValue) => handleRatingChange(newValue)}
+              value={filters.ratingRange}
+              onChange={(e, newValue) =>
+                setFilters((prev) => ({ ...prev, ratingRange: newValue }))
+              }
               valueLabelDisplay="auto"
               min={0}
               max={5}
@@ -170,7 +186,7 @@ function ShopFilter({ filters, handleFilter, handleClearFilter }) {
             <Button
               variant="contained"
               onClick={() => {
-                handleSearch()
+                handleFilter()
                 handleCloseFilter()
               }}
             >

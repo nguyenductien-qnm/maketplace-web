@@ -61,6 +61,77 @@ const updateAddressAPI = async ({ data, loadingClass }) => {
   return res
 }
 
+const queryUserByAdminAPI = async ({ data }) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/user/query-user-by-admin`,
+    data,
+    {
+      ...TOAST_MODE.ONLY_ERROR
+    }
+  )
+  return res
+}
+
+const banUserAPI = async ({ data }) => {
+  const res = await authorizedAxios.post(`${API_ROOT}/v1/api/user/ban`, data, {
+    ...TOAST_MODE.ALL
+  })
+  return res
+}
+
+const unbanUserAPI = async ({ data }) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/user/unban`,
+    data,
+    {
+      ...TOAST_MODE.ALL
+    }
+  )
+  return res
+}
+
+const getUserDetailForAdminAPI = async ({ _id }) => {
+  const res = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/user/detail-for-admin?_id=${_id}`,
+    {
+      ...TOAST_MODE.ALL
+    }
+  )
+  return res
+}
+
+const updateUserPasswordForAdminAPI = async (data) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/user/update-user-password-for-admin`,
+    data,
+    {
+      ...TOAST_MODE.ALL
+    }
+  )
+  return res
+}
+
+const exportUserDataAPI = async (data) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/user/export`,
+    data,
+    {
+      ...TOAST_MODE.ALL,
+      responseType: 'blob'
+    }
+  )
+
+  const blob = res.data
+  const url = window.URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'users.csv'
+  a.click()
+  window.URL.revokeObjectURL(url)
+
+  return res
+}
+
 export {
   getUserInfoAPI,
   changePasswordAPI,
@@ -68,5 +139,11 @@ export {
   getAddressListAPI,
   setDefaultAddressAPI,
   deleteAddressAPI,
-  updateAddressAPI
+  updateAddressAPI,
+  queryUserByAdminAPI,
+  banUserAPI,
+  unbanUserAPI,
+  getUserDetailForAdminAPI,
+  updateUserPasswordForAdminAPI,
+  exportUserDataAPI
 }

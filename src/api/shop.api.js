@@ -40,7 +40,7 @@ export const queryShopByAdminAPI = async (data) => {
     `${API_ROOT}/v1/api/shop/query-shop-by-admin`,
     data,
     {
-      ...TOAST_MODE.NONE
+      ...TOAST_MODE.ONLY_ERROR
     }
   )
   return res
@@ -79,6 +79,16 @@ export const rejectShopAPI = async (data) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/shop/reject`,
     data,
+    {
+      ...TOAST_MODE.ALL
+    }
+  )
+  return res
+}
+
+export const getShopDetailForAdminAPI = async ({ _id }) => {
+  const res = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/detail-for-admin?_id=${_id}`,
     {
       ...TOAST_MODE.ALL
     }

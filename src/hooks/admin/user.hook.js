@@ -1,29 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  acceptShopAPI,
-  banShopAPI,
-  exportShopDataAPI,
-  getShopDetailForAdminAPI,
-  queryShopByAdminAPI,
-  rejectShopAPI,
-  unbanShopAPI
-} from '~/api/shop.api'
+  banUserAPI,
+  exportUserDataAPI,
+  getUserDetailForAdminAPI,
+  queryUserByAdminAPI,
+  unbanUserAPI,
+  updateUserPasswordForAdminAPI
+} from '~/api/user.api'
 import { navigate } from '~/helpers/navigation'
 
-export const useAdminShop = ({ status }) => {
+export const useAdminUser = ({ status }) => {
   // ============================== STATE ==============================
-
   const defaultFilters = {
     search: '',
-    province: '',
+    isShop: false,
+    gender: '',
     createdFrom: '',
-    createdTo: '',
-    productCountRange: [0, 500],
-    followerCountRange: [0, 1000],
-    ratingRange: [0, 5]
+    createdTo: ''
   }
 
-  const [shops, setShops] = useState([])
+  const [users, setUsers] = useState([])
   const [count, setCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [isDenied, setDenied] = useState(false)
@@ -36,11 +32,13 @@ export const useAdminShop = ({ status }) => {
 
   const [openReasonModal, setOpenReasonModal] = useState(false)
   const [openInfoModal, setOpenInfoModal] = useState(false)
+  const [openUpdatePasswordModal, setOpenUpdatePasswordModal] = useState(false)
   const [action, setAction] = useState(null)
-  const [selectedShop, setSelectedShop] = useState(null)
-  const [shopDetail, setShopDetail] = useState(null)
+  const [selectedUser, setSelectedUser] = useState(null)
+  const [userDetail, setUserDetail] = useState(null)
 
   // ============================== EFFECT ==============================
+
   useEffect(() => {
     if (isDenied) navigate('/unauthorized')
   }, [isDenied])
@@ -51,17 +49,17 @@ export const useAdminShop = ({ status }) => {
       return
     }
 
-    queryShopByAdmin({ page, rowsPerPage, status, ...filters })
+    queryUserByAdmin({ page, rowsPerPage, status, ...filters })
   }, [status, page, rowsPerPage])
 
   // ============================== API ==============================
 
-  const queryShopByAdmin = async (data) => {
+  const queryUserByAdmin = async (data) => {
     setLoading(true)
     try {
-      const res = await queryShopByAdminAPI(data)
+      const res = await queryUserByAdminAPI({ data })
       if (res.status === 200) {
-        setShops(res.data?.metadata?.shops)
+        setUsers(res.data?.metadata?.users)
         setCount(res.data?.metadata?.count)
       } else {
         setDenied(true)
@@ -77,7 +75,7 @@ export const useAdminShop = ({ status }) => {
 
   const handleFilter = () => {
     if (page === 0) {
-      queryShopByAdmin({ page, rowsPerPage, status, ...filters })
+      queryUserByAdmin({ page, rowsPerPage, status, ...filters })
     } else {
       setPage(0)
     }
@@ -97,11 +95,13 @@ export const useAdminShop = ({ status }) => {
     setPage(0)
   }
 
-  const handleOpenModal = ({ action, shop }) => {
+  const handleOpenModal = ({ action, user }) => {
     setAction(action)
-    setSelectedShop(shop)
+    setSelectedUser(user)
     if (action === 'detail') {
       setOpenInfoModal(true)
+    } else if (action === 'update-password') {
+      setOpenUpdatePasswordModal(true)
     } else {
       setOpenReasonModal(true)
     }
@@ -110,53 +110,48 @@ export const useAdminShop = ({ status }) => {
   const handleCloseModal = () => {
     setOpenInfoModal(false)
     setOpenReasonModal(false)
+    setOpenUpdatePasswordModal(false)
     setAction(null)
-    setSelectedShop(null)
-    setShopDetail(null)
+    setSelectedUser(null)
+    setUserDetail(null)
   }
 
-  const handleBanShop = async (data) => {
-    await banShopAPI(data)
-    setShops((prev) => prev.filter((shop) => shop._id != data._id))
+  const handleBanUser = async (data) => {
+    await banUserAPI(data)
+    setUsers((prev) => prev.filter((u) => u._id !== data._id))
     handleCloseModal()
   }
 
-  const handleUnbanShop = async (data) => {
-    await unbanShopAPI(data)
-    setShops((prev) => prev.filter((shop) => shop._id != data._id))
+  const handleUnbanUser = async (data) => {
+    await unbanUserAPI(data)
+    setUsers((prev) => prev.filter((u) => u._id !== data._id))
     handleCloseModal()
   }
 
-  const handleAcceptShop = async (data) => {
-    await acceptShopAPI(data)
-    setShops((prev) => prev.filter((shop) => shop._id != data._id))
+  const handleGetUserDetail = async (data) => {
+    const res = await getUserDetailForAdminAPI({ _id: data?._id })
+    setUserDetail(res?.data?.metadata)
   }
 
-  const handleRejectShop = async (data) => {
-    await rejectShopAPI(data)
-    setShops((prev) => prev.filter((shop) => shop._id != data._id))
-    handleCloseModal()
-  }
-
-  const handleGetShopDetail = async (data) => {
-    const res = await getShopDetailForAdminAPI({ _id: data?._id })
-    setShopDetail(res?.data?.metadata)
+  const handleUpdatePassword = async (data) => {
+    const res = await updateUserPasswordForAdminAPI(data)
+    if (res?.status === 200) handleCloseModal()
   }
 
   const handleExportData = async () => {
-    await exportShopDataAPI({ status, ...filters })
+    await exportUserDataAPI({ status, ...filters })
   }
+
+  // ============================== MODAL CONFIG ==============================
 
   const modalProps = {
     ban: {
       type: 'reason',
-      header: 'Ban Shop',
+      header: 'Ban User',
       open: openReasonModal,
       onSubmit: (value) => {
-        handleBanShop({
-          _id: selectedShop?._id,
-          reason: value,
-          action
+        handleBanUser({
+          data: { _id: selectedUser?._id, reason: value, action }
         })
       },
       submitText: 'Ban',
@@ -164,40 +159,27 @@ export const useAdminShop = ({ status }) => {
     },
     unban: {
       type: 'reason',
-      header: 'Unban Shop',
+      header: 'Unban User',
       open: openReasonModal,
       onSubmit: (value) => {
-        handleUnbanShop({
-          _id: selectedShop?._id,
-          reason: value,
-          action
+        handleUnbanUser({
+          data: { _id: selectedUser?._id, reason: value, action }
         })
       },
       submitText: 'Unban',
       submitColor: 'success'
-    },
-    reject: {
-      type: 'reason',
-      header: 'Reject Shop',
-      open: openReasonModal,
-      onSubmit: (value) => {
-        handleRejectShop({
-          _id: selectedShop?._id,
-          reason: value,
-          action
-        })
-      },
-      submitText: 'Reject',
-      submitColor: 'error'
     }
   }
 
+  // ============================== RETURN ==============================
+
   return {
-    shops,
+    users,
     count,
     loading,
     isDenied,
-    shopDetail,
+    userDetail,
+    selectedUser,
 
     filters,
     setFilters,
@@ -206,6 +188,7 @@ export const useAdminShop = ({ status }) => {
 
     openInfoModal,
     openReasonModal,
+    openUpdatePasswordModal,
     modalProps: modalProps[action],
 
     handleFilter,
@@ -216,8 +199,8 @@ export const useAdminShop = ({ status }) => {
     handleOpenModal,
     handleCloseModal,
 
-    handleAcceptShop,
-    handleGetShopDetail,
+    handleGetUserDetail,
+    handleUpdatePassword,
     handleExportData
   }
 }

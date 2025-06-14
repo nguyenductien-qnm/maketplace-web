@@ -64,20 +64,20 @@ export default function AdminSidebar() {
         </ListItemButton>
 
         {renderSection('Users', <PersonOutlinedIcon />, 'users', [
-          'User List',
-          'Blocked Users',
+          'Active Users',
+          'Banned Users',
           'New Registrations',
           'User Feedback / Reports'
         ])}
 
         {renderSection(
-          'Shops / Sellers',
+          'Shops / Vendors',
           <StoreMallDirectoryOutlinedIcon />,
           'shops',
           [
-            'Shop List',
+            'Active Shops',
             'Pending Shop Approvals',
-            'Reported / Banned Shops',
+            'Banned Shops',
             'Suspended Shops',
             'Shop Info Update Requests'
           ]

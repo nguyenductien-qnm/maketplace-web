@@ -1,72 +1,38 @@
 import Paper from '@mui/material/Paper'
-import Box from '@mui/material/Box'
-import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import ShopTable from '~/components/admin/shop/ShopTable'
 import ShopHeader from '~/components/admin/shop/ShopHeader'
-import { useEffect, useRef, useState } from 'react'
 import { useAdminShop } from '~/hooks/admin/shop.hook'
-import { exportShopDataAPI } from '~/api/shop.api'
+import TableSkeleton from '~/components/admin/TableSkeleton'
 
 function AdminShop({ name, status }) {
-  const defaultFilters = {
-    search: '',
-    province: '',
-    productCountRange: [0, 500],
-    followerCountRange: [0, 1000],
-    ratingRange: [0, 5]
-  }
-
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(10)
-  const [filters, setFilters] = useState(defaultFilters)
-  const skipEffect = useRef(false)
-
-  const handleClearFilter = () => {
-    skipEffect.current = true
-    setFilters(defaultFilters)
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
-
   const {
-    count,
     shops,
+    count,
     loading,
     isDenied,
-    queryShopByAdmin,
-    banShop,
-    openReasonModal,
+    shopDetail,
+
+    filters,
+    setFilters,
+    page,
+    rowsPerPage,
+
     openInfoModal,
+    openReasonModal,
+    modalProps,
+
+    handleFilter,
+    handleClearFilter,
+    handleChangePage,
+    handleChangeRowsPerPage,
+
     handleOpenModal,
     handleCloseModal,
-    selectedShop,
-    modalProps,
-    handleAcceptShop
-  } = useAdminShop(page, rowsPerPage, status)
 
-  const handleFilter = (data) => {
-    setFilters(data)
-    setPage(0)
-  }
-
-  const handleExportData = async () => {
-    await exportShopDataAPI({ status, ...filters })
-  }
-
-  useEffect(() => {
-    if (skipEffect.current == true) {
-      skipEffect.current = false
-      return
-    }
-    queryShopByAdmin({ page, rowsPerPage, status, ...filters })
-  }, [status, page, filters, rowsPerPage])
+    handleAcceptShop,
+    handleGetShopDetail,
+    handleExportData
+  } = useAdminShop({ status })
 
   return (
     <Paper
@@ -80,35 +46,26 @@ function AdminShop({ name, status }) {
       <ShopHeader
         name={name}
         filters={filters}
+        status={status}
+        setFilters={setFilters}
         handleFilter={handleFilter}
-        handleExportData={handleExportData}
         handleClearFilter={handleClearFilter}
+        handleExportData={handleExportData}
       />
-      {loading && (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            mt: '50px'
-          }}
-        >
-          <CircularIndeterminate />
-        </Box>
-      )}
+      {loading && <TableSkeleton columns={9} rows={rowsPerPage} />}
       {!loading && !isDenied && (
         <ShopTable
           shops={shops}
           count={count}
           page={page}
+          shopDetail={shopDetail}
+          handleGetShopDetail={handleGetShopDetail}
           rowsPerPage={rowsPerPage}
-          banShop={banShop}
           modalProps={modalProps}
           handleChangePage={handleChangePage}
           handleChangeRowsPerPage={handleChangeRowsPerPage}
           openReasonModal={openReasonModal}
           openInfoModal={openInfoModal}
-          selectedShop={selectedShop}
           handleOpenModal={handleOpenModal}
           handleCloseModal={handleCloseModal}
           handleAcceptShop={handleAcceptShop}
