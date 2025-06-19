@@ -4,6 +4,7 @@ import AdminLayout from '~/layouts/admin/AdminLayout'
 import AdminShop from '~/pages/admin/AdminShop'
 import { RequireAuthRoute } from './RouteGuards'
 import AdminUser from '~/pages/admin/AdminUser'
+import AdminVoucher from '~/pages/admin/AdminVoucher'
 
 const AdminRoutes = () => {
   const user = useSelector((state) => state.user.currentUser)
@@ -48,6 +49,35 @@ const AdminRoutes = () => {
                 name="New Registration Users"
                 status="NEW_REGISTRATION"
               />
+            }
+          />
+        </Route>
+
+        <Route path="voucher">
+          <Route
+            path="active"
+            element={<AdminVoucher status="ACTIVE" name="Active Vouchers" />}
+          />
+
+          <Route
+            path="expired"
+            element={<AdminVoucher status="EXPIRED" name="Expired Vouchers" />}
+          />
+
+          <Route
+            path="out-of-stock"
+            element={
+              <AdminVoucher
+                status="OUT_OF_STOCK"
+                name="Out Of Stock Vouchers"
+              />
+            }
+          />
+
+          <Route
+            path="not-started"
+            element={
+              <AdminVoucher status="NOT_STARTED" name="Not Started Vouchers" />
             }
           />
         </Route>

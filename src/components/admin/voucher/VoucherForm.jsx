@@ -3,7 +3,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
+import TypographyLabel from '~/components/common/TypographyLabel'
 import TextField from '@mui/material/TextField'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
@@ -12,7 +12,7 @@ import Paper from '@mui/material/Paper'
 import Grid2 from '@mui/material/Grid2'
 import SearchInput from '~/components/common/SearchInput'
 import FieldErrorAlert from '~/components/common/FieldErrorAlert'
-import ProductEmpty from '../VendorProduct/ProductEmpty'
+import ProductEmpty from '~/components/vendor/VendorProduct/ProductEmpty'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import {
   FIELD_REQUIRED_MESSAGE,
@@ -24,51 +24,44 @@ import {
   VOUCHER_CODE_RULE_MESSAGE
 } from '~/utils/validators'
 import { blue } from '@mui/material/colors'
-import { useVendorVoucherModal } from '~/hooks/vendor/voucher.hook'
-import { Controller } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
+import { useEffect } from 'react'
 
-const VoucherModal = ({
-  open,
-  handleClose,
-  action,
-  voucher,
-  handleCreateVoucher,
-  handleUpdateVoucher
-}) => {
+function VoucherForm({ voucher, mode, action, open, onclose, onSubmit }) {
   const {
     register,
-    errors,
-    onSubmit,
-    voucherApplies,
-    product,
-    loading,
-    searchValue,
-    setSearchValue,
-    handleSearch,
-    handleSelectProduct,
-    selectProduct,
-    control
-  } = useVendorVoucherModal({
-    voucher,
-    action,
-    onClose: handleClose,
-    handleCreateVoucher,
-    handleUpdateVoucher
+    formState: { errors },
+    control,
+    handleSubmit,
+    reset
+  } = useForm({
+    defaultValues: {
+      voucher_type: 'percent',
+      voucher_status: 'public'
+    }
   })
 
+  useEffect(() => {
+    if (voucher) reset(voucher)
+  }, [voucher])
+
+  const submitHandler = (data) => {
+    onSubmit(data)
+  }
+
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onclose} fullWidth maxWidth="sm">
       <DialogTitle>
-        {action === 'CREATE' && 'Create Voucher'}
-        {action === 'UPDATE' && 'Update Voucher'}
+        {action === 'create' && 'Create Voucher'}
+        {action === 'update' && 'Update Voucher'}
       </DialogTitle>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit(submitHandler)}>
         <DialogContent sx={{ mt: '-20px' }}>
           <Box sx={{ mt: 2 }}>
             <Grid2 container spacing={2}>
               {/* Voucher Code */}
               <Grid2 size={6}>
-                <Typography variant="body2">CODE Voucher</Typography>
+                <TypographyLabel variant="body2">CODE Voucher</TypographyLabel>
                 <TextField
                   placeholder="8 characters"
                   size="small"
@@ -87,7 +80,7 @@ const VoucherModal = ({
 
               {/* Voucher Name */}
               <Grid2 size={6}>
-                <Typography variant="body2">Voucher Name</Typography>
+                <TypographyLabel variant="body2">Voucher Name</TypographyLabel>
                 <TextField
                   size="small"
                   fullWidth
@@ -105,7 +98,7 @@ const VoucherModal = ({
 
               {/* Voucher Type */}
               <Grid2 size={6}>
-                <Typography variant="body2">Voucher Type</Typography>
+                <TypographyLabel variant="body2">Voucher Type</TypographyLabel>
                 <Controller
                   name="voucher_type"
                   control={control}
@@ -128,7 +121,7 @@ const VoucherModal = ({
 
               {/* Voucher Value */}
               <Grid2 size={6}>
-                <Typography variant="body2">Voucher Value</Typography>
+                <TypographyLabel variant="body2">Voucher Value</TypographyLabel>
                 <TextField
                   type="number"
                   size="small"
@@ -147,9 +140,9 @@ const VoucherModal = ({
 
               {/* Voucher Start & End Date & Time */}
               <Grid2 size={6}>
-                <Typography variant="body2">
+                <TypographyLabel variant="body2">
                   Voucher Start Date & Time
-                </Typography>
+                </TypographyLabel>
                 <TextField
                   type="datetime-local"
                   size="small"
@@ -163,7 +156,9 @@ const VoucherModal = ({
               </Grid2>
 
               <Grid2 size={6}>
-                <Typography variant="body2">Voucher End Date & Time</Typography>
+                <TypographyLabel variant="body2">
+                  Voucher End Date & Time
+                </TypographyLabel>
                 <TextField
                   type="datetime-local"
                   size="small"
@@ -178,7 +173,9 @@ const VoucherModal = ({
 
               {/* Voucher Quantity */}
               <Grid2 size={6}>
-                <Typography variant="body2">Voucher Quantity</Typography>
+                <TypographyLabel variant="body2">
+                  Voucher Quantity
+                </TypographyLabel>
                 <TextField
                   type="number"
                   size="small"
@@ -197,7 +194,9 @@ const VoucherModal = ({
 
               {/* Voucher Min Order Value */}
               <Grid2 size={6}>
-                <Typography variant="body2">Voucher Min Order Value</Typography>
+                <TypographyLabel variant="body2">
+                  Voucher Min Order Value
+                </TypographyLabel>
                 <TextField
                   type="number"
                   size="small"
@@ -215,7 +214,9 @@ const VoucherModal = ({
               </Grid2>
 
               <Grid2 size={12}>
-                <Typography variant="body2">Voucher status</Typography>
+                <TypographyLabel variant="body2">
+                  Voucher status
+                </TypographyLabel>
                 <Controller
                   name="voucher_status"
                   control={control}
@@ -237,28 +238,32 @@ const VoucherModal = ({
               </Grid2>
 
               {/* Voucher Applies */}
-              <Grid2 size={12}>
-                <Typography variant="body2">Voucher Applies</Typography>
-                <Controller
-                  name="voucher_applies"
-                  control={control}
-                  rules={{ required: FIELD_REQUIRED_MESSAGE }}
-                  render={({ field }) => (
-                    <Select
-                      size="small"
-                      fullWidth
-                      {...field}
-                      error={!!errors['voucher_type']}
-                      value={field.value ?? 'all'}
-                    >
-                      <MenuItem value="all">All</MenuItem>
-                      <MenuItem value="specific">Specific</MenuItem>
-                    </Select>
-                  )}
-                />
-              </Grid2>
+              {mode === 'vendor' && (
+                <>
+                  <Grid2 size={12}>
+                    <TypographyLabel variant="body2">
+                      Voucher Applies
+                    </TypographyLabel>
+                    <Controller
+                      name="voucher_applies"
+                      control={control}
+                      rules={{ required: FIELD_REQUIRED_MESSAGE }}
+                      render={({ field }) => (
+                        <Select
+                          size="small"
+                          fullWidth
+                          {...field}
+                          error={!!errors['voucher_type']}
+                          value={field.value ?? 'all'}
+                        >
+                          <MenuItem value="all">All</MenuItem>
+                          <MenuItem value="specific">Specific</MenuItem>
+                        </Select>
+                      )}
+                    />
+                  </Grid2>
 
-              {voucherApplies === 'specific' && (
+                  {/* {voucherApplies === 'specific' && (
                 <Grid2 size={12} sx={{ mt: 2 }}>
                   <SearchInput
                     searchValue={searchValue}
@@ -319,7 +324,7 @@ const VoucherModal = ({
                               alt={p.product_name}
                               style={{ maxWidth: '100px', marginRight: '10px' }}
                             />
-                            <Typography
+                            <TypographyLabel
                               variant="body2"
                               sx={{
                                 display: '-webkit-box',
@@ -329,13 +334,15 @@ const VoucherModal = ({
                               }}
                             >
                               {p.product_name}
-                            </Typography>
+                            </TypographyLabel>
                           </Paper>
                         </Grid2>
                       ))}
                     </Grid2>
                   )}
                 </Grid2>
+              )} */}
+                </>
               )}
             </Grid2>
           </Box>
@@ -343,7 +350,7 @@ const VoucherModal = ({
         <DialogActions>
           <Button
             className="btn-shop-cancel-submit-voucher"
-            onClick={handleClose}
+            onClick={onclose}
             color="secondary"
           >
             Cancel
@@ -362,4 +369,4 @@ const VoucherModal = ({
   )
 }
 
-export default VoucherModal
+export default VoucherForm
