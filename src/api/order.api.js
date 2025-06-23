@@ -59,6 +59,37 @@ const cancelOrderByUserAPI = async (data, loadingClass) => {
   )
 }
 
+const queryOrderByAdminAPI = async (data) => {
+  return await authorizedAxios.post(
+    `${API_ROOT}/v1/api/order/query-order-by-admin`,
+    data,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+}
+
+const getOrderDetailByAdminAPI = async ({ _id }) => {
+  return await authorizedAxios.get(
+    `${API_ROOT}/v1/api/order/detail-for-admin?_id=${_id}`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+}
+
+const updateOrderStatusToShippingAPI = async (data) => {
+  return await authorizedAxios.post(
+    `${API_ROOT}/v1/api/order/mark-as-shipping`,
+    data,
+    { ...TOAST_MODE.ALL }
+  )
+}
+
+const updateOrderStatusToDeliveredAPI = async (data) => {
+  return await authorizedAxios.post(
+    `${API_ROOT}/v1/api/order/mark-as-delivered`,
+    data,
+    { ...TOAST_MODE.ALL }
+  )
+}
+
 export {
   placeOrderAPI,
   updatePayPalOrderIdAPI,
@@ -66,5 +97,9 @@ export {
   getOrderDetailAPI,
   queryOrderByOwnerAPI,
   updateOrderStatusByOwnerAPI,
-  cancelOrderByUserAPI
+  cancelOrderByUserAPI,
+  queryOrderByAdminAPI,
+  getOrderDetailByAdminAPI,
+  updateOrderStatusToShippingAPI,
+  updateOrderStatusToDeliveredAPI
 }

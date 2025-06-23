@@ -29,6 +29,8 @@ import CustomerRoutes from './routes/CustomerRoutes'
 import VendorRoutes from './routes/VendorRoutes'
 import AccessDeniedPage from './pages/common/AccessDeniedPage'
 import AdminRoutes from './routes/AdminRoutes'
+import CustomerShoppingCart from './pages/customer/CustomerShoppingCart'
+import CustomerCheckOut from './pages/customer/CustomerCheckout'
 
 function App() {
   const navigate = useNavigate()
@@ -117,6 +119,8 @@ function App() {
         </Route>
 
         <Route path="/unauthorized" element={<AccessDeniedPage />} />
+        <Route path="/cart" element={<CustomerShoppingCart />} />
+        <Route path="/checkout" element={<CustomerCheckOut />} />
       </Routes>
     </>
   )

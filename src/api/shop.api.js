@@ -96,6 +96,16 @@ export const getShopDetailForAdminAPI = async ({ _id }) => {
   return res
 }
 
+export const getShopListForFilterAPI = async () => {
+  const res = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/get-shop-list-for-filter`,
+    {
+      ...TOAST_MODE.ONLY_ERROR
+    }
+  )
+  return res
+}
+
 export const exportShopDataAPI = async (data) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/shop/export`,

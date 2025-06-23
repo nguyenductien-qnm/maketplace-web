@@ -5,6 +5,7 @@ import AdminShop from '~/pages/admin/AdminShop'
 import { RequireAuthRoute } from './RouteGuards'
 import AdminUser from '~/pages/admin/AdminUser'
 import AdminVoucher from '~/pages/admin/AdminVoucher'
+import AdminOrder from '~/pages/admin/AdminOrder'
 
 const AdminRoutes = () => {
   const user = useSelector((state) => state.user.currentUser)
@@ -79,6 +80,28 @@ const AdminRoutes = () => {
             element={
               <AdminVoucher status="NOT_STARTED" name="Not Started Vouchers" />
             }
+          />
+        </Route>
+
+        <Route path="order">
+          <Route
+            path="pending"
+            element={<AdminOrder status="PENDING" name="Pending Orders" />}
+          />
+
+          <Route
+            path="confirmed"
+            element={<AdminOrder status="CONFIRMED" name="Confirmed Orders" />}
+          />
+
+          <Route
+            path="shipping"
+            element={<AdminOrder status="SHIPPING" name="Shipping Orders" />}
+          />
+
+          <Route
+            path="delivered"
+            element={<AdminOrder status="DELIVERED" name="Delivered Orders" />}
           />
         </Route>
       </Route>
