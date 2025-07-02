@@ -84,6 +84,25 @@ const updateProductAPI = async (data, loadingClass) => {
   })
 }
 
+const queryProductByAdminAPI = async (data) => {
+  return await authorizedAxios.post(
+    `${API_ROOT}/v1/api/product/query-by-admin`,
+    data,
+    {
+      ...TOAST_MODE.ONLY_ERROR
+    }
+  )
+}
+
+const getProductDetailByAdminAPI = async ({ _id }) => {
+  return await authorizedAxios.get(
+    `${API_ROOT}/v1/api/product/detail-by-admin?_id=${_id}`,
+    {
+      ...TOAST_MODE.ONLY_ERROR
+    }
+  )
+}
+
 export {
   getProductDetailForCustomerAPI,
   searchProductByOwnerAPI,
@@ -93,5 +112,7 @@ export {
   createProductAPI,
   updateProductAPI,
   getDetailProductByOwnerAPI,
-  queryProductByOwnerAPI
+  queryProductByOwnerAPI,
+  queryProductByAdminAPI,
+  getProductDetailByAdminAPI
 }

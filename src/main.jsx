@@ -19,9 +19,25 @@ createRoot(document.getElementById('root')).render(
       <PersistGate loading={null} persistor={persistor}>
         <GlobalStyles
           styles={{
-            a: { textDecoration: 'none', color: 'inherit' },
+            a: {
+              textDecoration: 'none',
+              color: 'inherit'
+            },
             '.MuiButton-root': {
               textTransform: 'none !important'
+            },
+            ul: {
+              listStyle: 'none',
+              padding: 0,
+              margin: 0
+            },
+            li: {
+              listStyle: 'none',
+              padding: 0,
+              margin: 0
+            },
+            'li::marker': {
+              content: '" "'
             }
           }}
         />

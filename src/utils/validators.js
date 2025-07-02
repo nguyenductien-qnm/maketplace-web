@@ -20,7 +20,17 @@ export const NAME_RULE = /^[A-Za-zÀ-ỹà-ỹ\s]{3,50}$/
 export const NAME_RULE_MESSAGE =
   'Please enter a valid name (3-50 letters and spaces only).'
 
-// ==================== name ============================
+// ==================== category name ============================
+export const CATEGORY_NAME_RULE = /^[A-Za-zÀ-ỹà-ỹ\s&]{3,50}$/
+export const CATEGORY_NAME_RULE_MESSAGE =
+  'Please enter a valid name (3-50 letters, spaces, and "&" only).'
+
+// ==================== category code ============================
+export const CATEGORY_CODE_RULE = /^[A-Z_]{3,30}$/
+export const CATEGORY_CODE_RULE_MESSAGE =
+  'Please enter a valid code (3–30 uppercase letters and underscores only).'
+
+// ==================== reason ============================
 export const REASON_RULE = /^.{5,255}$/
 export const REASON_RULE_MESSAGE =
   'Reason must be between 5 and 255 characters.'

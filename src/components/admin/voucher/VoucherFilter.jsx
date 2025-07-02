@@ -166,6 +166,7 @@ function VoucherFilter({
               />
             </Box>
           </Box>
+
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Box sx={{ flex: 1 }}>
               <TypographyLabel>Created by</TypographyLabel>

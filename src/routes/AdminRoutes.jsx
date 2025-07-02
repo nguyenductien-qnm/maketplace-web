@@ -6,6 +6,8 @@ import { RequireAuthRoute } from './RouteGuards'
 import AdminUser from '~/pages/admin/AdminUser'
 import AdminVoucher from '~/pages/admin/AdminVoucher'
 import AdminOrder from '~/pages/admin/AdminOrder'
+import AdminProduct from '~/pages/admin/AdminProduct'
+import AdminCategory from '~/pages/admin/AdminCategory'
 
 const AdminRoutes = () => {
   const user = useSelector((state) => state.user.currentUser)
@@ -104,6 +106,15 @@ const AdminRoutes = () => {
             element={<AdminOrder status="DELIVERED" name="Delivered Orders" />}
           />
         </Route>
+
+        <Route path="product">
+          <Route
+            path="pending"
+            element={<AdminProduct status="PENDING" name="Pending products" />}
+          />
+        </Route>
+
+        <Route path="category" element={<AdminCategory />} />
       </Route>
     </Route>
   )
