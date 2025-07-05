@@ -12,6 +12,7 @@ export const useAdminCategoryFormHook = ({ mode, category, onSubmit }) => {
     setValue,
     clearErrors,
     watch,
+    reset,
     formState: { errors }
   } = useForm({
     shouldUnregister: true
@@ -55,13 +56,14 @@ export const useAdminCategoryFormHook = ({ mode, category, onSubmit }) => {
     if (mode?.includes('update') && category) {
       setValue('category_name', category.category_name || '')
       setValue('category_code', category.category_code || '')
-      setValue('category_slug', category.category_slug || '')
       setValue(
         'category_status',
         category.category_status == 'active' ? true : false
       )
       setValue('category_icon', category.category_icon || '')
       setValue('category_image', category.category_image || '')
+    } else {
+      reset()
     }
   }, [mode, category])
 

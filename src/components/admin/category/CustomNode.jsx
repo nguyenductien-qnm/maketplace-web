@@ -10,7 +10,7 @@ import { TypeIcon } from './TypeIcon'
 export const CustomNode = (props) => {
   const { id, text, status } = props.node
   const indent = props.depth * 24
-  const { handleOpenModal, handleDeleteCategory } = props
+  const { handleOpenModal } = props
 
   const handleToggle = (e) => {
     e.stopPropagation()
@@ -65,7 +65,9 @@ export const CustomNode = (props) => {
         </Typography>
         <Box>
           <DeleteOutlineOutlinedIcon
-            onClick={() => handleDeleteCategory(id)}
+            onClick={() =>
+              handleOpenModal({ action: 'delete', category: props.node })
+            }
             fontSize="small"
             className="edit-icon"
             sx={{

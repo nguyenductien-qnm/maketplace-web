@@ -71,12 +71,11 @@ const updateCategoryPositionAPI = async ({ payload }) => {
   }
 }
 
-const deleteCategoryByAdminAPI = async ({ _id }) => {
-  const { status } = await authorizedAxios.delete(
-    `${API_ROOT}/v1/api/category/admin/${_id}`,
-    {
-      ...TOAST_MODE.ALL
-    }
+const deleteCategoryByAdminAPI = async ({ _id, payload, loadingClass }) => {
+  const { status } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/category/admin/${_id}/delete`,
+    payload,
+    { ...TOAST_MODE.ALL, loadingClass }
   )
   return { status }
 }

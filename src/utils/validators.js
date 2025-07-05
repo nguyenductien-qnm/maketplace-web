@@ -21,7 +21,7 @@ export const NAME_RULE_MESSAGE =
   'Please enter a valid name (3-50 letters and spaces only).'
 
 // ==================== category name ============================
-export const CATEGORY_NAME_RULE = /^[A-Za-zÀ-ỹà-ỹ\s&]{3,50}$/
+export const CATEGORY_NAME_RULE = /^[A-Za-zÀ-ỹà-ỹ\s&',’\-]{3,50}$/
 export const CATEGORY_NAME_RULE_MESSAGE =
   'Please enter a valid name (3-50 letters, spaces, and "&" only).'
 

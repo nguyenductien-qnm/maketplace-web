@@ -16,11 +16,13 @@ import CategoryForm from '~/components/admin/category/CategoryForm'
 import { Placeholder } from '~/components/admin/category/Placeholder'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import ReasonModal from '~/components/admin/ReasonModal'
 
 function AdminCategory() {
   const {
     isLoading,
     openModal,
+    openReasonModal,
     action,
     handleOpenModal,
     handleCloseModal,
@@ -42,7 +44,14 @@ function AdminCategory() {
   const rootNodes = categoriesTree.filter((node) => node.parent === 0)
 
   return (
-    <Container sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+    <Container
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+        height: 'calc(90vh - 24px)'
+      }}
+    >
       <CategoryHeader handleOpenModal={handleOpenModal} />
       {isLoading && (
         <Box sx={{ alignSelf: 'center', mt: 10 }}>
@@ -52,9 +61,16 @@ function AdminCategory() {
       {!isLoading && (
         <>
           <DndProvider backend={MultiBackend} options={getBackendOptions()}>
-            <Box display="flex" gap={2} flexWrap="wrap">
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+                flexWrap: 'wrap',
+                overflowY: 'auto'
+              }}
+            >
               {rootNodes.map((root) => (
-                <Card key={root.id} sx={{ width: 373, p: 4 }}>
+                <Card key={root.id} sx={{ width: 360, p: 4 }}>
                   <Box
                     sx={{
                       display: 'flex',
@@ -80,16 +96,17 @@ function AdminCategory() {
                       />
                       <Typography
                         sx={{
-                          fontSize: '18px',
                           color: root.status === 'active' ? 'inherit' : 'red'
                         }}
                       >
                         {root.text}
                       </Typography>
                     </Box>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Box sx={{ display: 'flex' }}>
                       <DeleteOutlineOutlinedIcon
-                        onClick={() => handleDeleteCategory(root.id)}
+                        onClick={() =>
+                          handleOpenModal({ action: 'delete', category: root })
+                        }
                         fontSize="small"
                         className="add-icon"
                         sx={{
@@ -143,7 +160,6 @@ function AdminCategory() {
                         isOpen={isOpen}
                         onToggle={onToggle}
                         handleOpenModal={handleOpenModal}
-                        handleDeleteCategory={handleDeleteCategory}
                       />
                     )}
                     dragPreviewRender={(monitorProps) => (
@@ -194,6 +210,14 @@ function AdminCategory() {
               action == 'update-child' &&
                 (await handleUpdateCategoryChild(data))
             }}
+          />
+          <ReasonModal
+            header="Delete category (This action can't be undone.)"
+            open={openReasonModal}
+            onClose={handleCloseModal}
+            onSubmit={handleDeleteCategory}
+            submitText="Confirm"
+            submitColor="error"
           />
         </>
       )}

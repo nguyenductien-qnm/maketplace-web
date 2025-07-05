@@ -17,10 +17,16 @@ const LOADING_CLASS = [
   '.btn-submit-category-form'
 ]
 
+const LOADING_CLASS_DELETE = [
+  '.btn-reason-modal-cancel',
+  '.btn-reason-modal-submit'
+]
+
 export const useAdminCategory = () => {
   const [categoriesTree, setCategoriesTree] = useState([])
   const [categoryDetail, setCategoryDetail] = useState(null)
   const [openModal, setOpenModal] = useState(false)
+  const [openReasonModal, setOpenReasonModal] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [action, setAction] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -73,15 +79,20 @@ export const useAdminCategory = () => {
 
   const handleOpenModal = ({ action, category }) => {
     setAction(action)
-    setOpenModal(true)
     setSelectedCategory(category)
-    if (action?.includes('update')) {
-      handleQueryCategoryDetail(category)
+    if (action == 'delete') {
+      setOpenReasonModal(true)
+    } else {
+      setOpenModal(true)
+      if (action?.includes('update')) {
+        handleQueryCategoryDetail(category)
+      }
     }
   }
 
   const handleCloseModal = () => {
     setOpenModal(false)
+    setOpenReasonModal(false)
     setSelectedCategory(null)
     setCategoryDetail(null)
     setAction(null)
@@ -206,15 +217,22 @@ export const useAdminCategory = () => {
   }
 
   const handleDeleteCategory = async (data) => {
+    const { id } = selectedCategory
     const { status } = await deleteCategoryByAdminAPI({
-      _id: data
+      _id: id,
+      payload: { reason: data },
+      loadingClass: LOADING_CLASS_DELETE
     })
-    if (status === StatusCodes.OK) fetchCategories()
+    if (status === StatusCodes.OK) {
+      handleCloseModal()
+      fetchCategories()
+    }
   }
 
   return {
     isLoading,
     openModal,
+    openReasonModal,
     action,
     categoryDetail,
     categoriesTree,
