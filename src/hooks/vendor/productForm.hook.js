@@ -8,6 +8,8 @@ import { toast } from 'react-toastify'
 import { useForm } from 'react-hook-form'
 import { prepareImageForStorage } from '~/helpers/resizeImage'
 import { useLocation, useParams } from 'react-router-dom'
+import interceptorLoadingElements from '~/utils/interceptorLoading'
+import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
 
 const DEFAULT_VALUES = {
   isMultiVariation: false,
@@ -40,7 +42,8 @@ export const useVendorProductForm = () => {
   const { _id } = useParams()
   const methods = useForm({ defaultValues: DEFAULT_VALUES })
 
-  const { setValue, watch, setError, handleSubmit, getValues } = methods
+  const { setValue, watch, setError, handleSubmit, getValues, clearErrors } =
+    methods
 
   const [loading, setLoading] = useState(true)
 
@@ -266,6 +269,7 @@ export const useVendorProductForm = () => {
       width: 180,
       height: 180
     })
+
     data.product_gallery = data.product_gallery.map((img) =>
       prepareImageForStorage(img, {
         width: 2000,
@@ -274,13 +278,50 @@ export const useVendorProductForm = () => {
       })
     )
 
-    try {
-      const api = isEditMode && _id ? updateProductAPI : createProductAPI
-      await api(data, '.btn-shop-create-product')
-    } catch (err) {
-      toast.error('Submit failed!')
-    }
+    console.log('data::::', data)
+    // const api = isEditMode && _id ? updateProductAPI : createProductAPI
+    // await api(data, '.btn-shop-create-product')
   })
+
+  const handleUploadThumb = async (e) => {
+    interceptorLoadingElements(true, [
+      '.btn-shop-upload-product-thumb',
+      '.btn-shop-create-product'
+    ])
+    const url = await uploadImageToCloudinary(e.target.files[0])
+    setValue('product_thumb', url)
+    clearErrors('product_thumb')
+    interceptorLoadingElements(false, [
+      '.btn-shop-upload-product-thumb',
+      '.btn-shop-create-product'
+    ])
+  }
+
+  const handleUploadGallery = async (e) => {
+    const currentGallery = getValues('product_gallery')
+    if (currentGallery?.length >= 9) {
+      toast.warn('You can upload a maximum of 9 images in the gallery.')
+    }
+
+    interceptorLoadingElements(true, [
+      '.btn-shop-upload-product-gallery',
+      '.btn-shop-create-product'
+    ])
+    const url = await uploadImageToCloudinary(e.target.files[0])
+    interceptorLoadingElements(false, [
+      '.btn-shop-upload-product-gallery',
+      '.btn-shop-create-product'
+    ])
+
+    setValue('product_gallery', [...currentGallery, url])
+  }
+
+  const handleDeleteGallery = (index) => {
+    const currentGallery = getValues('product_gallery')
+    const updatedGallery = currentGallery.filter((_, i) => i !== index)
+    setValue('product_gallery', updatedGallery)
+  }
+
   return {
     methods,
     loading,
@@ -289,6 +330,9 @@ export const useVendorProductForm = () => {
     classifications,
     onSubmit,
     pathname,
-    handleAddVariation
+    handleAddVariation,
+    handleUploadThumb,
+    handleUploadGallery,
+    handleDeleteGallery
   }
 }

@@ -3,19 +3,17 @@ import Grid2 from '@mui/material/Grid2'
 import TextField from '@mui/material/TextField'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-import Paper from '@mui/material/Paper'
 import Button from '@mui/material/Button'
-import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
-import { styled } from '@mui/material/styles'
-
-import { grey, red } from '@mui/material/colors'
-import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
-import { useSelector } from 'react-redux'
-import TypographyLabel from '~/components/common/TypographyLabel'
+import Autocomplete from '@mui/material/Autocomplete'
+import Chip from '@mui/material/Chip'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-
+import { grey, red } from '@mui/material/colors'
+import TypographyLabel from '~/components/common/TypographyLabel'
+import CategoryTreeView from '~/components/common/CategoryTreeView'
+import VisuallyHiddenInput from '~/components/common/VisuallyHiddenInput'
+import { toast } from 'react-toastify'
 import {
   FIELD_REQUIRED_MESSAGE,
   PRODUCT_NAME_RULE,
@@ -24,33 +22,30 @@ import {
   NUMBER_RULE_MESSAGE
 } from '~/utils/validators'
 import { NumericFormat } from 'react-number-format'
-import interceptorLoadingElements from '~/utils/interceptorLoading'
-import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
 import { getImageForPreview } from '~/helpers/resizeImage'
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
+import { useState } from 'react'
+const visibilityOptions = [
+  { id: 'private', name: 'Private' },
+  { id: 'public', name: 'Public' }
+]
 
-function SPUForm() {
-  const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1
-  })
-
+function SPUForm({
+  handleUploadThumb,
+  handleUploadGallery,
+  handleDeleteGallery
+}) {
   const {
     register,
     control,
     setValue,
     watch,
     formState: { errors },
-    clearErrors
+    getValues
   } = useFormContext()
 
-  const categories = useSelector((state) => state.categories.categories)
   const selectedVisibility = watch('product_visibility')
   const productThumb = watch('product_thumb')
   const productGallery = watch('product_gallery')
@@ -59,45 +54,6 @@ function SPUForm() {
     control,
     name: 'product_specs'
   })
-
-  const visibilityOptions = [
-    { id: 'private', name: 'Private' },
-    { id: 'public', name: 'Public' }
-  ]
-
-  const handleUploadThumb = async (e) => {
-    interceptorLoadingElements(true, [
-      '.btn-shop-upload-product-thumb',
-      '.btn-shop-create-product'
-    ])
-    const url = await uploadImageToCloudinary(e.target.files[0])
-    setValue('product_thumb', url)
-    clearErrors('product_thumb')
-    interceptorLoadingElements(false, [
-      '.btn-shop-upload-product-thumb',
-      '.btn-shop-create-product'
-    ])
-  }
-
-  const handleUploadGallery = async (e) => {
-    interceptorLoadingElements(true, [
-      '.btn-shop-upload-product-gallery',
-      '.btn-shop-create-product'
-    ])
-    const url = await uploadImageToCloudinary(e.target.files[0])
-    interceptorLoadingElements(false, [
-      '.btn-shop-upload-product-gallery',
-      '.btn-shop-create-product'
-    ])
-    const currentGallery = productGallery
-    setValue('product_gallery', [...currentGallery, url])
-  }
-
-  const handleDeleteGallery = (index) => {
-    const currentGallery = productGallery
-    const updatedGallery = currentGallery.filter((_, i) => i !== index)
-    setValue('product_gallery', updatedGallery)
-  }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
@@ -263,35 +219,74 @@ function SPUForm() {
 
           <Grid2 size={12}>
             <TypographyLabel>Product categories</TypographyLabel>
-            <FormControl
-              fullWidth
-              size="small"
-              error={!!errors.product_categories}
-            >
-              <Select
-                {...register('product_categories', {
-                  required: FIELD_REQUIRED_MESSAGE
-                })}
-                multiple
-                value={watch('product_categories') || []}
-                onChange={(e) => setValue('product_categories', e.target.value)}
-                renderValue={(selected) => selected.join(', ')}
-              >
-                {categories.map((category) => (
-                  <MenuItem
-                    key={category.category_code}
-                    value={category.category_code}
-                  >
-                    {category.category_name}
-                  </MenuItem>
-                ))}
-              </Select>
-              {errors.product_categories && (
-                <FormHelperText>
-                  {errors.product_categories.message}
-                </FormHelperText>
+
+            <Controller
+              name="product_categories"
+              control={control}
+              rules={{ required: FIELD_REQUIRED_MESSAGE }}
+              render={({ field }) => (
+                <>
+                  <CategoryTreeView
+                    value={field.value || []}
+                    onChange={(newSelected) => {
+                      if (newSelected.length > 1) {
+                        toast.warn('You can only select 1 item')
+                        return
+                      }
+                      field.onChange(newSelected)
+                    }}
+                  />
+                  {errors.product_categories && (
+                    <FormHelperText error sx={{ mt: 1 }}>
+                      {errors.product_categories.message}
+                    </FormHelperText>
+                  )}
+                </>
               )}
-            </FormControl>
+            />
+          </Grid2>
+
+          <Grid2 size={12}>
+            <TypographyLabel>Product tags</TypographyLabel>
+            <Controller
+              name="product_tags"
+              control={control}
+              defaultValue={[]}
+              render={({ field }) => (
+                <Autocomplete
+                  fullWidth
+                  multiple
+                  freeSolo
+                  options={[]}
+                  value={field.value}
+                  onChange={(event, newValue) => {
+                    if (newValue?.length > 30) {
+                      toast.warn('You can add up to 30 items only')
+                      return
+                    }
+                    field.onChange(newValue)
+                  }}
+                  renderTags={(value, getTagProps) =>
+                    value.map((option, index) => (
+                      <Chip
+                        variant="outlined"
+                        label={option}
+                        {...getTagProps({ index })}
+                        key={index}
+                      />
+                    ))
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      fullWidth
+                      {...params}
+                      variant="outlined"
+                      placeholder="Enter tags"
+                    />
+                  )}
+                />
+              )}
+            />
           </Grid2>
 
           <Grid2 size={12}>
@@ -299,57 +294,53 @@ function SPUForm() {
             <Grid2 container spacing={2} rowSpacing={3}>
               {fields.map((field, index) => (
                 <Grid2 size={12} key={field.id}>
-                  <Paper elevation={2} sx={{ padding: '10px' }}>
-                    <Grid2 container spacing={3}>
-                      <Grid2 size={fields.length > 3 ? 5 : 6}>
-                        <TextField
-                          {...register(`product_specs.${index}.key`, {
-                            required: 'Key is required'
-                          })}
-                          error={!!errors.product_specs?.[index]?.key}
-                          fullWidth
-                          size="small"
-                          placeholder="Key"
-                          helperText={
-                            errors.product_specs?.[index]?.key?.message
-                          }
-                        />
-                      </Grid2>
-
-                      <Grid2 size={fields.length > 3 ? 5 : 6}>
-                        <TextField
-                          {...register(`product_specs.${index}.value`, {
-                            required: 'Value is required'
-                          })}
-                          error={!!errors.product_specs?.[index]?.value}
-                          fullWidth
-                          size="small"
-                          placeholder="Value"
-                          helperText={
-                            errors.product_specs?.[index]?.value?.message
-                          }
-                        />
-                      </Grid2>
-
-                      <Grid2
-                        xs={1}
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center'
-                        }}
-                      >
-                        {fields.length > 3 && (
-                          <HighlightOffOutlinedIcon
-                            onClick={() => remove(index)}
-                            sx={{
-                              color: red[600],
-                              '&:hover': { cursor: 'pointer' }
-                            }}
-                          />
-                        )}
-                      </Grid2>
+                  <Grid2 container spacing={2}>
+                    <Grid2 size={fields.length > 3 ? 5.7 : 6}>
+                      <TextField
+                        {...register(`product_specs.${index}.key`, {
+                          required: 'Key is required'
+                        })}
+                        error={!!errors.product_specs?.[index]?.key}
+                        fullWidth
+                        size="small"
+                        placeholder="Key"
+                        helperText={errors.product_specs?.[index]?.key?.message}
+                      />
                     </Grid2>
-                  </Paper>
+
+                    <Grid2 size={fields.length > 3 ? 5.7 : 6}>
+                      <TextField
+                        {...register(`product_specs.${index}.value`, {
+                          required: 'Value is required'
+                        })}
+                        error={!!errors.product_specs?.[index]?.value}
+                        fullWidth
+                        size="small"
+                        placeholder="Value"
+                        helperText={
+                          errors.product_specs?.[index]?.value?.message
+                        }
+                      />
+                    </Grid2>
+
+                    <Grid2
+                      size={0.6}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
+                    >
+                      {fields.length > 3 && (
+                        <HighlightOffOutlinedIcon
+                          onClick={() => remove(index)}
+                          sx={{
+                            color: red[600],
+                            '&:hover': { cursor: 'pointer' }
+                          }}
+                        />
+                      )}
+                    </Grid2>
+                  </Grid2>
                 </Grid2>
               ))}
             </Grid2>
@@ -358,7 +349,14 @@ function SPUForm() {
               sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}
             >
               <Button
-                onClick={() => append({ key: '', value: '' })}
+                onClick={() => {
+                  const length = getValues('product_specs')?.length
+                  if (length > 9) {
+                    toast.warn('You can add up to 10 items only')
+                    return
+                  }
+                  append({ key: '', value: '' })
+                }}
                 variant="contained"
               >
                 + Add Attribute
@@ -385,16 +383,29 @@ function SPUForm() {
             </Select>
           </Grid2>
 
-          <Grid2 size={12}>
+          <Grid2 size={12} sx={{ mb: '50px' }}>
             <TypographyLabel> Product Description</TypographyLabel>
-            <TextField
-              {...register('product_description', {
+            <Controller
+              name="product_description"
+              control={control}
+              rules={{
                 required: FIELD_REQUIRED_MESSAGE
-              })}
-              error={!!errors['product_description']}
-              fullWidth
-              multiline
-              rows={10}
+              }}
+              render={({ field }) => (
+                <>
+                  <ReactQuill
+                    theme="snow"
+                    value={field.value || ''}
+                    onChange={field.onChange}
+                    style={{ height: '300px' }}
+                  />
+                  {errors.product_description && (
+                    <p style={{ color: 'red' }}>
+                      {errors.product_description.message}
+                    </p>
+                  )}
+                </>
+              )}
             />
           </Grid2>
         </Grid2>

@@ -20,7 +20,10 @@ function VendorProductForm() {
     productSKU,
     pathname,
     handleAddVariation,
-    onSubmit
+    onSubmit,
+    handleUploadThumb,
+    handleUploadGallery,
+    handleDeleteGallery
   } = useVendorProductForm()
 
   const isCreate = pathname === '/vendor/create-product'
@@ -44,7 +47,11 @@ function VendorProductForm() {
         {loading && <ProductFormSkeleton />}
         {!loading && (
           <Box>
-            <SPUForm />
+            <SPUForm
+              handleUploadThumb={handleUploadThumb}
+              handleUploadGallery={handleUploadGallery}
+              handleDeleteGallery={handleDeleteGallery}
+            />
 
             <FormControlLabel
               control={

@@ -4,17 +4,30 @@ import {
   FormControl,
   MenuItem,
   OutlinedInput,
-  Select,
-  Typography
+  Select
 } from '@mui/material'
 import { Controller } from 'react-hook-form'
+import TypographyLabel from '~/components/common/TypographyLabel'
 
-const TypographyLabel = ({ children }) => (
-  <Typography fontWeight={500} mb={1}>
-    {children}
-  </Typography>
-)
-const variations = ['Type', 'Size', 'Color', 'Material']
+const variations = [
+  'Type',
+  'Size',
+  'Color',
+  'Material',
+  'Capacity',
+  'Power',
+  'Configuration',
+  'Edition',
+  'Pack Size',
+  'Style',
+  'Weight',
+  'Length',
+  'Volume',
+  'Flavor',
+  'Scent',
+  'Pattern',
+  'Packaging'
+]
 
 const ProductVariationsSelect = ({ methods, classifications }) => {
   return (

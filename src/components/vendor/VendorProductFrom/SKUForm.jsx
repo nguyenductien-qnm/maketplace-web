@@ -62,9 +62,9 @@ function SKUForm() {
             )}
           </Box>
 
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
             {/* Product Price */}
-            <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: 1, maxWidth: '300px', minWidth: '200px' }}>
               <TypographyLabel>Product Price</TypographyLabel>
               <Controller
                 name={`product_sku.${index}.price`}
@@ -91,7 +91,7 @@ function SKUForm() {
               />
             </Box>
 
-            <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: 1, maxWidth: '300px', minWidth: '200px' }}>
               <TypographyLabel>Product Stock</TypographyLabel>
               <TextField
                 {...register(`product_sku.${index}.stock`, {
@@ -110,7 +110,10 @@ function SKUForm() {
             </Box>
 
             {selectedVariations.map((variation) => (
-              <Box sx={{ flex: 1 }} key={variation}>
+              <Box
+                sx={{ flex: 1, maxWidth: '300px', minWidth: '200px' }}
+                key={variation}
+              >
                 <TypographyLabel>{variation}</TypographyLabel>
                 <TextField
                   {...register(`product_sku.${index}.${variation}`, {
