@@ -221,24 +221,20 @@ function SPUForm({
             <TypographyLabel>Product categories</TypographyLabel>
 
             <Controller
-              name="product_categories"
+              name="product_category"
               control={control}
               rules={{ required: FIELD_REQUIRED_MESSAGE }}
               render={({ field }) => (
                 <>
                   <CategoryTreeView
-                    value={field.value || []}
+                    value={field.value || ''}
                     onChange={(newSelected) => {
-                      if (newSelected.length > 1) {
-                        toast.warn('You can only select 1 item')
-                        return
-                      }
                       field.onChange(newSelected)
                     }}
                   />
-                  {errors.product_categories && (
+                  {errors.product_category && (
                     <FormHelperText error sx={{ mt: 1 }}>
-                      {errors.product_categories.message}
+                      {errors.product_category.message}
                     </FormHelperText>
                   )}
                 </>

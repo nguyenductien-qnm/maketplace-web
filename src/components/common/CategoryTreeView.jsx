@@ -19,7 +19,6 @@ function CategoryTreeView({ value = [], onChange }) {
   return (
     <Box sx={{ minHeight: 352, minWidth: 290 }}>
       <SimpleTreeView
-        multiSelect
         checkboxSelection
         selectedItems={value}
         onSelectedItemsChange={(e, selected) => onChange?.(selected)}

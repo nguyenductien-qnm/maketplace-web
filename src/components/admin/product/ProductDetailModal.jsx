@@ -119,7 +119,7 @@ function ProductDetailModal({ open, onClose, product }) {
             <Box sx={{ flex: 1 }}>
               <TypographyLabel>Categories</TypographyLabel>
               <ReadOnlyTextField
-                value={product?.product_categories?.map((c) => c)}
+                value={product?.product_category?.map((c) => c)}
               />
             </Box>
 

@@ -19,7 +19,7 @@ const DEFAULT_VALUES = {
   product_min_price: null,
   product_max_price: null,
   product_stock: null,
-  product_categories: [],
+  product_category: '',
   product_visibility: 'private',
   product_specs: [
     { key: '', value: '' },
@@ -107,8 +107,6 @@ export const useVendorProductForm = () => {
           setValue('product_sku', updatedSKU)
           setValue('isMultiVariation', true)
         }
-      } catch (err) {
-        toast.error('Failed to load product data')
       } finally {
         setLoading(false)
       }
@@ -151,7 +149,11 @@ export const useVendorProductForm = () => {
       product_stock: parseInt(data.product_stock, 10)
     }
 
-    if (data.isMultiVariation) {
+    if (
+      data.isMultiVariation &&
+      data.product_sku.length > 0 &&
+      data.product_classifications.length > 0
+    ) {
       const variations = data.product_classifications || []
       const skuList = data.product_sku || []
 
@@ -182,6 +184,7 @@ export const useVendorProductForm = () => {
 
       parsed.product_sku = formattedSKU
     } else {
+      parsed.isMultiVariation = false
       delete parsed.product_classifications
       delete parsed.product_sku
     }
@@ -278,9 +281,8 @@ export const useVendorProductForm = () => {
       })
     )
 
-    console.log('data::::', data)
-    // const api = isEditMode && _id ? updateProductAPI : createProductAPI
-    // await api(data, '.btn-shop-create-product')
+    const api = isEditMode && _id ? updateProductAPI : createProductAPI
+    await api(data, '.btn-shop-create-product')
   })
 
   const handleUploadThumb = async (e) => {
