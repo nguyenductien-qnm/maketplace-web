@@ -88,7 +88,7 @@ function TopBar() {
           >
             {userNotifications?.map((notification) => (
               <NotificationItem
-                key={notification._id}
+                key={notification?._id}
                 notification={notification}
                 small={true}
               />

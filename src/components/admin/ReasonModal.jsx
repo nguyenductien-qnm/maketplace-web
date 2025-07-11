@@ -8,6 +8,8 @@ import TypographyLabel from '../common/TypographyLabel'
 import MDEditor from '@uiw/react-md-editor'
 import { REASON_RULE, REASON_RULE_MESSAGE } from '~/utils/validators'
 import { Typography } from '@mui/material'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
 
 function ReasonModal({
   header,
@@ -30,7 +32,7 @@ function ReasonModal({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>{header}</DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ height: '310px' }}>
         <TypographyLabel>Reason for this action</TypographyLabel>
 
         <Controller
@@ -53,23 +55,18 @@ function ReasonModal({
           }}
           render={({ field }) => (
             <>
-              <MDEditor
+              <ReactQuill
+                theme="snow"
                 value={field.value}
                 onChange={field.onChange}
-                data-color-mode="light"
+                style={{ height: '200px' }}
               />
-              <MDEditor.Markdown
-                source={field.value}
-                style={{ whiteSpace: 'pre-wrap', marginTop: '8px' }}
-              />
+              {errors.reason && (
+                <p style={{ color: 'red' }}>{errors.reason.message}</p>
+              )}
             </>
           )}
         />
-        {errors.reason && (
-          <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-            {errors.reason.message}
-          </Typography>
-        )}
       </DialogContent>
       <DialogActions>
         <Button

@@ -2,6 +2,7 @@ import { Paper } from '@mui/material'
 import ProductDetailModal from '~/components/admin/product/ProductDetailModal'
 import ProductHeader from '~/components/admin/product/ProductHeader'
 import ProductTable from '~/components/admin/product/ProductTable'
+import ReasonModal from '~/components/admin/ReasonModal'
 import TableSkeleton from '~/components/admin/TableSkeleton'
 import { useAdminProduct } from '~/hooks/admin/product.hook'
 
@@ -24,7 +25,10 @@ function AdminProduct({ status, name }) {
     openDetailModal,
     handleChangePage,
     handleChangeRowsPerPage,
-    productDetail
+    productDetail,
+    handleApprovalProduct,
+    openReasonModal,
+    modalProps
   } = useAdminProduct({ status })
   return (
     <Paper
@@ -53,6 +57,7 @@ function AdminProduct({ status, name }) {
           count={count}
           page={page}
           rowsPerPage={rowsPerPage}
+          handleApprovalProduct={handleApprovalProduct}
           handleOpenModal={handleOpenModal}
           openDetailModal={openDetailModal}
           handleCloseModal={handleCloseModal}
@@ -65,6 +70,15 @@ function AdminProduct({ status, name }) {
         open={openDetailModal}
         onClose={handleCloseModal}
         product={productDetail}
+        categories={categories}
+      />
+
+      <ReasonModal
+        open={openReasonModal}
+        onClose={handleCloseModal}
+        header={modalProps?.header}
+        submitColor={modalProps?.submitColor}
+        onSubmit={modalProps?.onSubmit}
       />
     </Paper>
   )

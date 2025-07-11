@@ -1,7 +1,9 @@
+import { StatusCodes } from 'http-status-codes'
 import { useEffect, useRef, useState } from 'react'
 import {
   getProductDetailByAdminAPI,
-  queryProductByAdminAPI
+  queryProductByAdminAPI,
+  updateProductStatusByAdminAPI
 } from '~/api/product.api'
 import { getShopListForFilterAPI } from '~/api/shop.api'
 import { navigate } from '~/helpers/navigation'
@@ -71,10 +73,13 @@ export const useAdminProduct = ({ status }) => {
   const queryProductByAdmin = async (data) => {
     setLoading(true)
     try {
-      const res = await queryProductByAdminAPI(data)
-      if (res.status === 200) {
-        setProducts(res.data?.metadata?.products)
-        setCount(res.data?.metadata?.count)
+      const { status, resData } = await queryProductByAdminAPI({
+        payload: data
+      })
+      if (status === StatusCodes.OK) {
+        const { products, count } = resData.metadata
+        setProducts(products)
+        setCount(count)
       } else {
         setDenied(true)
       }
@@ -128,8 +133,70 @@ export const useAdminProduct = ({ status }) => {
     setOpenDetailModal(false)
     setOpenReasonModal(false)
     setAction(null)
-    setSelectedShop(null)
-    setShopDetail(null)
+    setSelectedProduct(null)
+    setProductDetail(null)
+  }
+
+  const handleApprovalProduct = async ({ product }) => {
+    const payload = {
+      _id: product?._id,
+      action: 'approval'
+    }
+    const { status, resData } = await updateProductStatusByAdminAPI({ payload })
+    if (status === StatusCodes.OK) {
+      const update = resData.metadata
+      setProducts((prev) =>
+        prev?.map((p) => (p._id === update._id ? update : p))
+      )
+    }
+  }
+
+  const handleRejectProduct = async (data) => {
+    const payload = {
+      _id: selectedProduct?._id,
+      action: 'reject',
+      reason: data
+    }
+    const { status, resData } = await updateProductStatusByAdminAPI({ payload })
+    if (status === StatusCodes.OK) {
+      handleCloseModal()
+      const update = resData.metadata
+      setProducts((prev) =>
+        prev?.map((p) => (p._id === update._id ? update : p))
+      )
+    }
+  }
+
+  const handleBanProduct = async (data) => {
+    const payload = {
+      _id: selectedProduct?._id,
+      action: 'ban',
+      reason: data
+    }
+    const { status, resData } = await updateProductStatusByAdminAPI({ payload })
+    if (status === StatusCodes.OK) {
+      handleCloseModal()
+      const update = resData.metadata
+      setProducts((prev) =>
+        prev?.map((p) => (p._id === update._id ? update : p))
+      )
+    }
+  }
+
+  const handleUnbanProduct = async (data) => {
+    const payload = {
+      _id: selectedProduct?._id,
+      action: 'unban',
+      reason: data
+    }
+    const { status, resData } = await updateProductStatusByAdminAPI({ payload })
+    if (status === StatusCodes.OK) {
+      handleCloseModal()
+      const update = resData.metadata
+      setProducts((prev) =>
+        prev?.map((p) => (p._id === update._id ? update : p))
+      )
+    }
   }
 
   const modalProps = {
@@ -137,9 +204,7 @@ export const useAdminProduct = ({ status }) => {
       type: 'reason',
       header: 'Ban Product',
       open: openReasonModal,
-      onSubmit: (value) => {
-        console.log(value)
-      },
+      onSubmit: (value) => handleBanProduct(value),
       submitText: 'Ban',
       submitColor: 'error'
     },
@@ -147,9 +212,7 @@ export const useAdminProduct = ({ status }) => {
       type: 'reason',
       header: 'Unban Product',
       open: openReasonModal,
-      onSubmit: (value) => {
-        console.log(value)
-      },
+      onSubmit: (value) => handleUnbanProduct(value),
       submitText: 'Unban',
       submitColor: 'success'
     },
@@ -157,9 +220,7 @@ export const useAdminProduct = ({ status }) => {
       type: 'reason',
       header: 'Reject Product',
       open: openReasonModal,
-      onSubmit: (value) => {
-        console.log(value)
-      },
+      onSubmit: (value) => handleRejectProduct(value),
       submitText: 'Reject',
       submitColor: 'error'
     }
@@ -187,6 +248,7 @@ export const useAdminProduct = ({ status }) => {
     handleClearFilter,
     handleChangePage,
     handleChangeRowsPerPage,
+    handleApprovalProduct,
 
     handleOpenModal,
     handleCloseModal

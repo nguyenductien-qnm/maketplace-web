@@ -8,22 +8,21 @@ import TableRow from '@mui/material/TableRow'
 import TableFooter from '@mui/material/TableFooter'
 import TablePagination from '@mui/material/TablePagination'
 import { Box, Button, Tooltip } from '@mui/material'
-import ReasonModal from '../ReasonModal'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined'
-import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
 import LockOpenIcon from '@mui/icons-material/LockOpen'
 import BlockIcon from '@mui/icons-material/Block'
 import NoData from '../NoData'
 import formatCurrency from '~/utils/formatCurrency'
+import DoneIcon from '@mui/icons-material/Done'
+import DoDisturbOnOutlinedIcon from '@mui/icons-material/DoDisturbOnOutlined'
 function ProductTable({
   status,
   products,
   count,
   page,
   rowsPerPage,
+  handleApprovalProduct,
   handleOpenModal,
-  openDetailModal,
   handleCloseModal,
   handleChangePage,
   handleChangeRowsPerPage
@@ -48,10 +47,10 @@ function ProductTable({
                 <TableCell align="right">Price range</TableCell>
                 <TableCell align="right">Stock</TableCell>
                 <TableCell align="right">Status</TableCell>
-                <TableCell align="left">Visibility</TableCell>
+                <TableCell align="right">Visibility</TableCell>
                 <TableCell align="right">Rating</TableCell>
-                <TableCell align="left">Review count</TableCell>
-                <TableCell align="left">Detail</TableCell>
+                <TableCell align="right">Review count</TableCell>
+                <TableCell align="right">Detail</TableCell>
                 <TableCell align="left">Action</TableCell>
               </TableRow>
             </TableHead>
@@ -101,67 +100,69 @@ function ProductTable({
                       </Box>
                     </Tooltip>
                   </TableCell>
-                  <TableCell align="right"></TableCell>
 
-                  {/* <TableCell align="right">
-                    {(shop?.shop_status === 'active' ||
-                      shop?.shop_status === 'paused') && (
-                      <Tooltip title="Ban shop">
-                        <Button
-                          color="error"
-                          variant="contained"
-                          onClick={() =>
-                            handleOpenModal({ action: 'ban', shop })
-                          }
-                        >
-                          <BlockIcon />
-                        </Button>
-                      </Tooltip>
-                    )}
-
-                    {shop?.shop_status === 'block' && (
-                      <Tooltip title="Unban shop">
-                        <Button
-                          variant="contained"
-                          onClick={() =>
-                            handleOpenModal({ action: 'unban', shop })
-                          }
-                        >
-                          <LockOpenIcon />
-                        </Button>
-                      </Tooltip>
-                    )}
-
-                    {shop?.shop_status === 'pending' && (
-                      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'nowrap' }}>
-                        <Tooltip title="Accept">
-                          <Button
-                            color="success"
-                            variant="contained"
-                            onClick={() =>
-                              handleAcceptShop({
-                                _id: shop._id,
-                                action: 'accept'
-                              })
-                            }
-                          >
-                            <CheckOutlinedIcon />
-                          </Button>
-                        </Tooltip>
-                        <Tooltip title="Reject">
+                  <TableCell align="left">
+                    {p?.product_status == 'approved' &&
+                      p?.product_visibility == 'public' && (
+                        <Tooltip title="Ban product">
                           <Button
                             color="error"
                             variant="contained"
                             onClick={() =>
-                              handleOpenModal({ action: 'reject', shop })
+                              handleOpenModal({ action: 'ban', product: p })
                             }
                           >
-                            <ClearOutlinedIcon />
+                            <BlockIcon />
+                          </Button>
+                        </Tooltip>
+                      )}
+
+                    {p?.product_status == 'pending' &&
+                      p?.product_visibility == 'public' && (
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                          <Tooltip title="Accept product">
+                            <Button
+                              variant="contained"
+                              onClick={() =>
+                                handleApprovalProduct({ product: p })
+                              }
+                            >
+                              <DoneIcon />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip title="Reject product">
+                            <Button
+                              color="error"
+                              variant="contained"
+                              onClick={() =>
+                                handleOpenModal({
+                                  action: 'reject',
+                                  product: p
+                                })
+                              }
+                            >
+                              <DoDisturbOnOutlinedIcon />
+                            </Button>
+                          </Tooltip>
+                        </Box>
+                      )}
+
+                    {p?.product_status == 'ban' && (
+                      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'nowrap' }}>
+                        <Tooltip title="Unban product">
+                          <Button
+                            color="success"
+                            variant="contained"
+                            onClick={() =>
+                              handleOpenModal({ action: 'unban', product: p })
+                            }
+                          >
+                            <LockOpenIcon />
                           </Button>
                         </Tooltip>
                       </Box>
                     )}
-                  </TableCell> */}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

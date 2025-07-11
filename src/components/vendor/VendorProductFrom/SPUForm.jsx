@@ -26,7 +26,6 @@ import { getImageForPreview } from '~/helpers/resizeImage'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useState } from 'react'
 const visibilityOptions = [
   { id: 'private', name: 'Private' },
   { id: 'public', name: 'Public' }
@@ -160,7 +159,10 @@ function SPUForm({
                   size="small"
                   {...register('product_dimensions.length', {
                     required: FIELD_REQUIRED_MESSAGE,
-                    valueAsNumber: true
+                    pattern: {
+                      value: NUMBER_RULE,
+                      message: NUMBER_RULE_MESSAGE
+                    }
                   })}
                   error={!!errors?.product_dimensions?.length}
                   helperText={errors?.product_dimensions?.length?.message}
@@ -175,7 +177,10 @@ function SPUForm({
                   type="number"
                   {...register('product_dimensions.width', {
                     required: FIELD_REQUIRED_MESSAGE,
-                    valueAsNumber: true
+                    pattern: {
+                      value: NUMBER_RULE,
+                      message: NUMBER_RULE_MESSAGE
+                    }
                   })}
                   error={!!errors?.product_dimensions?.width}
                   helperText={errors?.product_dimensions?.width?.message}
@@ -190,7 +195,10 @@ function SPUForm({
                   type="number"
                   {...register('product_dimensions.height', {
                     required: FIELD_REQUIRED_MESSAGE,
-                    valueAsNumber: true
+                    pattern: {
+                      value: NUMBER_RULE,
+                      message: NUMBER_RULE_MESSAGE
+                    }
                   })}
                   error={!!errors?.product_dimensions?.height}
                   helperText={errors?.product_dimensions?.height?.message}

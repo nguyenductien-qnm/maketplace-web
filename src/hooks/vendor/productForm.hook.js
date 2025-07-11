@@ -21,6 +21,7 @@ const DEFAULT_VALUES = {
   product_stock: null,
   product_category: '',
   product_visibility: 'private',
+  product_tags: [],
   product_specs: [
     { key: '', value: '' },
     { key: '', value: '' },
@@ -189,6 +190,9 @@ export const useVendorProductForm = () => {
       delete parsed.product_sku
     }
 
+    Object.keys(parsed).forEach((k) => {
+      if (k != '_id' && !(k in DEFAULT_VALUES)) delete parsed[k]
+    })
     return parsed
   }, [])
 
@@ -268,18 +272,23 @@ export const useVendorProductForm = () => {
 
     if (!validateData(data)) return
 
-    data.product_thumb = prepareImageForStorage(data.product_thumb, {
-      width: 180,
-      height: 180
-    })
-
-    data.product_gallery = data.product_gallery.map((img) =>
-      prepareImageForStorage(img, {
-        width: 2000,
-        crop: 'limit',
-        quality: 'auto:good'
+    if (!data.product_thumb.includes('w_180,h_180')) {
+      data.product_thumb = prepareImageForStorage(data.product_thumb, {
+        width: 180,
+        height: 180
       })
-    )
+    }
+
+    data.product_gallery = data.product_gallery.map((img) => {
+      if (!img?.includes('w_2000')) {
+        return prepareImageForStorage(img, {
+          width: 2000,
+          crop: 'limit',
+          quality: 'auto:good'
+        })
+      }
+      return img
+    })
 
     const api = isEditMode && _id ? updateProductAPI : createProductAPI
     await api(data, '.btn-shop-create-product')

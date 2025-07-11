@@ -112,6 +112,22 @@ const AdminRoutes = () => {
             path="pending"
             element={<AdminProduct status="PENDING" name="Pending products" />}
           />
+          <Route
+            path="approved"
+            element={
+              <AdminProduct status="APPROVED" name="Approved products" />
+            }
+          />
+          <Route
+            path="rejected"
+            element={
+              <AdminProduct status="REJECTED" name="Rejected products" />
+            }
+          />
+          <Route
+            path="ban"
+            element={<AdminProduct status="BAN" name="Ban products" />}
+          />
         </Route>
 
         <Route path="category" element={<AdminCategory />} />
