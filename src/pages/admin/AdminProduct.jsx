@@ -1,4 +1,4 @@
-import { Paper } from '@mui/material'
+import Paper from '@mui/material/Paper'
 import ProductDetailModal from '~/components/admin/product/ProductDetailModal'
 import ProductHeader from '~/components/admin/product/ProductHeader'
 import ProductTable from '~/components/admin/product/ProductTable'
@@ -52,7 +52,6 @@ function AdminProduct({ status, name }) {
       {loading && <TableSkeleton columns={10} rows={rowsPerPage} />}
       {!loading && !isDenied && (
         <ProductTable
-          status={status}
           products={products}
           count={count}
           page={page}
@@ -60,7 +59,6 @@ function AdminProduct({ status, name }) {
           handleApprovalProduct={handleApprovalProduct}
           handleOpenModal={handleOpenModal}
           openDetailModal={openDetailModal}
-          handleCloseModal={handleCloseModal}
           handleChangePage={handleChangePage}
           handleChangeRowsPerPage={handleChangeRowsPerPage}
         />

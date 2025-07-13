@@ -7,23 +7,26 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableFooter from '@mui/material/TableFooter'
 import TablePagination from '@mui/material/TablePagination'
-import { Box, Button, Tooltip } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
+import Tooltip from '@mui/material/Tooltip'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import LockOpenIcon from '@mui/icons-material/LockOpen'
 import BlockIcon from '@mui/icons-material/Block'
-import NoData from '../NoData'
-import formatCurrency from '~/utils/formatCurrency'
 import DoneIcon from '@mui/icons-material/Done'
 import DoDisturbOnOutlinedIcon from '@mui/icons-material/DoDisturbOnOutlined'
+import NoData from '../NoData'
+import formatCurrency from '~/utils/formatCurrency'
+import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
+
 function ProductTable({
-  status,
   products,
   count,
   page,
   rowsPerPage,
   handleApprovalProduct,
   handleOpenModal,
-  handleCloseModal,
   handleChangePage,
   handleChangeRowsPerPage
 }) {
@@ -78,8 +81,38 @@ function ProductTable({
                         )} - ${formatCurrency(p.product_max_price)}`}
                   </TableCell>
                   <TableCell align="right">{p.product_stock}</TableCell>
-                  <TableCell align="right">{p.product_status}</TableCell>
-                  <TableCell align="right">{p.product_visibility}</TableCell>
+                  <TableCell align="right">
+                    <Chip
+                      label={capitalizeFirstLetter(p.product_status)}
+                      color={
+                        p.product_status === 'approval'
+                          ? 'success'
+                          : p.product_status === 'reject'
+                          ? 'error'
+                          : p.product_status === 'ban'
+                          ? 'warning'
+                          : p.product_status === 'pending'
+                          ? 'info'
+                          : 'default'
+                      }
+                      variant="outlined"
+                      size="small"
+                    />
+                  </TableCell>
+
+                  <TableCell align="right">
+                    <Chip
+                      label={capitalizeFirstLetter(p.product_visibility)}
+                      color={
+                        p.product_visibility === 'public'
+                          ? 'success'
+                          : 'default'
+                      }
+                      variant="contained"
+                      size="small"
+                      sx={{ width: '60px' }}
+                    />
+                  </TableCell>
                   <TableCell align="right">
                     {p.product_rating_average}
                   </TableCell>
@@ -177,7 +210,7 @@ function ProductTable({
               >
                 <TablePagination
                   rowsPerPageOptions={[10, 25, 50]}
-                  colSpan={9}
+                  colSpan={10}
                   count={count || 0}
                   rowsPerPage={rowsPerPage}
                   page={page}

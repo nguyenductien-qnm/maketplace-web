@@ -26,6 +26,7 @@ import { getImageForPreview } from '~/helpers/resizeImage'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
+import { useSelector } from 'react-redux'
 const visibilityOptions = [
   { id: 'private', name: 'Private' },
   { id: 'public', name: 'Public' }
@@ -53,6 +54,7 @@ function SPUForm({
     control,
     name: 'product_specs'
   })
+  const categories = useSelector((state) => state?.categories?.categories)
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
@@ -235,10 +237,12 @@ function SPUForm({
               render={({ field }) => (
                 <>
                   <CategoryTreeView
+                    multi={false}
                     value={field.value || ''}
                     onChange={(newSelected) => {
                       field.onChange(newSelected)
                     }}
+                    categories={categories}
                   />
                   {errors.product_category && (
                     <FormHelperText error sx={{ mt: 1 }}>

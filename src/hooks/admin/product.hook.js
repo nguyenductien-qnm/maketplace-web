@@ -1,9 +1,12 @@
 import { StatusCodes } from 'http-status-codes'
 import { useEffect, useRef, useState } from 'react'
 import {
+  approvalProductByAdminAPI,
+  banProductByAdminAPI,
   getProductDetailByAdminAPI,
   queryProductByAdminAPI,
-  updateProductStatusByAdminAPI
+  rejectProductByAdminAPI,
+  unbanProductByAdminAPI
 } from '~/api/product.api'
 import { getShopListForFilterAPI } from '~/api/shop.api'
 import { navigate } from '~/helpers/navigation'
@@ -142,7 +145,7 @@ export const useAdminProduct = ({ status }) => {
       _id: product?._id,
       action: 'approval'
     }
-    const { status, resData } = await updateProductStatusByAdminAPI({ payload })
+    const { status, resData } = await approvalProductByAdminAPI({ payload })
     if (status === StatusCodes.OK) {
       const update = resData.metadata
       setProducts((prev) =>
@@ -157,7 +160,7 @@ export const useAdminProduct = ({ status }) => {
       action: 'reject',
       reason: data
     }
-    const { status, resData } = await updateProductStatusByAdminAPI({ payload })
+    const { status, resData } = await rejectProductByAdminAPI({ payload })
     if (status === StatusCodes.OK) {
       handleCloseModal()
       const update = resData.metadata
@@ -173,7 +176,7 @@ export const useAdminProduct = ({ status }) => {
       action: 'ban',
       reason: data
     }
-    const { status, resData } = await updateProductStatusByAdminAPI({ payload })
+    const { status, resData } = await banProductByAdminAPI({ payload })
     if (status === StatusCodes.OK) {
       handleCloseModal()
       const update = resData.metadata
@@ -189,7 +192,7 @@ export const useAdminProduct = ({ status }) => {
       action: 'unban',
       reason: data
     }
-    const { status, resData } = await updateProductStatusByAdminAPI({ payload })
+    const { status, resData } = await unbanProductByAdminAPI({ payload })
     if (status === StatusCodes.OK) {
       handleCloseModal()
       const update = resData.metadata

@@ -102,9 +102,42 @@ const getProductDetailByAdminAPI = async ({ _id }) => {
   })
 }
 
-const updateProductStatusByAdminAPI = async ({ payload }) => {
+const approvalProductByAdminAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/product/admin/update-status`,
+    `${API_ROOT}/v1/api/product/admin/update-status/approval`,
+    payload,
+    {
+      ...TOAST_MODE.ALL
+    }
+  )
+  return { status, resData: data }
+}
+
+const rejectProductByAdminAPI = async ({ payload }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/product/admin/update-status/reject`,
+    payload,
+    {
+      ...TOAST_MODE.ALL
+    }
+  )
+  return { status, resData: data }
+}
+
+const banProductByAdminAPI = async ({ payload }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/product/admin/update-status/ban`,
+    payload,
+    {
+      ...TOAST_MODE.ALL
+    }
+  )
+  return { status, resData: data }
+}
+
+const unbanProductByAdminAPI = async ({ payload }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/product/admin/update-status/unban`,
     payload,
     {
       ...TOAST_MODE.ALL
@@ -125,5 +158,8 @@ export {
   queryProductByOwnerAPI,
   queryProductByAdminAPI,
   getProductDetailByAdminAPI,
-  updateProductStatusByAdminAPI
+  approvalProductByAdminAPI,
+  rejectProductByAdminAPI,
+  banProductByAdminAPI,
+  unbanProductByAdminAPI
 }

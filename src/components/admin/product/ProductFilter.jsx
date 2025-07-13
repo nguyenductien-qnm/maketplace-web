@@ -1,13 +1,11 @@
 import Box from '@mui/material/Box'
-import MenuItem from '@mui/material/MenuItem'
 import Popover from '@mui/material/Popover'
-import Select from '@mui/material/Select'
 import Slider from '@mui/material/Slider'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
-import { Button, Divider, TextField } from '@mui/material'
-import { apiGetProvinces } from '~/helpers/getAddress'
+import { Autocomplete, Button, Divider, TextField } from '@mui/material'
 import TypographyLabel from '../../common/TypographyLabel'
+import CategoryTreeView from '~/components/common/CategoryTreeView'
 
 function ProductFilter({
   shops,
@@ -19,7 +17,6 @@ function ProductFilter({
 }) {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
-  const [provinces, setProvinces] = useState([])
 
   const handleOpenFilter = (event) => setAnchorEl(event.currentTarget)
   const handleCloseFilter = () => setAnchorEl(null)
@@ -36,6 +33,7 @@ function ProductFilter({
         onClose={handleCloseFilter}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        sx={{ height: '500px' }}
       >
         <Box
           sx={{
@@ -51,7 +49,7 @@ function ProductFilter({
           <Box sx={{ flex: 1 }}>
             <TextField
               fullWidth
-              placeholder="Enter product name or product ID"
+              placeholder="Enter product name"
               size="small"
               value={filters.search}
               onChange={(e) =>
@@ -62,46 +60,37 @@ function ProductFilter({
 
           <Box sx={{ flex: 1 }}>
             <TypographyLabel>Product of shop</TypographyLabel>
-            <Select
+            <Autocomplete
               size="small"
               fullWidth
-              value={filters.productOfShop || ''}
-              onChange={(e) =>
+              options={shops || []}
+              getOptionLabel={(option) => option.shop_name || ''}
+              value={
+                shops?.find((shop) => shop._id === filters.productOfShop) ||
+                null
+              }
+              onChange={(_, newValue) => {
                 setFilters((prev) => ({
                   ...prev,
-                  productOfShop: e.target.value
+                  productOfShop: newValue?._id || ''
                 }))
-              }
-              displayEmpty
-            >
-              {shops?.map((shop) => (
-                <MenuItem key={shop._id} value={shop._id}>
-                  {shop.shop_name}
-                </MenuItem>
-              ))}
-            </Select>
+              }}
+              renderInput={(params) => <TextField {...params} />}
+              isOptionEqualToValue={(option, value) => option._id === value._id}
+            />
           </Box>
 
           <Box sx={{ flex: 1 }}>
             <TypographyLabel>Category</TypographyLabel>
-            <Select
-              size="small"
-              fullWidth
+
+            <CategoryTreeView
+              multi="true"
+              categories={categories}
               value={filters.category || ''}
-              onChange={(e) =>
-                setFilters((prev) => ({
-                  ...prev,
-                  category: e.target.value
-                }))
+              onChange={(newSelected) =>
+                setFilters((prev) => ({ ...prev, category: newSelected }))
               }
-              displayEmpty
-            >
-              {categories?.map((c) => (
-                <MenuItem key={c._id} value={c.category_code}>
-                  {c.category_name}
-                </MenuItem>
-              ))}
-            </Select>
+            />
           </Box>
 
           <Box sx={{ display: 'flex', gap: 1 }}>

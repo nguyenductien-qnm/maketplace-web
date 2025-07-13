@@ -4,14 +4,18 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
 import TypographyLabel from '~/components/common/TypographyLabel'
-import { Box, Chip, Divider, Paper } from '@mui/material'
+import Box from '@mui/material/Box'
+import Chip from '@mui/material/Chip'
+import Divider from '@mui/material/Divider'
+import Paper from '@mui/material/Paper'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import formatCurrency from '~/utils/formatCurrency'
 import ReadOnlyTextField from '~/components/common/ReadOnlyTextField'
 import findCategoryName from '~/utils/findCategoryName'
-import { WEB_ROOT } from '~/utils/constants'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
+import { WEB_ROOT } from '~/utils/constants'
+import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
 
 function ProductDetailModal({ open, onClose, product, categories }) {
   const dimensions = product?.product_dimensions
@@ -171,12 +175,16 @@ function ProductDetailModal({ open, onClose, product, categories }) {
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Box sx={{ flex: 1 }}>
                 <TypographyLabel>Product status</TypographyLabel>
-                <ReadOnlyTextField value={product?.product_status} />
+                <ReadOnlyTextField
+                  value={capitalizeFirstLetter(product?.product_status)}
+                />
               </Box>
 
               <Box sx={{ flex: 1 }}>
                 <TypographyLabel>Product visibility</TypographyLabel>
-                <ReadOnlyTextField value={product?.product_visibility} />
+                <ReadOnlyTextField
+                  value={capitalizeFirstLetter(product?.product_visibility)}
+                />
               </Box>
             </Box>
 
