@@ -1,6 +1,14 @@
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 
+const getCategoriesRootByAdminAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/category/admin/root`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
 const queryCategoriesByAdminAPI = async () => {
   const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/category/admin`,
@@ -88,5 +96,6 @@ export {
   updateCategoryRootByAdminAPI,
   updateCategoryChildByAdminAPI,
   updateCategoryPositionAPI,
-  deleteCategoryByAdminAPI
+  deleteCategoryByAdminAPI,
+  getCategoriesRootByAdminAPI
 }

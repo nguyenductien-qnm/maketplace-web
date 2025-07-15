@@ -39,8 +39,12 @@ export const REASON_RULE_MESSAGE =
 export const PHONE_RULE = /^\d{10}$/
 export const PHONE_RULE_MESSAGE = 'Invalid phone.'
 
+// ==================== number ============================
 export const NUMBER_RULE = /^\d+$/
 export const NUMBER_RULE_MESSAGE = 'Only numbers are allowed.'
+
+export const POSITIVE_NUMBER_RULE = /^(?!0+(?:\.0+)?$)\d+(\.\d+)?$/
+export const POSITIVE_NUMBER_RULE_MESSAGE = 'Positive number only.'
 // ==================== voucher code ============================
 export const VOUCHER_CODE_RULE = /^[A-Za-z0-9]{8}$/
 export const VOUCHER_CODE_RULE_MESSAGE =

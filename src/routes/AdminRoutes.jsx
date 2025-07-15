@@ -8,6 +8,8 @@ import AdminVoucher from '~/pages/admin/AdminVoucher'
 import AdminOrder from '~/pages/admin/AdminOrder'
 import AdminProduct from '~/pages/admin/AdminProduct'
 import AdminCategory from '~/pages/admin/AdminCategory'
+import AdminWithdrawRequest from '~/pages/admin/AdminWithdrawRequest'
+import AdminCommissionRate from '~/pages/admin/AdminCommissionRate'
 
 const AdminRoutes = () => {
   const user = useSelector((state) => state.user.currentUser)
@@ -129,8 +131,18 @@ const AdminRoutes = () => {
             element={<AdminProduct status="BAN" name="Ban products" />}
           />
         </Route>
-
+        <Route path="withdraw-request">
+          <Route
+            path="vendor"
+            element={<AdminWithdrawRequest type="VENDOR" />}
+          />
+          <Route
+            path="customer"
+            element={<AdminWithdrawRequest type="CUSTOMER" />}
+          />
+        </Route>
         <Route path="category" element={<AdminCategory />} />
+        <Route path="commission-rate" element={<AdminCommissionRate />} />
       </Route>
     </Route>
   )
