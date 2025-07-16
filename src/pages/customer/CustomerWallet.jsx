@@ -12,7 +12,7 @@ import {
 } from '~/api/wallet.api'
 import VendorWalletSkeleton from '~/components/shared/Wallet/VendorWalletSkeleton'
 import { getUserTransactionsAPI } from '~/api/transaction.api'
-import { getUserRequestWithdrawAPI } from '~/api/requestWithdraw.api'
+import { getUserRequestWithdrawAPI } from '~/api/withdrawRequest.api'
 
 function CustomerWallet() {
   const [userWallet, setUserWallet] = useState({})

@@ -7,7 +7,7 @@ import {
   shopSetDefaultPaymentAccountAPI
 } from '~/api/wallet.api'
 import { getShopTransactionsAPI } from '~/api/transaction.api'
-import { getShopRequestWithdrawAPI } from '~/api/requestWithdraw.api'
+import { getShopRequestWithdrawAPI } from '~/api/withdrawRequest.api'
 
 export const useVendorWallet = () => {
   const [shopWallet, setShopWallet] = useState({})
