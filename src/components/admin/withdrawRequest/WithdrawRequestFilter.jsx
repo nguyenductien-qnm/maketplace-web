@@ -1,2 +1,189 @@
-function WithdrawRequestFilter() {}
+import {
+  Box,
+  Button,
+  Divider,
+  MenuItem,
+  Popover,
+  Select,
+  TextField,
+  Slider,
+  Autocomplete
+} from '@mui/material'
+import { useState } from 'react'
+import TypographyLabel from '~/components/common/TypographyLabel'
+import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
+
+function WithdrawRequestFilter({
+  type,
+  users,
+  shops,
+  filters,
+  setFilters,
+  handleFilter,
+  handleClearFilter
+}) {
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+
+  const handleOpenFilter = (event) => setAnchorEl(event.currentTarget)
+  const handleCloseFilter = () => setAnchorEl(null)
+
+  return (
+    <Box>
+      <Button variant="contained" onClick={handleOpenFilter}>
+        <FilterListOutlinedIcon />
+        Filters
+      </Button>
+
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleCloseFilter}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Box
+          sx={{
+            minWidth: '400px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px'
+          }}
+        >
+          <h3 style={{ marginBottom: 0 }}>Advanced filters</h3>
+          <Divider />
+          <TextField
+            fullWidth
+            placeholder="Enter paypal email, transactionID, "
+            size="small"
+            value={filters.search}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, search: e.target.value }))
+            }
+          />
+          <Box sx={{ flex: 1 }}>
+            <TypographyLabel>
+              {type === 'VENDOR' ? 'Shop' : 'Customer'}
+            </TypographyLabel>
+            <Autocomplete
+              size="small"
+              fullWidth
+              options={type === 'VENDOR' ? shops || [] : users || []}
+              getOptionLabel={(option) =>
+                type === 'VENDOR'
+                  ? option.shop_name || ''
+                  : option.user_name || ''
+              }
+              value={
+                type === 'VENDOR'
+                  ? shops?.find((s) => s._id === filters.requestOfShop) || null
+                  : users?.find((u) => u._id === filters.requestOfUser) || null
+              }
+              onChange={(_, newValue) => {
+                setFilters((prev) => ({
+                  ...prev,
+                  ...(type === 'VENDOR'
+                    ? { requestOfShop: newValue?._id || '' }
+                    : { requestOfUser: newValue?._id || '' })
+                }))
+              }}
+              isOptionEqualToValue={(option, value) => option._id === value._id}
+              renderInput={(params) => (
+                <TextField {...params} placeholder="Search by name..." />
+              )}
+            />
+          </Box>
+          <Box>
+            <TypographyLabel>Status</TypographyLabel>
+            <Select
+              size="small"
+              fullWidth
+              value={filters.status || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, status: e.target.value }))
+              }
+              displayEmpty
+            >
+              <MenuItem value="ALL">All</MenuItem>
+              <MenuItem value="PENDING">Pending</MenuItem>
+              <MenuItem value="APPROVED">Approved</MenuItem>
+              <MenuItem value="REJECT">Rejected</MenuItem>
+              <MenuItem value="COMPLETE">Completed</MenuItem>
+            </Select>
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Box sx={{ flex: 1 }}>
+              <TypographyLabel>Created from</TypographyLabel>
+              <TextField
+                onChange={(e) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    createdFrom: e.target.value
+                  }))
+                }
+                value={filters.createdFrom}
+                size="small"
+                type="date"
+                fullWidth
+              />
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <TypographyLabel>Created to</TypographyLabel>
+              <TextField
+                onChange={(e) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    createdTo: e.target.value
+                  }))
+                }
+                value={filters.createdTo}
+                size="small"
+                type="date"
+                fullWidth
+              />
+            </Box>
+          </Box>
+
+          <Box width="100%">
+            <TypographyLabel>
+              Amount: {filters.amountRange[0].toLocaleString()} -{' '}
+              {filters.amountRange[1].toLocaleString()} $
+            </TypographyLabel>
+            <Slider
+              value={filters.amountRange}
+              onChange={(e, newValue) =>
+                setFilters((prev) => ({ ...prev, amountRange: newValue }))
+              }
+              valueLabelDisplay="auto"
+              min={50}
+              max={500}
+              step={10}
+            />
+          </Box>
+          <Divider />
+          <Box sx={{ alignSelf: 'end' }}>
+            <Button
+              onClick={handleClearFilter}
+              variant="contained"
+              sx={{ backgroundColor: 'black', mr: '10px' }}
+            >
+              Clear
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                handleFilter()
+                handleCloseFilter()
+              }}
+            >
+              Search
+            </Button>
+          </Box>
+        </Box>
+      </Popover>
+    </Box>
+  )
+}
 export default WithdrawRequestFilter

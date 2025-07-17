@@ -2,7 +2,15 @@ import { Box, Button, Tooltip, Typography } from '@mui/material'
 import WithdrawRequestFilter from './WithdrawRequestFilter'
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 
-function WithdrawRequestHeader({ type }) {
+function WithdrawRequestHeader({
+  type,
+  shops,
+  users,
+  filters,
+  setFilters,
+  handleFilter,
+  handleClearFilter
+}) {
   return (
     <Box
       sx={{
@@ -21,7 +29,17 @@ function WithdrawRequestHeader({ type }) {
       </Typography>
       <Box sx={{ display: 'flex', gap: '10px' }}>
         <Tooltip title="Advantage filter">
-          <Box></Box>
+          <Box>
+            <WithdrawRequestFilter
+              type={type}
+              filters={filters}
+              setFilters={setFilters}
+              shops={shops}
+              users={users}
+              handleFilter={handleFilter}
+              handleClearFilter={handleClearFilter}
+            />
+          </Box>
         </Tooltip>
         <Tooltip title="Download with advantage filter">
           <Box>

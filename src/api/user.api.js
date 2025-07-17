@@ -132,6 +132,16 @@ const exportUserDataAPI = async (data) => {
   return res
 }
 
+const getUserListForFilterAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/user/get-user-list-for-filter`,
+    {
+      ...TOAST_MODE.NONE
+    }
+  )
+  return { status, resData: data }
+}
+
 export {
   getUserInfoAPI,
   changePasswordAPI,
@@ -145,5 +155,6 @@ export {
   unbanUserAPI,
   getUserDetailForAdminAPI,
   updateUserPasswordForAdminAPI,
-  exportUserDataAPI
+  exportUserDataAPI,
+  getUserListForFilterAPI
 }

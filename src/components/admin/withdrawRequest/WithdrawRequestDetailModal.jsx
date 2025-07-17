@@ -5,11 +5,6 @@ import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
-import MenuItem from '@mui/material/MenuItem'
-import Select from '@mui/material/Select'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import { Controller } from 'react-hook-form'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import ReadOnlyTextField from '~/components/common/ReadOnlyTextField'
 import TypographyLabel from '~/components/common/TypographyLabel'
@@ -53,13 +48,13 @@ function WithdrawRequestDetailModal({ open, onClose, withdrawRequest }) {
 
               <Box flex={1}>
                 <TypographyLabel>
-                  {isShop ? 'Shop name' : 'User name'}
+                  {isShop ? 'Shop email' : 'User email'}
                 </TypographyLabel>
                 <ReadOnlyTextField
                   value={
                     isShop
-                      ? withdrawRequest?.shop?.shop_name
-                      : withdrawRequest?.user?.user_name
+                      ? withdrawRequest?.shop?.shop_email
+                      : withdrawRequest?.user?.user_email
                   }
                 />
               </Box>

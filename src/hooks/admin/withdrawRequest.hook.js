@@ -1,5 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import { useEffect, useRef, useState } from 'react'
+import { getShopListForFilterAPI } from '~/api/shop.api'
+import { getUserListForFilterAPI } from '~/api/user.api'
 import {
   getWithdrawRequestDetailByAdminAPI,
   queryWithdrawRequestByAdminAPI,
@@ -11,11 +13,14 @@ import { navigate } from '~/helpers/navigation'
 export const useAdminWithdrawRequest = ({ type }) => {
   // ============================== STATE ==============================
   const defaultFilters = {
-    status: '',
-    createFrom: '',
-    createdTo: ''
+    search: '',
+    status: 'ALL',
+    createdFrom: '',
+    createdTo: '',
+    requestOfShop: '',
+    requestOfUser: '',
+    amountRange: [50, 500]
   }
-
   const [isDenied, setDenied] = useState(false)
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
@@ -24,6 +29,9 @@ export const useAdminWithdrawRequest = ({ type }) => {
   const [openReasonModal, setOpenReasonModal] = useState(false)
   const [withdrawRequestDetail, setWithdrawRequestDetail] = useState(null)
   const [selectedWithdrawRequest, setSelectedWithdrawRequest] = useState(null)
+
+  const [shops, setShops] = useState([])
+  const [users, setUsers] = useState([])
 
   const [filters, setFilters] = useState(defaultFilters)
   const skipEffect = useRef(false)
@@ -44,6 +52,11 @@ export const useAdminWithdrawRequest = ({ type }) => {
     }
 
     queryWithdrawRequest({ page, rowsPerPage, type, ...filters })
+    if (type == 'VENDOR') {
+      getShopList()
+    } else if (type == 'CUSTOMER') {
+      getUserList()
+    }
   }, [status, page, rowsPerPage])
 
   // ============================== API ==============================
@@ -67,11 +80,21 @@ export const useAdminWithdrawRequest = ({ type }) => {
     }
   }
 
+  const getShopList = async () => {
+    const res = await getShopListForFilterAPI()
+    setShops(res?.data?.metadata || [])
+  }
+
+  const getUserList = async () => {
+    const { status, resData } = await getUserListForFilterAPI()
+    if (status === StatusCodes.OK) setUsers(resData?.metadata || [])
+  }
+
   // ============================== HANDLER ==============================
 
   const handleFilter = () => {
     if (page === 0) {
-      queryUserByAdmin({ page, rowsPerPage, status, ...filters })
+      queryWithdrawRequest({ page, rowsPerPage, type, ...filters })
     } else {
       setPage(0)
     }
@@ -145,6 +168,8 @@ export const useAdminWithdrawRequest = ({ type }) => {
     setFilters,
     page,
     rowsPerPage,
+    shops,
+    users,
 
     handleFilter,
     handleClearFilter,

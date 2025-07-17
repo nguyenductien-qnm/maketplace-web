@@ -71,7 +71,7 @@ const userDeletePaymentAccountAPI = async (data, loadingClass) => {
 
 const shopRequestWithdrawAPI = async (data, loadingClass) => {
   const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/request-withdraw/shop`,
+    `${API_ROOT}/v1/api/withdraw-request/shop`,
     data,
     { loadingClass, ...TOAST_MODE.ALL }
   )
@@ -80,7 +80,7 @@ const shopRequestWithdrawAPI = async (data, loadingClass) => {
 
 const userRequestWithdrawAPI = async (data, loadingClass) => {
   const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/request-withdraw/user`,
+    `${API_ROOT}/v1/api/withdraw-request/user`,
     data,
     { loadingClass, ...TOAST_MODE.ALL }
   )

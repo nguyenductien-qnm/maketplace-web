@@ -3,7 +3,7 @@ import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 
 const getShopRequestWithdrawAPI = async () => {
   const res = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/request-withdraw/shop`,
+    `${API_ROOT}/v1/api/withdraw-request/shop`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return res
@@ -11,7 +11,7 @@ const getShopRequestWithdrawAPI = async () => {
 
 const getUserRequestWithdrawAPI = async () => {
   const res = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/request-withdraw/user`,
+    `${API_ROOT}/v1/api/withdraw-request/user`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return res
@@ -19,7 +19,7 @@ const getUserRequestWithdrawAPI = async () => {
 
 const queryWithdrawRequestByAdminAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/request-withdraw/query-by-admin`,
+    `${API_ROOT}/v1/api/withdraw-request/query-by-admin`,
     payload,
     { ...TOAST_MODE.ONLY_ERROR }
   )
@@ -28,7 +28,7 @@ const queryWithdrawRequestByAdminAPI = async ({ payload }) => {
 
 const getWithdrawRequestDetailByAdminAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/request-withdraw/by-admin/${_id}`,
+    `${API_ROOT}/v1/api/withdraw-request/by-admin/${_id}`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
@@ -36,7 +36,7 @@ const getWithdrawRequestDetailByAdminAPI = async ({ _id }) => {
 
 const approvalWithdrawRequestByAdminAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/request-withdraw/approve`,
+    `${API_ROOT}/v1/api/withdraw-request/approve`,
     { _id },
     { ...TOAST_MODE.ALL }
   )
@@ -45,7 +45,7 @@ const approvalWithdrawRequestByAdminAPI = async ({ _id }) => {
 
 const rejectWithdrawRequestByAdminAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/request-withdraw/reject`,
+    `${API_ROOT}/v1/api/withdraw-request/reject`,
     payload,
     { ...TOAST_MODE.ALL }
   )

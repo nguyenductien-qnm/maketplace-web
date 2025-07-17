@@ -6,6 +6,12 @@ import WithdrawRequestTable from '~/components/admin/withdrawRequest/WithdrawReq
 import { useAdminWithdrawRequest } from '~/hooks/admin/withdrawRequest.hook'
 function AdminWithdrawRequest({ type }) {
   const {
+    page,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    shops,
+    users,
     withdrawRequests,
     handleOpenModal,
     loading,
@@ -14,7 +20,12 @@ function AdminWithdrawRequest({ type }) {
     withdrawRequestDetail,
     handleCloseModal,
     handleApprovalWithdrawRequest,
-    handleRejectWithdrawRequest
+    handleRejectWithdrawRequest,
+    filters,
+    setFilters,
+    count,
+    handleFilter,
+    handleClearFilter
   } = useAdminWithdrawRequest({ type })
   return (
     <Paper
@@ -25,12 +36,25 @@ function AdminWithdrawRequest({ type }) {
         flexDirection: 'column'
       }}
     >
-      <WithdrawRequestHeader type={type} />
+      <WithdrawRequestHeader
+        type={type}
+        shops={shops}
+        users={users}
+        filters={filters}
+        setFilters={setFilters}
+        handleFilter={handleFilter}
+        handleClearFilter={handleClearFilter}
+      />
       <WithdrawRequestTable
         loading={loading}
         withdrawRequests={withdrawRequests}
         handleOpenModal={handleOpenModal}
         handleApprovalWithdrawRequest={handleApprovalWithdrawRequest}
+        page={page}
+        count={count}
+        rowsPerPage={rowsPerPage}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
       />
       <WithdrawRequestDetailModal
         open={openDetailModal}
