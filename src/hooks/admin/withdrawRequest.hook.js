@@ -142,6 +142,12 @@ export const useAdminWithdrawRequest = ({ type }) => {
     const { status, resData } = await approvalWithdrawRequestByAdminAPI({
       _id: data?._id
     })
+    if (status === StatusCodes.OK) {
+      const update = resData?.metadata
+      setWithdrawRequests((prev) =>
+        prev?.map((w) => (w?._id === update?._id ? update : w))
+      )
+    }
   }
 
   const handleRejectWithdrawRequest = async (data) => {
@@ -149,6 +155,14 @@ export const useAdminWithdrawRequest = ({ type }) => {
     const { status, resData } = await rejectWithdrawRequestByAdminAPI({
       payload
     })
+
+    if (status === StatusCodes.OK) {
+      const update = resData?.metadata
+      setWithdrawRequests((prev) =>
+        prev?.map((w) => (w?._id === update?._id ? update : w))
+      )
+      handleCloseModal()
+    }
   }
 
   // ============================== MODAL CONFIG ==============================

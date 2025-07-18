@@ -64,8 +64,8 @@ function WithdrawRequestDetailModal({ open, onClose, withdrawRequest }) {
                 <ReadOnlyTextField
                   value={formatCurrency(
                     isShop
-                      ? withdrawRequest?.wallet?.shop_balance
-                      : withdrawRequest?.wallet?.user_balance
+                      ? withdrawRequest?.shop_balance
+                      : withdrawRequest?.user_balance
                   )}
                 />
               </Box>
@@ -126,10 +126,7 @@ function WithdrawRequestDetailModal({ open, onClose, withdrawRequest }) {
               <Box flex={1}>
                 <TypographyLabel>Transaction ID of paypal</TypographyLabel>
                 <ReadOnlyTextField
-                  value={
-                    withdrawRequest?.transaction?.withdrawal_details
-                      ?.transaction_id || 'NAN'
-                  }
+                  value={withdrawRequest?.transaction_id_of_paypal || 'NAN'}
                 />
               </Box>
             </Box>
