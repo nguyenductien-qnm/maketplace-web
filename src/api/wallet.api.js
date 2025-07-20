@@ -87,6 +87,15 @@ const userRequestWithdrawAPI = async (data, loadingClass) => {
   return res
 }
 
+const queryWalletByAdminAPI = async ({ payload }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/wallet/query-by-admin`,
+    payload,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
 export {
   getShopWalletAPI,
   shopAddPaymentAccountAPI,
@@ -97,5 +106,6 @@ export {
   userDeletePaymentAccountAPI,
   shopRequestWithdrawAPI,
   userRequestWithdrawAPI,
-  getUserWalletAPI
+  getUserWalletAPI,
+  queryWalletByAdminAPI
 }

@@ -15,4 +15,19 @@ const getUserTransactionsAPI = async () => {
   return res
 }
 
-export { getShopTransactionsAPI, getUserTransactionsAPI }
+const getRecentWalletTransactionsByAdminAPI = async ({ payload }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/transaction/wallet/recent`,
+    payload,
+    {
+      ...TOAST_MODE.ONLY_ERROR
+    }
+  )
+  return { status, resData: data }
+}
+
+export {
+  getShopTransactionsAPI,
+  getUserTransactionsAPI,
+  getRecentWalletTransactionsByAdminAPI
+}

@@ -10,6 +10,7 @@ import AdminProduct from '~/pages/admin/AdminProduct'
 import AdminCategory from '~/pages/admin/AdminCategory'
 import AdminWithdrawRequest from '~/pages/admin/AdminWithdrawRequest'
 import AdminCommissionRate from '~/pages/admin/AdminCommissionRate'
+import AdminWallet from '~/pages/admin/AdminWallet'
 
 const AdminRoutes = () => {
   const user = useSelector((state) => state.user.currentUser)
@@ -142,6 +143,12 @@ const AdminRoutes = () => {
             element={<AdminWithdrawRequest type="CUSTOMER" />}
           />
         </Route>
+
+        <Route path="wallet">
+          <Route path="vendor" element={<AdminWallet type="VENDOR" />} />
+          <Route path="customer" element={<AdminWallet type="CUSTOMER" />} />
+        </Route>
+
         <Route path="category" element={<AdminCategory />} />
         <Route path="commission-rate" element={<AdminCommissionRate />} />
       </Route>

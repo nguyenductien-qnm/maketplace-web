@@ -2,18 +2,16 @@ import {
   Box,
   Button,
   Divider,
-  MenuItem,
   Popover,
-  Select,
   TextField,
-  Slider,
   Autocomplete
 } from '@mui/material'
 import { useState } from 'react'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
+import { NumericFormat } from 'react-number-format'
 
-function WithdrawRequestFilter({
+function WalletFilter({
   type,
   users,
   shops,
@@ -53,15 +51,6 @@ function WithdrawRequestFilter({
         >
           <h3 style={{ marginBottom: 0 }}>Advanced filters</h3>
           <Divider />
-          <TextField
-            fullWidth
-            placeholder="Enter paypal email, transactionID, "
-            size="small"
-            value={filters.search}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, search: e.target.value }))
-            }
-          />
           <Box sx={{ flex: 1 }}>
             <TypographyLabel>
               {type === 'VENDOR' ? 'Shop' : 'Customer'}
@@ -77,15 +66,15 @@ function WithdrawRequestFilter({
               }
               value={
                 type === 'VENDOR'
-                  ? shops?.find((s) => s._id === filters.requestOfShop) || null
-                  : users?.find((u) => u._id === filters.requestOfUser) || null
+                  ? shops?.find((s) => s._id === filters.walletOfShop) || null
+                  : users?.find((u) => u._id === filters.walletOfUser) || null
               }
               onChange={(_, newValue) => {
                 setFilters((prev) => ({
                   ...prev,
                   ...(type === 'VENDOR'
-                    ? { requestOfShop: newValue?._id || '' }
-                    : { requestOfUser: newValue?._id || '' })
+                    ? { walletOfShop: newValue?._id || '' }
+                    : { walletOfUser: newValue?._id || '' })
                 }))
               }}
               isOptionEqualToValue={(option, value) => option._id === value._id}
@@ -93,24 +82,6 @@ function WithdrawRequestFilter({
                 <TextField {...params} placeholder="Search by name..." />
               )}
             />
-          </Box>
-          <Box>
-            <TypographyLabel>Status</TypographyLabel>
-            <Select
-              size="small"
-              fullWidth
-              value={filters.status || ''}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, status: e.target.value }))
-              }
-              displayEmpty
-            >
-              <MenuItem value="ALL">All</MenuItem>
-              <MenuItem value="PENDING">Pending</MenuItem>
-              <MenuItem value="APPROVED">Approved</MenuItem>
-              <MenuItem value="REJECTED">Rejected</MenuItem>
-              <MenuItem value="COMPLETED">Completed</MenuItem>
-            </Select>
           </Box>
 
           <Box sx={{ display: 'flex', gap: 1 }}>
@@ -129,6 +100,7 @@ function WithdrawRequestFilter({
                 fullWidth
               />
             </Box>
+
             <Box sx={{ flex: 1 }}>
               <TypographyLabel>Created to</TypographyLabel>
               <TextField
@@ -147,19 +119,24 @@ function WithdrawRequestFilter({
           </Box>
 
           <Box width="100%">
-            <TypographyLabel>
-              Amount: {filters.amountRange[0].toLocaleString()} -{' '}
-              {filters.amountRange[1].toLocaleString()} $
-            </TypographyLabel>
-            <Slider
-              value={filters.amountRange}
-              onChange={(e, newValue) =>
-                setFilters((prev) => ({ ...prev, amountRange: newValue }))
-              }
-              valueLabelDisplay="auto"
-              min={50}
-              max={500}
-              step={10}
+            <TypographyLabel>Min balance</TypographyLabel>
+
+            <NumericFormat
+              value={filters.minBalance}
+              onValueChange={(values) => {
+                setFilters((prev) => ({
+                  ...prev,
+                  minBalance: values.value || ''
+                }))
+              }}
+              size="small"
+              allowNegative={false}
+              prefix="$"
+              decimalScale={2}
+              fixedDecimalScale
+              thousandSeparator
+              customInput={TextField}
+              fullWidth
             />
           </Box>
           <Divider />
@@ -186,4 +163,4 @@ function WithdrawRequestFilter({
     </Box>
   )
 }
-export default WithdrawRequestFilter
+export default WalletFilter
