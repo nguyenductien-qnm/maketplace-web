@@ -1,27 +1,29 @@
 import { StatusCodes } from 'http-status-codes'
 import { useEffect, useRef, useState } from 'react'
 import { getShopListForFilterAPI } from '~/api/shop.api'
-import { getRecentWalletTransactionsByAdminAPI } from '~/api/transaction.api'
+import {
+  getTransactionDetailByAdminAPI,
+  queryTransactionByAdminAPI
+} from '~/api/transaction.api'
 import { getUserListForFilterAPI } from '~/api/user.api'
-import { queryWalletByAdminAPI } from '~/api/wallet.api'
 import { navigate } from '~/helpers/navigation'
 
-export const useAdminWallet = ({ type }) => {
+export const useAdminTransaction = ({ type }) => {
   // ============================== STATE ==============================
   const defaultFilters = {
-    walletOfShop: '',
-    walletOfUser: '',
+    transactionOfShop: '',
+    transactionOfUser: '',
     createdFrom: '',
     createdTo: '',
-    minBalance: ''
+    amountRange: [50, 500],
+    status: '',
+    typeOfTrans: ''
   }
 
   const [isDenied, setDenied] = useState(false)
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
-  const [openDetailModal, setOpenDetailModal] = useState(false)
-  const [recentTransactions, setRecentTransactions] = useState(null)
 
   const [shops, setShops] = useState([])
   const [users, setUsers] = useState([])
@@ -30,7 +32,9 @@ export const useAdminWallet = ({ type }) => {
   const skipEffect = useRef(false)
 
   const [count, setCount] = useState(null)
-  const [wallets, setWallets] = useState([])
+  const [transactions, setTransactions] = useState([])
+  const [transactionDetail, setTransactionDetail] = useState(null)
+  const [openModal, setOpenModal] = useState(false)
 
   // ============================== EFFECT ==============================
 
@@ -44,7 +48,7 @@ export const useAdminWallet = ({ type }) => {
       return
     }
 
-    queryWallet({ page, rowsPerPage, type, ...filters })
+    queryTransaction({ page, rowsPerPage, type, ...filters })
     if (type == 'VENDOR') {
       getShopList()
     } else if (type == 'CUSTOMER') {
@@ -54,17 +58,17 @@ export const useAdminWallet = ({ type }) => {
 
   // ============================== API ==============================
 
-  const queryWallet = async (data) => {
+  const queryTransaction = async (data) => {
     setLoading(true)
     try {
-      const { status, resData } = await queryWalletByAdminAPI({
+      const { status, resData } = await queryTransactionByAdminAPI({
         payload: data
       })
 
       if (status === StatusCodes.OK) {
-        const { count, wallets } = resData?.metadata
+        const { count, transactions } = resData?.metadata
         setCount(count || 0)
-        setWallets(wallets || [])
+        setTransactions(transactions || [])
       }
     } catch {
       setDenied(true)
@@ -87,7 +91,7 @@ export const useAdminWallet = ({ type }) => {
 
   const handleFilter = () => {
     if (page === 0) {
-      queryWallet({ page, rowsPerPage, type, ...filters })
+      queryTransaction({ page, rowsPerPage, type, ...filters })
     } else {
       setPage(0)
     }
@@ -107,34 +111,34 @@ export const useAdminWallet = ({ type }) => {
     setPage(0)
   }
 
-  const handleOpenModal = ({ wallet }) => {
-    handleGetRecentWalletTransactions(wallet)
-    setOpenDetailModal(true)
+  const handleOpenModal = async ({ transaction }) => {
+    setOpenModal(true)
+    handleGetTransactionDetail({ transaction })
   }
 
-  const handleCloseModal = () => {
-    setOpenDetailModal(false)
-    setRecentTransactions(null)
-  }
-
-  const handleGetRecentWalletTransactions = async (data) => {
-    const payload = {
-      _id: type === 'VENDOR' ? data?.shop_id?._id : data?.user_id?._id,
+  const handleGetTransactionDetail = async ({ transaction }) => {
+    const { _id } = transaction
+    const { status, resData } = await getTransactionDetailByAdminAPI({
+      _id,
       type
-    }
-    const { status, resData } = await getRecentWalletTransactionsByAdminAPI({
-      payload
     })
-    if (status === StatusCodes.OK)
-      setRecentTransactions(resData?.metadata || [])
+    if (status === StatusCodes.OK) setTransactionDetail(resData?.metadata)
+  }
+
+  const handleCloseModal = async () => {
+    setOpenModal(false)
+    setTransactionDetail(null)
   }
 
   // ============================== RETURN ==============================
 
   return {
-    openDetailModal,
-    recentTransactions,
-    wallets,
+    openModal,
+    handleOpenModal,
+    handleCloseModal,
+    transactionDetail,
+
+    transactions,
     count,
     loading,
     isDenied,
@@ -149,9 +153,6 @@ export const useAdminWallet = ({ type }) => {
     handleFilter,
     handleClearFilter,
     handleChangePage,
-    handleChangeRowsPerPage,
-    handleCloseModal,
-
-    handleOpenModal
+    handleChangeRowsPerPage
   }
 }
