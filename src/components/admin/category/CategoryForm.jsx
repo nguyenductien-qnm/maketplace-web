@@ -1,18 +1,30 @@
+// MUI - Components
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
+import Divider from '@mui/material/Divider'
 import TextField from '@mui/material/TextField'
-import { red } from '@mui/material/colors'
+import Typography from '@mui/material/Typography'
 
+// MUI - Icons & Colors
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
+import { red } from '@mui/material/colors'
 
+// Components - Custom
+import CircularIndeterminate from '~/components/common/CircularIndeterminate'
+import ReadOnlyTextField from '~/components/common/ReadOnlyTextField'
+import SpinnerIcon from '~/components/common/SpinnerIcon'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import VisuallyHiddenInput from '~/components/common/VisuallyHiddenInput'
 
+// Hooks
+import { useAdminCategoryFormHook } from '~/hooks/admin/categoryForm.hook'
+
+// Constants / Utils
 import {
   CATEGORY_CODE_RULE,
   CATEGORY_CODE_RULE_MESSAGE,
@@ -21,24 +33,23 @@ import {
   FIELD_REQUIRED_MESSAGE
 } from '~/utils/validators'
 
-import { useAdminCategoryFormHook } from '~/hooks/admin/categoryForm.hook'
-import SpinnerIcon from '~/components/common/SpinnerIcon'
-import CircularIndeterminate from '~/components/common/CircularIndeterminate'
-import ReadOnlyTextField from '~/components/common/ReadOnlyTextField'
-import { Divider, Typography } from '@mui/material'
-
 function CategoryForm({ mode, open, onClose, onSubmit, category }) {
   const {
+    // React Hook Form essentials
     register,
     handleSubmit,
     errors,
-    customHandleUploadImage,
-    imageUrl,
-    isUploadImage,
     setValue,
+    watch,
+
+    // Form submission
     handleFormSubmit,
     isSubmitting,
-    watch
+
+    // Image upload
+    imageUrl,
+    isUploadImage,
+    customHandleUploadImage
   } = useAdminCategoryFormHook({ mode, category, onSubmit })
 
   const creator = category?.category_creator_id

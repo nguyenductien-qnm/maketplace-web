@@ -1,42 +1,55 @@
+// External Libraries - react-dnd-treeview
+import { DndProvider } from '@minoru/react-dnd-treeview'
 import {
   Tree,
   MultiBackend,
   getBackendOptions
 } from '@minoru/react-dnd-treeview'
-import { useAdminCategory } from '~/hooks/admin/category.hook'
-import styles from '~/components/admin/category/App.module.css'
-import { DndProvider } from '@minoru/react-dnd-treeview'
-import { CustomNode } from '~/components/admin/category/CustomNode'
-import { CustomDragPreview } from '~/components/admin/category/CustomDragPreview'
+
+// MUI - Components & Icons
 import { Box, Card, Container, Typography } from '@mui/material'
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
-import CategoryHeader from '~/components/admin/category/CategoryHeader'
-import CategoryForm from '~/components/admin/category/CategoryForm'
-import { Placeholder } from '~/components/admin/category/Placeholder'
-import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
+
+// Custom Hooks
+import { useAdminCategory } from '~/hooks/admin/category.hook'
+
+// Custom Components - Admin Category
+import CategoryForm from '~/components/admin/category/CategoryForm'
+import CategoryHeader from '~/components/admin/category/CategoryHeader'
+import { CustomDragPreview } from '~/components/admin/category/CustomDragPreview'
+import { CustomNode } from '~/components/admin/category/CustomNode'
+import { Placeholder } from '~/components/admin/category/Placeholder'
+
+// Custom Components - Common
+import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import ReasonModal from '~/components/admin/ReasonModal'
+
+// Styles
+import styles from '~/components/admin/category/App.module.css'
 
 function AdminCategory() {
   const {
+    // UI state
     isLoading,
     openModal,
     openReasonModal,
     action,
-    handleOpenModal,
-    handleCloseModal,
 
+    // Data
     categoriesTree,
     categoryDetail,
 
-    handleCreateCategoryRoot,
-    handleCreateCategoryChild,
+    // Modal controls
+    handleOpenModal,
+    handleCloseModal,
 
+    // Form and drag-drop actions
+    handleSubmitCategory,
     handleDrop,
-    handleUpdateCategoryRoot,
-    handleUpdateCategoryChild,
 
+    // Media and deletion handlers
     handleUploadImage,
     handleDeleteCategory
   } = useAdminCategory()
@@ -202,14 +215,7 @@ function AdminCategory() {
             handleUploadImage={handleUploadImage}
             mode={action}
             category={categoryDetail}
-            onSubmit={async (data) => {
-              action == 'create-root' && (await handleCreateCategoryRoot(data))
-              action == 'create-child' &&
-                (await handleCreateCategoryChild(data))
-              action == 'update-root' && (await handleUpdateCategoryRoot(data))
-              action == 'update-child' &&
-                (await handleUpdateCategoryChild(data))
-            }}
+            onSubmit={handleSubmitCategory}
           />
           <ReasonModal
             header="Delete category (This action can't be undone.)"

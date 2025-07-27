@@ -14,8 +14,7 @@ function AdminCommissionRate() {
     selectedCommissionRate,
     handleOpenModal,
     handleCloseModal,
-    handleCreateCommissionRate,
-    handleUpdateCommissionRate
+    handleSubmit
   } = useAdminCommissionRate()
   return (
     <Paper
@@ -36,11 +35,7 @@ function AdminCommissionRate() {
       <CommissionRateForm
         action={action}
         open={openModal}
-        onSubmit={
-          action === 'create'
-            ? handleCreateCommissionRate
-            : handleUpdateCommissionRate
-        }
+        onSubmit={handleSubmit}
         onClose={handleCloseModal}
         categoriesRoot={categoriesRoot}
         commissionRate={selectedCommissionRate}

@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
-const LOADING_CLASS = [
-  '.btn-submit-commission-form',
-  '.btn-cancel-submit-commission-form'
-]
-
 export const useAdminCommissionRateForm = ({
   action,
   commissionRate,
@@ -36,7 +31,7 @@ export const useAdminCommissionRateForm = ({
   const handleFormSubmit = async (data) => {
     setIsSubmitting(true)
     try {
-      await onSubmit({ data, loadingClass: LOADING_CLASS })
+      await onSubmit({ data })
     } finally {
       setIsSubmitting(false)
     }

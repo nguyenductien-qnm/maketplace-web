@@ -11,59 +11,49 @@ import {
 } from '~/api/category.api'
 import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
 import { StatusCodes } from 'http-status-codes'
+import { navigate } from '~/helpers/navigation'
 
+// ================= CONSTANTS =================
 const LOADING_CLASS = [
   '.btn-cancel-submit-category-form',
   '.btn-submit-category-form'
 ]
-
 const LOADING_CLASS_DELETE = [
   '.btn-reason-modal-cancel',
   '.btn-reason-modal-submit'
 ]
 
+// ================= STATE =================
 export const useAdminCategory = () => {
+  const [isDenied, setDenied] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [categoriesTree, setCategoriesTree] = useState([])
   const [categoryDetail, setCategoryDetail] = useState(null)
-  const [openModal, setOpenModal] = useState(false)
-  const [openReasonModal, setOpenReasonModal] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [action, setAction] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [openModal, setOpenModal] = useState(false)
+  const [openReasonModal, setOpenReasonModal] = useState(false)
 
-  const convertData = (data) => ({
-    id: data?._id,
-    parent: data?.category_parent_id || 0,
-    text: data?.category_name,
-    icon: data?.category_icon,
-    status: data?.category_status
-  })
-
+  // ================= EFFECT =================
   useEffect(() => {
     fetchCategories()
   }, [])
 
+  useEffect(() => {
+    if (isDenied) navigate('/unauthorized')
+  }, [isDenied])
+
+  // ================= API CALL =================
   const fetchCategories = async () => {
     try {
       const { status, resData } = await queryCategoriesByAdminAPI()
-      if (status === StatusCodes.OK) {
+      if (status === StatusCodes.OK)
         setCategoriesTree((resData?.metadata || []).map(convertData))
-      }
+    } catch {
+      setDenied(true)
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const getSubtreeDepth = (nodeId, treeData) => {
-    const children = treeData.filter((node) => node.parent === nodeId)
-
-    if (children.length === 0) return 1
-
-    const childrenDepths = children.map((child) =>
-      getSubtreeDepth(child.id, treeData)
-    )
-
-    return 1 + Math.max(...childrenDepths)
   }
 
   const handleQueryCategoryDetail = async (category) => {
@@ -72,15 +62,32 @@ export const useAdminCategory = () => {
       const hasChild = categoriesTree.some(
         (c) => c.parent === resData.metadata._id
       )
-
       setCategoryDetail({ ...resData.metadata, hasChild } || {})
     }
   }
 
+  // ================= HELPER =================
+  const convertData = (data) => ({
+    id: data?._id,
+    parent: data?.category_parent_id || 0,
+    text: data?.category_name,
+    icon: data?.category_icon,
+    status: data?.category_status
+  })
+
+  const getSubtreeDepth = (nodeId, treeData) => {
+    const children = treeData.filter((node) => node.parent === nodeId)
+    if (children.length === 0) return 1
+    const depths = children.map((child) => getSubtreeDepth(child.id, treeData))
+    return 1 + Math.max(...depths)
+  }
+
+  // ================= HANDLERS =================
   const handleOpenModal = ({ action, category }) => {
     setAction(action)
     setSelectedCategory(category)
-    if (action == 'delete') {
+
+    if (action === 'delete') {
       setOpenReasonModal(true)
     } else {
       setOpenModal(true)
@@ -103,6 +110,34 @@ export const useAdminCategory = () => {
     return url
   }
 
+  const handleDrop = async (newTree, options) => {
+    const { dragSourceId, dropTargetId, dragSource, dropTarget } = options
+    if (dragSourceId === dropTargetId) return
+
+    const dragNodeDepth = getSubtreeDepth(dragSource.id, categoriesTree)
+    if (dragNodeDepth >= 2 && dropTarget.parent !== 0) return
+
+    const newParent = categoriesTree.find((c) => c.id === dropTargetId)
+    if (newParent?.status === 'inactive' && dragSource.status === 'active')
+      return
+
+    const newIndex = newTree
+      .filter((c) => c.parent === newParent.id)
+      .findIndex((c) => c.id === dragSourceId)
+
+    const payload = {
+      category_id: dragSourceId,
+      new_index: newIndex,
+      new_parent_id: newParent.id
+    }
+
+    setCategoriesTree(newTree)
+
+    const { status } = await updateCategoryPositionAPI({ payload })
+    if (status !== StatusCodes.OK) fetchCategories()
+  }
+
+  // ================= CRUD =================
   const handleCreateCategoryRoot = async (data) => {
     const { status, resData } = await createCategoryRootAPI({
       payload: data,
@@ -147,9 +182,8 @@ export const useAdminCategory = () => {
     })
     if (status === StatusCodes.OK) {
       const updated = resData?.metadata
-
       const isInactive = updated?.category_status === 'inactive'
-      const hasChild = categoriesTree.some((c) => c.parent == updated._id)
+      const hasChild = categoriesTree.some((c) => c.parent === updated._id)
 
       if (isInactive && hasChild) {
         fetchCategories()
@@ -175,9 +209,8 @@ export const useAdminCategory = () => {
     })
     if (status === StatusCodes.OK) {
       const updated = resData?.metadata
-
       const isInactive = updated?.category_status === 'inactive'
-      const hasChild = categoriesTree.some((c) => c.parent == updated._id)
+      const hasChild = categoriesTree.some((c) => c.parent === updated._id)
 
       if (isInactive && hasChild) {
         fetchCategories()
@@ -186,41 +219,16 @@ export const useAdminCategory = () => {
           prev.map((c) => (c.id === updated._id ? convertData(updated) : c))
         )
       }
+
       handleCloseModal()
     }
   }
 
-  const handleDrop = async (newTree, options) => {
-    const { dragSourceId, dropTargetId, dragSource, dropTarget } = options
-    if (dragSourceId == dropTargetId) return
-    const dragNodeSubtreeDepth = getSubtreeDepth(dragSource.id, categoriesTree)
-    if (dragNodeSubtreeDepth >= 2 && dropTarget.parent != 0) return
-
-    const new_parent = categoriesTree.find((c) => c.id == dropTargetId)
-
-    if (new_parent.status === 'inactive' && dragSource.status === 'active')
-      return
-
-    const new_index = newTree
-      .filter((c) => c.parent == new_parent.id)
-      .findIndex((c) => c.id == dragSourceId)
-
-    const payload = {
-      category_id: dragSourceId,
-      new_index,
-      new_parent_id: new_parent.id
-    }
-    setCategoriesTree(newTree)
-
-    const { status } = await updateCategoryPositionAPI({ payload })
-    if (status != StatusCodes.OK) fetchCategories()
-  }
-
-  const handleDeleteCategory = async (data) => {
+  const handleDeleteCategory = async (reason) => {
     const { id } = selectedCategory
     const { status } = await deleteCategoryByAdminAPI({
       _id: id,
-      payload: { reason: data },
+      payload: { reason },
       loadingClass: LOADING_CLASS_DELETE
     })
     if (status === StatusCodes.OK) {
@@ -229,6 +237,23 @@ export const useAdminCategory = () => {
     }
   }
 
+  // ================= SUBMIT HANDLER =================
+  const handleSubmitCategory = async (data) => {
+    switch (action) {
+      case 'create-root':
+        return await handleCreateCategoryRoot(data)
+      case 'create-child':
+        return await handleCreateCategoryChild(data)
+      case 'update-root':
+        return await handleUpdateCategoryRoot(data)
+      case 'update-child':
+        return await handleUpdateCategoryChild(data)
+      default:
+        console.warn('Unhandled action:', action)
+    }
+  }
+
+  // ================= RETURN =================
   return {
     isLoading,
     openModal,
@@ -236,16 +261,10 @@ export const useAdminCategory = () => {
     action,
     categoryDetail,
     categoriesTree,
-
     handleOpenModal,
     handleCloseModal,
-
-    handleCreateCategoryRoot,
-    handleCreateCategoryChild,
-    handleUpdateCategoryRoot,
-    handleUpdateCategoryChild,
+    handleSubmitCategory,
     handleDrop,
-
     handleUploadImage,
     handleDeleteCategory
   }

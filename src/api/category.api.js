@@ -3,7 +3,7 @@ import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 
 const getCategoriesRootByAdminAPI = async () => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/category/admin/root`,
+    `${API_ROOT}/v1/api/admin/category/root`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
@@ -11,7 +11,7 @@ const getCategoriesRootByAdminAPI = async () => {
 
 const queryCategoriesByAdminAPI = async () => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/category/admin`,
+    `${API_ROOT}/v1/api/admin/category`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
@@ -20,7 +20,7 @@ const queryCategoriesByAdminAPI = async () => {
 const queryCategoryDetailByAdminAPI = async ({ id, parent }) => {
   const isRoot = parent === 0
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/category/admin/${id}`,
+    `${API_ROOT}/v1/api/admin/category/${id}`,
     {
       params: { root: isRoot },
       ...TOAST_MODE.ONLY_ERROR
@@ -31,7 +31,7 @@ const queryCategoryDetailByAdminAPI = async ({ id, parent }) => {
 
 const createCategoryRootAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/category/admin/root`,
+    `${API_ROOT}/v1/api/admin/category/root`,
     payload,
     { ...TOAST_MODE.ALL, loadingClass }
   )
@@ -40,7 +40,7 @@ const createCategoryRootAPI = async ({ payload, loadingClass }) => {
 
 const createCategoryChildAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/category/admin/child`,
+    `${API_ROOT}/v1/api/admin/category/child`,
     payload,
     { ...TOAST_MODE.ALL, loadingClass }
   )
@@ -49,7 +49,7 @@ const createCategoryChildAPI = async ({ payload, loadingClass }) => {
 
 const updateCategoryRootByAdminAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/category/admin/root`,
+    `${API_ROOT}/v1/api/admin/category/root`,
     payload,
     { ...TOAST_MODE.ALL, loadingClass }
   )
@@ -58,7 +58,7 @@ const updateCategoryRootByAdminAPI = async ({ payload, loadingClass }) => {
 
 const updateCategoryChildByAdminAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/category/admin/child`,
+    `${API_ROOT}/v1/api/admin/category/child`,
     payload,
     { ...TOAST_MODE.ALL, loadingClass }
   )
@@ -68,7 +68,7 @@ const updateCategoryChildByAdminAPI = async ({ payload, loadingClass }) => {
 const updateCategoryPositionAPI = async ({ payload }) => {
   try {
     const { status, data } = await authorizedAxios.put(
-      `${API_ROOT}/v1/api/category/admin/update-position`,
+      `${API_ROOT}/v1/api/admin/category/update-position`,
       payload,
       { ...TOAST_MODE.ONLY_ERROR }
     )
@@ -81,7 +81,7 @@ const updateCategoryPositionAPI = async ({ payload }) => {
 
 const deleteCategoryByAdminAPI = async ({ _id, payload, loadingClass }) => {
   const { status } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/category/admin/${_id}/delete`,
+    `${API_ROOT}/v1/api/admin/category/${_id}/delete`,
     payload,
     { ...TOAST_MODE.ALL, loadingClass }
   )
