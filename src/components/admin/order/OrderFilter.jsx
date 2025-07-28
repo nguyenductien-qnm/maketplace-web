@@ -3,25 +3,22 @@ import MenuItem from '@mui/material/MenuItem'
 import Popover from '@mui/material/Popover'
 import Select from '@mui/material/Select'
 import Slider from '@mui/material/Slider'
-import { useEffect, useState } from 'react'
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
+import Divider from '@mui/material/Divider'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import TextField from '@mui/material/TextField'
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
-import {
-  Button,
-  Checkbox,
-  Divider,
-  FormControlLabel,
-  TextField
-} from '@mui/material'
 import TypographyLabel from '../../common/TypographyLabel'
+import { useState } from 'react'
 
 function OrderFilter({
-  status,
   filters,
+  provinces,
+  shops,
   setFilters,
   handleFilter,
-  handleClearFilter,
-  provinces,
-  shops
+  handleClearFilter
 }) {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)

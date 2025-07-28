@@ -32,7 +32,7 @@ import styles from '~/components/admin/category/App.module.css'
 function AdminCategory() {
   const {
     // UI state
-    isLoading,
+    loading,
     openModal,
     openReasonModal,
     action,
@@ -66,12 +66,12 @@ function AdminCategory() {
       }}
     >
       <CategoryHeader handleOpenModal={handleOpenModal} />
-      {isLoading && (
+      {loading && (
         <Box sx={{ alignSelf: 'center', mt: 10 }}>
           <CircularIndeterminate />
         </Box>
       )}
-      {!isLoading && (
+      {!loading && (
         <>
           <DndProvider backend={MultiBackend} options={getBackendOptions()}>
             <Box

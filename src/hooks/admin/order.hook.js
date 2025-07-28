@@ -1,3 +1,4 @@
+import { StatusCodes } from 'http-status-codes'
 import { useEffect, useRef, useState } from 'react'
 import {
   getOrderDetailByAdminAPI,
@@ -7,50 +8,45 @@ import {
 } from '~/api/order.api'
 import { getShopListForFilterAPI } from '~/api/shop.api'
 import { apiGetProvinces } from '~/helpers/getAddress'
+import { navigate } from '~/helpers/navigation'
+
+// ================= CONSTANTS =================
+const DEFAULT_FILTERS = {
+  search: '',
+  orderPaymentMethod: '',
+  orderPaymentStatus: '',
+  createdFrom: '',
+  createdTo: '',
+  shippingToProvince: '',
+  orderOfShop: '',
+  totalPriceRange: [0, 2000],
+  isHaveDiscount: false
+}
+
+const LOADING_CLASS = ['.btn-mark-as-shipping', '.btn-mark-as-delivered']
 
 export const useAdminOrder = ({ status }) => {
-  const defaultFilters = {
-    search: '',
-    orderPaymentMethod: '',
-    orderPaymentStatus: '',
-    createdFrom: '',
-    createdTo: '',
-    shippingToProvince: '',
-    orderOfShop: '',
-    totalPriceRange: [0, 2000],
-    isHaveDiscount: false
-  }
-
+  // ================= STATE =================
   const [orders, setOrders] = useState([])
   const [count, setCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [isDenied, setDenied] = useState(false)
+  const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [provinces, setProvinces] = useState([])
   const [shops, setShops] = useState([])
 
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
 
-  const [filters, setFilters] = useState(defaultFilters)
   const skipEffect = useRef(false)
 
   const [openDetailModal, setOpenDetailModal] = useState(false)
-  const [openUpdateStatusModal, setOpenUpdateStatusModal] = useState(false)
-  const [action, setAction] = useState(null)
-  const [selectedOrder, setSelectedOrder] = useState(null)
   const [orderDetail, setOrderDetail] = useState(null)
 
+  // ================= EFFECT =================
   useEffect(() => {
-    const fetchProvinces = async () => {
-      const res = await apiGetProvinces()
-      setProvinces(res)
-    }
-    const fetchShops = async () => {
-      const res = await getShopListForFilterAPI()
-      setShops(res?.data?.metadata)
-    }
-    fetchProvinces()
-    fetchShops()
+    getProvinceList()
+    getShopList()
   }, [])
 
   useEffect(() => {
@@ -58,30 +54,51 @@ export const useAdminOrder = ({ status }) => {
       skipEffect.current = false
       return
     }
-
-    queryOrderByAdmin({ page, rowsPerPage, status, ...filters })
+    fetchOrders({ page, rowsPerPage, status, ...filters })
   }, [status, page, rowsPerPage])
 
-  const queryOrderByAdmin = async (data) => {
+  useEffect(() => {
+    if (isDenied) navigate('/unauthorized')
+  }, [isDenied])
+
+  // ================= API =================
+  const fetchOrders = async (data) => {
     setLoading(true)
     try {
-      const res = await queryOrderByAdminAPI(data)
-      if (res.status === 200) {
-        setOrders(res?.data?.metadata?.orders)
-        setCount(res?.data?.metadata?.count)
-      } else {
-        setDenied(true)
+      const { status, resData } = await queryOrderByAdminAPI({ payload: data })
+      if (status === StatusCodes.OK) {
+        const { orders, count } = resData?.metadata
+        setOrders(orders || [])
+        setCount(count || 0)
       }
-    } catch (err) {
+    } catch {
       setDenied(true)
     } finally {
       setLoading(false)
     }
   }
 
+  const fetchOrderDetail = async (order) => {
+    const { status, resData } = await getOrderDetailByAdminAPI({
+      _id: order?._id
+    })
+    if (status === StatusCodes.OK) setOrderDetail(resData?.metadata)
+  }
+
+  const getProvinceList = async () => {
+    const { status, resData } = await apiGetProvinces()
+    if (status === StatusCodes.OK) setProvinces(resData?.metadata || [])
+  }
+
+  const getShopList = async () => {
+    const { status, resData } = await getShopListForFilterAPI()
+    if (status === StatusCodes.OK) setShops(resData?.metadata || [])
+  }
+
+  // ================= FILTER HANDLER =================
   const handleFilter = () => {
-    if (page == 0) {
-      queryOrderByAdmin({ page, rowsPerPage, status, ...filters })
+    if (page === 0) {
+      fetchOrders({ page, rowsPerPage, status, ...filters })
     } else {
       setPage(0)
     }
@@ -89,33 +106,21 @@ export const useAdminOrder = ({ status }) => {
 
   const handleClearFilter = () => {
     skipEffect.current = true
-    setFilters(defaultFilters)
+    setFilters(DEFAULT_FILTERS)
   }
 
-  const handleGetOrderDetail = async (data) => {
-    const res = await getOrderDetailByAdminAPI({ _id: data?._id })
-    setOrderDetail(res?.data?.metadata)
-  }
-
-  const handleOpenModal = ({ action, order }) => {
-    setAction(action)
-    setSelectedOrder(order)
-    if (action === 'detail') {
-      setOpenDetailModal(true)
-      handleGetOrderDetail(order)
-    } else if (action === 'update-status') {
-      setOpenUpdateStatusModal(true)
-    }
+  // ================= MODAL HANDLER =================
+  const handleOpenModal = ({ order }) => {
+    setOpenDetailModal(true)
+    fetchOrderDetail(order)
   }
 
   const handleCloseModal = () => {
     setOpenDetailModal(false)
-    setOpenUpdateStatusModal(false)
-    setAction(null)
-    setSelectedOrder(null)
     setOrderDetail(null)
   }
 
+  // ================= PAGINATION =================
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
   }
@@ -125,49 +130,66 @@ export const useAdminOrder = ({ status }) => {
     setPage(0)
   }
 
+  // ================= STATUS UPDATE =================
   const handleMarkOrderAsShipping = async (data) => {
-    const res = await updateOrderStatusToShippingAPI(data)
+    const { status, resData } = await updateOrderStatusToShippingAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS
+    })
 
-    if (res?.status === 200) {
-      const orderUpdated = res?.data?.metadata
+    if (status === StatusCodes.OK) {
+      const updated = resData?.metadata
       setOrders((prev) =>
-        prev.map((o) => (o._id === orderUpdated._id ? orderUpdated : o))
+        prev.map((o) => (o._id === updated._id ? updated : o))
       )
     }
   }
 
   const handleMarkOrderAsDelivered = async (data) => {
-    const res = await updateOrderStatusToDeliveredAPI(data)
+    const { status, resData } = await updateOrderStatusToDeliveredAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS
+    })
 
-    if (res?.status === 200) {
-      const orderUpdated = res?.data?.metadata
+    if (status === StatusCodes.OK) {
+      const updated = resData?.metadata
       setOrders((prev) =>
-        prev.map((o) => (o._id === orderUpdated._id ? orderUpdated : o))
+        prev.map((o) => (o._id === updated._id ? updated : o))
       )
     }
   }
 
+  // ================= RETURN =================
   return {
+    // Filter
     filters,
     setFilters,
     handleFilter,
     handleClearFilter,
+
+    // Location & Shop
     provinces,
     shops,
+
+    // Pagination
+    page,
+    rowsPerPage,
     handleChangePage,
     handleChangeRowsPerPage,
+
+    // Modal
+    openDetailModal,
     handleOpenModal,
     handleCloseModal,
+
+    // Data
     loading,
     isDenied,
     orders,
     count,
-    page,
-    rowsPerPage,
     orderDetail,
-    openDetailModal,
-    openUpdateStatusModal,
-    selectedOrder,
+
+    // Actions
     handleMarkOrderAsShipping,
     handleMarkOrderAsDelivered
   }

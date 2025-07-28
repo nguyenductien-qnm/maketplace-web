@@ -1,12 +1,16 @@
+import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
 import TypographyLabel from '~/components/common/TypographyLabel'
-import { Box, Divider, TextField, Typography } from '@mui/material'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import formatCurrency from '~/utils/formatCurrency'
+import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
 
 function OrderDetailModal({ open, onClose, order }) {
   const address = order?.order_address
@@ -57,7 +61,7 @@ function OrderDetailModal({ open, onClose, order }) {
                 <TypographyLabel>Payment method</TypographyLabel>
                 <TextField
                   size="small"
-                  value={order?.order_payment_method}
+                  value={capitalizeFirstLetter(order?.order_payment_method)}
                   disabled
                   fullWidth
                 />
@@ -67,7 +71,7 @@ function OrderDetailModal({ open, onClose, order }) {
                 <TypographyLabel>Payment status</TypographyLabel>
                 <TextField
                   size="small"
-                  value={order?.order_payment_status}
+                  value={capitalizeFirstLetter(order?.order_payment_status)}
                   disabled
                   fullWidth
                 />
@@ -79,7 +83,7 @@ function OrderDetailModal({ open, onClose, order }) {
                 <TypographyLabel>Status</TypographyLabel>
                 <TextField
                   size="small"
-                  value={order?.order_status}
+                  value={capitalizeFirstLetter(order?.order_status)}
                   disabled
                   fullWidth
                 />

@@ -51,8 +51,8 @@ export const useAdminProduct = ({ status }) => {
 
   useEffect(() => {
     const fetchShops = async () => {
-      const res = await getShopListForFilterAPI()
-      setShops(res?.data?.metadata)
+      const { status, resData } = await getShopListForFilterAPI()
+      if (status === StatusCodes.OK) setShops(resData?.metadata || [])
     }
     const fetchCategories = async () => {
       const res = await authorizedAxios.get(`${API_ROOT}/v1/api/category`)

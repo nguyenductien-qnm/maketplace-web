@@ -2,8 +2,8 @@ import axios from 'axios'
 import { API_ROOT } from '~/utils/constants'
 
 const apiGetProvinces = async () => {
-  const provinces = await axios.get(`${API_ROOT}/v1/api/ghn/get-address`)
-  return provinces.data
+  const { status, data } = await axios.get(`${API_ROOT}/v1/api/ghn/get-address`)
+  return { status, resData: data }
 }
 
 const apiGetDistricts = async (provinceId) => {

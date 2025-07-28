@@ -8,6 +8,7 @@ import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
 import { Button, Divider, TextField } from '@mui/material'
 import { apiGetProvinces } from '~/helpers/getAddress'
 import TypographyLabel from '../../common/TypographyLabel'
+import { StatusCodes } from 'http-status-codes'
 
 function ShopFilter({
   status,
@@ -25,8 +26,8 @@ function ShopFilter({
 
   useEffect(() => {
     const fetchProvinces = async () => {
-      const res = await apiGetProvinces()
-      setProvinces(res)
+      const { status, resData } = await apiGetProvinces()
+      if (status === StatusCodes.OK) setProvinces(resData?.metadata || [])
     }
     fetchProvinces()
   }, [])

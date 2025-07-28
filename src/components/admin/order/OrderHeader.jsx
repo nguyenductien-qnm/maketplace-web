@@ -1,16 +1,19 @@
-import { Box, Button, Tooltip, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import OrderFilter from './OrderFilter'
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 
 function OrderHeader({
   name,
   filters,
+  provinces,
+  shops,
   setFilters,
   handleFilter,
   handleClearFilter,
-  handleExportData,
-  provinces,
-  shops
+  handleExportData
 }) {
   return (
     <Box
@@ -33,11 +36,11 @@ function OrderHeader({
           <Box>
             <OrderFilter
               filters={filters}
+              provinces={provinces}
+              shops={shops}
               setFilters={setFilters}
               handleFilter={handleFilter}
               handleClearFilter={handleClearFilter}
-              provinces={provinces}
-              shops={shops}
             />
           </Box>
         </Tooltip>

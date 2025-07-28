@@ -8,6 +8,7 @@ import {
 import TypographyLabel from './TypographyLabel'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import FieldErrorAlert from './FieldErrorAlert'
+import { StatusCodes } from 'http-status-codes'
 
 function FormAddress({
   register,
@@ -28,7 +29,8 @@ function FormAddress({
   const [selectedWard, setSelectedWard] = useState({})
 
   const getAndSetListProvinces = async () => {
-    setListProvinces(await apiGetProvinces())
+    const { status, resData } = await apiGetProvinces()
+    if (status === StatusCodes.OK) setListProvinces(resData?.metadata || [])
   }
 
   const getAndSetListDistricts = async (provinceId) => {

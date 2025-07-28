@@ -97,13 +97,13 @@ export const getShopDetailForAdminAPI = async ({ _id }) => {
 }
 
 export const getShopListForFilterAPI = async () => {
-  const res = await authorizedAxios.get(
+  const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/shop/get-shop-list-for-filter`,
     {
       ...TOAST_MODE.ONLY_ERROR
     }
   )
-  return res
+  return { status, resData: data }
 }
 
 export const exportShopDataAPI = async (data) => {

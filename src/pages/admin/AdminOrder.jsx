@@ -1,4 +1,4 @@
-import { Paper } from '@mui/material'
+import Paper from '@mui/material/Paper'
 import OrderDetailModal from '~/components/admin/order/OrderDetailModal'
 import OrderHeader from '~/components/admin/order/OrderHeader'
 import OrderTable from '~/components/admin/order/OrderTable'
@@ -9,24 +9,22 @@ function AdminOrder({ status, name }) {
   const {
     filters,
     setFilters,
-    handleFilter,
-    handleClearFilter,
     provinces,
-    loading,
-    isDenied,
     orders,
+    orderDetail,
+    shops,
     count,
     page,
     rowsPerPage,
-    shops,
+    openDetailModal,
+    loading,
+    isDenied,
+    handleFilter,
+    handleClearFilter,
     handleOpenModal,
     handleCloseModal,
-    openDetailModal,
     handleChangePage,
     handleChangeRowsPerPage,
-    orderDetail,
-    openUpdateStatusModal,
-    selectedOrder,
     handleMarkOrderAsShipping,
     handleMarkOrderAsDelivered
   } = useAdminOrder({ status })
@@ -43,11 +41,11 @@ function AdminOrder({ status, name }) {
         name={name}
         filters={filters}
         status={status}
+        provinces={provinces}
+        shops={shops}
         setFilters={setFilters}
         handleFilter={handleFilter}
         handleClearFilter={handleClearFilter}
-        provinces={provinces}
-        shops={shops}
       />
 
       {loading && <TableSkeleton columns={8} rows={rowsPerPage} />}
@@ -58,11 +56,10 @@ function AdminOrder({ status, name }) {
           count={count}
           page={page}
           rowsPerPage={rowsPerPage}
-          handleOpenModal={handleOpenModal}
-          openDetailModal={openDetailModal}
-          handleCloseModal={handleCloseModal}
           handleChangePage={handleChangePage}
           handleChangeRowsPerPage={handleChangeRowsPerPage}
+          handleOpenModal={handleOpenModal}
+          handleCloseModal={handleCloseModal}
           handleMarkOrderAsShipping={handleMarkOrderAsShipping}
           handleMarkOrderAsDelivered={handleMarkOrderAsDelivered}
         />

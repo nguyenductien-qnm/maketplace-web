@@ -1,3 +1,7 @@
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
+import Tooltip from '@mui/material/Tooltip'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -7,8 +11,6 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableFooter from '@mui/material/TableFooter'
 import TablePagination from '@mui/material/TablePagination'
-import { Box, Button, Chip, Tooltip } from '@mui/material'
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import NoData from '../NoData'
 import formatCurrency from '~/utils/formatCurrency'
@@ -44,14 +46,14 @@ function OrderTable({
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell align="right">Shop</TableCell>
-                <TableCell align="right">Payment method</TableCell>
-                <TableCell align="right">Payment status</TableCell>
-                <TableCell align="right">Order status</TableCell>
-                <TableCell align="right">Have voucher</TableCell>
-                <TableCell align="right">Total price</TableCell>
-                <TableCell align="right">Detail</TableCell>
-                <TableCell align="right">Created at</TableCell>
+                <TableCell align="left">Shop</TableCell>
+                <TableCell align="left">Payment method</TableCell>
+                <TableCell align="left">Payment status</TableCell>
+                <TableCell align="left">Order status</TableCell>
+                <TableCell align="left">Have voucher</TableCell>
+                <TableCell align="left">Total price</TableCell>
+                <TableCell align="left">Created at</TableCell>
+                <TableCell align="left">Detail</TableCell>
                 <TableCell align="left">Action</TableCell>
               </TableRow>
             </TableHead>
@@ -61,8 +63,8 @@ function OrderTable({
                   key={order?._id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell align="right">{order.shop_name}</TableCell>
-                  <TableCell align="right">
+                  <TableCell align="left">{order.shop_name}</TableCell>
+                  <TableCell align="left">
                     <Chip
                       label={order.order_payment_method?.toUpperCase()}
                       size="small"
@@ -76,7 +78,7 @@ function OrderTable({
                       }}
                     />
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell align="left">
                     <Chip
                       label={order.order_payment_status?.toUpperCase()}
                       size="small"
@@ -91,7 +93,7 @@ function OrderTable({
                     />
                   </TableCell>
 
-                  <TableCell align="right">
+                  <TableCell align="left">
                     <Chip
                       label={order.order_status.toUpperCase()}
                       size="small"
@@ -112,18 +114,20 @@ function OrderTable({
                     />
                   </TableCell>
 
-                  <TableCell align="right">
+                  <TableCell align="left">
                     {order.isHaveVoucher ? (
                       <CheckOutlinedIcon sx={{ color: '#4caf50' }} />
                     ) : (
                       <ClearOutlinedIcon sx={{ color: '#f44336' }} />
                     )}
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell align="left">
                     <b>{formatCurrency(order.order_total_price)}</b>
                   </TableCell>
 
-                  <TableCell align="right">
+                  <TableCell align="left">{order.createdAt}</TableCell>
+
+                  <TableCell align="left">
                     <Tooltip title="View detail order">
                       <Box
                         sx={{
@@ -132,7 +136,7 @@ function OrderTable({
                           }
                         }}
                         onClick={() => {
-                          handleOpenModal({ action: 'detail', order })
+                          handleOpenModal({ order })
                         }}
                       >
                         <InfoOutlinedIcon />
@@ -140,12 +144,12 @@ function OrderTable({
                     </Tooltip>
                   </TableCell>
 
-                  <TableCell align="right">{order.createdAt}</TableCell>
-                  <TableCell align="right">
+                  <TableCell align="left">
                     {status === 'CONFIRMED' &&
                       order?.order_status === 'confirmed' && (
                         <Tooltip title="Mark as shipping">
                           <Button
+                            className="btn-mark-as-shipping"
                             variant="contained"
                             onClick={() =>
                               handleMarkOrderAsShipping({ _id: order?._id })
@@ -160,6 +164,7 @@ function OrderTable({
                       order?.order_status === 'shipping' && (
                         <Tooltip title="Mark as delivered">
                           <Button
+                            className="btn-mark-as-delivered"
                             variant="contained"
                             onClick={() =>
                               handleMarkOrderAsDelivered({ _id: order?._id })

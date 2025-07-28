@@ -54,7 +54,7 @@ export const useAdminTransaction = ({ type }) => {
     } else if (type == 'CUSTOMER') {
       getUserList()
     }
-  }, [status, page, rowsPerPage])
+  }, [type, page, rowsPerPage])
 
   // ============================== API ==============================
 
@@ -78,8 +78,8 @@ export const useAdminTransaction = ({ type }) => {
   }
 
   const getShopList = async () => {
-    const res = await getShopListForFilterAPI()
-    setShops(res?.data?.metadata || [])
+    const { status, resData } = await getShopListForFilterAPI()
+    if (status === StatusCodes.OK) setShops(resData?.metadata || [])
   }
 
   const getUserList = async () => {

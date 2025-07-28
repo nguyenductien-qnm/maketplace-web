@@ -26,7 +26,7 @@ const LOADING_CLASS_DELETE = [
 // ================= STATE =================
 export const useAdminCategory = () => {
   const [isDenied, setDenied] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
   const [categoriesTree, setCategoriesTree] = useState([])
   const [categoryDetail, setCategoryDetail] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
@@ -52,7 +52,7 @@ export const useAdminCategory = () => {
     } catch {
       setDenied(true)
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
@@ -255,7 +255,7 @@ export const useAdminCategory = () => {
 
   // ================= RETURN =================
   return {
-    isLoading,
+    loading,
     openModal,
     openReasonModal,
     action,

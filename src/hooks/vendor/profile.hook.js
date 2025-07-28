@@ -81,7 +81,8 @@ export const useVendorProfile = () => {
   }, [selectedDistrict])
 
   const getAndSetProvinces = async () => {
-    setProvinces(await apiGetProvinces())
+    const { status, resData } = await apiGetProvinces()
+    if (status === StatusCodes.OK) setProvinces(resData?.metadata || [])
   }
 
   const getAndSetDistricts = async (provinceId) => {
