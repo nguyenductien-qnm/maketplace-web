@@ -24,7 +24,8 @@ function ProductDetailModal({ open, onClose, product, categories }) {
     const mapped = {}
     product.product_classifications.forEach((cls, i) => {
       const name = cls.name
-      mapped[name] = skuItem[name] || cls.options[skuItem.sku_tier_indices?.[i]]
+      mapped[name] =
+        skuItem?.[name] ?? cls.options?.[skuItem?.sku_tier_indices?.[i]] ?? ''
     })
     return {
       ...mapped,
@@ -62,8 +63,8 @@ function ProductDetailModal({ open, onClose, product, categories }) {
               <Box sx={{ flex: 10 }}>
                 <TypographyLabel>Product gallery</TypographyLabel>
                 <Box sx={{ display: 'flex' }}>
-                  {product?.product_gallery?.map((g) => (
-                    <img style={{ width: '150px' }} src={g} />
+                  {product?.product_gallery?.map((g, i) => (
+                    <img key={i} style={{ width: '150px' }} src={g} />
                   ))}
                 </Box>
               </Box>
@@ -72,27 +73,6 @@ function ProductDetailModal({ open, onClose, product, categories }) {
             <Box sx={{ flex: 1 }}>
               <TypographyLabel>Product name</TypographyLabel>
               <ReadOnlyTextField value={product?.product_name} rows={2} />
-            </Box>
-
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <Box sx={{ flex: 1 }}>
-                <TypographyLabel>Product min price</TypographyLabel>
-                <ReadOnlyTextField
-                  value={formatCurrency(product?.product_min_price)}
-                />
-              </Box>
-
-              <Box sx={{ flex: 1 }}>
-                <TypographyLabel>Product max price</TypographyLabel>
-                <ReadOnlyTextField
-                  value={formatCurrency(product?.product_max_price)}
-                />
-              </Box>
-
-              <Box sx={{ flex: 1 }}>
-                <TypographyLabel>Product stock</TypographyLabel>
-                <ReadOnlyTextField value={product?.product_stock} />
-              </Box>
             </Box>
 
             <Box sx={{ display: 'flex', gap: 2 }}>
@@ -150,8 +130,8 @@ function ProductDetailModal({ open, onClose, product, categories }) {
 
             <Box sx={{ flex: 1 }}>
               <TypographyLabel>Product attributes</TypographyLabel>
-              {attributes?.map((a) => (
-                <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+              {attributes?.map((a, i) => (
+                <Box sx={{ display: 'flex', gap: 2, mt: 2 }} key={i}>
                   <Box sx={{ flex: 1 }}>
                     <ReadOnlyTextField value={a?.key} />
                   </Box>
@@ -166,8 +146,8 @@ function ProductDetailModal({ open, onClose, product, categories }) {
             <Box sx={{ flex: 1 }}>
               <TypographyLabel>Product tags</TypographyLabel>
               <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-                {product?.product_tags?.map((a) => (
-                  <Chip label={a} variant="outlined" />
+                {product?.product_tags?.map((a, i) => (
+                  <Chip key={i} label={a} variant="outlined" />
                 ))}
               </Box>
             </Box>
@@ -208,10 +188,10 @@ function ProductDetailModal({ open, onClose, product, categories }) {
                       <ReadOnlyTextField value={sku[index]?.stock} />
                     </Box>
 
-                    {variants?.map((v) => (
+                    {variants?.map((v, i) => (
                       <Box
                         sx={{ flex: 1, maxWidth: '300px', minWidth: '200px' }}
-                        key={v}
+                        key={i}
                       >
                         <TypographyLabel>{v.name}</TypographyLabel>
                         <ReadOnlyTextField value={sku[index]?.[v.name]} />

@@ -1,12 +1,14 @@
-import { Box, Button, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 import Tooltip from '@mui/material/Tooltip'
 import ProductFilter from './ProductFilter'
 
 function ProductHeader({
+  name,
   shops,
   categories,
-  name,
   filters,
   setFilters,
   handleFilter,

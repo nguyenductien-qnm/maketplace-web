@@ -1,17 +1,19 @@
 import { StatusCodes } from 'http-status-codes'
 import { useEffect, useRef, useState } from 'react'
+import { getCategoriesAPI } from '~/api/category.api'
 import {
-  approvalProductByAdminAPI,
-  banProductByAdminAPI,
   getProductDetailByAdminAPI,
   queryProductByAdminAPI,
-  rejectProductByAdminAPI,
-  unbanProductByAdminAPI
+  updateProductStatusByAdminAPI
 } from '~/api/product.api'
 import { getShopListForFilterAPI } from '~/api/shop.api'
 import { navigate } from '~/helpers/navigation'
-import { authorizedAxios } from '~/utils/authorizedAxios'
-import { API_ROOT } from '~/utils/constants'
+
+const LOADING_CLASS = [
+  '.btn-reason-modal-submit',
+  '.btn-reason-modal-cancel',
+  '.btn-admin-approval-product'
+]
 
 export const useAdminProduct = ({ status }) => {
   // ============================== STATE ==============================
@@ -50,16 +52,8 @@ export const useAdminProduct = ({ status }) => {
   }, [isDenied])
 
   useEffect(() => {
-    const fetchShops = async () => {
-      const { status, resData } = await getShopListForFilterAPI()
-      if (status === StatusCodes.OK) setShops(resData?.metadata || [])
-    }
-    const fetchCategories = async () => {
-      const res = await authorizedAxios.get(`${API_ROOT}/v1/api/category`)
-      setCategories(res?.data?.metadata)
-    }
-    fetchShops()
-    fetchCategories()
+    getShopList()
+    getCategories()
   }, [])
 
   useEffect(() => {
@@ -72,6 +66,16 @@ export const useAdminProduct = ({ status }) => {
   }, [status, page, rowsPerPage])
 
   // ============================== API ==============================
+
+  const getShopList = async () => {
+    const { status, resData } = await getShopListForFilterAPI()
+    if (status === StatusCodes.OK) setShops(resData?.metadata || [])
+  }
+
+  const getCategories = async () => {
+    const { status, resData } = await getCategoriesAPI()
+    if (status === StatusCodes.OK) setCategories(resData?.metadata || [])
+  }
 
   const queryProductByAdmin = async (data) => {
     setLoading(true)
@@ -95,8 +99,10 @@ export const useAdminProduct = ({ status }) => {
 
   // ============================== HANDLER ==============================
   const handleGetProductDetail = async (data) => {
-    const res = await getProductDetailByAdminAPI({ _id: data._id })
-    if (res.status === 200) setProductDetail(res?.data?.metadata)
+    const { status, resData } = await getProductDetailByAdminAPI({
+      _id: data._id
+    })
+    if (status === StatusCodes.OK) setProductDetail(resData?.metadata)
   }
 
   const handleFilter = () => {
@@ -145,7 +151,12 @@ export const useAdminProduct = ({ status }) => {
       _id: product?._id,
       action: 'approval'
     }
-    const { status, resData } = await approvalProductByAdminAPI({ payload })
+    const { status, resData } = await updateProductStatusByAdminAPI({
+      payload,
+      loadingClass: LOADING_CLASS,
+      action: 'approval'
+    })
+
     if (status === StatusCodes.OK) {
       const update = resData.metadata
       setProducts((prev) =>
@@ -155,12 +166,19 @@ export const useAdminProduct = ({ status }) => {
   }
 
   const handleRejectProduct = async (data) => {
+    console.log('data')
     const payload = {
       _id: selectedProduct?._id,
       action: 'reject',
       reason: data
     }
-    const { status, resData } = await rejectProductByAdminAPI({ payload })
+
+    const { status, resData } = await updateProductStatusByAdminAPI({
+      payload,
+      loadingClass: LOADING_CLASS,
+      action: 'reject'
+    })
+
     if (status === StatusCodes.OK) {
       handleCloseModal()
       const update = resData.metadata
@@ -176,7 +194,13 @@ export const useAdminProduct = ({ status }) => {
       action: 'ban',
       reason: data
     }
-    const { status, resData } = await banProductByAdminAPI({ payload })
+
+    const { status, resData } = await updateProductStatusByAdminAPI({
+      payload,
+      loadingClass: LOADING_CLASS,
+      action: 'ban'
+    })
+
     if (status === StatusCodes.OK) {
       handleCloseModal()
       const update = resData.metadata
@@ -192,7 +216,11 @@ export const useAdminProduct = ({ status }) => {
       action: 'unban',
       reason: data
     }
-    const { status, resData } = await unbanProductByAdminAPI({ payload })
+    const { status, resData } = await updateProductStatusByAdminAPI({
+      payload,
+      loadingClass: LOADING_CLASS,
+      action: 'unban'
+    })
     if (status === StatusCodes.OK) {
       handleCloseModal()
       const update = resData.metadata
@@ -233,7 +261,6 @@ export const useAdminProduct = ({ status }) => {
     products,
     count,
     loading,
-    isDenied,
     productDetail,
     shops,
     categories,

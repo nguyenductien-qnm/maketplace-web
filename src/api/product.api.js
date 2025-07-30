@@ -1,19 +1,20 @@
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 
-const queryProductByOwnerAPI = async (payloads) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/product/query-product-by-owner`,
-    payloads,
-    { ...TOAST_MODE.ONLY_ERROR }
-  )
-  return res
-}
-
+// ============================ CUSTOMER ============================
 const getProductDetailForCustomerAPI = async (product_slug) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/product/get-product-for-customer`,
     { product_slug },
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return res
+}
+// ============================ VENDOR ============================
+const queryProductByOwnerAPI = async (payloads) => {
+  const res = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/product/query-product-by-owner`,
+    payloads,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return res
@@ -84,10 +85,11 @@ const updateProductAPI = async (data, loadingClass) => {
   })
 }
 
+// ============================ ADMIN ============================
+
 const queryProductByAdminAPI = async ({ payload }) => {
-  console.log('payload:::', payload)
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/product/query-by-admin`,
+    `${API_ROOT}/v1/api/admin/product/query`,
     payload,
     {
       ...TOAST_MODE.ONLY_ERROR
@@ -97,50 +99,26 @@ const queryProductByAdminAPI = async ({ payload }) => {
 }
 
 const getProductDetailByAdminAPI = async ({ _id }) => {
-  return await authorizedAxios.get(`${API_ROOT}/v1/api/product/admin/${_id}`, {
-    ...TOAST_MODE.ONLY_ERROR
-  })
-}
-
-const approvalProductByAdminAPI = async ({ payload }) => {
-  const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/product/admin/update-status/approval`,
-    payload,
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/admin/product/${_id}`,
     {
-      ...TOAST_MODE.ALL
+      ...TOAST_MODE.ONLY_ERROR
     }
   )
   return { status, resData: data }
 }
 
-const rejectProductByAdminAPI = async ({ payload }) => {
+const updateProductStatusByAdminAPI = async ({
+  payload,
+  loadingClass,
+  action
+}) => {
   const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/product/admin/update-status/reject`,
+    `${API_ROOT}/v1/api/admin/product/update-status/${action}`,
     payload,
     {
-      ...TOAST_MODE.ALL
-    }
-  )
-  return { status, resData: data }
-}
-
-const banProductByAdminAPI = async ({ payload }) => {
-  const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/product/admin/update-status/ban`,
-    payload,
-    {
-      ...TOAST_MODE.ALL
-    }
-  )
-  return { status, resData: data }
-}
-
-const unbanProductByAdminAPI = async ({ payload }) => {
-  const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/product/admin/update-status/unban`,
-    payload,
-    {
-      ...TOAST_MODE.ALL
+      ...TOAST_MODE.ALL,
+      loadingClass
     }
   )
   return { status, resData: data }
@@ -158,8 +136,5 @@ export {
   queryProductByOwnerAPI,
   queryProductByAdminAPI,
   getProductDetailByAdminAPI,
-  approvalProductByAdminAPI,
-  rejectProductByAdminAPI,
-  banProductByAdminAPI,
-  unbanProductByAdminAPI
+  updateProductStatusByAdminAPI
 }

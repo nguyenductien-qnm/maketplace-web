@@ -19,8 +19,10 @@ import DoDisturbOnOutlinedIcon from '@mui/icons-material/DoDisturbOnOutlined'
 import NoData from '../NoData'
 import formatCurrency from '~/utils/formatCurrency'
 import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
+import TableSkeleton from '../TableSkeleton'
 
 function ProductTable({
+  loading,
   products,
   count,
   page,
@@ -32,8 +34,9 @@ function ProductTable({
 }) {
   return (
     <>
-      {products?.length === 0 && <NoData />}
-      {products?.length > 0 && (
+      {loading && <TableSkeleton columns={10} rows={rowsPerPage} />}
+      {!loading && products?.length === 0 && <NoData />}
+      {!loading && products?.length > 0 && (
         <TableContainer
           component={Paper}
           sx={{
@@ -153,8 +156,9 @@ function ProductTable({
                     {p?.product_status == 'pending' &&
                       p?.product_visibility == 'public' && (
                         <Box sx={{ display: 'flex', gap: 1 }}>
-                          <Tooltip title="Accept product">
+                          <Tooltip title="Approval product">
                             <Button
+                              className="btn-admin-approval-product"
                               variant="contained"
                               onClick={() =>
                                 handleApprovalProduct({ product: p })

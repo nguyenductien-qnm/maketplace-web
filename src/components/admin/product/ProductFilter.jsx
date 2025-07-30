@@ -1,11 +1,14 @@
 import Box from '@mui/material/Box'
 import Popover from '@mui/material/Popover'
 import Slider from '@mui/material/Slider'
-import { useState } from 'react'
+import Autocomplete from '@mui/material/Autocomplete'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import TextField from '@mui/material/TextField'
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
-import { Autocomplete, Button, Divider, TextField } from '@mui/material'
 import TypographyLabel from '../../common/TypographyLabel'
 import CategoryTreeView from '~/components/common/CategoryTreeView'
+import { useState } from 'react'
 
 function ProductFilter({
   shops,
@@ -33,7 +36,7 @@ function ProductFilter({
         onClose={handleCloseFilter}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        sx={{ height: '500px' }}
+        sx={{ height: '750px' }}
       >
         <Box
           sx={{

@@ -3,32 +3,34 @@ import ProductDetailModal from '~/components/admin/product/ProductDetailModal'
 import ProductHeader from '~/components/admin/product/ProductHeader'
 import ProductTable from '~/components/admin/product/ProductTable'
 import ReasonModal from '~/components/admin/ReasonModal'
-import TableSkeleton from '~/components/admin/TableSkeleton'
 import { useAdminProduct } from '~/hooks/admin/product.hook'
 
 function AdminProduct({ status, name }) {
   const {
-    filters,
-    setFilters,
-    handleFilter,
-    handleClearFilter,
-    loading,
-    isDenied,
     products,
     count,
-    page,
-    rowsPerPage,
+    loading,
+    productDetail,
     shops,
     categories,
-    handleOpenModal,
-    handleCloseModal,
+
+    filters,
+    setFilters,
+    page,
+    rowsPerPage,
+
     openDetailModal,
+    openReasonModal,
+    modalProps,
+
+    handleFilter,
+    handleClearFilter,
     handleChangePage,
     handleChangeRowsPerPage,
-    productDetail,
     handleApprovalProduct,
-    openReasonModal,
-    modalProps
+
+    handleOpenModal,
+    handleCloseModal
   } = useAdminProduct({ status })
   return (
     <Paper
@@ -40,29 +42,26 @@ function AdminProduct({ status, name }) {
       }}
     >
       <ProductHeader
+        name={name}
         shops={shops}
         categories={categories}
-        name={name}
         filters={filters}
         setFilters={setFilters}
         handleFilter={handleFilter}
         handleClearFilter={handleClearFilter}
       />
 
-      {loading && <TableSkeleton columns={10} rows={rowsPerPage} />}
-      {!loading && !isDenied && (
-        <ProductTable
-          products={products}
-          count={count}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          handleApprovalProduct={handleApprovalProduct}
-          handleOpenModal={handleOpenModal}
-          openDetailModal={openDetailModal}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-      )}
+      <ProductTable
+        loading={loading}
+        products={products}
+        count={count}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        handleApprovalProduct={handleApprovalProduct}
+        handleOpenModal={handleOpenModal}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+      />
 
       <ProductDetailModal
         open={openDetailModal}
