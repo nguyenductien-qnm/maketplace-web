@@ -19,7 +19,7 @@ function AdminWithdrawRequest({ type }) {
     openReasonModal,
     withdrawRequestDetail,
     handleCloseModal,
-    handleApprovalWithdrawRequest,
+    handleApproveWithdrawRequest,
     handleRejectWithdrawRequest,
     filters,
     setFilters,
@@ -49,7 +49,7 @@ function AdminWithdrawRequest({ type }) {
         loading={loading}
         withdrawRequests={withdrawRequests}
         handleOpenModal={handleOpenModal}
-        handleApprovalWithdrawRequest={handleApprovalWithdrawRequest}
+        handleApproveWithdrawRequest={handleApproveWithdrawRequest}
         page={page}
         count={count}
         rowsPerPage={rowsPerPage}

@@ -27,7 +27,7 @@ function AdminProduct({ status, name }) {
     handleClearFilter,
     handleChangePage,
     handleChangeRowsPerPage,
-    handleApprovalProduct,
+    handleApproveProduct,
 
     handleOpenModal,
     handleCloseModal
@@ -57,7 +57,7 @@ function AdminProduct({ status, name }) {
         count={count}
         page={page}
         rowsPerPage={rowsPerPage}
-        handleApprovalProduct={handleApprovalProduct}
+        handleApproveProduct={handleApproveProduct}
         handleOpenModal={handleOpenModal}
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}

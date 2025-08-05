@@ -76,7 +76,7 @@ export default function AdminSidebar() {
           'shops',
           [
             'Active Shops',
-            'Pending Shop Approvals',
+            'Pending Shop Approves',
             'Banned Shops',
             'Suspended Shops',
             'Shop Info Update Requests'
@@ -85,7 +85,7 @@ export default function AdminSidebar() {
 
         {renderSection('Products', <CategoryOutlinedIcon />, 'products', [
           'Product List',
-          'Pending Product Approvals',
+          'Pending Product Approves',
           'Reported Products',
           'Hidden Products',
           'Product Categories'

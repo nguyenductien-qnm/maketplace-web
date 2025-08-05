@@ -3,34 +3,25 @@ import MenuItem from '@mui/material/MenuItem'
 import Popover from '@mui/material/Popover'
 import Select from '@mui/material/Select'
 import Slider from '@mui/material/Slider'
-import { useEffect, useState } from 'react'
-import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
-import { Button, Divider, TextField } from '@mui/material'
-import { apiGetProvinces } from '~/helpers/getAddress'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import TextField from '@mui/material/TextField'
 import TypographyLabel from '../../common/TypographyLabel'
-import { StatusCodes } from 'http-status-codes'
+import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
+import { useState } from 'react'
 
 function ShopFilter({
   status,
   filters,
+  provinces,
   setFilters,
   handleFilter,
   handleClearFilter
 }) {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
-  const [provinces, setProvinces] = useState([])
-
   const handleOpenFilter = (event) => setAnchorEl(event.currentTarget)
   const handleCloseFilter = () => setAnchorEl(null)
-
-  useEffect(() => {
-    const fetchProvinces = async () => {
-      const { status, resData } = await apiGetProvinces()
-      if (status === StatusCodes.OK) setProvinces(resData?.metadata || [])
-    }
-    fetchProvinces()
-  }, [])
 
   return (
     <Box>

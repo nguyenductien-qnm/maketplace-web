@@ -12,7 +12,7 @@ import { navigate } from '~/helpers/navigation'
 const LOADING_CLASS = [
   '.btn-reason-modal-submit',
   '.btn-reason-modal-cancel',
-  '.btn-admin-approval-product'
+  '.btn-admin-product-action'
 ]
 
 export const useAdminProduct = ({ status }) => {
@@ -146,15 +146,15 @@ export const useAdminProduct = ({ status }) => {
     setProductDetail(null)
   }
 
-  const handleApprovalProduct = async ({ product }) => {
+  const handleApproveProduct = async ({ product }) => {
     const payload = {
       _id: product?._id,
-      action: 'approval'
+      action: 'approve'
     }
     const { status, resData } = await updateProductStatusByAdminAPI({
       payload,
       loadingClass: LOADING_CLASS,
-      action: 'approval'
+      action: 'approve'
     })
 
     if (status === StatusCodes.OK) {
@@ -278,7 +278,7 @@ export const useAdminProduct = ({ status }) => {
     handleClearFilter,
     handleChangePage,
     handleChangeRowsPerPage,
-    handleApprovalProduct,
+    handleApproveProduct,
 
     handleOpenModal,
     handleCloseModal

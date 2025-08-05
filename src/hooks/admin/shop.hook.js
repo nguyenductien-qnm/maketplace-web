@@ -1,14 +1,22 @@
+import { StatusCodes } from 'http-status-codes'
 import { useEffect, useRef, useState } from 'react'
 import {
-  acceptShopAPI,
-  banShopAPI,
-  exportShopDataAPI,
-  getShopDetailForAdminAPI,
   queryShopByAdminAPI,
-  rejectShopAPI,
-  unbanShopAPI
+  banShopByAdminAPI,
+  unbanShopByAdminAPI,
+  approveShopByAdminAPI,
+  rejectShopByAdminAPI,
+  getShopDetailAPI,
+  exportShopDataByAdminAPI
 } from '~/api/shop.api'
+import { apiGetProvinces } from '~/helpers/getAddress'
 import { navigate } from '~/helpers/navigation'
+
+const LOADING_CLASS = [
+  '.btn-reason-modal-cancel',
+  '.btn-reason-modal-submit',
+  '.btn-admin-shop-action'
+]
 
 export const useAdminShop = ({ status }) => {
   // ============================== STATE ==============================
@@ -25,6 +33,7 @@ export const useAdminShop = ({ status }) => {
 
   const [shops, setShops] = useState([])
   const [count, setCount] = useState(0)
+  const [provinces, setProvinces] = useState([])
   const [loading, setLoading] = useState(true)
   const [isDenied, setDenied] = useState(false)
 
@@ -35,7 +44,7 @@ export const useAdminShop = ({ status }) => {
   const skipEffect = useRef(false)
 
   const [openReasonModal, setOpenReasonModal] = useState(false)
-  const [openInfoModal, setOpenInfoModal] = useState(false)
+  const [openDetailModal, setOpenDetailModal] = useState(false)
   const [action, setAction] = useState(null)
   const [selectedShop, setSelectedShop] = useState(null)
   const [shopDetail, setShopDetail] = useState(null)
@@ -54,19 +63,26 @@ export const useAdminShop = ({ status }) => {
     queryShopByAdmin({ page, rowsPerPage, status, ...filters })
   }, [status, page, rowsPerPage])
 
+  useEffect(() => {
+    getProvinces()
+  }, [])
+
   // ============================== API ==============================
+  const getProvinces = async () => {
+    const { status, resData } = await apiGetProvinces()
+    if (status === StatusCodes.OK) setProvinces(resData?.metadata || [])
+  }
 
   const queryShopByAdmin = async (data) => {
     setLoading(true)
     try {
-      const res = await queryShopByAdminAPI(data)
-      if (res.status === 200) {
-        setShops(res.data?.metadata?.shops)
-        setCount(res.data?.metadata?.count)
-      } else {
-        setDenied(true)
+      const { status, resData } = await queryShopByAdminAPI({ payload: data })
+      if (status === StatusCodes.OK) {
+        const { shops, count } = resData?.metadata
+        setShops(shops || [])
+        setCount(count || 0)
       }
-    } catch (err) {
+    } catch {
       setDenied(true)
     } finally {
       setLoading(false)
@@ -99,16 +115,17 @@ export const useAdminShop = ({ status }) => {
 
   const handleOpenModal = ({ action, shop }) => {
     setAction(action)
-    setSelectedShop(shop)
     if (action === 'detail') {
-      setOpenInfoModal(true)
+      setOpenDetailModal(true)
+      handleGetShopDetail(shop)
     } else {
+      setSelectedShop(shop)
       setOpenReasonModal(true)
     }
   }
 
   const handleCloseModal = () => {
-    setOpenInfoModal(false)
+    setOpenDetailModal(false)
     setOpenReasonModal(false)
     setAction(null)
     setSelectedShop(null)
@@ -116,35 +133,72 @@ export const useAdminShop = ({ status }) => {
   }
 
   const handleBanShop = async (data) => {
-    await banShopAPI(data)
-    setShops((prev) => prev.filter((shop) => shop._id != data._id))
-    handleCloseModal()
+    const { status, resData } = await banShopByAdminAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS
+    })
+    if (status === StatusCodes.OK) {
+      const update = resData?.metadata
+      setShops((prev) =>
+        prev.map((shop) => (shop._id == update._id ? update : shop))
+      )
+      handleCloseModal()
+    }
   }
 
   const handleUnbanShop = async (data) => {
-    await unbanShopAPI(data)
-    setShops((prev) => prev.filter((shop) => shop._id != data._id))
-    handleCloseModal()
+    const { status, resData } = await unbanShopByAdminAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS
+    })
+    if (status === StatusCodes.OK) {
+      const update = resData?.metadata
+      setShops((prev) =>
+        prev.map((shop) => (shop._id == update._id ? update : shop))
+      )
+      handleCloseModal()
+    }
   }
 
-  const handleAcceptShop = async (data) => {
-    await acceptShopAPI(data)
-    setShops((prev) => prev.filter((shop) => shop._id != data._id))
+  const handleApproveShop = async (data) => {
+    const { status, resData } = await approveShopByAdminAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS
+    })
+    if (status === StatusCodes.OK) {
+      const update = resData?.metadata
+      setShops((prev) =>
+        prev.map((shop) => (shop._id == update._id ? update : shop))
+      )
+      handleCloseModal()
+    }
   }
 
   const handleRejectShop = async (data) => {
-    await rejectShopAPI(data)
-    setShops((prev) => prev.filter((shop) => shop._id != data._id))
-    handleCloseModal()
+    const { status, resData } = await rejectShopByAdminAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS
+    })
+    if (status === StatusCodes.OK) {
+      const update = resData?.metadata
+      setShops((prev) =>
+        prev.map((shop) => (shop._id == update._id ? update : shop))
+      )
+      handleCloseModal()
+    }
   }
 
   const handleGetShopDetail = async (data) => {
-    const res = await getShopDetailForAdminAPI({ _id: data?._id })
-    setShopDetail(res?.data?.metadata)
+    const payload = {
+      _id: data?._id,
+      role: 'admin'
+    }
+    const { status, resData } = await getShopDetailAPI({ payload })
+    if (status === StatusCodes.OK) setShopDetail(resData?.metadata)
   }
 
   const handleExportData = async () => {
-    await exportShopDataAPI({ status, ...filters })
+    await exportShopDataByAdminAPI({ status, ...filters })
   }
 
   const modalProps = {
@@ -198,13 +252,14 @@ export const useAdminShop = ({ status }) => {
     loading,
     isDenied,
     shopDetail,
+    provinces,
 
     filters,
     setFilters,
     page,
     rowsPerPage,
 
-    openInfoModal,
+    openDetailModal,
     openReasonModal,
     modalProps: modalProps[action],
 
@@ -216,8 +271,7 @@ export const useAdminShop = ({ status }) => {
     handleOpenModal,
     handleCloseModal,
 
-    handleAcceptShop,
-    handleGetShopDetail,
+    handleApproveShop,
     handleExportData
   }
 }

@@ -34,7 +34,7 @@ const getWithdrawRequestDetailByAdminAPI = async ({ _id }) => {
   return { status, resData: data }
 }
 
-const approvalWithdrawRequestByAdminAPI = async ({ _id }) => {
+const approveWithdrawRequestByAdminAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.post(
     `${API_ROOT}/v1/api/withdraw-request/approve`,
     { _id },
@@ -57,6 +57,6 @@ export {
   getUserRequestWithdrawAPI,
   queryWithdrawRequestByAdminAPI,
   getWithdrawRequestDetailByAdminAPI,
-  approvalWithdrawRequestByAdminAPI,
+  approveWithdrawRequestByAdminAPI,
   rejectWithdrawRequestByAdminAPI
 }

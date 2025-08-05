@@ -3,13 +3,18 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
 import BannerAndAvatarDisplay from '~/components/vendor/VendorProfile/BannerAndAvatarDisplay'
 import TypographyLabel from '~/components/common/TypographyLabel'
-import { Box, TextField } from '@mui/material'
-import { WEB_ROOT } from '~/utils/constants'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
+import { WEB_ROOT } from '~/utils/constants'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
+import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
+import { Divider } from '@mui/material'
 
-function ShopModal({ open, onClose, shop }) {
+function ShopDetailModal({ open, onClose, shop }) {
   const address = shop?.shop_address
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -61,19 +66,18 @@ function ShopModal({ open, onClose, shop }) {
                   fullWidth
                 />
               </Box>
+            </Box>
 
+            <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
               <Box sx={{ flex: 1 }}>
                 <TypographyLabel>Shop status</TypographyLabel>
                 <TextField
                   size="small"
-                  value={shop?.shop_status}
+                  value={capitalizeFirstLetter(shop?.shop_status)}
                   disabled
                   fullWidth
                 />
               </Box>
-            </Box>
-
-            <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
               <Box sx={{ flex: 1 }}>
                 <TypographyLabel>Product count</TypographyLabel>
                 <TextField
@@ -152,8 +156,9 @@ function ShopModal({ open, onClose, shop }) {
                 rows={5}
               />
             </Box>
-            {shop?.shop_status === 'block' && (
+            {shop?.shop_status === 'blocked' && (
               <Box>
+                <Divider sx={{ mt: 3, mb: 3 }} />
                 <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
                   <Box sx={{ flex: 1 }}>
                     <TypographyLabel>Banned By</TypographyLabel>
@@ -191,13 +196,10 @@ function ShopModal({ open, onClose, shop }) {
                 <Box sx={{ mt: 1 }}>
                   <Box sx={{ flex: 1 }}>
                     <TypographyLabel>Reason</TypographyLabel>
-                    <TextField
-                      multiline
-                      rows={5}
+                    <ReactQuill
+                      theme="snow"
                       value={shop?.ban_info?.reason}
-                      size="small"
-                      disabled
-                      fullWidth
+                      style={{ height: '200px' }}
                     />
                   </Box>
                 </Box>
@@ -215,4 +217,4 @@ function ShopModal({ open, onClose, shop }) {
   )
 }
 
-export default ShopModal
+export default ShopDetailModal

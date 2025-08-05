@@ -21,7 +21,7 @@ function WithdrawRequestTable({
   loading,
   withdrawRequests,
   handleOpenModal,
-  handleApprovalWithdrawRequest,
+  handleApproveWithdrawRequest,
   page,
   rowsPerPage,
   handleChangePage,
@@ -96,12 +96,12 @@ function WithdrawRequestTable({
                   <TableCell align="left">
                     {request?.status === 'pending' && (
                       <Box>
-                        <Tooltip title="Approval request">
+                        <Tooltip title="Approve request">
                           <Button
                             variant="contained"
                             sx={{ mr: 1 }}
                             onClick={() =>
-                              handleApprovalWithdrawRequest(request)
+                              handleApproveWithdrawRequest(request)
                             }
                           >
                             <DoneIcon />

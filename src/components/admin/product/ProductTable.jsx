@@ -27,7 +27,7 @@ function ProductTable({
   count,
   page,
   rowsPerPage,
-  handleApprovalProduct,
+  handleApproveProduct,
   handleOpenModal,
   handleChangePage,
   handleChangeRowsPerPage
@@ -88,9 +88,9 @@ function ProductTable({
                     <Chip
                       label={capitalizeFirstLetter(p.product_status)}
                       color={
-                        p.product_status === 'approval'
+                        p.product_status === 'approved'
                           ? 'success'
-                          : p.product_status === 'reject'
+                          : p.product_status === 'rejected'
                           ? 'error'
                           : p.product_status === 'ban'
                           ? 'warning'
@@ -156,12 +156,12 @@ function ProductTable({
                     {p?.product_status == 'pending' &&
                       p?.product_visibility == 'public' && (
                         <Box sx={{ display: 'flex', gap: 1 }}>
-                          <Tooltip title="Approval product">
+                          <Tooltip title="Approve product">
                             <Button
-                              className="btn-admin-approval-product"
+                              className="btn-admin-product-action"
                               variant="contained"
                               onClick={() =>
-                                handleApprovalProduct({ product: p })
+                                handleApproveProduct({ product: p })
                               }
                             >
                               <DoneIcon />

@@ -1,11 +1,14 @@
-import { Box, Button, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import Tooltip from '@mui/material/Tooltip'
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 import ShopFilter from './ShopFilter'
-import Tooltip from '@mui/material/Tooltip'
 
 function ShopHeader({
   name,
   filters,
+  provinces,
   status,
   setFilters,
   handleFilter,
@@ -34,6 +37,7 @@ function ShopHeader({
             <ShopFilter
               status={status}
               filters={filters}
+              provinces={provinces}
               setFilters={setFilters}
               handleFilter={handleFilter}
               handleClearFilter={handleClearFilter}

@@ -21,18 +21,20 @@ const AdminRoutes = () => {
       <Route element={<AdminLayout />}>
         <Route path="shop">
           <Route
-            path="active"
-            element={<AdminShop name="Active Shops" status="ACTIVE" />}
+            path="approved"
+            element={<AdminShop name="Approved Shops" status="APPROVED" />}
           />
           <Route
-            path="pending-shop-approvals"
-            element={
-              <AdminShop name="Pending Shop Approvals" status="PENDING" />
-            }
+            path="rejected"
+            element={<AdminShop name="Rejected Shops" status="REJECTED" />}
           />
           <Route
-            path="banned"
-            element={<AdminShop name="Banned Shops" status="BLOCK" />}
+            path="pending"
+            element={<AdminShop name="Pending Shops" status="PENDING" />}
+          />
+          <Route
+            path="blocked"
+            element={<AdminShop name="Block Shops" status="BLOCKED" />}
           />
           <Route
             path="suspended"

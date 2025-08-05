@@ -35,68 +35,81 @@ export const getShopByUserAPI = async (data) => {
   return res
 }
 
-export const queryShopByAdminAPI = async (data) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/shop/query-shop-by-admin`,
-    data,
+// ============================ ADMIN ============================
+
+const queryShopByAdminAPI = async ({ payload }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/admin/shop/query`,
+    payload,
     {
       ...TOAST_MODE.ONLY_ERROR
     }
   )
-  return res
+  return { status, resData: data }
 }
 
-export const banShopAPI = async (data) => {
-  const res = await authorizedAxios.post(`${API_ROOT}/v1/api/shop/ban`, data, {
-    ...TOAST_MODE.ALL
-  })
-  return res
+const banShopByAdminAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/shop/update-status/ban`,
+    payload,
+    { ...TOAST_MODE.ALL, loadingClass }
+  )
+  return { status, resData: data }
 }
 
-export const unbanShopAPI = async (data) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/shop/unban`,
-    data,
+const unbanShopByAdminAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/shop/update-status/unban`,
+    payload,
+    {
+      ...TOAST_MODE.ALL,
+      loadingClass
+    }
+  )
+  return { status, resData: data }
+}
+
+const approveShopByAdminAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/shop/update-status/approve`,
+    payload,
+    {
+      ...TOAST_MODE.ALL,
+      loadingClass
+    }
+  )
+  return { status, resData: data }
+}
+
+const rejectShopByAdminAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/shop/update-status/reject`,
+    payload,
+    {
+      ...TOAST_MODE.ALL,
+      loadingClass
+    }
+  )
+  return { status, resData: data }
+}
+
+const getShopDetailAPI = async ({ payload }) => {
+  const { _id, role } = payload
+
+  const apiMap = {
+    admin: 'admin/shop'
+  }
+
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/${apiMap[role]}/${_id}`,
     {
       ...TOAST_MODE.ALL
     }
   )
-  return res
+  return { status, resData: data }
 }
 
-export const acceptShopAPI = async (data) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/shop/accept`,
-    data,
-    {
-      ...TOAST_MODE.ALL
-    }
-  )
-  return res
-}
-
-export const rejectShopAPI = async (data) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/shop/reject`,
-    data,
-    {
-      ...TOAST_MODE.ALL
-    }
-  )
-  return res
-}
-
-export const getShopDetailForAdminAPI = async ({ _id }) => {
-  const res = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/shop/detail-for-admin?_id=${_id}`,
-    {
-      ...TOAST_MODE.ALL
-    }
-  )
-  return res
-}
-
-export const getShopListForFilterAPI = async () => {
+const getShopListForFilterAPI = async () => {
   const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/shop/get-shop-list-for-filter`,
     {
@@ -106,7 +119,7 @@ export const getShopListForFilterAPI = async () => {
   return { status, resData: data }
 }
 
-export const exportShopDataAPI = async (data) => {
+const exportShopDataByAdminAPI = async (data) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/shop/export`,
     data,
@@ -125,4 +138,15 @@ export const exportShopDataAPI = async (data) => {
   window.URL.revokeObjectURL(url)
 
   return res
+}
+
+export {
+  queryShopByAdminAPI,
+  banShopByAdminAPI,
+  unbanShopByAdminAPI,
+  approveShopByAdminAPI,
+  rejectShopByAdminAPI,
+  getShopDetailAPI,
+  getShopListForFilterAPI,
+  exportShopDataByAdminAPI
 }

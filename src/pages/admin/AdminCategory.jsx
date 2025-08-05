@@ -1,55 +1,35 @@
-// External Libraries - react-dnd-treeview
 import { DndProvider } from '@minoru/react-dnd-treeview'
 import {
   Tree,
   MultiBackend,
   getBackendOptions
 } from '@minoru/react-dnd-treeview'
-
-// MUI - Components & Icons
 import { Box, Card, Container, Typography } from '@mui/material'
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
-
-// Custom Hooks
 import { useAdminCategory } from '~/hooks/admin/category.hook'
-
-// Custom Components - Admin Category
 import CategoryForm from '~/components/admin/category/CategoryForm'
 import CategoryHeader from '~/components/admin/category/CategoryHeader'
 import { CustomDragPreview } from '~/components/admin/category/CustomDragPreview'
 import { CustomNode } from '~/components/admin/category/CustomNode'
 import { Placeholder } from '~/components/admin/category/Placeholder'
-
-// Custom Components - Common
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import ReasonModal from '~/components/admin/ReasonModal'
-
-// Styles
 import styles from '~/components/admin/category/App.module.css'
 
 function AdminCategory() {
   const {
-    // UI state
     loading,
     openModal,
     openReasonModal,
     action,
-
-    // Data
     categoriesTree,
     categoryDetail,
-
-    // Modal controls
     handleOpenModal,
     handleCloseModal,
-
-    // Form and drag-drop actions
     handleSubmitCategory,
     handleDrop,
-
-    // Media and deletion handlers
     handleUploadImage,
     handleDeleteCategory
   } = useAdminCategory()

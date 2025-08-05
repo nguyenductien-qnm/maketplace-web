@@ -5,7 +5,7 @@ import { getUserListForFilterAPI } from '~/api/user.api'
 import {
   getWithdrawRequestDetailByAdminAPI,
   queryWithdrawRequestByAdminAPI,
-  approvalWithdrawRequestByAdminAPI,
+  approveWithdrawRequestByAdminAPI,
   rejectWithdrawRequestByAdminAPI
 } from '~/api/withdrawRequest.api'
 import { navigate } from '~/helpers/navigation'
@@ -138,8 +138,8 @@ export const useAdminWithdrawRequest = ({ type }) => {
     if (status === StatusCodes.OK) setWithdrawRequestDetail(resData?.metadata)
   }
 
-  const handleApprovalWithdrawRequest = async (data) => {
-    const { status, resData } = await approvalWithdrawRequestByAdminAPI({
+  const handleApproveWithdrawRequest = async (data) => {
+    const { status, resData } = await approveWithdrawRequestByAdminAPI({
       _id: data?._id
     })
     if (status === StatusCodes.OK) {
@@ -193,7 +193,7 @@ export const useAdminWithdrawRequest = ({ type }) => {
 
     handleOpenModal,
 
-    handleApprovalWithdrawRequest,
+    handleApproveWithdrawRequest,
     handleRejectWithdrawRequest
   }
 }

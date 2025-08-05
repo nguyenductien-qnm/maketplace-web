@@ -1,23 +1,24 @@
 import Paper from '@mui/material/Paper'
 import ShopTable from '~/components/admin/shop/ShopTable'
 import ShopHeader from '~/components/admin/shop/ShopHeader'
+import ShopDetailModal from '~/components/admin/shop/ShopDetailModal'
+import ReasonModal from '~/components/admin/ReasonModal'
 import { useAdminShop } from '~/hooks/admin/shop.hook'
-import TableSkeleton from '~/components/admin/TableSkeleton'
 
 function AdminShop({ name, status }) {
   const {
     shops,
     count,
     loading,
-    isDenied,
     shopDetail,
+    provinces,
 
     filters,
     setFilters,
     page,
     rowsPerPage,
 
-    openInfoModal,
+    openDetailModal,
     openReasonModal,
     modalProps,
 
@@ -29,8 +30,7 @@ function AdminShop({ name, status }) {
     handleOpenModal,
     handleCloseModal,
 
-    handleAcceptShop,
-    handleGetShopDetail,
+    handleApproveShop,
     handleExportData
   } = useAdminShop({ status })
 
@@ -46,31 +46,40 @@ function AdminShop({ name, status }) {
       <ShopHeader
         name={name}
         filters={filters}
+        provinces={provinces}
         status={status}
         setFilters={setFilters}
         handleFilter={handleFilter}
         handleClearFilter={handleClearFilter}
         handleExportData={handleExportData}
       />
-      {loading && <TableSkeleton columns={9} rows={rowsPerPage} />}
-      {!loading && !isDenied && (
-        <ShopTable
-          shops={shops}
-          count={count}
-          page={page}
-          shopDetail={shopDetail}
-          handleGetShopDetail={handleGetShopDetail}
-          rowsPerPage={rowsPerPage}
-          modalProps={modalProps}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
-          openReasonModal={openReasonModal}
-          openInfoModal={openInfoModal}
-          handleOpenModal={handleOpenModal}
-          handleCloseModal={handleCloseModal}
-          handleAcceptShop={handleAcceptShop}
-        />
-      )}
+
+      <ShopTable
+        loading={loading}
+        shops={shops}
+        count={count}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+        handleOpenModal={handleOpenModal}
+        handleApproveShop={handleApproveShop}
+      />
+
+      <ShopDetailModal
+        open={openDetailModal}
+        onClose={handleCloseModal}
+        shop={shopDetail}
+      />
+
+      <ReasonModal
+        open={openReasonModal}
+        onClose={handleCloseModal}
+        header={modalProps?.header}
+        submitText={modalProps?.submitText}
+        submitColor={modalProps?.submitColor}
+        onSubmit={modalProps?.onSubmit}
+      />
     </Paper>
   )
 }
