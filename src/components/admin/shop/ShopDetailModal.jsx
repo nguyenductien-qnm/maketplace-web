@@ -1,3 +1,4 @@
+import Divider from '@mui/material/Divider'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
@@ -12,7 +13,6 @@ import { WEB_ROOT } from '~/utils/constants'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
-import { Divider } from '@mui/material'
 
 function ShopDetailModal({ open, onClose, shop }) {
   const address = shop?.shop_address

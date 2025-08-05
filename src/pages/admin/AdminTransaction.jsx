@@ -1,4 +1,4 @@
-import { Paper } from '@mui/material'
+import Paper from '@mui/material/Paper'
 import TransactionDetailModal from '~/components/admin/transaction/TransactionDetailModal'
 import TransactionHeader from '~/components/admin/transaction/TransactionHeader'
 import TransactionTable from '~/components/admin/transaction/TransactionTable'
@@ -6,25 +6,25 @@ import { useAdminTransaction } from '~/hooks/admin/transaction.hook'
 
 function AdminTransaction({ type }) {
   const {
-    handleOpenModal,
-    handleCloseModal,
-    transactionDetail,
-    openModal,
-    transactions,
     count,
-    loading,
-
     filters,
-    setFilters,
+    loading,
     page,
     rowsPerPage,
+    setFilters,
+    transactionDetail,
+    transactions,
     shops,
     users,
 
-    handleFilter,
-    handleClearFilter,
+    openModal,
+    handleCloseModal,
+    handleOpenModal,
+
     handleChangePage,
-    handleChangeRowsPerPage
+    handleChangeRowsPerPage,
+    handleClearFilter,
+    handleFilter
   } = useAdminTransaction({ type })
   return (
     <Paper
@@ -44,6 +44,7 @@ function AdminTransaction({ type }) {
         handleFilter={handleFilter}
         handleClearFilter={handleClearFilter}
       />
+
       <TransactionTable
         type={type}
         loading={loading}
@@ -55,6 +56,7 @@ function AdminTransaction({ type }) {
         handleChangeRowsPerPage={handleChangeRowsPerPage}
         handleOpenModal={handleOpenModal}
       />
+
       <TransactionDetailModal
         type={type}
         open={openModal}

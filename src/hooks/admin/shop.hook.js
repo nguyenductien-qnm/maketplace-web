@@ -1,5 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import { useEffect, useRef, useState } from 'react'
+import { apiGetProvinces } from '~/helpers/getAddress'
+import { navigate } from '~/helpers/navigation'
 import {
   queryShopByAdminAPI,
   banShopByAdminAPI,
@@ -9,8 +11,6 @@ import {
   getShopDetailAPI,
   exportShopDataByAdminAPI
 } from '~/api/shop.api'
-import { apiGetProvinces } from '~/helpers/getAddress'
-import { navigate } from '~/helpers/navigation'
 
 const LOADING_CLASS = [
   '.btn-reason-modal-cancel',

@@ -111,7 +111,7 @@ const getShopDetailAPI = async ({ payload }) => {
 
 const getShopListForFilterAPI = async () => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/shop/get-shop-list-for-filter`,
+    `${API_ROOT}/v1/api/admin/shop/list`,
     {
       ...TOAST_MODE.ONLY_ERROR
     }

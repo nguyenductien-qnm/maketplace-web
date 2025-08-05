@@ -1,12 +1,12 @@
 import { StatusCodes } from 'http-status-codes'
 import { useEffect, useRef, useState } from 'react'
 import { getShopListForFilterAPI } from '~/api/shop.api'
+import { getUserListForFilterAPI } from '~/api/user.api'
+import { navigate } from '~/helpers/navigation'
 import {
   getTransactionDetailByAdminAPI,
   queryTransactionByAdminAPI
 } from '~/api/transaction.api'
-import { getUserListForFilterAPI } from '~/api/user.api'
-import { navigate } from '~/helpers/navigation'
 
 export const useAdminTransaction = ({ type }) => {
   // ============================== STATE ==============================
@@ -133,26 +133,24 @@ export const useAdminTransaction = ({ type }) => {
   // ============================== RETURN ==============================
 
   return {
-    openModal,
-    handleOpenModal,
-    handleCloseModal,
-    transactionDetail,
-
-    transactions,
     count,
-    loading,
-    isDenied,
-
     filters,
-    setFilters,
+    loading,
     page,
     rowsPerPage,
+    setFilters,
+    transactionDetail,
+    transactions,
     shops,
     users,
 
-    handleFilter,
-    handleClearFilter,
+    openModal,
+    handleCloseModal,
+    handleOpenModal,
+
     handleChangePage,
-    handleChangeRowsPerPage
+    handleChangeRowsPerPage,
+    handleClearFilter,
+    handleFilter
   }
 }
