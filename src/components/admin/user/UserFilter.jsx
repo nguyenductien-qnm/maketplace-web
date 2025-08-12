@@ -8,8 +8,8 @@ import Checkbox from '@mui/material/Checkbox'
 import Divider from '@mui/material/Divider'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import TextField from '@mui/material/TextField'
-import { useState } from 'react'
 import TypographyLabel from '../../common/TypographyLabel'
+import { useState } from 'react'
 
 function UserFilter({
   status,

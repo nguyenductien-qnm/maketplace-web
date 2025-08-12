@@ -1,8 +1,9 @@
-import { Box, Paper } from '@mui/material'
-import TableSkeleton from '~/components/admin/TableSkeleton'
+import Paper from '@mui/material/Paper'
+import ReasonModal from '~/components/admin/ReasonModal'
 import UserHeader from '~/components/admin/user/UserHeader'
+import UserDetailModal from '~/components/admin/user/UserDetailModal'
 import UserTable from '~/components/admin/user/UserTable'
-import NoData from '~/components/admin/NoData'
+import UserUpdatePasswordModal from '~/components/admin/user/UserUpdatePasswordModal'
 import { useAdminUser } from '~/hooks/admin/user.hook'
 
 function AdminUser({ name, status }) {
@@ -10,7 +11,6 @@ function AdminUser({ name, status }) {
     users,
     count,
     loading,
-    isDenied,
     userDetail,
     selectedUser,
 
@@ -33,7 +33,6 @@ function AdminUser({ name, status }) {
     handleOpenModal,
     handleCloseModal,
 
-    handleGetUserDetail,
     handleUpdatePassword
   } = useAdminUser({ status })
 
@@ -55,27 +54,39 @@ function AdminUser({ name, status }) {
         handleClearFilter={handleClearFilter}
         handleExportData={handleExportData}
       />
-      {loading && <TableSkeleton columns={8} rows={rowsPerPage} />}
-      {!loading && !isDenied && (
-        <UserTable
-          users={users}
-          count={count}
-          page={page}
-          userDetail={userDetail}
-          selectedUser={selectedUser}
-          handleGetUserDetail={handleGetUserDetail}
-          rowsPerPage={rowsPerPage}
-          modalProps={modalProps}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
-          openReasonModal={openReasonModal}
-          openInfoModal={openInfoModal}
-          openUpdatePasswordModal={openUpdatePasswordModal}
-          handleOpenModal={handleOpenModal}
-          handleCloseModal={handleCloseModal}
-          handleUpdatePassword={handleUpdatePassword}
-        />
-      )}
+
+      <UserTable
+        loading={loading}
+        users={users}
+        count={count}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+        handleOpenModal={handleOpenModal}
+      />
+
+      <ReasonModal
+        open={openReasonModal}
+        onClose={handleCloseModal}
+        header={modalProps?.header}
+        submitText={modalProps?.submitText}
+        submitColor={modalProps?.submitColor}
+        onSubmit={modalProps?.onSubmit}
+      />
+
+      <UserDetailModal
+        open={openInfoModal}
+        onClose={handleCloseModal}
+        user={userDetail}
+      />
+
+      <UserUpdatePasswordModal
+        open={openUpdatePasswordModal}
+        onClose={handleCloseModal}
+        handleUpdatePassword={handleUpdatePassword}
+        user={selectedUser}
+      />
     </Paper>
   )
 }

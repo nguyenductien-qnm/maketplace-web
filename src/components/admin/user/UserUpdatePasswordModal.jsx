@@ -1,10 +1,11 @@
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
 import TypographyLabel from '~/components/common/TypographyLabel'
-import { Box, TextField } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import {
   FIELD_REQUIRED_MESSAGE,
@@ -72,10 +73,16 @@ function UserUpdatePasswordModal({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant="outlined" color="secondary">
-          Close
+        <Button
+          className="btn-admin-user-action"
+          onClick={onClose}
+          variant="outlined"
+          color="secondary"
+        >
+          Cancel
         </Button>
         <Button
+          className="btn-admin-user-action"
           color="success"
           variant="contained"
           onClick={handleSubmit(onsubmit)}

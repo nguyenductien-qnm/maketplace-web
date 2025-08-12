@@ -1,13 +1,20 @@
+import { StatusCodes } from 'http-status-codes'
 import { useEffect, useRef, useState } from 'react'
 import {
-  banUserAPI,
-  exportUserDataAPI,
-  getUserDetailForAdminAPI,
   queryUserByAdminAPI,
-  unbanUserAPI,
-  updateUserPasswordForAdminAPI
+  banUserByAdminAPI,
+  unbanUserByAdminAPI,
+  exportUserDataAPI,
+  getUserDetailByAdminAPI,
+  updateUserPasswordByAdminAPI
 } from '~/api/user.api'
 import { navigate } from '~/helpers/navigation'
+
+const LOADING_CLASS = [
+  '.btn-admin-user-action',
+  '.btn-reason-modal-cancel',
+  '.btn-reason-modal-submit'
+]
 
 export const useAdminUser = ({ status }) => {
   // ============================== STATE ==============================
@@ -57,14 +64,13 @@ export const useAdminUser = ({ status }) => {
   const queryUserByAdmin = async (data) => {
     setLoading(true)
     try {
-      const res = await queryUserByAdminAPI({ data })
-      if (res.status === 200) {
-        setUsers(res.data?.metadata?.users)
-        setCount(res.data?.metadata?.count)
-      } else {
-        setDenied(true)
+      const { status, resData } = await queryUserByAdminAPI({ payload: data })
+      if (status === StatusCodes.OK) {
+        const { users, count } = resData?.metadata
+        setUsers(users || [])
+        setCount(count || 0)
       }
-    } catch (err) {
+    } catch {
       setDenied(true)
     } finally {
       setLoading(false)
@@ -100,6 +106,7 @@ export const useAdminUser = ({ status }) => {
     setSelectedUser(user)
     if (action === 'detail') {
       setOpenInfoModal(true)
+      handleGetUserDetail(user)
     } else if (action === 'update-password') {
       setOpenUpdatePasswordModal(true)
     } else {
@@ -116,26 +123,47 @@ export const useAdminUser = ({ status }) => {
     setUserDetail(null)
   }
 
-  const handleBanUser = async (data) => {
-    await banUserAPI(data)
-    setUsers((prev) => prev.filter((u) => u._id !== data._id))
-    handleCloseModal()
+  const handleBanUser = async ({ data }) => {
+    const { status, resData } = await banUserByAdminAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS
+    })
+    if (status === StatusCodes.OK) {
+      const updated = resData?.metadata
+      handleCloseModal()
+      setUsers((prev) =>
+        prev.map((u) => (u?._id === updated?._id ? updated : u))
+      )
+    }
   }
 
-  const handleUnbanUser = async (data) => {
-    await unbanUserAPI(data)
-    setUsers((prev) => prev.filter((u) => u._id !== data._id))
-    handleCloseModal()
+  const handleUnbanUser = async ({ data }) => {
+    const { status, resData } = await unbanUserByAdminAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS
+    })
+    if (status === StatusCodes.OK) {
+      const updated = resData?.metadata
+      handleCloseModal()
+      setUsers((prev) =>
+        prev.map((u) => (u?._id === updated?._id ? updated : u))
+      )
+    }
   }
 
   const handleGetUserDetail = async (data) => {
-    const res = await getUserDetailForAdminAPI({ _id: data?._id })
-    setUserDetail(res?.data?.metadata)
+    const { status, resData } = await getUserDetailByAdminAPI({
+      _id: data?._id
+    })
+    if (status === StatusCodes.OK) setUserDetail(resData?.metadata)
   }
 
   const handleUpdatePassword = async (data) => {
-    const res = await updateUserPasswordForAdminAPI(data)
-    if (res?.status === 200) handleCloseModal()
+    const { status, resData } = await updateUserPasswordByAdminAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS
+    })
+    if (status === StatusCodes.OK) handleCloseModal()
   }
 
   const handleExportData = async () => {
@@ -177,7 +205,6 @@ export const useAdminUser = ({ status }) => {
     users,
     count,
     loading,
-    isDenied,
     userDetail,
     selectedUser,
 

@@ -7,33 +7,26 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableFooter from '@mui/material/TableFooter'
 import TablePagination from '@mui/material/TablePagination'
-import { Box, Button, Tooltip } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Tooltip from '@mui/material/Tooltip'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import Chip from '@mui/material/Chip'
-import ReasonModal from '../ReasonModal'
-import UserModal from './UserModal'
-import UserUpdatePasswordModal from './UserUpdatePasswordModal'
 import PasswordIcon from '@mui/icons-material/Password'
 import LockOpenIcon from '@mui/icons-material/LockOpen'
 import BlockIcon from '@mui/icons-material/Block'
 import NoData from '../NoData'
+import TableSkeleton from '../TableSkeleton'
+
 function UserTable({
+  loading,
   users,
   count,
   page,
   rowsPerPage,
-  userDetail,
-  selectedUser,
-  handleGetUserDetail,
-  modalProps,
   handleChangePage,
   handleChangeRowsPerPage,
-  openReasonModal,
-  openInfoModal,
-  openUpdatePasswordModal,
-  handleOpenModal,
-  handleCloseModal,
-  handleUpdatePassword
+  handleOpenModal
 }) {
   const GenderCell = ({ gender }) => {
     if (!gender) return '—'
@@ -55,10 +48,12 @@ function UserTable({
       />
     )
   }
+
   return (
     <>
-      {users?.length === 0 && <NoData />}
-      {users?.length > 0 && (
+      {loading && <TableSkeleton columns={8} rows={rowsPerPage} />}
+      {!loading && users?.length === 0 && <NoData />}
+      {!loading && users?.length > 0 && (
         <TableContainer
           component={Paper}
           sx={{
@@ -70,12 +65,12 @@ function UserTable({
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell align="right">Email</TableCell>
-                <TableCell align="right">Phone</TableCell>
-                <TableCell align="right">Full name</TableCell>
-                <TableCell align="right">Create at</TableCell>
-                <TableCell align="right">Gender</TableCell>
-                <TableCell align="right">Is Shop</TableCell>
+                <TableCell align="left">Email</TableCell>
+                <TableCell align="left">Phone</TableCell>
+                <TableCell align="left">Full name</TableCell>
+                <TableCell align="left">Create at</TableCell>
+                <TableCell align="left">Gender</TableCell>
+                <TableCell align="left">Is Shop</TableCell>
                 <TableCell align="left">Detail</TableCell>
                 <TableCell align="left">Action</TableCell>
               </TableRow>
@@ -87,14 +82,14 @@ function UserTable({
                   key={user._id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell align="right">{user?.user_email}</TableCell>
-                  <TableCell align="right">{user?.user_phone || '—'}</TableCell>
-                  <TableCell align="right">{user?.user_name || '—'}</TableCell>
-                  <TableCell align="right">{user?.createdAt}</TableCell>
-                  <TableCell align="right">
+                  <TableCell align="left">{user?.user_email}</TableCell>
+                  <TableCell align="left">{user?.user_phone || '—'}</TableCell>
+                  <TableCell align="left">{user?.user_name || '—'}</TableCell>
+                  <TableCell align="left">{user?.createdAt}</TableCell>
+                  <TableCell align="left">
                     {GenderCell({ gender: user?.user_gender })}
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell align="left">
                     {user?.user_role.includes('SHOP') ? (
                       <Chip
                         sx={{ width: '40px' }}
@@ -112,7 +107,7 @@ function UserTable({
                     )}
                   </TableCell>
 
-                  <TableCell align="right">
+                  <TableCell align="left">
                     <Tooltip title="View detail info">
                       <Box
                         sx={{
@@ -122,7 +117,6 @@ function UserTable({
                         }}
                         onClick={() => {
                           handleOpenModal({ action: 'detail', user })
-                          handleGetUserDetail(user)
                         }}
                       >
                         <InfoOutlinedIcon />
@@ -134,6 +128,7 @@ function UserTable({
                       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'nowrap' }}>
                         <Tooltip title="Ban user">
                           <Button
+                            className="btn-admin-user-action"
                             color="error"
                             variant="contained"
                             onClick={() =>
@@ -146,6 +141,7 @@ function UserTable({
 
                         <Tooltip title="Update password">
                           <Button
+                            className="btn-admin-user-action"
                             color="success"
                             variant="contained"
                             onClick={() =>
@@ -161,9 +157,10 @@ function UserTable({
                       </Box>
                     )}
 
-                    {user?.user_status === 'block' && (
+                    {user?.user_status === 'blocked' && (
                       <Tooltip title="Unban user">
                         <Button
+                          className="btn-admin-user-action"
                           variant="contained"
                           onClick={() =>
                             handleOpenModal({ action: 'unban', user })
@@ -207,29 +204,6 @@ function UserTable({
               </TableRow>
             </TableFooter>
           </Table>
-          {modalProps?.type === 'reason' && (
-            <ReasonModal
-              open={openReasonModal}
-              onClose={handleCloseModal}
-              header={modalProps.header}
-              submitText={modalProps.submitText}
-              submitColor={modalProps.submitColor}
-              onSubmit={modalProps.onSubmit}
-            />
-          )}
-
-          <UserModal
-            open={openInfoModal}
-            onClose={handleCloseModal}
-            user={userDetail}
-          />
-
-          <UserUpdatePasswordModal
-            open={openUpdatePasswordModal}
-            onClose={handleCloseModal}
-            handleUpdatePassword={handleUpdatePassword}
-            user={selectedUser}
-          />
         </TableContainer>
       )}
     </>

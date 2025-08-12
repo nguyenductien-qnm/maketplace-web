@@ -61,54 +61,63 @@ const updateAddressAPI = async ({ data, loadingClass }) => {
   return res
 }
 
-const queryUserByAdminAPI = async ({ data }) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/user/query-user-by-admin`,
-    data,
+// ============================ ADMIN ============================
+const queryUserByAdminAPI = async ({ payload }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/admin/user/query`,
+    payload,
     {
       ...TOAST_MODE.ONLY_ERROR
     }
   )
-  return res
+  return { status, resData: data }
 }
 
-const banUserAPI = async ({ data }) => {
-  const res = await authorizedAxios.post(`${API_ROOT}/v1/api/user/ban`, data, {
-    ...TOAST_MODE.ALL
-  })
-  return res
+const banUserByAdminAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/user/update-status/ban`,
+    payload,
+    { ...TOAST_MODE.ALL, loadingClass }
+  )
+  return { status, resData: data }
 }
 
-const unbanUserAPI = async ({ data }) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/user/unban`,
-    data,
+const unbanUserByAdminAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/user/update-status/unban`,
+    payload,
+    { ...TOAST_MODE.ALL, loadingClass }
+  )
+  return { status, resData: data }
+}
+
+const getUserDetailByAdminAPI = async ({ _id }) => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/admin/user/${_id}`,
     {
       ...TOAST_MODE.ALL
     }
   )
-  return res
+  return { status, resData: data }
 }
 
-const getUserDetailForAdminAPI = async ({ _id }) => {
-  const res = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/user/detail-for-admin?_id=${_id}`,
-    {
-      ...TOAST_MODE.ALL
-    }
+const updateUserPasswordByAdminAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/user/update-password`,
+    payload,
+    { ...TOAST_MODE.ALL, loadingClass }
   )
-  return res
+  return { status, resData: data }
 }
 
-const updateUserPasswordForAdminAPI = async (data) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/user/update-user-password-for-admin`,
-    data,
+const getUserListForFilterAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/user/get-user-list-for-filter`,
     {
-      ...TOAST_MODE.ALL
+      ...TOAST_MODE.NONE
     }
   )
-  return res
+  return { status, resData: data }
 }
 
 const exportUserDataAPI = async (data) => {
@@ -132,16 +141,6 @@ const exportUserDataAPI = async (data) => {
   return res
 }
 
-const getUserListForFilterAPI = async () => {
-  const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/user/get-user-list-for-filter`,
-    {
-      ...TOAST_MODE.NONE
-    }
-  )
-  return { status, resData: data }
-}
-
 export {
   getUserInfoAPI,
   changePasswordAPI,
@@ -151,10 +150,10 @@ export {
   deleteAddressAPI,
   updateAddressAPI,
   queryUserByAdminAPI,
-  banUserAPI,
-  unbanUserAPI,
-  getUserDetailForAdminAPI,
-  updateUserPasswordForAdminAPI,
+  banUserByAdminAPI,
+  unbanUserByAdminAPI,
+  getUserDetailByAdminAPI,
+  updateUserPasswordByAdminAPI,
   exportUserDataAPI,
   getUserListForFilterAPI
 }

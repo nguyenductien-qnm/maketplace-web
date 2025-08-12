@@ -3,12 +3,16 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
-import TypographyLabel from '~/components/common/TypographyLabel'
-import { Avatar, Box, TextField } from '@mui/material'
-import { formatDate } from '~/utils/formatDate'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
+import TypographyLabel from '~/components/common/TypographyLabel'
+import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
 
-function UserModal({ open, onClose, user }) {
+function UserDetailModal({ open, onClose, user }) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>User Detail</DialogTitle>
@@ -55,7 +59,7 @@ function UserModal({ open, onClose, user }) {
                 <TypographyLabel>Phone</TypographyLabel>
                 <TextField
                   size="small"
-                  value={user?.user_phone}
+                  value={user?.user_phone || 'NAN'}
                   disabled
                   fullWidth
                 />
@@ -65,7 +69,7 @@ function UserModal({ open, onClose, user }) {
                 <TypographyLabel>Status</TypographyLabel>
                 <TextField
                   size="small"
-                  value={user?.user_status}
+                  value={capitalizeFirstLetter(user?.user_status)}
                   disabled
                   fullWidth
                 />
@@ -77,7 +81,7 @@ function UserModal({ open, onClose, user }) {
                 <TypographyLabel>Gender</TypographyLabel>
                 <TextField
                   size="small"
-                  value={user?.user_gender}
+                  value={capitalizeFirstLetter(user?.user_gender) || 'NAN'}
                   disabled
                   fullWidth
                 />
@@ -87,7 +91,7 @@ function UserModal({ open, onClose, user }) {
                 <TypographyLabel>Date of birth</TypographyLabel>
                 <TextField
                   size="small"
-                  value={user?.user_date_of_birth}
+                  value={user?.user_date_of_birth || 'NAN'}
                   disabled
                   fullWidth
                 />
@@ -109,14 +113,14 @@ function UserModal({ open, onClose, user }) {
                 <TypographyLabel>Created at</TypographyLabel>
                 <TextField
                   size="small"
-                  value={formatDate(user?.createdAt)}
+                  value={user?.createdAt}
                   disabled
                   fullWidth
                 />
               </Box>
             </Box>
 
-            {user?.user_status === 'block' && (
+            {user?.user_status === 'blocked' && (
               <>
                 <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
                   <Box sx={{ flex: 1 }}>
@@ -155,13 +159,10 @@ function UserModal({ open, onClose, user }) {
                 <Box sx={{ mt: 1 }}>
                   <Box sx={{ flex: 1 }}>
                     <TypographyLabel>Reason</TypographyLabel>
-                    <TextField
-                      multiline
-                      rows={5}
+                    <ReactQuill
+                      theme="snow"
                       value={user?.ban_info?.reason}
-                      size="small"
-                      disabled
-                      fullWidth
+                      style={{ height: '200px' }}
                     />
                   </Box>
                 </Box>
@@ -179,4 +180,4 @@ function UserModal({ open, onClose, user }) {
   )
 }
 
-export default UserModal
+export default UserDetailModal

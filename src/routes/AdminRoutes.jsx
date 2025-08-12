@@ -48,8 +48,8 @@ const AdminRoutes = () => {
             element={<AdminUser name="Active Users " status="ACTIVE" />}
           />
           <Route
-            path="banned"
-            element={<AdminUser name="Banned Users" status="BLOCK" />}
+            path="blocked"
+            element={<AdminUser name="Blocked Users" status="BLOCK" />}
           />
           <Route
             path="new-registrations"
