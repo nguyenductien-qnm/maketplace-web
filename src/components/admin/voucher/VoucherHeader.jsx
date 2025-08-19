@@ -1,11 +1,14 @@
-import { Box, Button, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 import Tooltip from '@mui/material/Tooltip'
 import VoucherFilter from './VoucherFilter'
 
 function VoucherHeader({
+  shops,
+  staffs,
   name,
-  status,
   filters,
   setFilters,
   handleFilter,
@@ -42,7 +45,8 @@ function VoucherHeader({
         <Tooltip title="Advantage filter">
           <Box>
             <VoucherFilter
-              status={status}
+              shops={shops}
+              staffs={staffs}
               filters={filters}
               setFilters={setFilters}
               handleFilter={handleFilter}

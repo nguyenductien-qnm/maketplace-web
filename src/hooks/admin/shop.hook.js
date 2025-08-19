@@ -12,11 +12,7 @@ import {
   exportShopDataByAdminAPI
 } from '~/api/shop.api'
 
-const LOADING_CLASS = [
-  '.btn-reason-modal-cancel',
-  '.btn-reason-modal-submit',
-  '.btn-admin-shop-action'
-]
+const LOADING_CLASS = ['.btn-reason-modal', '.btn-admin-shop-action']
 
 export const useAdminShop = ({ status }) => {
   // ============================== STATE ==============================

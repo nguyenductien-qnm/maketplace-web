@@ -68,7 +68,7 @@ function ReasonModal({
       </DialogContent>
       <DialogActions>
         <Button
-          className="btn-reason-modal-cancel"
+          className="btn-reason-modal"
           onClick={onClose}
           variant="outlined"
           color="secondary"
@@ -76,7 +76,7 @@ function ReasonModal({
           Cancel
         </Button>
         <Button
-          className="btn-reason-modal-submit"
+          className="btn-reason-modal"
           onClick={handleSubmit(submitHandler)}
           variant="contained"
           color={submitColor}

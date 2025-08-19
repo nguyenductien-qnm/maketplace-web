@@ -1,15 +1,19 @@
+import Autocomplete from '@mui/material/Autocomplete'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
 import MenuItem from '@mui/material/MenuItem'
 import Popover from '@mui/material/Popover'
 import Select from '@mui/material/Select'
 import Slider from '@mui/material/Slider'
-import { useState } from 'react'
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
-import { Button, Divider, TextField } from '@mui/material'
 import TypographyLabel from '../../common/TypographyLabel'
+import { useState } from 'react'
 
 function VoucherFilter({
-  status,
+  shops,
+  staffs,
   filters,
   setFilters,
   handleFilter,
@@ -31,6 +35,8 @@ function VoucherFilter({
       admin: 200
     }
   }
+
+  const createdBy = filters?.createdBy
 
   return (
     <Box>
@@ -97,6 +103,7 @@ function VoucherFilter({
                 }
                 displayEmpty
               >
+                <MenuItem value="all">All</MenuItem>
                 <MenuItem value="percent">Percent</MenuItem>
                 <MenuItem value="fixed_amount">Fixed amount</MenuItem>
               </Select>
@@ -175,33 +182,64 @@ function VoucherFilter({
                 fullWidth
                 value={filters.createdBy || ''}
                 onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, createdBy: e.target.value }))
+                  setFilters((prev) => ({
+                    ...prev,
+                    createdBy: e.target.value,
+                    creatorSelect: ''
+                  }))
                 }
                 displayEmpty
               >
+                <MenuItem value="all">All</MenuItem>
                 <MenuItem value="admin">Admin</MenuItem>
                 <MenuItem value="shop">Shop</MenuItem>
               </Select>
             </Box>
 
-            <Box sx={{ flex: 1 }}>
-              <TypographyLabel>Creator select</TypographyLabel>
-              <Select
-                size="small"
-                fullWidth
-                value={filters.creatorSelect || ''}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    creatorSelect: e.target.value
-                  }))
-                }
-                displayEmpty
-              >
-                <MenuItem value="percent">Percent</MenuItem>
-                <MenuItem value="fixed_amount">Fixed amount</MenuItem>
-              </Select>
-            </Box>
+            {createdBy !== 'all' && (
+              <Box sx={{ flex: 1 }}>
+                <TypographyLabel>Creator select</TypographyLabel>
+                <Autocomplete
+                  size="small"
+                  fullWidth
+                  options={
+                    createdBy === 'shop'
+                      ? shops || []
+                      : createdBy === 'admin'
+                      ? staffs || []
+                      : []
+                  }
+                  getOptionLabel={(option) =>
+                    createdBy === 'shop'
+                      ? option.shop_name || ''
+                      : createdBy === 'admin'
+                      ? option.user_name || ''
+                      : ''
+                  }
+                  value={
+                    createdBy === 'shop'
+                      ? shops?.find((s) => s._id === filters.creatorSelect) ||
+                        null
+                      : createdBy === 'admin'
+                      ? staffs?.find((u) => u._id === filters.creatorSelect) ||
+                        null
+                      : null
+                  }
+                  onChange={(_, newValue) => {
+                    setFilters((prev) => ({
+                      ...prev,
+                      creatorSelect: newValue?._id || ''
+                    }))
+                  }}
+                  isOptionEqualToValue={(option, value) =>
+                    option?._id === value?._id
+                  }
+                  renderInput={(params) => (
+                    <TextField {...params} placeholder="Search by name..." />
+                  )}
+                />
+              </Box>
+            )}
           </Box>
           <Box sx={{ display: 'flex', gap: 5 }}>
             <Box sx={{ flex: 1 }}>

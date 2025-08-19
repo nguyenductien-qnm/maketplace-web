@@ -9,11 +9,7 @@ import {
 import { getShopListForFilterAPI } from '~/api/shop.api'
 import { navigate } from '~/helpers/navigation'
 
-const LOADING_CLASS = [
-  '.btn-reason-modal-submit',
-  '.btn-reason-modal-cancel',
-  '.btn-admin-product-action'
-]
+const LOADING_CLASS = ['.btn-reason-modal', '.btn-admin-product-action']
 
 export const useAdminProduct = ({ status }) => {
   // ============================== STATE ==============================

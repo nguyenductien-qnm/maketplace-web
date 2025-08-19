@@ -120,6 +120,16 @@ const getUserListForFilterAPI = async () => {
   return { status, resData: data }
 }
 
+const getStaffListForFilterAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/user/get-staff-list-for-filter`,
+    {
+      ...TOAST_MODE.NONE
+    }
+  )
+  return { status, resData: data }
+}
+
 const exportUserDataAPI = async (data) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/user/export`,
@@ -155,5 +165,6 @@ export {
   getUserDetailByAdminAPI,
   updateUserPasswordByAdminAPI,
   exportUserDataAPI,
-  getUserListForFilterAPI
+  getUserListForFilterAPI,
+  getStaffListForFilterAPI
 }

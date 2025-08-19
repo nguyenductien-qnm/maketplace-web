@@ -10,11 +10,7 @@ import {
 } from '~/api/user.api'
 import { navigate } from '~/helpers/navigation'
 
-const LOADING_CLASS = [
-  '.btn-admin-user-action',
-  '.btn-reason-modal-cancel',
-  '.btn-reason-modal-submit'
-]
+const LOADING_CLASS = ['.btn-reason-modal', '.btn-admin-user-action']
 
 export const useAdminUser = ({ status }) => {
   // ============================== STATE ==============================

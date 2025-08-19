@@ -1,17 +1,19 @@
-import { Paper } from '@mui/material'
+import Paper from '@mui/material/Paper'
 import ReasonModal from '~/components/admin/ReasonModal'
-import TableSkeleton from '~/components/admin/TableSkeleton'
+import VoucherDetailModal from '~/components/admin/voucher/VoucherDetailModal'
 import VoucherForm from '~/components/admin/voucher/VoucherForm'
 import VoucherHeader from '~/components/admin/voucher/VoucherHeader'
 import VoucherTable from '~/components/admin/voucher/VoucherTable'
 import { useAdminVoucher } from '~/hooks/admin/voucher.hook'
+
 function AdminVoucher({ status, name }) {
   const {
     action,
     vouchers,
+    shops,
+    staffs,
     count,
     loading,
-    isDenied,
     voucherDetail,
     selectedVoucher,
 
@@ -47,9 +49,10 @@ function AdminVoucher({ status, name }) {
       }}
     >
       <VoucherHeader
+        shops={shops}
+        staffs={staffs}
         name={name}
         filters={filters}
-        status={status}
         setFilters={setFilters}
         handleFilter={handleFilter}
         handleClearFilter={handleClearFilter}
@@ -57,24 +60,19 @@ function AdminVoucher({ status, name }) {
         // handleExportData={handleExportData}
       />
 
-      {loading && <TableSkeleton columns={8} rows={rowsPerPage} />}
-      {!loading && !isDenied && (
-        <VoucherTable
-          status={status}
-          vouchers={vouchers}
-          count={count}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          handleGetVoucherDetail={handleGetVoucherDetail}
-          handleOpenForm={handleOpenForm}
-          handleOpenModal={handleOpenModal}
-          openDetailModal={openDetailModal}
-          voucherDetail={voucherDetail}
-          handleCloseModal={handleCloseModal}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-      )}
+      <VoucherTable
+        loading={loading}
+        status={status}
+        vouchers={vouchers}
+        count={count}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        handleGetVoucherDetail={handleGetVoucherDetail}
+        handleOpenForm={handleOpenForm}
+        handleOpenModal={handleOpenModal}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+      />
 
       <VoucherForm
         key={selectedVoucher?._id || 'new'}
@@ -88,16 +86,20 @@ function AdminVoucher({ status, name }) {
         }
       />
 
-      {modalProps && (
-        <ReasonModal
-          open={openReasonModal}
-          onClose={handleCloseModal}
-          header={modalProps.header}
-          submitText={modalProps.submitText}
-          submitColor={modalProps.submitColor}
-          onSubmit={modalProps.onSubmit}
-        />
-      )}
+      <VoucherDetailModal
+        open={openDetailModal}
+        onClose={handleCloseModal}
+        voucher={voucherDetail}
+      />
+
+      <ReasonModal
+        open={openReasonModal}
+        onClose={handleCloseModal}
+        header={modalProps?.header}
+        submitText={modalProps?.submitText}
+        submitColor={modalProps?.submitColor}
+        onSubmit={modalProps?.onSubmit}
+      />
     </Paper>
   )
 }

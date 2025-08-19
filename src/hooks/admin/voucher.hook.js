@@ -1,6 +1,9 @@
+import { StatusCodes } from 'http-status-codes'
 import { useState, useRef, useEffect } from 'react'
+import { getShopListForFilterAPI } from '~/api/shop.api'
+import { getStaffListForFilterAPI } from '~/api/user.api'
 import {
-  adminCreateVoucherAPI,
+  createVoucherByAdminAPI,
   disableShopVoucherByAdminAPI,
   enableShopVoucherByAdminAPI,
   getVoucherDetailForAdminAPI,
@@ -9,19 +12,25 @@ import {
 } from '~/api/voucher.api'
 import { navigate } from '~/helpers/navigation'
 
+const LOADING_CLASS = [
+  '.btn-admin-voucher-action',
+  '.btn-voucher-form',
+  '.btn-reason-modal'
+]
+
 export const useAdminVoucher = ({ status }) => {
   // ============================== STATE ==============================
   const defaultFilters = {
     search: '',
-    type: '',
+    type: 'all',
     startDate: '',
     endDate: '',
     createdFrom: '',
     createdTo: '',
-    createdBy: 'admin',
+    createdBy: 'all',
     creatorSelect: '',
-    discountValueRange: [0, 100],
-    applies: '',
+    discountValueRange: [0, 200],
+    applies: 'all',
     reservedRange: [0, 500],
     quantityRange: [0, 500]
   }
@@ -37,6 +46,8 @@ export const useAdminVoucher = ({ status }) => {
   const [filters, setFilters] = useState(defaultFilters)
   const skipEffect = useRef(false)
 
+  const [shops, setShops] = useState([])
+  const [staffs, setStaffs] = useState([])
   const [openReasonModal, setOpenReasonModal] = useState(false)
   const [openDetailModal, setOpenDetailModal] = useState(false)
   const [openVoucherForm, setOpenVoucherForm] = useState(false)
@@ -50,16 +61,25 @@ export const useAdminVoucher = ({ status }) => {
   }, [isDenied])
 
   useEffect(() => {
-    if (filters?.type === 'percent') {
-      defaultFilters.discountValueRange[1] = 100
+    if (!filters) return
+
+    let newMax
+
+    if (filters.type === 'percent') {
+      newMax = 100
+    } else if (filters.type === 'fixed_amount') {
+      newMax = filters.createdBy === 'shop' ? 100 : 200
     } else {
-      if (filters?.createdBy === 'admin') {
-        defaultFilters.discountValueRange[1] = 200
-      } else {
-        defaultFilters.discountValueRange[1] = 100
-      }
+      return
     }
-  }, [filters])
+
+    if (filters.discountValueRange?.[1] !== newMax) {
+      setFilters((prev) => ({
+        ...prev,
+        discountValueRange: [prev.discountValueRange?.[0] ?? 0, newMax]
+      }))
+    }
+  }, [filters?.type, filters?.createdBy])
 
   useEffect(() => {
     if (skipEffect.current) {
@@ -70,20 +90,34 @@ export const useAdminVoucher = ({ status }) => {
     queryVoucherByAdmin({ page, rowsPerPage, status, ...filters })
   }, [status, page, rowsPerPage])
 
+  useEffect(() => {
+    getShopList()
+    getStaffList()
+  }, [])
   // ============================== API ==============================
+  const getShopList = async () => {
+    const { status, resData } = await getShopListForFilterAPI()
+    if (status === StatusCodes.OK) setShops(resData?.metadata || [])
+  }
+
+  const getStaffList = async () => {
+    const { status, resData } = await getStaffListForFilterAPI()
+    if (status === StatusCodes.OK) setStaffs(resData?.metadata || [])
+  }
 
   const queryVoucherByAdmin = async (data) => {
     setLoading(true)
     try {
-      const res = await queryVoucherByAdminAPI(data)
-      if (res.status === 200) {
-        setVouchers(res.data?.metadata?.vouchers)
-        setCount(res.data?.metadata?.count)
-      } else {
-        setDenied(true)
+      const { status, resData } = await queryVoucherByAdminAPI({
+        payload: data
+      })
+      if (status === StatusCodes.OK) {
+        const { vouchers, count } = resData?.metadata
+        setVouchers(vouchers)
+        setCount(count)
       }
     } catch (err) {
-      setDenied(true)
+      if (err?.status !== StatusCodes.UNPROCESSABLE_ENTITY) setDenied(true)
     } finally {
       setLoading(false)
     }
@@ -143,44 +177,65 @@ export const useAdminVoucher = ({ status }) => {
   }
 
   const handleGetVoucherDetail = async (data) => {
-    const res = await getVoucherDetailForAdminAPI({ _id: data?._id })
-    setVoucherDetail(res?.data?.metadata)
+    const { status, resData } = await getVoucherDetailForAdminAPI({
+      _id: data?._id
+    })
+    if (status === StatusCodes.OK) setVoucherDetail(resData?.metadata)
   }
 
   const handleCreateVoucher = async (data) => {
-    const res = await adminCreateVoucherAPI(data)
-    setVouchers((prev) => [
-      res.data.metadata,
-      ...prev.slice(0, prev.length - 1)
-    ])
-    handleCloseForm()
+    const { status, resData } = await createVoucherByAdminAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS
+    })
+    if (status === StatusCodes.OK) {
+      const created = resData?.metadata
+      setVouchers((p) => [created, ...p])
+      handleCloseForm()
+    }
   }
 
   const handleUpdateVoucher = async (data) => {
-    const res = await updateVoucherByAdminAPI(data)
-    const updated = res?.data?.metadata
-    setVouchers((prev) =>
-      prev.map((v) => (v._id === updated._id ? updated : v))
-    )
-    handleCloseForm()
+    const { voucher_applies, ...payload } = data
+    const { status, resData } = await updateVoucherByAdminAPI({
+      payload,
+      loadingClass: LOADING_CLASS
+    })
+    if (status === StatusCodes.OK) {
+      const updated = resData?.metadata
+      setVouchers((prev) =>
+        prev.map((v) => (v._id === updated._id ? updated : v))
+      )
+      handleCloseForm()
+    }
   }
 
   const handleDisableShopVoucher = async (data) => {
-    const res = await disableShopVoucherByAdminAPI(data)
-    const updated = res?.data?.metadata
-    setVouchers((prev) =>
-      prev.map((v) => (v._id === updated._id ? updated : v))
-    )
-    handleCloseModal()
+    const { status, resData } = await disableShopVoucherByAdminAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS
+    })
+    if (status === StatusCodes.OK) {
+      const updated = resData?.metadata
+      setVouchers((prev) =>
+        prev.map((v) => (v._id === updated._id ? updated : v))
+      )
+      handleCloseModal()
+    }
   }
 
   const handleEnableShopVoucher = async (data) => {
-    const res = await enableShopVoucherByAdminAPI(data)
-    const updated = res?.data?.metadata
-    setVouchers((prev) =>
-      prev.map((v) => (v._id === updated._id ? updated : v))
-    )
-    handleCloseModal()
+    const { status, resData } = await enableShopVoucherByAdminAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS
+    })
+    if (status === StatusCodes.OK) {
+      const updated = resData?.metadata
+      setVouchers((prev) =>
+        prev.map((v) => (v._id === updated._id ? updated : v))
+      )
+      handleCloseModal()
+    }
   }
 
   const modalProps = {
@@ -215,11 +270,12 @@ export const useAdminVoucher = ({ status }) => {
   }
 
   return {
+    shops,
+    staffs,
     action,
     vouchers,
     count,
     loading,
-    isDenied,
     voucherDetail,
     selectedVoucher,
 

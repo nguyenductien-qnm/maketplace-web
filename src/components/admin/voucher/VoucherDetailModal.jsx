@@ -4,8 +4,11 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
 import TypographyLabel from '~/components/common/TypographyLabel'
-import { Box, TextField } from '@mui/material'
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
+import formatCurrency from '~/utils/formatCurrency'
+import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
 
 function VoucherDetailModal({ open, onClose, voucher }) {
   return (
@@ -52,7 +55,7 @@ function VoucherDetailModal({ open, onClose, voucher }) {
                 <TypographyLabel>Creator role</TypographyLabel>
                 <TextField
                   size="small"
-                  value={voucher?.voucher_creator_role}
+                  value={capitalizeFirstLetter(voucher?.voucher_creator_role)}
                   disabled
                   fullWidth
                 />
@@ -64,7 +67,7 @@ function VoucherDetailModal({ open, onClose, voucher }) {
                 <TypographyLabel>Type</TypographyLabel>
                 <TextField
                   size="small"
-                  value={voucher?.voucher_type}
+                  value={capitalizeFirstLetter(voucher?.voucher_type)}
                   disabled
                   fullWidth
                 />
@@ -74,7 +77,11 @@ function VoucherDetailModal({ open, onClose, voucher }) {
                 <TypographyLabel>Value</TypographyLabel>
                 <TextField
                   size="small"
-                  value={voucher?.voucher_value}
+                  value={
+                    voucher?.voucher_type === 'percent'
+                      ? voucher?.voucher_value + '%'
+                      : formatCurrency(voucher?.voucher_value)
+                  }
                   disabled
                   fullWidth
                 />
@@ -84,7 +91,7 @@ function VoucherDetailModal({ open, onClose, voucher }) {
                 <TypographyLabel>Min order value</TypographyLabel>
                 <TextField
                   size="small"
-                  value={voucher?.voucher_min_order_value}
+                  value={formatCurrency(voucher?.voucher_min_order_value)}
                   disabled
                   fullWidth
                 />
@@ -160,7 +167,7 @@ function VoucherDetailModal({ open, onClose, voucher }) {
                 <TypographyLabel>Applies</TypographyLabel>
                 <TextField
                   size="small"
-                  value={voucher?.voucher_applies}
+                  value={capitalizeFirstLetter(voucher?.voucher_applies)}
                   disabled
                   fullWidth
                 />
@@ -170,7 +177,7 @@ function VoucherDetailModal({ open, onClose, voucher }) {
                 <TypographyLabel>Status</TypographyLabel>
                 <TextField
                   size="small"
-                  value={voucher?.voucher_status}
+                  value={capitalizeFirstLetter(voucher?.voucher_status)}
                   disabled
                   fullWidth
                 />

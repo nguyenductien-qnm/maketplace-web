@@ -23,39 +23,31 @@ import {
   VOUCHER_CODE_RULE,
   VOUCHER_CODE_RULE_MESSAGE
 } from '~/utils/validators'
-import { blue } from '@mui/material/colors'
-import { Controller, useForm } from 'react-hook-form'
-import { useEffect } from 'react'
+import { Controller } from 'react-hook-form'
+import { useAdminVoucherForm } from '~/hooks/admin/voucherForm.hook'
 
 function VoucherForm({ voucher, mode, action, open, onclose, onSubmit }) {
-  const {
-    register,
-    formState: { errors },
-    control,
-    handleSubmit,
-    reset
-  } = useForm({
-    defaultValues: {
-      voucher_type: 'percent',
-      voucher_status: 'public'
-    }
-  })
-
-  useEffect(() => {
-    if (voucher) reset(voucher)
-  }, [voucher])
-
-  const submitHandler = (data) => {
-    onSubmit(data)
-  }
+  const { isSubmitting, register, errors, control, handleFormSubmit } =
+    useAdminVoucherForm({
+      action,
+      voucher,
+      onSubmit
+    })
 
   return (
-    <Dialog open={open} onClose={onclose} fullWidth maxWidth="sm">
+    <Dialog
+      open={open}
+      onClose={() => {
+        if (!isSubmitting) onclose()
+      }}
+      fullWidth
+      maxWidth="sm"
+    >
       <DialogTitle>
         {action === 'create' && 'Create Voucher'}
         {action === 'update' && 'Update Voucher'}
       </DialogTitle>
-      <form onSubmit={handleSubmit(submitHandler)}>
+      <form onSubmit={handleFormSubmit}>
         <DialogContent sx={{ mt: '-20px' }}>
           <Box sx={{ mt: 2 }}>
             <Grid2 container spacing={2}>
@@ -349,14 +341,16 @@ function VoucherForm({ voucher, mode, action, open, onclose, onSubmit }) {
         </DialogContent>
         <DialogActions>
           <Button
-            className="btn-shop-cancel-submit-voucher"
+            className="btn-voucher-form"
+            // className="btn-shop-cancel-submit-voucher"
             onClick={onclose}
             color="secondary"
           >
             Cancel
           </Button>
           <Button
-            className="btn-shop-submit-voucher"
+            className="btn-voucher-form"
+            // className="btn-shop-submit-voucher"
             variant="contained"
             color="primary"
             type="submit"

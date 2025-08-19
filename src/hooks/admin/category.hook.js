@@ -18,10 +18,7 @@ const LOADING_CLASS = [
   '.btn-cancel-submit-category-form',
   '.btn-submit-category-form'
 ]
-const LOADING_CLASS_DELETE = [
-  '.btn-reason-modal-cancel',
-  '.btn-reason-modal-submit'
-]
+const LOADING_CLASS_DELETE = ['.btn-reason-modal']
 
 // ================= STATE =================
 export const useAdminCategory = () => {
