@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { getShopListForFilterAPI } from '~/api/shop.api'
 import { getRecentWalletTransactionsByAdminAPI } from '~/api/transaction.api'
 import { getUserListForFilterAPI } from '~/api/user.api'
@@ -8,13 +8,16 @@ import { navigate } from '~/helpers/navigation'
 
 export const useAdminWallet = ({ type }) => {
   // ============================== STATE ==============================
-  const defaultFilters = {
-    walletOfShop: '',
-    walletOfUser: '',
-    createdFrom: '',
-    createdTo: '',
-    minBalance: ''
-  }
+  const defaultFilters = useMemo(
+    () => ({
+      walletOfShop: '',
+      walletOfUser: '',
+      createdFrom: '',
+      createdTo: '',
+      minBalance: ''
+    }),
+    []
+  )
 
   const [isDenied, setDenied] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -44,17 +47,17 @@ export const useAdminWallet = ({ type }) => {
       return
     }
 
-    queryWallet({ page, rowsPerPage, type, ...filters })
+    queryWallets({ page, rowsPerPage, type, ...filters })
     if (type == 'VENDOR') {
       getShopList()
     } else if (type == 'CUSTOMER') {
       getUserList()
     }
-  }, [status, page, rowsPerPage])
+  }, [page, rowsPerPage])
 
   // ============================== API ==============================
 
-  const queryWallet = async (data) => {
+  const queryWallets = async (data) => {
     setLoading(true)
     try {
       const { status, resData } = await queryWalletByAdminAPI({
@@ -66,8 +69,8 @@ export const useAdminWallet = ({ type }) => {
         setCount(count || 0)
         setWallets(wallets || [])
       }
-    } catch {
-      setDenied(true)
+    } catch (err) {
+      if (err?.status !== StatusCodes.UNPROCESSABLE_ENTITY) setDenied(true)
     } finally {
       setLoading(false)
     }
@@ -87,7 +90,7 @@ export const useAdminWallet = ({ type }) => {
 
   const handleFilter = () => {
     if (page === 0) {
-      queryWallet({ page, rowsPerPage, type, ...filters })
+      queryWallets({ page, rowsPerPage, type, ...filters })
     } else {
       setPage(0)
     }

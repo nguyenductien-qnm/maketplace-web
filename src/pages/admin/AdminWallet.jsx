@@ -1,4 +1,4 @@
-import { Paper } from '@mui/material'
+import Paper from '@mui/material/Paper'
 import RecentWalletTransactionsModal from '~/components/admin/wallet/RecentWalletTransactionsModal'
 import WalletHeader from '~/components/admin/wallet/WalletHeader'
 import WalletTable from '~/components/admin/wallet/WalletTable'
@@ -45,6 +45,7 @@ function AdminWallet({ type }) {
         handleFilter={handleFilter}
         handleClearFilter={handleClearFilter}
       />
+
       <WalletTable
         type={type}
         loading={loading}
@@ -56,6 +57,7 @@ function AdminWallet({ type }) {
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
       />
+
       <RecentWalletTransactionsModal
         open={openDetailModal}
         onClose={handleCloseModal}

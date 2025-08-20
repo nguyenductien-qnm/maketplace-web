@@ -87,9 +87,11 @@ const userRequestWithdrawAPI = async (data, loadingClass) => {
   return res
 }
 
+// ============================ ADMIN ============================
+
 const queryWalletByAdminAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/wallet/query-by-admin`,
+    `${API_ROOT}/v1/api/admin/wallet/query`,
     payload,
     { ...TOAST_MODE.ONLY_ERROR }
   )

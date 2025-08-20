@@ -16,7 +16,6 @@ const getUserTransactionsAPI = async () => {
 }
 
 // ============================ ADMIN ============================
-
 const getRecentWalletTransactionsByAdminAPI = async ({ payload }) => {
   const { _id, type } = payload
   const { status, data } = await authorizedAxios.get(

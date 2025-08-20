@@ -1,5 +1,8 @@
-import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import TableFooter from '@mui/material/TableFooter'
+import TablePagination from '@mui/material/TablePagination'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -10,7 +13,6 @@ import Tooltip from '@mui/material/Tooltip'
 import TableSkeleton from '../TableSkeleton'
 import NoData from '../NoData'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import { Avatar, Box, TableFooter, TablePagination } from '@mui/material'
 import formatCurrency from '~/utils/formatCurrency'
 
 function WalletTable({
@@ -41,9 +43,7 @@ function WalletTable({
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell align="left">
-                  {isShop ? 'Shop avatar' : 'User avatar'}
-                </TableCell>
+                <TableCell align="left">Avatar</TableCell>
                 <TableCell align="left">
                   {isShop ? 'Shop email' : 'User email'}
                 </TableCell>
@@ -73,22 +73,24 @@ function WalletTable({
                   </TableCell>
                   <TableCell align="left">
                     {isShop
-                      ? wallet?.shop_id?.shop_email
-                      : wallet?.user_id?.user_email}
+                      ? wallet?.shop_id?.shop_email || 'NAN'
+                      : wallet?.user_id?.user_email || 'NAN'}
                   </TableCell>
                   <TableCell align="left">
                     {isShop
-                      ? wallet?.shop_id?.shop_name
-                      : wallet?.user_id?.user_name}
+                      ? wallet?.shop_id?.shop_name || 'NAN'
+                      : wallet?.user_id?.user_name || 'NAN'}
                   </TableCell>
                   <TableCell align="left">
                     <b>
                       {formatCurrency(
                         isShop ? wallet?.shop_balance : wallet?.user_balance
-                      )}
+                      ) || 'NAN'}
                     </b>
                   </TableCell>
-                  <TableCell align="left">{wallet?.createdAt}</TableCell>
+                  <TableCell align="left">
+                    {wallet?.createdAt || 'NAN'}
+                  </TableCell>
                   <TableCell align="left">
                     {wallet?.updatedAt || 'NAN'}
                   </TableCell>

@@ -1,14 +1,12 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Popover,
-  TextField,
-  Autocomplete
-} from '@mui/material'
-import { useState } from 'react'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import Popover from '@mui/material/Popover'
+import TextField from '@mui/material/TextField'
+import Autocomplete from '@mui/material/Autocomplete'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
+import { useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 
 function WalletFilter({

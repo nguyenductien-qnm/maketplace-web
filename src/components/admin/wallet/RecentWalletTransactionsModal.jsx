@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
@@ -9,12 +10,10 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-
 import NoData from '../NoData'
 import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
 import formatCurrency from '~/utils/formatCurrency'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
-import { Box } from '@mui/material'
 
 function RecentWalletTransactionsModal({ open, onClose, recentTransactions }) {
   return (
@@ -59,16 +58,20 @@ function RecentWalletTransactionsModal({ open, onClose, recentTransactions }) {
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
                     <TableCell align="left">
-                      {capitalizeFirstLetter(trans?.type)}
+                      {capitalizeFirstLetter(trans?.type) || 'NAN'}
                     </TableCell>
                     <TableCell align="left">
-                      <b>{formatCurrency(trans?.amount)}</b>
+                      <b>{formatCurrency(trans?.amount) || 'NAN'}</b>
                     </TableCell>
                     <TableCell align="left">
-                      {capitalizeFirstLetter(trans?.status)}
+                      {capitalizeFirstLetter(trans?.status) || 'NAN'}
                     </TableCell>
-                    <TableCell align="left">{trans?.createdAt}</TableCell>
-                    <TableCell align="left">{trans?.processed_at}</TableCell>
+                    <TableCell align="left">
+                      {trans?.createdAt || 'NAN'}
+                    </TableCell>
+                    <TableCell align="left">
+                      {trans?.processed_at || 'NAN'}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
