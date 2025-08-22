@@ -135,12 +135,11 @@ export const useAdminWallet = ({ type }) => {
   // ============================== RETURN ==============================
 
   return {
-    openDetailModal,
-    recentTransactions,
     wallets,
     count,
     loading,
-    isDenied,
+    openDetailModal,
+    recentTransactions,
 
     filters,
     setFilters,

@@ -1,32 +1,38 @@
-import { Paper } from '@mui/material'
+import Paper from '@mui/material/Paper'
 import ReasonModal from '~/components/admin/ReasonModal'
 import WithdrawRequestDetailModal from '~/components/admin/withdrawRequest/WithdrawRequestDetailModal'
 import WithdrawRequestHeader from '~/components/admin/withdrawRequest/WithdrawRequestHeader'
 import WithdrawRequestTable from '~/components/admin/withdrawRequest/WithdrawRequestTable'
 import { useAdminWithdrawRequest } from '~/hooks/admin/withdrawRequest.hook'
+
 function AdminWithdrawRequest({ type }) {
   const {
-    page,
-    rowsPerPage,
-    handleChangePage,
-    handleChangeRowsPerPage,
-    shops,
-    users,
     withdrawRequests,
-    handleOpenModal,
+    count,
     loading,
-    openDetailModal,
     openReasonModal,
+    openDetailModal,
     withdrawRequestDetail,
-    handleCloseModal,
-    handleApproveWithdrawRequest,
-    handleRejectWithdrawRequest,
+
     filters,
     setFilters,
-    count,
+    page,
+    rowsPerPage,
+    shops,
+    users,
+
     handleFilter,
-    handleClearFilter
+    handleClearFilter,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleCloseModal,
+
+    handleOpenModal,
+
+    handleApproveWithdrawRequest,
+    handleRejectWithdrawRequest
   } = useAdminWithdrawRequest({ type })
+
   return (
     <Paper
       sx={{

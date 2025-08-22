@@ -1,24 +1,25 @@
-import { useEffect, useState } from 'react'
 import {
   createCategoryChildAPI,
   createCategoryRootAPI,
   deleteCategoryByAdminAPI,
+  exportCategoryDataByAdminAPI,
   queryCategoriesByAdminAPI,
   queryCategoryDetailByAdminAPI,
   updateCategoryChildByAdminAPI,
   updateCategoryPositionAPI,
   updateCategoryRootByAdminAPI
 } from '~/api/category.api'
+import { useEffect, useState } from 'react'
 import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
 import { StatusCodes } from 'http-status-codes'
 import { navigate } from '~/helpers/navigation'
 
 // ================= CONSTANTS =================
 const LOADING_CLASS = [
-  '.btn-cancel-submit-category-form',
-  '.btn-submit-category-form'
+  '.btn-category-form',
+  '.btn-reason-modal',
+  '.btn-export-category'
 ]
-const LOADING_CLASS_DELETE = ['.btn-reason-modal']
 
 // ================= STATE =================
 export const useAdminCategory = () => {
@@ -226,12 +227,16 @@ export const useAdminCategory = () => {
     const { status } = await deleteCategoryByAdminAPI({
       _id: id,
       payload: { reason },
-      loadingClass: LOADING_CLASS_DELETE
+      loadingClass: LOADING_CLASS
     })
     if (status === StatusCodes.OK) {
       handleCloseModal()
       fetchCategories()
     }
+  }
+
+  const handleExport = async () => {
+    await exportCategoryDataByAdminAPI({ loadingClass: LOADING_CLASS })
   }
 
   // ================= SUBMIT HANDLER =================
@@ -262,6 +267,7 @@ export const useAdminCategory = () => {
     handleCloseModal,
     handleSubmitCategory,
     handleDrop,
+    handleExport,
     handleUploadImage,
     handleDeleteCategory
   }

@@ -99,6 +99,25 @@ const deleteCategoryByAdminAPI = async ({ _id, payload, loadingClass }) => {
   return { status }
 }
 
+const exportCategoryDataByAdminAPI = async ({ loadingClass }) => {
+  const res = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/admin/category/export`,
+    {
+      ...TOAST_MODE.ONLY_ERROR,
+      responseType: 'blob',
+      loadingClass
+    }
+  )
+
+  const blob = res.data
+  const url = window.URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'categories.csv'
+  a.click()
+  window.URL.revokeObjectURL(url)
+}
+
 export {
   createCategoryRootAPI,
   queryCategoriesByAdminAPI,
@@ -109,5 +128,6 @@ export {
   updateCategoryPositionAPI,
   deleteCategoryByAdminAPI,
   getCategoriesRootByAdminAPI,
-  getCategoriesAPI
+  getCategoriesAPI,
+  exportCategoryDataByAdminAPI
 }

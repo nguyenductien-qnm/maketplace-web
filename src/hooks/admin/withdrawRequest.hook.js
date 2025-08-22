@@ -1,26 +1,30 @@
 import { StatusCodes } from 'http-status-codes'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { getShopListForFilterAPI } from '~/api/shop.api'
 import { getUserListForFilterAPI } from '~/api/user.api'
+import { navigate } from '~/helpers/navigation'
 import {
   getWithdrawRequestDetailByAdminAPI,
   queryWithdrawRequestByAdminAPI,
   approveWithdrawRequestByAdminAPI,
   rejectWithdrawRequestByAdminAPI
 } from '~/api/withdrawRequest.api'
-import { navigate } from '~/helpers/navigation'
 
 export const useAdminWithdrawRequest = ({ type }) => {
   // ============================== STATE ==============================
-  const defaultFilters = {
-    search: '',
-    status: 'ALL',
-    createdFrom: '',
-    createdTo: '',
-    requestOfShop: '',
-    requestOfUser: '',
-    amountRange: [50, 500]
-  }
+  const defaultFilters = useMemo(
+    () => ({
+      search: '',
+      status: 'ALL',
+      createdFrom: '',
+      createdTo: '',
+      requestOfShop: '',
+      requestOfUser: '',
+      amountRange: [50, 500]
+    }),
+    []
+  )
+
   const [isDenied, setDenied] = useState(false)
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
@@ -73,8 +77,8 @@ export const useAdminWithdrawRequest = ({ type }) => {
         setCount(count || 0)
         setWithdrawRequests(withdrawRequests || [])
       }
-    } catch {
-      setDenied(true)
+    } catch (err) {
+      if (err?.status !== StatusCodes.UNPROCESSABLE_ENTITY) setDenied(true)
     } finally {
       setLoading(false)
     }
@@ -116,8 +120,8 @@ export const useAdminWithdrawRequest = ({ type }) => {
 
   const handleOpenModal = ({ action, request }) => {
     if (action === 'detail') {
-      handleGetWithdrawRequestDetail(request)
       setOpenDetailModal(true)
+      handleGetWithdrawRequestDetail(request)
     } else if (action === 'reject') {
       setOpenReasonModal(true)
       setSelectedWithdrawRequest(request)
@@ -165,18 +169,15 @@ export const useAdminWithdrawRequest = ({ type }) => {
     }
   }
 
-  // ============================== MODAL CONFIG ==============================
-
   // ============================== RETURN ==============================
 
   return {
-    openReasonModal,
-    openDetailModal,
-    withdrawRequestDetail,
     withdrawRequests,
     count,
     loading,
-    isDenied,
+    openReasonModal,
+    openDetailModal,
+    withdrawRequestDetail,
 
     filters,
     setFilters,

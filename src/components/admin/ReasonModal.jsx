@@ -1,12 +1,12 @@
-import { Controller, useForm } from 'react-hook-form'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
 import TypographyLabel from '../common/TypographyLabel'
-import { REASON_RULE, REASON_RULE_MESSAGE } from '~/utils/validators'
 import ReactQuill from 'react-quill'
+import { Controller, useForm } from 'react-hook-form'
+import { REASON_RULE, REASON_RULE_MESSAGE } from '~/utils/validators'
 import 'react-quill/dist/quill.snow.css'
 
 function ReasonModal({

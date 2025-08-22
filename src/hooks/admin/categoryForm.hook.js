@@ -25,11 +25,7 @@ export const useAdminCategoryFormHook = ({ mode, category, onSubmit }) => {
 
   // Image upload handler
   const customHandleUploadImage = async (e) => {
-    const loadingEls = [
-      '.btn-cancel-submit-category-form',
-      '.btn-submit-category-form',
-      '.btn-upload-category-image'
-    ]
+    const loadingEls = ['.btn-category-form', '.btn-upload-category-image']
 
     setIsUpLoadImage(true)
     interceptorLoadingElements(true, loadingEls)

@@ -17,9 +17,11 @@ const getUserRequestWithdrawAPI = async () => {
   return res
 }
 
+// ============================ ADMIN ============================
+
 const queryWithdrawRequestByAdminAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/withdraw-request/query-by-admin`,
+    `${API_ROOT}/v1/api/admin/withdraw-request/query`,
     payload,
     { ...TOAST_MODE.ONLY_ERROR }
   )
@@ -28,7 +30,7 @@ const queryWithdrawRequestByAdminAPI = async ({ payload }) => {
 
 const getWithdrawRequestDetailByAdminAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/withdraw-request/by-admin/${_id}`,
+    `${API_ROOT}/v1/api/admin/withdraw-request/${_id}`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
@@ -36,7 +38,7 @@ const getWithdrawRequestDetailByAdminAPI = async ({ _id }) => {
 
 const approveWithdrawRequestByAdminAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/withdraw-request/approve`,
+    `${API_ROOT}/v1/api/admin/withdraw-request/approve`,
     { _id },
     { ...TOAST_MODE.ALL }
   )
@@ -45,7 +47,7 @@ const approveWithdrawRequestByAdminAPI = async ({ _id }) => {
 
 const rejectWithdrawRequestByAdminAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/withdraw-request/reject`,
+    `${API_ROOT}/v1/api/admin/withdraw-request/reject`,
     payload,
     { ...TOAST_MODE.ALL }
   )

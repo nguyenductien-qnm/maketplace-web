@@ -1,7 +1,11 @@
-import { Box, Button, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 
-function CategoryHeader({ handleOpenModal }) {
+function CategoryHeader({ handleOpenModal, handleExport }) {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
       <Box>
@@ -12,7 +16,7 @@ function CategoryHeader({ handleOpenModal }) {
           Categories
         </Typography>
       </Box>
-      <Box>
+      <Box sx={{ display: 'flex', gap: 1 }}>
         <Button
           variant="contained"
           onClick={() => {
@@ -20,8 +24,21 @@ function CategoryHeader({ handleOpenModal }) {
           }}
         >
           <AddOutlinedIcon />
-          Add new category root
+          Add category root
         </Button>
+
+        <Tooltip title="Export categories to Excel (.csv)">
+          <Box>
+            <Button
+              className="btn-export-category"
+              variant="contained"
+              onClick={handleExport}
+            >
+              <FileDownloadOutlinedIcon />
+              Export
+            </Button>
+          </Box>
+        </Tooltip>
       </Box>
     </Box>
   )

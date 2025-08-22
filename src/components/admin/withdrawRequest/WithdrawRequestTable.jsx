@@ -1,3 +1,6 @@
+import Box from '@mui/material/Box'
+import TableFooter from '@mui/material/TableFooter'
+import TablePagination from '@mui/material/TablePagination'
 import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
@@ -10,7 +13,6 @@ import Tooltip from '@mui/material/Tooltip'
 import TableSkeleton from '../TableSkeleton'
 import NoData from '../NoData'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import { Box, TableFooter, TablePagination } from '@mui/material'
 import formatCurrency from '~/utils/formatCurrency'
 import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
 import DoneIcon from '@mui/icons-material/Done'
@@ -49,7 +51,6 @@ function WithdrawRequestTable({
                 <TableCell align="left">Status</TableCell>
                 <TableCell align="left">Created at</TableCell>
                 <TableCell align="left">Processed at</TableCell>
-                <TableCell align="left">Transaction ID</TableCell>
                 <TableCell align="left">Detail</TableCell>
                 <TableCell align="left">Action</TableCell>
               </TableRow>
@@ -60,22 +61,23 @@ function WithdrawRequestTable({
                   key={request?._id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell align="left">{request?.paypal_email}</TableCell>
                   <TableCell align="left">
-                    {capitalizeFirstLetter(request?.payment_method)}
+                    {request?.paypal_email || 'NAN'}
                   </TableCell>
                   <TableCell align="left">
-                    <b>{formatCurrency(request?.amount)}</b>
+                    {capitalizeFirstLetter(request?.payment_method) || 'NAN'}
                   </TableCell>
                   <TableCell align="left">
-                    {capitalizeFirstLetter(request?.status)}
+                    <b>{formatCurrency(request?.amount) || 'NAN'}</b>
                   </TableCell>
-                  <TableCell align="left">{request?.createdAt}</TableCell>
+                  <TableCell align="left">
+                    {capitalizeFirstLetter(request?.status) || 'NAN'}
+                  </TableCell>
+                  <TableCell align="left">
+                    {request?.createdAt || 'NAN'}
+                  </TableCell>
                   <TableCell align="left">
                     {request?.processed_at || 'NAN'}
-                  </TableCell>
-                  <TableCell align="left">
-                    {request?.transaction_id || 'NAN'}
                   </TableCell>
                   <TableCell align="right">
                     <Tooltip title="View detail info">
