@@ -127,14 +127,14 @@ function CommissionRateForm({
         </DialogContent>
         <DialogActions>
           <Button
-            className="btn-cancel-submit-commission-form"
+            className="btn-commission-form"
             onClick={onClose}
             color="secondary"
           >
             Cancel
           </Button>
           <Button
-            className="btn-submit-commission-form"
+            className="btn-commission-form"
             variant="contained"
             color="primary"
             type="submit"

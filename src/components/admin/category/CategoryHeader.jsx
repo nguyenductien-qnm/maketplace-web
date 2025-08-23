@@ -31,7 +31,7 @@ function CategoryHeader({ handleOpenModal, handleExport }) {
           <Box>
             <Button
               className="btn-export-category"
-              variant="contained"
+              variant="outlined"
               onClick={handleExport}
             >
               <FileDownloadOutlinedIcon />

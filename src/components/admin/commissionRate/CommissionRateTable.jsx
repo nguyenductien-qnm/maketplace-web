@@ -61,12 +61,12 @@ function CommissionRateTable({
                     {findCategoryName(commission?.category_code)}
                   </TableCell>
                   <TableCell align="left">
-                    {commission?.refund_rate_auto} ~ (
-                    {toPercentage(commission?.refund_rate_auto)})
+                    {commission?.refund_rate_auto} ~{' '}
+                    <b>({toPercentage(commission?.refund_rate_auto)})</b>
                   </TableCell>
                   <TableCell align="left">
-                    {commission?.refund_rate_manual} ~ (
-                    {toPercentage(commission?.refund_rate_manual)})
+                    {commission?.refund_rate_manual} ~{' '}
+                    <b>({toPercentage(commission?.refund_rate_manual)})</b>
                   </TableCell>
                   <TableCell align="left">
                     {commission?.creator_id?.user_name}
@@ -76,7 +76,8 @@ function CommissionRateTable({
                   <TableCell align="left">
                     <Tooltip title="Update commission rate">
                       <Button
-                        variant="contained"
+                        variant="outlined"
+                        color="info"
                         onClick={() =>
                           handleOpenModal({
                             action: 'update',

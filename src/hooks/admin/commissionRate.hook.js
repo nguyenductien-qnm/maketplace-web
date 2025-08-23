@@ -1,20 +1,17 @@
 import { useEffect, useState } from 'react'
 import { StatusCodes } from 'http-status-codes'
-
 import { getCategoriesRootByAdminAPI } from '~/api/category.api'
 import {
   createCommissionRateByAdminAPI,
-  getCommissionRateByAdminAPI,
+  exportCommissionRatesByAdminAPI,
+  queryCommissionRateByAdminAPI,
   updateCommissionRateByAdminAPI
 } from '~/api/commissionRate.api'
 
 import { navigate } from '~/helpers/navigation'
 
 // ================= CONSTANTS =================
-const LOADING_CLASS = [
-  '.btn-submit-commission-form',
-  '.btn-cancel-submit-commission-form'
-]
+const LOADING_CLASS = ['.btn-commission-form', '.btn-export-commission']
 
 export const useAdminCommissionRate = () => {
   // ================= STATE =================
@@ -28,32 +25,19 @@ export const useAdminCommissionRate = () => {
   const [commissionRates, setCommissionRates] = useState([])
   const [categoriesRoot, setCategoriesRoot] = useState([])
 
+  const [sortBy, setSortBy] = useState('updatedAt')
+
   // ================ EFFECTS ================
   useEffect(() => {
     if (isDenied) navigate('/unauthorized')
   }, [isDenied])
 
   useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        const [commissionRes, categoryRes] = await Promise.all([
-          getCommissionRateByAdminAPI(),
-          getCategoriesRootByAdminAPI()
-        ])
+    queryCommissionRateByAdmin()
+  }, [sortBy])
 
-        if (commissionRes.status === StatusCodes.OK)
-          setCommissionRates(commissionRes?.resData?.metadata || [])
-
-        if (categoryRes.status === StatusCodes.OK)
-          setCategoriesRoot(categoryRes?.resData?.metadata || [])
-      } catch {
-        setDenied(true)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchInitialData()
+  useEffect(() => {
+    fetchCategoriesRoot()
   }, [])
 
   // ================ HANDLERS ================
@@ -69,6 +53,31 @@ export const useAdminCommissionRate = () => {
     setOpenModal(false)
     setAction(null)
     setSelectedCommissionRate(null)
+  }
+
+  const queryCommissionRateByAdmin = async () => {
+    setLoading(true)
+    try {
+      const { status, resData } = await queryCommissionRateByAdminAPI({
+        payload: { sortBy }
+      })
+      if (status === StatusCodes.OK) {
+        const commissionRates = resData?.metadata
+        setCommissionRates(commissionRates || [])
+      }
+    } catch (err) {
+      if (err?.status !== StatusCodes.UNPROCESSABLE_ENTITY) setDenied(true)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchCategoriesRoot = async () => {
+    const { status, resData } = await getCategoriesRootByAdminAPI()
+    if (status === StatusCodes.OK) {
+      const categoriesRoot = resData?.metadata
+      setCategoriesRoot(categoriesRoot || [])
+    }
   }
 
   const handleCreateCommissionRate = async ({ data }) => {
@@ -98,6 +107,13 @@ export const useAdminCommissionRate = () => {
     }
   }
 
+  const handleExportCommissionRates = async () => {
+    await exportCommissionRatesByAdminAPI({
+      payload: { sortBy },
+      loadingClass: LOADING_CLASS
+    })
+  }
+
   const handleSubmit = async ({ data }) => {
     action === 'create'
       ? await handleCreateCommissionRate({ data })
@@ -112,8 +128,11 @@ export const useAdminCommissionRate = () => {
     selectedCommissionRate,
     commissionRates,
     categoriesRoot,
+    sortBy,
+    setSortBy,
     handleOpenModal,
     handleCloseModal,
-    handleSubmit
+    handleSubmit,
+    handleExportCommissionRates
   }
 }

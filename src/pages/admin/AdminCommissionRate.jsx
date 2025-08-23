@@ -12,9 +12,12 @@ function AdminCommissionRate() {
     commissionRates,
     categoriesRoot,
     selectedCommissionRate,
+    sortBy,
+    setSortBy,
     handleOpenModal,
     handleCloseModal,
-    handleSubmit
+    handleSubmit,
+    handleExportCommissionRates
   } = useAdminCommissionRate()
   return (
     <Paper
@@ -25,7 +28,12 @@ function AdminCommissionRate() {
         flexDirection: 'column'
       }}
     >
-      <CommissionRateHeader handleOpenModal={handleOpenModal} />
+      <CommissionRateHeader
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        handleOpenModal={handleOpenModal}
+        handleExportCommissionRates={handleExportCommissionRates}
+      />
       <CommissionRateTable
         loading={loading}
         commissionRates={commissionRates}
