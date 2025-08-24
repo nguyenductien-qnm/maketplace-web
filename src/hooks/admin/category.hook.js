@@ -236,7 +236,19 @@ export const useAdminCategory = () => {
   }
 
   const handleExport = async () => {
-    await exportCategoryDataByAdminAPI({ loadingClass: LOADING_CLASS })
+    const { status, resData } = await exportCategoryDataByAdminAPI({
+      loadingClass: LOADING_CLASS
+    })
+
+    if (status === StatusCodes.OK) {
+      const blob = resData
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'categories.csv'
+      a.click()
+      window.URL.revokeObjectURL(url)
+    }
   }
 
   // ================= SUBMIT HANDLER =================

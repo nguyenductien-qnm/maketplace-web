@@ -17,7 +17,8 @@ function AdminCommissionRate() {
     handleOpenModal,
     handleCloseModal,
     handleSubmit,
-    handleExportCommissionRates
+    handleExportCommissionRates,
+    COMMISSION_RATE_HEADERS
   } = useAdminCommissionRate()
   return (
     <Paper
@@ -39,6 +40,7 @@ function AdminCommissionRate() {
         commissionRates={commissionRates}
         categoriesRoot={categoriesRoot}
         handleOpenModal={handleOpenModal}
+        COMMISSION_RATE_HEADERS={COMMISSION_RATE_HEADERS}
       />
       <CommissionRateForm
         action={action}

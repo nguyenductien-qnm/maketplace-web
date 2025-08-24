@@ -1,3 +1,4 @@
+import { StatusCodes } from 'http-status-codes'
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 
@@ -102,6 +103,15 @@ const updateOrderStatusToDeliveredAPI = async ({ payload, loadingClass }) => {
   return { status, resData: data }
 }
 
+const exportOrderDataByAdminAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/admin/order/export`,
+    payload,
+    { ...TOAST_MODE.ONLY_ERROR, responseType: 'blob', loadingClass }
+  )
+  return { status, resData: data }
+}
+
 export {
   placeOrderAPI,
   updatePayPalOrderIdAPI,
@@ -113,5 +123,6 @@ export {
   queryOrderByAdminAPI,
   getOrderDetailByAdminAPI,
   updateOrderStatusToShippingAPI,
-  updateOrderStatusToDeliveredAPI
+  updateOrderStatusToDeliveredAPI,
+  exportOrderDataByAdminAPI
 }

@@ -13,7 +13,7 @@ function OrderHeader({
   setFilters,
   handleFilter,
   handleClearFilter,
-  handleExportData
+  handleExportOrders
 }) {
   return (
     <Box
@@ -46,9 +46,13 @@ function OrderHeader({
         </Tooltip>
         <Tooltip title="Download with advantage filter">
           <Box>
-            <Button variant="contained" onClick={handleExportData}>
+            <Button
+              className="btn-export-orders"
+              variant="outlined"
+              onClick={handleExportOrders}
+            >
               <FileDownloadOutlinedIcon />
-              Download
+              Export
             </Button>
           </Box>
         </Tooltip>

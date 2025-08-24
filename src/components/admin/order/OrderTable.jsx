@@ -1,7 +1,3 @@
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import Tooltip from '@mui/material/Tooltip'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -11,15 +7,12 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableFooter from '@mui/material/TableFooter'
 import TablePagination from '@mui/material/TablePagination'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import NoData from '../NoData'
-import formatCurrency from '~/utils/formatCurrency'
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined'
-import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
-import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined'
-import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined'
+import OrderRow from './OrderRow'
+import TableSkeleton from '../TableSkeleton'
 
 function OrderTable({
+  loading,
   status,
   orders,
   count,
@@ -29,12 +22,14 @@ function OrderTable({
   handleChangeRowsPerPage,
   handleOpenModal,
   handleMarkOrderAsShipping,
-  handleMarkOrderAsDelivered
+  handleMarkOrderAsDelivered,
+  ORDER_TABLE_HEADERS
 }) {
   return (
     <>
-      {orders?.length === 0 && <NoData />}
-      {orders?.length > 0 && (
+      {loading && <TableSkeleton columns={8} rows={rowsPerPage} />}
+      {!loading && orders?.length === 0 && <NoData />}
+      {!loading && orders?.length > 0 && (
         <TableContainer
           component={Paper}
           sx={{
@@ -46,136 +41,23 @@ function OrderTable({
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell align="left">Shop</TableCell>
-                <TableCell align="left">Payment method</TableCell>
-                <TableCell align="left">Payment status</TableCell>
-                <TableCell align="left">Order status</TableCell>
-                <TableCell align="left">Have voucher</TableCell>
-                <TableCell align="left">Total price</TableCell>
-                <TableCell align="left">Created at</TableCell>
-                <TableCell align="left">Detail</TableCell>
-                <TableCell align="left">Action</TableCell>
+                {ORDER_TABLE_HEADERS?.map((header) => (
+                  <TableCell key={header} align="left">
+                    {header}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {orders?.map((order) => (
-                <TableRow
+                <OrderRow
                   key={order?._id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell align="left">{order.shop_name}</TableCell>
-                  <TableCell align="left">
-                    <Chip
-                      label={order.order_payment_method?.toUpperCase()}
-                      size="small"
-                      sx={{
-                        width: '80px',
-                        color: 'white',
-                        backgroundColor:
-                          order.order_payment_method === 'paypal'
-                            ? '#1976d2'
-                            : '#ff9800'
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell align="left">
-                    <Chip
-                      label={order.order_payment_status?.toUpperCase()}
-                      size="small"
-                      sx={{
-                        width: '80px',
-                        color: 'white',
-                        backgroundColor:
-                          order.order_payment_status === 'paid'
-                            ? '#4caf50'
-                            : '#f44336'
-                      }}
-                    />
-                  </TableCell>
-
-                  <TableCell align="left">
-                    <Chip
-                      label={order.order_status.toUpperCase()}
-                      size="small"
-                      sx={{
-                        backgroundColor: {
-                          pending: '#9e9e9e',
-                          confirmed: '#1976d2',
-                          shipping: '#00bcd4',
-                          delivered: '#4caf50',
-                          cancel_requested: '#ffb300',
-                          cancelled: '#f44336',
-                          rejected: '#795548'
-                        }[order.order_status],
-                        color: 'white',
-                        fontWeight: 500,
-                        width: '100px'
-                      }}
-                    />
-                  </TableCell>
-
-                  <TableCell align="left">
-                    {order.isHaveVoucher ? (
-                      <CheckOutlinedIcon sx={{ color: '#4caf50' }} />
-                    ) : (
-                      <ClearOutlinedIcon sx={{ color: '#f44336' }} />
-                    )}
-                  </TableCell>
-                  <TableCell align="left">
-                    <b>{formatCurrency(order.order_total_price)}</b>
-                  </TableCell>
-
-                  <TableCell align="left">{order.createdAt}</TableCell>
-
-                  <TableCell align="left">
-                    <Tooltip title="View detail order">
-                      <Box
-                        sx={{
-                          '&:hover': {
-                            cursor: 'pointer'
-                          }
-                        }}
-                        onClick={() => {
-                          handleOpenModal({ order })
-                        }}
-                      >
-                        <InfoOutlinedIcon />
-                      </Box>
-                    </Tooltip>
-                  </TableCell>
-
-                  <TableCell align="left">
-                    {status === 'CONFIRMED' &&
-                      order?.order_status === 'confirmed' && (
-                        <Tooltip title="Mark as shipping">
-                          <Button
-                            className="btn-mark-as-shipping"
-                            variant="contained"
-                            onClick={() =>
-                              handleMarkOrderAsShipping({ _id: order?._id })
-                            }
-                          >
-                            <LocalShippingOutlinedIcon />
-                          </Button>
-                        </Tooltip>
-                      )}
-
-                    {status === 'SHIPPING' &&
-                      order?.order_status === 'shipping' && (
-                        <Tooltip title="Mark as delivered">
-                          <Button
-                            className="btn-mark-as-delivered"
-                            variant="contained"
-                            onClick={() =>
-                              handleMarkOrderAsDelivered({ _id: order?._id })
-                            }
-                          >
-                            <DoneOutlinedIcon />
-                          </Button>
-                        </Tooltip>
-                      )}
-                  </TableCell>
-                </TableRow>
+                  order={order}
+                  status={status}
+                  handleOpenModal={handleOpenModal}
+                  handleMarkOrderAsShipping={handleMarkOrderAsShipping}
+                  handleMarkOrderAsDelivered={handleMarkOrderAsDelivered}
+                />
               ))}
             </TableBody>
             <TableFooter>

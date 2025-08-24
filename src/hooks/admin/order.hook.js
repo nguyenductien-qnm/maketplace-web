@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import { useEffect, useRef, useState } from 'react'
 import {
+  exportOrderDataByAdminAPI,
   getOrderDetailByAdminAPI,
   queryOrderByAdminAPI,
   updateOrderStatusToDeliveredAPI,
@@ -11,8 +12,22 @@ import { apiGetProvinces } from '~/helpers/getAddress'
 import { navigate } from '~/helpers/navigation'
 
 // ================= CONSTANTS =================
+
+const ORDER_TABLE_HEADERS = [
+  'Shop name',
+  'Payment method',
+  'Payment status',
+  'Order status',
+  'Have voucher',
+  'Total price',
+  'Created at',
+  'Detail',
+  'Action'
+]
+
 const DEFAULT_FILTERS = {
   search: '',
+  sortBy: 'newest',
   orderPaymentMethod: '',
   orderPaymentStatus: '',
   createdFrom: '',
@@ -23,7 +38,11 @@ const DEFAULT_FILTERS = {
   isHaveDiscount: false
 }
 
-const LOADING_CLASS = ['.btn-mark-as-shipping', '.btn-mark-as-delivered']
+const LOADING_CLASS = [
+  '.btn-mark-as-shipping',
+  '.btn-mark-as-delivered',
+  '.btn-export-orders'
+]
 
 export const useAdminOrder = ({ status }) => {
   // ================= STATE =================
@@ -106,7 +125,7 @@ export const useAdminOrder = ({ status }) => {
 
   const handleClearFilter = () => {
     skipEffect.current = true
-    setFilters(DEFAULT_FILTERS)
+    setFilters({ ...DEFAULT_FILTERS })
   }
 
   // ================= MODAL HANDLER =================
@@ -159,38 +178,45 @@ export const useAdminOrder = ({ status }) => {
     }
   }
 
+  const handleExportOrders = async () => {
+    const { status: apiStatus, resData } = await exportOrderDataByAdminAPI({
+      payload: { ...filters, status },
+      loadingClass: LOADING_CLASS
+    })
+
+    if (apiStatus === StatusCodes.OK) {
+      const blob = resData
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'orders.csv'
+      a.click()
+      window.URL.revokeObjectURL(url)
+    }
+  }
+
   // ================= RETURN =================
   return {
-    // Filter
     filters,
-    setFilters,
-    handleFilter,
-    handleClearFilter,
-
-    // Location & Shop
-    provinces,
-    shops,
-
-    // Pagination
-    page,
-    rowsPerPage,
-    handleChangePage,
-    handleChangeRowsPerPage,
-
-    // Modal
-    openDetailModal,
-    handleOpenModal,
-    handleCloseModal,
-
-    // Data
     loading,
-    isDenied,
     orders,
     count,
     orderDetail,
-
-    // Actions
+    provinces,
+    shops,
+    page,
+    rowsPerPage,
+    openDetailModal,
+    setFilters,
+    handleFilter,
+    handleClearFilter,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleOpenModal,
+    handleCloseModal,
     handleMarkOrderAsShipping,
-    handleMarkOrderAsDelivered
+    handleMarkOrderAsDelivered,
+    handleExportOrders,
+    ORDER_TABLE_HEADERS
   }
 }

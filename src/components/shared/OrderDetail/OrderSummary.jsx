@@ -17,7 +17,7 @@ function OrderSummary({ order }) {
       {[
         ['Merchandise total', order?.order_merchandise_price],
         ['Shipping Fee', order?.order_shipping_price],
-        ['Voucher Applied', order?.order_voucher_discount]
+        ['Voucher Applied', order?.order_voucher_value]
       ].map(([label, value]) => (
         <Box
           key={label}

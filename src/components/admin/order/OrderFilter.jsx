@@ -28,7 +28,7 @@ function OrderFilter({
 
   return (
     <Box>
-      <Button variant="contained" onClick={handleOpenFilter}>
+      <Button variant="outlined" onClick={handleOpenFilter}>
         <FilterListOutlinedIcon />
         Filters
       </Button>
@@ -42,7 +42,7 @@ function OrderFilter({
       >
         <Box
           sx={{
-            minWidth: '800px',
+            minWidth: '600px',
             padding: '20px',
             display: 'flex',
             flexDirection: 'column',
@@ -60,6 +60,33 @@ function OrderFilter({
               setFilters((prev) => ({ ...prev, search: e.target.value }))
             }
           />
+          <Box sx={{ flex: 1 }}>
+            <TypographyLabel>Sort by</TypographyLabel>
+            <Select
+              size="small"
+              fullWidth
+              value={filters.sortBy || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  sortBy: e.target.value
+                }))
+              }
+              displayEmpty
+            >
+              <MenuItem value="newest">Created (newest)</MenuItem>
+              <MenuItem value="oldest">Created (oldest)</MenuItem>
+              <MenuItem value="updatedAt">Updated</MenuItem>
+              <MenuItem value="highestTotalPrice">
+                Highest (total price)
+              </MenuItem>
+              <MenuItem value="highestDiscount">
+                Highest (discount value)
+              </MenuItem>
+              <MenuItem value="highestItems">Highest (items)</MenuItem>
+              <MenuItem value="lowestPrice">Lowest (total price)</MenuItem>
+            </Select>
+          </Box>
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Box sx={{ flex: 1 }}>
               <TypographyLabel>Order payment method</TypographyLabel>

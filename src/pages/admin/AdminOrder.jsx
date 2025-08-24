@@ -2,7 +2,6 @@ import Paper from '@mui/material/Paper'
 import OrderDetailModal from '~/components/admin/order/OrderDetailModal'
 import OrderHeader from '~/components/admin/order/OrderHeader'
 import OrderTable from '~/components/admin/order/OrderTable'
-import TableSkeleton from '~/components/admin/TableSkeleton'
 import { useAdminOrder } from '~/hooks/admin/order.hook'
 
 function AdminOrder({ status, name }) {
@@ -18,7 +17,6 @@ function AdminOrder({ status, name }) {
     rowsPerPage,
     openDetailModal,
     loading,
-    isDenied,
     handleFilter,
     handleClearFilter,
     handleOpenModal,
@@ -26,7 +24,9 @@ function AdminOrder({ status, name }) {
     handleChangePage,
     handleChangeRowsPerPage,
     handleMarkOrderAsShipping,
-    handleMarkOrderAsDelivered
+    handleMarkOrderAsDelivered,
+    handleExportOrders,
+    ORDER_TABLE_HEADERS
   } = useAdminOrder({ status })
   return (
     <Paper
@@ -46,24 +46,24 @@ function AdminOrder({ status, name }) {
         setFilters={setFilters}
         handleFilter={handleFilter}
         handleClearFilter={handleClearFilter}
+        handleExportOrders={handleExportOrders}
       />
 
-      {loading && <TableSkeleton columns={8} rows={rowsPerPage} />}
-      {!loading && !isDenied && (
-        <OrderTable
-          status={status}
-          orders={orders}
-          count={count}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
-          handleOpenModal={handleOpenModal}
-          handleCloseModal={handleCloseModal}
-          handleMarkOrderAsShipping={handleMarkOrderAsShipping}
-          handleMarkOrderAsDelivered={handleMarkOrderAsDelivered}
-        />
-      )}
+      <OrderTable
+        loading={loading}
+        status={status}
+        orders={orders}
+        count={count}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+        handleOpenModal={handleOpenModal}
+        handleCloseModal={handleCloseModal}
+        handleMarkOrderAsShipping={handleMarkOrderAsShipping}
+        handleMarkOrderAsDelivered={handleMarkOrderAsDelivered}
+        ORDER_TABLE_HEADERS={ORDER_TABLE_HEADERS}
+      />
 
       <OrderDetailModal
         open={openDetailModal}

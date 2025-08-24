@@ -125,7 +125,7 @@ function OrderDetailModal({ open, onClose, order }) {
                 <TypographyLabel>Discount</TypographyLabel>
                 <TextField
                   size="small"
-                  value={formatCurrency(order?.order_voucher_discount)}
+                  value={formatCurrency(order?.order_voucher_value)}
                   disabled
                   fullWidth
                 />

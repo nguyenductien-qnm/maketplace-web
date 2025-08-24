@@ -29,7 +29,7 @@ const updateCommissionRateByAdminAPI = async ({ payload, loadingClass }) => {
 }
 
 const exportCommissionRatesByAdminAPI = async ({ payload, loadingClass }) => {
-  const res = await authorizedAxios.post(
+  const { status, data } = await authorizedAxios.post(
     `${API_ROOT}/v1/api/admin/commission-rate/export`,
     payload,
     {
@@ -39,13 +39,7 @@ const exportCommissionRatesByAdminAPI = async ({ payload, loadingClass }) => {
     }
   )
 
-  const blob = res.data
-  const url = window.URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = 'commission_rates.csv'
-  a.click()
-  window.URL.revokeObjectURL(url)
+  return { status, resData: data }
 }
 
 export {

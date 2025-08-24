@@ -14,6 +14,16 @@ import { navigate } from '~/helpers/navigation'
 const LOADING_CLASS = ['.btn-commission-form', '.btn-export-commission']
 
 export const useAdminCommissionRate = () => {
+  const COMMISSION_RATE_HEADERS = [
+    'Category name',
+    'Refund rate auto',
+    'Refund rate manual',
+    'Created by',
+    'Created at',
+    'Updated at',
+    'Action'
+  ]
+
   // ================= STATE =================
   const [loading, setLoading] = useState(true)
   const [isDenied, setDenied] = useState(false)
@@ -108,10 +118,20 @@ export const useAdminCommissionRate = () => {
   }
 
   const handleExportCommissionRates = async () => {
-    await exportCommissionRatesByAdminAPI({
+    const { status, resData } = await exportCommissionRatesByAdminAPI({
       payload: { sortBy },
       loadingClass: LOADING_CLASS
     })
+
+    if (status === StatusCodes.OK) {
+      const blob = resData
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'commission_rates.csv'
+      a.click()
+      window.URL.revokeObjectURL(url)
+    }
   }
 
   const handleSubmit = async ({ data }) => {
@@ -133,6 +153,7 @@ export const useAdminCommissionRate = () => {
     handleOpenModal,
     handleCloseModal,
     handleSubmit,
-    handleExportCommissionRates
+    handleExportCommissionRates,
+    COMMISSION_RATE_HEADERS
   }
 }
