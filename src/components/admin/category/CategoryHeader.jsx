@@ -27,7 +27,7 @@ function CategoryHeader({ handleOpenModal, handleExport }) {
           Add category root
         </Button>
 
-        <Tooltip title="Export categories to Excel (.csv)">
+        <Tooltip title="Export categories(.csv)">
           <Box>
             <Button
               className="btn-export-category"

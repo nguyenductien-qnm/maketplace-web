@@ -63,7 +63,7 @@ function CommissionRateHeader({
           </Box>
         </Tooltip>
 
-        <Tooltip title="Export commission rates(.csv )">
+        <Tooltip title="Export sorted commission rates(.csv)">
           <Box>
             <Button
               className="btn-export-commission"

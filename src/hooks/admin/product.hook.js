@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes'
 import { useEffect, useRef, useState } from 'react'
 import { getCategoriesAPI } from '~/api/category.api'
 import {
+  exportProductsByAdminAPI,
   getProductDetailByAdminAPI,
   queryProductByAdminAPI,
   updateProductStatusByAdminAPI
@@ -9,19 +10,37 @@ import {
 import { getShopListForFilterAPI } from '~/api/shop.api'
 import { navigate } from '~/helpers/navigation'
 
-const LOADING_CLASS = ['.btn-reason-modal', '.btn-admin-product-action']
+const LOADING_CLASS = [
+  '.btn-reason-modal',
+  '.btn-admin-product-action',
+  '.btn-export-product'
+]
+
+const PRODUCT_TABLE_HEADERS = [
+  'Thumb',
+  'Name',
+  'Price range',
+  'Stock',
+  'Status',
+  'Visibility',
+  'Rating',
+  'Review count',
+  'Detail',
+  'Action'
+]
+
+const DEFAULT_FILTERS = {
+  search: '',
+  sortBy: 'newest',
+  productOfShop: '',
+  category: '',
+  createdFrom: '',
+  createdTo: '',
+  priceRange: [0, 2000]
+}
 
 export const useAdminProduct = ({ status }) => {
   // ============================== STATE ==============================
-
-  const defaultFilters = {
-    search: '',
-    productOfShop: '',
-    category: '',
-    createdFrom: '',
-    createdTo: '',
-    priceRange: [0, 2000]
-  }
 
   const [products, setProducts] = useState([])
   const [count, setCount] = useState(0)
@@ -33,7 +52,7 @@ export const useAdminProduct = ({ status }) => {
   const [categories, setCategories] = useState([])
   const [shops, setShops] = useState([])
 
-  const [filters, setFilters] = useState(defaultFilters)
+  const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const skipEffect = useRef(false)
 
   const [openReasonModal, setOpenReasonModal] = useState(false)
@@ -111,7 +130,7 @@ export const useAdminProduct = ({ status }) => {
 
   const handleClearFilter = () => {
     skipEffect.current = true
-    setFilters(defaultFilters)
+    setFilters({ ...DEFAULT_FILTERS })
   }
 
   const handleChangePage = (event, newPage) => {
@@ -124,12 +143,12 @@ export const useAdminProduct = ({ status }) => {
   }
 
   const handleOpenModal = ({ action, product }) => {
-    setAction(action)
     setSelectedProduct(product)
     if (action === 'detail') {
       setOpenDetailModal(true)
       handleGetProductDetail(product)
     } else {
+      setAction(action)
       setOpenReasonModal(true)
     }
   }
@@ -226,6 +245,23 @@ export const useAdminProduct = ({ status }) => {
     }
   }
 
+  const handleExportProducts = async () => {
+    const { status: apiStatus, resData } = await exportProductsByAdminAPI({
+      payload: { status, ...filters },
+      loadingClass: LOADING_CLASS
+    })
+
+    if (apiStatus === StatusCodes.OK) {
+      const blob = resData
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'products.csv'
+      a.click()
+      window.URL.revokeObjectURL(url)
+    }
+  }
+
   const modalProps = {
     ban: {
       type: 'reason',
@@ -275,8 +311,11 @@ export const useAdminProduct = ({ status }) => {
     handleChangePage,
     handleChangeRowsPerPage,
     handleApproveProduct,
+    handleExportProducts,
 
     handleOpenModal,
-    handleCloseModal
+    handleCloseModal,
+
+    PRODUCT_TABLE_HEADERS
   }
 }

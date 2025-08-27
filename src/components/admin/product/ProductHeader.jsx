@@ -13,7 +13,7 @@ function ProductHeader({
   setFilters,
   handleFilter,
   handleClearFilter,
-  handleExportData
+  handleExportProducts
 }) {
   return (
     <Box
@@ -44,11 +44,15 @@ function ProductHeader({
             />
           </Box>
         </Tooltip>
-        <Tooltip title="Download with advantage filter">
+        <Tooltip title="Export filtered products(.csv)">
           <Box>
-            <Button variant="contained" onClick={handleExportData}>
+            <Button
+              className="btn-export-product"
+              variant="outlined"
+              onClick={handleExportProducts}
+            >
               <FileDownloadOutlinedIcon />
-              Download
+              Export
             </Button>
           </Box>
         </Tooltip>

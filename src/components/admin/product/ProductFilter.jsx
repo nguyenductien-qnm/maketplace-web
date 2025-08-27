@@ -9,6 +9,7 @@ import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
 import TypographyLabel from '../../common/TypographyLabel'
 import CategoryTreeView from '~/components/common/CategoryTreeView'
 import { useState } from 'react'
+import { MenuItem, Select } from '@mui/material'
 
 function ProductFilter({
   shops,
@@ -25,7 +26,7 @@ function ProductFilter({
   const handleCloseFilter = () => setAnchorEl(null)
   return (
     <Box>
-      <Button variant="contained" onClick={handleOpenFilter}>
+      <Button variant="outlined" onClick={handleOpenFilter}>
         <FilterListOutlinedIcon />
         Filters
       </Button>
@@ -40,7 +41,7 @@ function ProductFilter({
       >
         <Box
           sx={{
-            minWidth: '400px',
+            minWidth: '500px',
             padding: '20px',
             display: 'flex',
             flexDirection: 'column',
@@ -59,6 +60,34 @@ function ProductFilter({
                 setFilters((prev) => ({ ...prev, search: e.target.value }))
               }
             />
+          </Box>
+
+          <Box sx={{ flex: 1 }}>
+            <TypographyLabel>Sort by</TypographyLabel>
+            <Select
+              size="small"
+              fullWidth
+              value={filters.sortBy || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  sortBy: e.target.value
+                }))
+              }
+              displayEmpty
+            >
+              <MenuItem value="newest">Created (newest)</MenuItem>
+              <MenuItem value="oldest">Created (oldest)</MenuItem>
+              <MenuItem value="updatedAt">Updated</MenuItem>
+              <MenuItem value="highestPrice">Highest (price)</MenuItem>
+              <MenuItem value="highestStock">Highest (stock)</MenuItem>
+              <MenuItem value="highestReview">Highest (review)</MenuItem>
+              <MenuItem value="highestRating">Highest (rating)</MenuItem>
+              <MenuItem value="lowestPrice">Lowest (price)</MenuItem>
+              <MenuItem value="lowestStock">Lowest (stock)</MenuItem>
+              <MenuItem value="lowestReview">Lowest (review)</MenuItem>
+              <MenuItem value="lowestRating">Lowest (rating)</MenuItem>
+            </Select>
           </Box>
 
           <Box sx={{ flex: 1 }}>

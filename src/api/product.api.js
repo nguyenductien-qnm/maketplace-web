@@ -124,6 +124,20 @@ const updateProductStatusByAdminAPI = async ({
   return { status, resData: data }
 }
 
+const exportProductsByAdminAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/admin/product/export`,
+    payload,
+    {
+      ...TOAST_MODE.ONLY_ERROR,
+      responseType: 'blob',
+      loadingClass
+    }
+  )
+
+  return { status, resData: data }
+}
+
 export {
   getProductDetailForCustomerAPI,
   searchProductByOwnerAPI,
@@ -136,5 +150,6 @@ export {
   queryProductByOwnerAPI,
   queryProductByAdminAPI,
   getProductDetailByAdminAPI,
-  updateProductStatusByAdminAPI
+  updateProductStatusByAdminAPI,
+  exportProductsByAdminAPI
 }

@@ -44,7 +44,7 @@ function OrderHeader({
             />
           </Box>
         </Tooltip>
-        <Tooltip title="Download with advantage filter">
+        <Tooltip title="Export filtered orders(.csv)">
           <Box>
             <Button
               className="btn-export-orders"

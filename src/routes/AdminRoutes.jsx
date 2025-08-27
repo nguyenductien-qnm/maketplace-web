@@ -131,8 +131,8 @@ const AdminRoutes = () => {
             }
           />
           <Route
-            path="ban"
-            element={<AdminProduct status="BAN" name="Ban products" />}
+            path="banned"
+            element={<AdminProduct status="BANNED" name="Banned products" />}
           />
         </Route>
 

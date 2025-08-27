@@ -28,9 +28,11 @@ function AdminProduct({ status, name }) {
     handleChangePage,
     handleChangeRowsPerPage,
     handleApproveProduct,
+    handleExportProducts,
 
     handleOpenModal,
-    handleCloseModal
+    handleCloseModal,
+    PRODUCT_TABLE_HEADERS
   } = useAdminProduct({ status })
   return (
     <Paper
@@ -49,6 +51,7 @@ function AdminProduct({ status, name }) {
         setFilters={setFilters}
         handleFilter={handleFilter}
         handleClearFilter={handleClearFilter}
+        handleExportProducts={handleExportProducts}
       />
 
       <ProductTable
@@ -61,6 +64,7 @@ function AdminProduct({ status, name }) {
         handleOpenModal={handleOpenModal}
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
+        PRODUCT_TABLE_HEADERS={PRODUCT_TABLE_HEADERS}
       />
 
       <ProductDetailModal
