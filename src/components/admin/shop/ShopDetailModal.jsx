@@ -156,7 +156,7 @@ function ShopDetailModal({ open, onClose, shop }) {
                 rows={5}
               />
             </Box>
-            {shop?.shop_status === 'blocked' && (
+            {shop?.shop_status === 'banned' && (
               <Box>
                 <Divider sx={{ mt: 3, mb: 3 }} />
                 <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>

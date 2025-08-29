@@ -119,25 +119,18 @@ const getShopListForFilterAPI = async () => {
   return { status, resData: data }
 }
 
-const exportShopDataByAdminAPI = async (data) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/shop/export`,
-    data,
+const exportShopDataByAdminAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/admin/shop/export`,
+    payload,
     {
       ...TOAST_MODE.ALL,
-      responseType: 'blob'
+      responseType: 'blob',
+      loadingClass
     }
   )
 
-  const blob = res.data
-  const url = window.URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = 'shops.csv'
-  a.click()
-  window.URL.revokeObjectURL(url)
-
-  return res
+  return { status, resData: data }
 }
 
 export {

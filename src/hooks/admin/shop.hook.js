@@ -12,21 +12,37 @@ import {
   exportShopDataByAdminAPI
 } from '~/api/shop.api'
 
-const LOADING_CLASS = ['.btn-reason-modal', '.btn-admin-shop-action']
+const LOADING_CLASS = [
+  '.btn-reason-modal',
+  '.btn-admin-shop-action',
+  '.btn-export-shop'
+]
+
+const SHOP_TABLE_HEADERS = [
+  'Avatar',
+  'Shop name',
+  'Email',
+  'Phone',
+  'Product',
+  'Follower',
+  'Rating',
+  'Detail',
+  'Action'
+]
+
+const DEFAULT_FILTERS = {
+  search: '',
+  province: '',
+  createdFrom: '',
+  createdTo: '',
+  sortBy: 'createdAt_desc',
+  productCountRange: [0, 500],
+  followerCountRange: [0, 1000],
+  ratingRange: [0, 5]
+}
 
 export const useAdminShop = ({ status }) => {
   // ============================== STATE ==============================
-
-  const defaultFilters = {
-    search: '',
-    province: '',
-    createdFrom: '',
-    createdTo: '',
-    productCountRange: [0, 500],
-    followerCountRange: [0, 1000],
-    ratingRange: [0, 5]
-  }
-
   const [shops, setShops] = useState([])
   const [count, setCount] = useState(0)
   const [provinces, setProvinces] = useState([])
@@ -36,7 +52,7 @@ export const useAdminShop = ({ status }) => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
 
-  const [filters, setFilters] = useState(defaultFilters)
+  const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const skipEffect = useRef(false)
 
   const [openReasonModal, setOpenReasonModal] = useState(false)
@@ -97,7 +113,7 @@ export const useAdminShop = ({ status }) => {
 
   const handleClearFilter = () => {
     skipEffect.current = true
-    setFilters(defaultFilters)
+    setFilters({ ...DEFAULT_FILTERS })
   }
 
   const handleChangePage = (event, newPage) => {
@@ -194,7 +210,20 @@ export const useAdminShop = ({ status }) => {
   }
 
   const handleExportData = async () => {
-    await exportShopDataByAdminAPI({ status, ...filters })
+    const { status: apiStatus, resData } = await exportShopDataByAdminAPI({
+      payload: { status, ...filters },
+      loadingClass: LOADING_CLASS
+    })
+
+    if (apiStatus === StatusCodes.OK) {
+      const blob = resData
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'shops.csv'
+      a.click()
+      window.URL.revokeObjectURL(url)
+    }
   }
 
   const modalProps = {
@@ -268,6 +297,7 @@ export const useAdminShop = ({ status }) => {
     handleCloseModal,
 
     handleApproveShop,
-    handleExportData
+    handleExportData,
+    SHOP_TABLE_HEADERS
   }
 }

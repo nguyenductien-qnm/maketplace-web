@@ -44,11 +44,15 @@ function ShopHeader({
             />
           </Box>
         </Tooltip>
-        <Tooltip title="Download with advantage filter">
+        <Tooltip title="Export filtered shops(.csv)">
           <Box>
-            <Button variant="contained" onClick={handleExportData}>
+            <Button
+              className="btn-export-shop"
+              variant="contained"
+              onClick={handleExportData}
+            >
               <FileDownloadOutlinedIcon />
-              Download
+              Export
             </Button>
           </Box>
         </Tooltip>

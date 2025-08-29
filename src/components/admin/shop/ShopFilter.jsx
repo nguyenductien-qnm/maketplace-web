@@ -25,7 +25,7 @@ function ShopFilter({
 
   return (
     <Box>
-      <Button variant="contained" onClick={handleOpenFilter}>
+      <Button variant="outlined" onClick={handleOpenFilter}>
         <FilterListOutlinedIcon />
         Filters
       </Button>
@@ -57,6 +57,71 @@ function ShopFilter({
               setFilters((prev) => ({ ...prev, search: e.target.value }))
             }
           />
+
+          <Box sx={{ flex: 1 }}>
+            <TypographyLabel>Sort by</TypographyLabel>
+            <Select
+              size="small"
+              fullWidth
+              value={filters.sortBy || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  sortBy: e.target.value
+                }))
+              }
+              displayEmpty
+            >
+              <MenuItem value="createdAt_desc">Created (Newest)</MenuItem>
+              <MenuItem value="createdAt_asc">Created (Oldest)</MenuItem>
+              <MenuItem value="updatedAt_desc">Updated (Newest)</MenuItem>
+              <MenuItem value="updatedAt_asc">Updated (Oldest)</MenuItem>
+              <MenuItem value="name_asc">Name (A → Z)</MenuItem>
+              <MenuItem value="name_desc">Name (Z → A)</MenuItem>
+
+              <MenuItem value="productCount_desc">
+                Number of Products (High → Low)
+              </MenuItem>
+              <MenuItem value="productCount_asc">
+                Number of Products (Low → High)
+              </MenuItem>
+              <MenuItem value="orderCount_desc">
+                Order Count (High → Low)
+              </MenuItem>
+              <MenuItem value="orderCount_asc">
+                Order Count (Low → High)
+              </MenuItem>
+              <MenuItem value="revenue_desc">Revenue (High → Low)</MenuItem>
+              <MenuItem value="revenue_asc">Revenue (Low → High)</MenuItem>
+
+              <MenuItem value="rating_desc">
+                Average Rating (High → Low)
+              </MenuItem>
+              <MenuItem value="rating_asc">
+                Average Rating (Low → High)
+              </MenuItem>
+              <MenuItem value="cancelRate_asc">
+                Cancellation Rate (Low → High)
+              </MenuItem>
+              <MenuItem value="cancelRate_desc">
+                Cancellation Rate (High → Low)
+              </MenuItem>
+              <MenuItem value="deliveryRate_desc">
+                Successful Delivery Rate (High → Low)
+              </MenuItem>
+              <MenuItem value="deliveryRate_asc">
+                Successful Delivery Rate (Low → High)
+              </MenuItem>
+
+              <MenuItem value="complaints_desc">
+                Customer Complaints (High → Low)
+              </MenuItem>
+              <MenuItem value="complaints_asc">
+                Customer Complaints (Low → High)
+              </MenuItem>
+            </Select>
+          </Box>
+
           <Box>
             <TypographyLabel>Shop province</TypographyLabel>
             <Select

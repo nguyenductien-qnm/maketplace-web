@@ -33,8 +33,8 @@ const AdminRoutes = () => {
             element={<AdminShop name="Pending Shops" status="PENDING" />}
           />
           <Route
-            path="blocked"
-            element={<AdminShop name="Block Shops" status="BLOCKED" />}
+            path="banned"
+            element={<AdminShop name="Banned Shops" status="BANNED" />}
           />
           <Route
             path="suspended"
