@@ -44,7 +44,11 @@ function UserHeader({
         </Tooltip>
         <Tooltip title="Export filtered users(.csv)">
           <Box>
-            <Button variant="contained" onClick={handleExportData}>
+            <Button
+              className="btn-export-user"
+              variant="contained"
+              onClick={handleExportData}
+            >
               <FileDownloadOutlinedIcon />
               Export
             </Button>

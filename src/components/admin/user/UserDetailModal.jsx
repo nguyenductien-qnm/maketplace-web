@@ -120,7 +120,7 @@ function UserDetailModal({ open, onClose, user }) {
               </Box>
             </Box>
 
-            {user?.user_status === 'blocked' && (
+            {user?.user_status === 'banned' && (
               <>
                 <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
                   <Box sx={{ flex: 1 }}>

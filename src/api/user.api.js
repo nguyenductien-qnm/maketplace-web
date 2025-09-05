@@ -130,13 +130,14 @@ const getStaffListForFilterAPI = async () => {
   return { status, resData: data }
 }
 
-const exportUserDataAPI = async (data) => {
+const exportUserDataAPI = async ({ payload, loadingClass }) => {
   const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/user/export`,
-    data,
+    `${API_ROOT}/v1/api/admin/user/export`,
+    payload,
     {
       ...TOAST_MODE.ALL,
-      responseType: 'blob'
+      responseType: 'blob',
+      loadingClass
     }
   )
 

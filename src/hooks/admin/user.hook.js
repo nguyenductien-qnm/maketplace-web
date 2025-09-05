@@ -10,12 +10,16 @@ import {
 } from '~/api/user.api'
 import { navigate } from '~/helpers/navigation'
 
-const LOADING_CLASS = ['.btn-reason-modal', '.btn-admin-user-action']
+const LOADING_CLASS = [
+  '.btn-reason-modal',
+  '.btn-admin-user-action',
+  '.btn-export-user'
+]
 
 const USER_TABLE_MAP = [
+  { key: 'user_name', label: 'Full Name' },
   { key: 'user_email', label: 'Email' },
   { key: 'user_phone', label: 'Phone' },
-  { key: 'user_name', label: 'Full Name' },
   { key: 'createdAt', label: 'Created At' },
   { key: 'user_gender', label: 'Gender' },
   { key: 'user_role', label: 'Is Shop' },
@@ -176,7 +180,20 @@ export const useAdminUser = ({ status }) => {
   }
 
   const handleExportData = async () => {
-    await exportUserDataAPI({ status, ...filters })
+    const { status: apiStatus, resData } = await exportUserDataAPI({
+      payload: { status, ...filters },
+      loadingClass: LOADING_CLASS
+    })
+
+    if (apiStatus === StatusCodes.OK) {
+      const blob = resData
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'users.csv'
+      a.click()
+      window.URL.revokeObjectURL(url)
+    }
   }
 
   // ============================== MODAL CONFIG ==============================
