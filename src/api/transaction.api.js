@@ -48,10 +48,25 @@ const getTransactionDetailByAdminAPI = async ({ _id, type }) => {
   return { status, resData: data }
 }
 
+const exportTransactionDataByAdminAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/admin/transaction/export`,
+    payload,
+    {
+      ...TOAST_MODE.ALL,
+      responseType: 'blob',
+      loadingClass
+    }
+  )
+
+  return { status, resData: data }
+}
+
 export {
   getShopTransactionsAPI,
   getUserTransactionsAPI,
   getRecentWalletTransactionsByAdminAPI,
   queryTransactionByAdminAPI,
-  getTransactionDetailByAdminAPI
+  getTransactionDetailByAdminAPI,
+  exportTransactionDataByAdminAPI
 }

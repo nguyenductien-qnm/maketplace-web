@@ -28,7 +28,7 @@ function TransactionFilter({
 
   return (
     <Box>
-      <Button variant="contained" onClick={handleOpenFilter}>
+      <Button variant="outlined" onClick={handleOpenFilter}>
         <FilterListOutlinedIcon />
         Filters
       </Button>

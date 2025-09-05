@@ -25,6 +25,7 @@ function AdminTransaction({ type }) {
     handleChangeRowsPerPage,
     handleClearFilter,
     handleFilter,
+    handleExportData,
 
     TRANSACTION_TABLE_MAP
   } = useAdminTransaction({ type })
@@ -45,6 +46,7 @@ function AdminTransaction({ type }) {
         setFilters={setFilters}
         handleFilter={handleFilter}
         handleClearFilter={handleClearFilter}
+        handleExportData={handleExportData}
       />
 
       <TransactionTable

@@ -4,9 +4,12 @@ import { getShopListForFilterAPI } from '~/api/shop.api'
 import { getUserListForFilterAPI } from '~/api/user.api'
 import { navigate } from '~/helpers/navigation'
 import {
+  exportTransactionDataByAdminAPI,
   getTransactionDetailByAdminAPI,
   queryTransactionByAdminAPI
 } from '~/api/transaction.api'
+
+const LOADING_CLASS = ['.btn-export-transaction']
 
 const SAME_KEY = [
   { key: 'amount', label: 'Amount' },
@@ -154,6 +157,24 @@ export const useAdminTransaction = ({ type }) => {
     setTransactionDetail(null)
   }
 
+  const handleExportData = async () => {
+    const { status: apiStatus, resData } =
+      await exportTransactionDataByAdminAPI({
+        payload: { type, ...filters },
+        loadingClass: LOADING_CLASS
+      })
+
+    if (apiStatus === StatusCodes.OK) {
+      const blob = resData
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `transactions_${type?.toLowerCase()}.csv`
+      a.click()
+      window.URL.revokeObjectURL(url)
+    }
+  }
+
   // ============================== RETURN ==============================
 
   return {
@@ -176,6 +197,7 @@ export const useAdminTransaction = ({ type }) => {
     handleChangeRowsPerPage,
     handleClearFilter,
     handleFilter,
+    handleExportData,
 
     TRANSACTION_TABLE_MAP: TRANSACTION_TABLE_MAP[type]
   }

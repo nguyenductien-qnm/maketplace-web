@@ -12,7 +12,8 @@ function TransactionHeader({
   filters,
   setFilters,
   handleFilter,
-  handleClearFilter
+  handleClearFilter,
+  handleExportData
 }) {
   return (
     <Box
@@ -44,11 +45,15 @@ function TransactionHeader({
             />
           </Box>
         </Tooltip>
-        <Tooltip title="Download with advantage filter">
+        <Tooltip title="Export filtered transactions(.csv)">
           <Box>
-            <Button variant="contained">
+            <Button
+              className="btn-export-transaction"
+              variant="contained"
+              onClick={handleExportData}
+            >
               <FileDownloadOutlinedIcon />
-              Download
+              Export
             </Button>
           </Box>
         </Tooltip>
