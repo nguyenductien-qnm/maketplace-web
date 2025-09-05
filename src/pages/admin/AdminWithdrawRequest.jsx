@@ -30,7 +30,9 @@ function AdminWithdrawRequest({ type }) {
     handleOpenModal,
 
     handleApproveWithdrawRequest,
-    handleRejectWithdrawRequest
+    handleRejectWithdrawRequest,
+
+    WITHDRAW_REQUEST_TABLE_MAP
   } = useAdminWithdrawRequest({ type })
 
   return (
@@ -61,6 +63,7 @@ function AdminWithdrawRequest({ type }) {
         rowsPerPage={rowsPerPage}
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
+        WITHDRAW_REQUEST_TABLE_MAP={WITHDRAW_REQUEST_TABLE_MAP}
       />
       <WithdrawRequestDetailModal
         open={openDetailModal}

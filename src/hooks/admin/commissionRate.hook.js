@@ -10,20 +10,19 @@ import {
 
 import { navigate } from '~/helpers/navigation'
 
-// ================= CONSTANTS =================
 const LOADING_CLASS = ['.btn-commission-form', '.btn-export-commission']
 
-export const useAdminCommissionRate = () => {
-  const COMMISSION_RATE_HEADERS = [
-    'Category name',
-    'Refund rate auto',
-    'Refund rate manual',
-    'Created by',
-    'Created at',
-    'Updated at',
-    'Action'
-  ]
+const COMMISSION_RATE_TABLE_MAP = [
+  { key: 'category_code', label: 'Category name' },
+  { key: 'refund_rate_auto', label: 'Refund rate auto' },
+  { key: 'refund_rate_manual', label: 'Refund rate manual' },
+  { key: 'creator_id?.user_name', label: 'Created by' },
+  { key: 'createdAt', label: 'Created at' },
+  { key: 'updatedAt', label: 'Updated at' },
+  { key: 'action', label: 'Action' }
+]
 
+export const useAdminCommissionRate = () => {
   // ================= STATE =================
   const [loading, setLoading] = useState(true)
   const [isDenied, setDenied] = useState(false)
@@ -154,6 +153,6 @@ export const useAdminCommissionRate = () => {
     handleCloseModal,
     handleSubmit,
     handleExportCommissionRates,
-    COMMISSION_RATE_HEADERS
+    COMMISSION_RATE_TABLE_MAP
   }
 }

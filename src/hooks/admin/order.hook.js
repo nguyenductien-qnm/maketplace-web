@@ -12,17 +12,15 @@ import { apiGetProvinces } from '~/helpers/getAddress'
 import { navigate } from '~/helpers/navigation'
 
 // ================= CONSTANTS =================
-
-const ORDER_TABLE_HEADERS = [
-  'Shop name',
-  'Payment method',
-  'Payment status',
-  'Order status',
-  'Have voucher',
-  'Total price',
-  'Created at',
-  'Detail',
-  'Action'
+const ORDER_TABLE_MAP = [
+  { key: 'shop_name', label: 'Shop name' },
+  { key: 'order_payment_method', label: 'Payment method' },
+  { key: 'order_payment_status', label: 'Payment status' },
+  { key: 'isHaveVoucher', label: 'Have voucher' },
+  { key: 'order_total_price', label: 'Total price' },
+  { key: 'createdAt', label: 'Created at' },
+  { key: 'detail', label: 'Detail' },
+  { key: 'action', label: 'Action' }
 ]
 
 const DEFAULT_FILTERS = {
@@ -90,8 +88,8 @@ export const useAdminOrder = ({ status }) => {
         setOrders(orders || [])
         setCount(count || 0)
       }
-    } catch {
-      setDenied(true)
+    } catch (err) {
+      if (err?.status !== StatusCodes.UNPROCESSABLE_ENTITY) setDenied(true)
     } finally {
       setLoading(false)
     }
@@ -217,6 +215,6 @@ export const useAdminOrder = ({ status }) => {
     handleMarkOrderAsShipping,
     handleMarkOrderAsDelivered,
     handleExportOrders,
-    ORDER_TABLE_HEADERS
+    ORDER_TABLE_MAP
   }
 }

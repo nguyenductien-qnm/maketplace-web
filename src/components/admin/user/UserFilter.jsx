@@ -26,7 +26,7 @@ function UserFilter({
 
   return (
     <Box>
-      <Button variant="contained" onClick={handleOpenFilter}>
+      <Button variant="outlined" onClick={handleOpenFilter}>
         <FilterListOutlinedIcon />
         Filters
       </Button>
@@ -58,6 +58,31 @@ function UserFilter({
               setFilters((prev) => ({ ...prev, search: e.target.value }))
             }
           />
+
+          <Box sx={{ flex: 1 }}>
+            <TypographyLabel>Sort by</TypographyLabel>
+            <Select
+              size="small"
+              fullWidth
+              value={filters.sortBy || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  sortBy: e.target.value
+                }))
+              }
+              displayEmpty
+            >
+              <MenuItem value="createdAt_desc">Created (Newest)</MenuItem>
+              <MenuItem value="createdAt_asc">Created (Oldest)</MenuItem>
+              <MenuItem value="updatedAt_desc">Updated (Newest)</MenuItem>
+              <MenuItem value="updatedAt_asc">Updated (Oldest)</MenuItem>
+              <MenuItem value="name_asc">Name (A → Z)</MenuItem>
+              <MenuItem value="name_desc">Name (Z → A)</MenuItem>
+              <MenuItem value="email_asc">Email (A → Z)</MenuItem>
+              <MenuItem value="email_desc">Email (Z → A)</MenuItem>
+            </Select>
+          </Box>
 
           <Box>
             <TypographyLabel>Gender</TypographyLabel>

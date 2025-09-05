@@ -18,22 +18,34 @@ const LOADING_CLASS = [
   '.btn-reason-modal'
 ]
 
+const DEFAULT_FILTERS = {
+  search: '',
+  type: 'all',
+  startDate: '',
+  endDate: '',
+  createdFrom: '',
+  createdTo: '',
+  createdBy: 'all',
+  creatorSelect: '',
+  discountValueRange: [0, 200],
+  applies: 'all',
+  reservedRange: [0, 500],
+  quantityRange: [0, 500]
+}
+
+const VOUCHER_TABLE_MAP = [
+  { key: 'voucher_code', label: 'CODE' },
+  { key: 'voucher_name', label: 'Name' },
+  { key: 'voucher_start_date', label: 'Start date' },
+  { key: 'voucher_end_date', label: 'End date' },
+  { key: 'voucher_type', label: 'Type' },
+  { key: 'voucher_creator_role', label: 'Creator role' },
+  { key: 'detail', label: 'Detail' },
+  { key: 'action', label: 'Action' }
+]
+
 export const useAdminVoucher = ({ status }) => {
   // ============================== STATE ==============================
-  const defaultFilters = {
-    search: '',
-    type: 'all',
-    startDate: '',
-    endDate: '',
-    createdFrom: '',
-    createdTo: '',
-    createdBy: 'all',
-    creatorSelect: '',
-    discountValueRange: [0, 200],
-    applies: 'all',
-    reservedRange: [0, 500],
-    quantityRange: [0, 500]
-  }
 
   const [vouchers, setVouchers] = useState([])
   const [count, setCount] = useState(0)
@@ -43,7 +55,7 @@ export const useAdminVoucher = ({ status }) => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
 
-  const [filters, setFilters] = useState(defaultFilters)
+  const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const skipEffect = useRef(false)
 
   const [shops, setShops] = useState([])
@@ -130,6 +142,7 @@ export const useAdminVoucher = ({ status }) => {
     setSelectedVoucher(voucher)
     if (action === 'detail') {
       setOpenDetailModal(true)
+      handleGetVoucherDetail(voucher)
     } else {
       setOpenReasonModal(true)
     }
@@ -164,7 +177,7 @@ export const useAdminVoucher = ({ status }) => {
 
   const handleClearFilter = () => {
     skipEffect.current = true
-    setFilters(defaultFilters)
+    setFilters({ ...DEFAULT_FILTERS })
   }
 
   const handleChangePage = (event, newPage) => {
@@ -295,10 +308,11 @@ export const useAdminVoucher = ({ status }) => {
     handleChangeRowsPerPage,
     handleOpenModal,
     handleCloseModal,
-    handleGetVoucherDetail,
     handleOpenForm,
     handleCloseForm,
     handleCreateVoucher,
-    handleUpdateVoucher
+    handleUpdateVoucher,
+
+    VOUCHER_TABLE_MAP
   }
 }

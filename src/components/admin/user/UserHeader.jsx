@@ -42,11 +42,11 @@ function UserHeader({
             />
           </Box>
         </Tooltip>
-        <Tooltip title="Download with advantage filter">
+        <Tooltip title="Export filtered users(.csv)">
           <Box>
             <Button variant="contained" onClick={handleExportData}>
               <FileDownloadOutlinedIcon />
-              Download
+              Export
             </Button>
           </Box>
         </Tooltip>

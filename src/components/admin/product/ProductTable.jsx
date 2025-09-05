@@ -21,7 +21,7 @@ function ProductTable({
   handleOpenModal,
   handleChangePage,
   handleChangeRowsPerPage,
-  PRODUCT_TABLE_HEADERS
+  PRODUCT_TABLE_MAP
 }) {
   return (
     <>
@@ -39,9 +39,9 @@ function ProductTable({
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                {PRODUCT_TABLE_HEADERS?.map((header) => (
-                  <TableCell key={header} align="left">
-                    {header}
+                {PRODUCT_TABLE_MAP?.map(({ key, label }) => (
+                  <TableCell key={key} align="left">
+                    {label}
                   </TableCell>
                 ))}
               </TableRow>
@@ -53,6 +53,7 @@ function ProductTable({
                   product={p}
                   handleOpenModal={handleOpenModal}
                   handleApproveProduct={handleApproveProduct}
+                  PRODUCT_TABLE_MAP={PRODUCT_TABLE_MAP}
                 />
               ))}
             </TableBody>

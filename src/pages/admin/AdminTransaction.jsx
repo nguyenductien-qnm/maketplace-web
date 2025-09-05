@@ -24,7 +24,9 @@ function AdminTransaction({ type }) {
     handleChangePage,
     handleChangeRowsPerPage,
     handleClearFilter,
-    handleFilter
+    handleFilter,
+
+    TRANSACTION_TABLE_MAP
   } = useAdminTransaction({ type })
   return (
     <Paper
@@ -46,7 +48,6 @@ function AdminTransaction({ type }) {
       />
 
       <TransactionTable
-        type={type}
         loading={loading}
         transactions={transactions}
         count={count}
@@ -55,6 +56,7 @@ function AdminTransaction({ type }) {
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
         handleOpenModal={handleOpenModal}
+        TRANSACTION_TABLE_MAP={TRANSACTION_TABLE_MAP}
       />
 
       <TransactionDetailModal

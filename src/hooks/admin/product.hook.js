@@ -16,17 +16,17 @@ const LOADING_CLASS = [
   '.btn-export-product'
 ]
 
-const PRODUCT_TABLE_HEADERS = [
-  'Thumb',
-  'Name',
-  'Price range',
-  'Stock',
-  'Status',
-  'Visibility',
-  'Rating',
-  'Review count',
-  'Detail',
-  'Action'
+const PRODUCT_TABLE_MAP = [
+  { key: 'product_thumb', label: 'Thumb' },
+  { key: 'product_name', label: 'Name' },
+  { key: 'price_range', label: 'Price range' },
+  { key: 'product_stock', label: 'Product stock' },
+  { key: 'product_status', label: 'Status' },
+  { key: 'product_visibility', label: 'Visibility' },
+  { key: 'product_rating_average', label: 'Rating' },
+  { key: 'product_review_count', label: 'Review count' },
+  { key: 'detail', label: 'Detail' },
+  { key: 'action', label: 'Action' }
 ]
 
 const DEFAULT_FILTERS = {
@@ -102,11 +102,9 @@ export const useAdminProduct = ({ status }) => {
         const { products, count } = resData.metadata
         setProducts(products)
         setCount(count)
-      } else {
-        setDenied(true)
       }
     } catch (err) {
-      setDenied(true)
+      if (err?.status !== StatusCodes.UNPROCESSABLE_ENTITY) setDenied(true)
     } finally {
       setLoading(false)
     }
@@ -316,6 +314,6 @@ export const useAdminProduct = ({ status }) => {
     handleOpenModal,
     handleCloseModal,
 
-    PRODUCT_TABLE_HEADERS
+    PRODUCT_TABLE_MAP
   }
 }

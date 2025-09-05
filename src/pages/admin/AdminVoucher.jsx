@@ -33,11 +33,12 @@ function AdminVoucher({ status, name }) {
     handleChangeRowsPerPage,
     handleOpenModal,
     handleCloseModal,
-    handleGetVoucherDetail,
     handleOpenForm,
     handleCloseForm,
     handleCreateVoucher,
-    handleUpdateVoucher
+    handleUpdateVoucher,
+
+    VOUCHER_TABLE_MAP
   } = useAdminVoucher({ status })
   return (
     <Paper
@@ -67,11 +68,11 @@ function AdminVoucher({ status, name }) {
         count={count}
         page={page}
         rowsPerPage={rowsPerPage}
-        handleGetVoucherDetail={handleGetVoucherDetail}
         handleOpenForm={handleOpenForm}
         handleOpenModal={handleOpenModal}
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
+        VOUCHER_TABLE_MAP={VOUCHER_TABLE_MAP}
       />
 
       <VoucherForm

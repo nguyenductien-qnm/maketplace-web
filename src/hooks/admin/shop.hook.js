@@ -18,16 +18,16 @@ const LOADING_CLASS = [
   '.btn-export-shop'
 ]
 
-const SHOP_TABLE_HEADERS = [
-  'Avatar',
-  'Shop name',
-  'Email',
-  'Phone',
-  'Product',
-  'Follower',
-  'Rating',
-  'Detail',
-  'Action'
+const SHOP_TABLE_MAP = [
+  { key: 'shop_avatar', label: 'Avatar' },
+  { key: 'shop_name', label: 'Name' },
+  { key: 'shop_email', label: 'Email' },
+  { key: 'shop_phone', label: 'Phone' },
+  { key: 'shop_product_count', label: 'Product' },
+  { key: 'shop_follower_count', label: 'Follower' },
+  { key: 'shop_rating', label: 'Rating' },
+  { key: 'detail', label: 'Detail' },
+  { key: 'action', label: 'Action' }
 ]
 
 const DEFAULT_FILTERS = {
@@ -94,8 +94,8 @@ export const useAdminShop = ({ status }) => {
         setShops(shops || [])
         setCount(count || 0)
       }
-    } catch {
-      setDenied(true)
+    } catch (err) {
+      if (err?.status !== StatusCodes.UNPROCESSABLE_ENTITY) setDenied(true)
     } finally {
       setLoading(false)
     }
@@ -298,6 +298,6 @@ export const useAdminShop = ({ status }) => {
 
     handleApproveShop,
     handleExportData,
-    SHOP_TABLE_HEADERS
+    SHOP_TABLE_MAP
   }
 }

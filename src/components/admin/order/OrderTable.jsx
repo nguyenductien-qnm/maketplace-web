@@ -23,7 +23,7 @@ function OrderTable({
   handleOpenModal,
   handleMarkOrderAsShipping,
   handleMarkOrderAsDelivered,
-  ORDER_TABLE_HEADERS
+  ORDER_TABLE_MAP
 }) {
   return (
     <>
@@ -41,9 +41,9 @@ function OrderTable({
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                {ORDER_TABLE_HEADERS?.map((header) => (
-                  <TableCell key={header} align="left">
-                    {header}
+                {ORDER_TABLE_MAP?.map(({ key, label }) => (
+                  <TableCell key={key} align="left">
+                    {label}
                   </TableCell>
                 ))}
               </TableRow>
@@ -57,6 +57,7 @@ function OrderTable({
                   handleOpenModal={handleOpenModal}
                   handleMarkOrderAsShipping={handleMarkOrderAsShipping}
                   handleMarkOrderAsDelivered={handleMarkOrderAsDelivered}
+                  ORDER_TABLE_MAP={ORDER_TABLE_MAP}
                 />
               ))}
             </TableBody>

@@ -86,6 +86,29 @@ function TransactionFilter({
             />
           </Box>
 
+          <Box sx={{ flex: 1 }}>
+            <TypographyLabel>Sort by</TypographyLabel>
+            <Select
+              size="small"
+              fullWidth
+              value={filters.sortBy || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  sortBy: e.target.value
+                }))
+              }
+              displayEmpty
+            >
+              <MenuItem value="createdAt_desc">Created (Newest)</MenuItem>
+              <MenuItem value="createdAt_asc">Created (Oldest)</MenuItem>
+              <MenuItem value="processedAt_desc">Processed (Newest)</MenuItem>
+              <MenuItem value="processedAt_asc">Processed (Oldest)</MenuItem>
+              <MenuItem value="amount_desc">Amount (High → Low)</MenuItem>
+              <MenuItem value="amount_asc">Amount (Low → High)</MenuItem>
+            </Select>
+          </Box>
+
           <Box>
             <TypographyLabel>Status</TypographyLabel>
             <Select
@@ -97,6 +120,7 @@ function TransactionFilter({
               }
               displayEmpty
             >
+              <MenuItem value="ALL">All</MenuItem>
               <MenuItem value="PENDING">Pending</MenuItem>
               <MenuItem value="COMPLETED">Completed</MenuItem>
               <MenuItem value="FAILED">Failed</MenuItem>

@@ -33,7 +33,7 @@ function AdminShop({ name, status }) {
     handleApproveShop,
     handleExportData,
 
-    SHOP_TABLE_HEADERS
+    SHOP_TABLE_MAP
   } = useAdminShop({ status })
 
   return (
@@ -66,7 +66,7 @@ function AdminShop({ name, status }) {
         handleChangeRowsPerPage={handleChangeRowsPerPage}
         handleOpenModal={handleOpenModal}
         handleApproveShop={handleApproveShop}
-        SHOP_TABLE_HEADERS={SHOP_TABLE_HEADERS}
+        SHOP_TABLE_MAP={SHOP_TABLE_MAP}
       />
 
       <ShopDetailModal

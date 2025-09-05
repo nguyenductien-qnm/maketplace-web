@@ -33,7 +33,9 @@ function AdminUser({ name, status }) {
     handleOpenModal,
     handleCloseModal,
 
-    handleUpdatePassword
+    handleUpdatePassword,
+
+    USER_TABLE_MAP
   } = useAdminUser({ status })
 
   return (
@@ -64,6 +66,7 @@ function AdminUser({ name, status }) {
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
         handleOpenModal={handleOpenModal}
+        USER_TABLE_MAP={USER_TABLE_MAP}
       />
 
       <ReasonModal

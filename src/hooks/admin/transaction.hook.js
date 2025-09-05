@@ -8,17 +8,41 @@ import {
   queryTransactionByAdminAPI
 } from '~/api/transaction.api'
 
+const SAME_KEY = [
+  { key: 'amount', label: 'Amount' },
+  { key: 'type', label: 'Type' },
+  { key: 'status', label: 'Status' },
+  { key: 'createdAt', label: 'Created at' },
+  { key: 'processed_at', label: 'Processed at' },
+  { key: 'detail', label: 'Detail' }
+]
+
+const TRANSACTION_TABLE_MAP = {
+  VENDOR: [
+    { key: 'shop_id?.shop_avatar', label: 'Avatar' },
+    { key: 'shop_id?.shop_name', label: 'Name' },
+    ...SAME_KEY
+  ],
+  CUSTOMER: [
+    { key: 'user_id?.user_avatar', label: 'Avatar' },
+    { key: 'user_id?.user_name', label: 'Name' },
+    ...SAME_KEY
+  ]
+}
+
+const DEFAULT_FILTERS = {
+  sortBy: 'createdAt_desc',
+  transactionOfShop: '',
+  transactionOfUser: '',
+  createdFrom: '',
+  createdTo: '',
+  amountRange: [50, 500],
+  status: 'ALL',
+  typeOfTrans: 'ALL'
+}
+
 export const useAdminTransaction = ({ type }) => {
   // ============================== STATE ==============================
-  const defaultFilters = {
-    transactionOfShop: '',
-    transactionOfUser: '',
-    createdFrom: '',
-    createdTo: '',
-    amountRange: [50, 500],
-    status: '',
-    typeOfTrans: ''
-  }
 
   const [isDenied, setDenied] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -28,7 +52,7 @@ export const useAdminTransaction = ({ type }) => {
   const [shops, setShops] = useState([])
   const [users, setUsers] = useState([])
 
-  const [filters, setFilters] = useState(defaultFilters)
+  const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const skipEffect = useRef(false)
 
   const [count, setCount] = useState(null)
@@ -70,8 +94,8 @@ export const useAdminTransaction = ({ type }) => {
         setCount(count || 0)
         setTransactions(transactions || [])
       }
-    } catch {
-      setDenied(true)
+    } catch (err) {
+      if (err?.status !== StatusCodes.UNPROCESSABLE_ENTITY) setDenied(true)
     } finally {
       setLoading(false)
     }
@@ -99,7 +123,7 @@ export const useAdminTransaction = ({ type }) => {
 
   const handleClearFilter = () => {
     skipEffect.current = true
-    setFilters(defaultFilters)
+    setFilters({ ...DEFAULT_FILTERS })
   }
 
   const handleChangePage = (event, newPage) => {
@@ -151,6 +175,8 @@ export const useAdminTransaction = ({ type }) => {
     handleChangePage,
     handleChangeRowsPerPage,
     handleClearFilter,
-    handleFilter
+    handleFilter,
+
+    TRANSACTION_TABLE_MAP: TRANSACTION_TABLE_MAP[type]
   }
 }

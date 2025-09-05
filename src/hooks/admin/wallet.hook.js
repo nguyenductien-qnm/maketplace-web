@@ -6,18 +6,37 @@ import { getUserListForFilterAPI } from '~/api/user.api'
 import { queryWalletByAdminAPI } from '~/api/wallet.api'
 import { navigate } from '~/helpers/navigation'
 
+const SAME_KEY = [
+  { key: 'createdAt', label: 'Created at' },
+  { key: 'updatedAt', label: 'Updated at' },
+  { key: 'recentTrans', label: 'Recent trans' }
+]
+
+const WALLET_TABLE_MAP = {
+  VENDOR: [
+    { key: 'shop_id?.shop_avatar', label: 'Avatar' },
+    { key: 'shop_id?.shop_name', label: 'Name' },
+    { key: 'shop_balance', label: 'Balance' },
+    ...SAME_KEY
+  ],
+  CUSTOMER: [
+    { key: 'user_id?.user_avatar', label: 'Avatar' },
+    { key: 'user_id?.user_name', label: 'Name' },
+    { key: 'user_balance', label: 'Balance' },
+    ...SAME_KEY
+  ]
+}
+
+const DEFAULT_FILTERS = {
+  walletOfShop: '',
+  walletOfUser: '',
+  createdFrom: '',
+  createdTo: '',
+  minBalance: ''
+}
+
 export const useAdminWallet = ({ type }) => {
   // ============================== STATE ==============================
-  const defaultFilters = useMemo(
-    () => ({
-      walletOfShop: '',
-      walletOfUser: '',
-      createdFrom: '',
-      createdTo: '',
-      minBalance: ''
-    }),
-    []
-  )
 
   const [isDenied, setDenied] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -29,7 +48,7 @@ export const useAdminWallet = ({ type }) => {
   const [shops, setShops] = useState([])
   const [users, setUsers] = useState([])
 
-  const [filters, setFilters] = useState(defaultFilters)
+  const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const skipEffect = useRef(false)
 
   const [count, setCount] = useState(null)
@@ -98,7 +117,7 @@ export const useAdminWallet = ({ type }) => {
 
   const handleClearFilter = () => {
     skipEffect.current = true
-    setFilters(defaultFilters)
+    setFilters({ ...DEFAULT_FILTERS })
   }
 
   const handleChangePage = (event, newPage) => {
@@ -154,6 +173,8 @@ export const useAdminWallet = ({ type }) => {
     handleChangeRowsPerPage,
     handleCloseModal,
 
-    handleOpenModal
+    handleOpenModal,
+
+    WALLET_TABLE_MAP: WALLET_TABLE_MAP[type]
   }
 }

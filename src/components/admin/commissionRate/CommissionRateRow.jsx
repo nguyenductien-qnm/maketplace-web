@@ -1,12 +1,15 @@
 import Button from '@mui/material/Button'
 import Tooltip from '@mui/material/Tooltip'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
-import { TableCell, TableRow } from '@mui/material'
+import TableCell from '@mui/material/TableCell'
+import TableRow from '@mui/material/TableRow'
+import { renderDefault } from '~/components/common/common'
 
 function CommissionRateRow({
   commissionRate,
   categoriesRoot,
-  handleOpenModal
+  handleOpenModal,
+  COMMISSION_RATE_TABLE_MAP
 }) {
   const findCategoryName = (code) => {
     const category = categoriesRoot?.find((c) => c?.category_code == code)
@@ -14,7 +17,43 @@ function CommissionRateRow({
   }
 
   const toPercentage = (value) => {
+    if (value == null) return '—'
     return `${(value * 100).toFixed(0)}%`
+  }
+
+  const renderCategoryName = (key) => {
+    return findCategoryName(commissionRate?.[key])
+  }
+
+  const renderNumber = (key) => (
+    <>
+      {commissionRate?.[key]} ~ <b>({toPercentage(commissionRate?.[key])})</b>
+    </>
+  )
+
+  const renderDetailButton = () => (
+    <Tooltip title="Update commission rate">
+      <Button
+        variant="outlined"
+        color="info"
+        onClick={() =>
+          handleOpenModal({
+            action: 'update',
+            commissionRate
+          })
+        }
+      >
+        <EditOutlinedIcon />
+      </Button>
+    </Tooltip>
+  )
+
+  const RENDER_MAP = {
+    category_code: renderCategoryName,
+    refund_rate_auto: renderNumber,
+    refund_rate_manual: renderNumber,
+    user_name: renderDefault,
+    action: renderDetailButton
   }
 
   return (
@@ -22,38 +61,13 @@ function CommissionRateRow({
       key={commissionRate?._id}
       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
     >
-      <TableCell align="left">
-        {findCategoryName(commissionRate?.category_code)}
-      </TableCell>
-      <TableCell align="left">
-        {commissionRate?.refund_rate_auto} ~{' '}
-        <b>({toPercentage(commissionRate?.refund_rate_auto)})</b>
-      </TableCell>
-      <TableCell align="left">
-        {commissionRate?.refund_rate_manual} ~{' '}
-        <b>({toPercentage(commissionRate?.refund_rate_manual)})</b>
-      </TableCell>
-      <TableCell align="left">
-        {commissionRate?.creator_id?.user_name}
-      </TableCell>
-      <TableCell align="left">{commissionRate?.createdAt}</TableCell>
-      <TableCell align="left">{commissionRate?.updatedAt}</TableCell>
-      <TableCell align="left">
-        <Tooltip title="Update commission rate">
-          <Button
-            variant="outlined"
-            color="info"
-            onClick={() =>
-              handleOpenModal({
-                action: 'update',
-                commissionRate
-              })
-            }
-          >
-            <EditOutlinedIcon />
-          </Button>
-        </Tooltip>
-      </TableCell>
+      {COMMISSION_RATE_TABLE_MAP?.map(({ key }) => (
+        <TableCell key={key} align="left">
+          {RENDER_MAP[key]
+            ? RENDER_MAP[key]?.(key)
+            : renderDefault(commissionRate, key)}
+        </TableCell>
+      ))}
     </TableRow>
   )
 }

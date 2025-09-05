@@ -12,15 +12,28 @@ import { navigate } from '~/helpers/navigation'
 
 const LOADING_CLASS = ['.btn-reason-modal', '.btn-admin-user-action']
 
+const USER_TABLE_MAP = [
+  { key: 'user_email', label: 'Email' },
+  { key: 'user_phone', label: 'Phone' },
+  { key: 'user_name', label: 'Full Name' },
+  { key: 'createdAt', label: 'Created At' },
+  { key: 'user_gender', label: 'Gender' },
+  { key: 'user_role', label: 'Is Shop' },
+  { key: 'detail', label: 'Detail' },
+  { key: 'action', label: 'Action' }
+]
+
+const DEFAULT_FILTERS = {
+  search: '',
+  isShop: false,
+  gender: 'ALL',
+  createdFrom: '',
+  createdTo: '',
+  sortBy: 'createdAt_desc'
+}
+
 export const useAdminUser = ({ status }) => {
   // ============================== STATE ==============================
-  const defaultFilters = {
-    search: '',
-    isShop: false,
-    gender: '',
-    createdFrom: '',
-    createdTo: ''
-  }
 
   const [users, setUsers] = useState([])
   const [count, setCount] = useState(0)
@@ -30,7 +43,7 @@ export const useAdminUser = ({ status }) => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
 
-  const [filters, setFilters] = useState(defaultFilters)
+  const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const skipEffect = useRef(false)
 
   const [openReasonModal, setOpenReasonModal] = useState(false)
@@ -66,8 +79,8 @@ export const useAdminUser = ({ status }) => {
         setUsers(users || [])
         setCount(count || 0)
       }
-    } catch {
-      setDenied(true)
+    } catch (err) {
+      if (err?.status !== StatusCodes.UNPROCESSABLE_ENTITY) setDenied(true)
     } finally {
       setLoading(false)
     }
@@ -85,7 +98,7 @@ export const useAdminUser = ({ status }) => {
 
   const handleClearFilter = () => {
     skipEffect.current = true
-    setFilters(defaultFilters)
+    setFilters({ ...DEFAULT_FILTERS })
   }
 
   const handleChangePage = (event, newPage) => {
@@ -224,6 +237,8 @@ export const useAdminUser = ({ status }) => {
 
     handleGetUserDetail,
     handleUpdatePassword,
-    handleExportData
+    handleExportData,
+
+    USER_TABLE_MAP
   }
 }

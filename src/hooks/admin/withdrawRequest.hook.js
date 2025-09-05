@@ -10,21 +10,29 @@ import {
   rejectWithdrawRequestByAdminAPI
 } from '~/api/withdrawRequest.api'
 
+const DEFAULT_FILTERS = {
+  search: '',
+  status: 'ALL',
+  createdFrom: '',
+  createdTo: '',
+  requestOfShop: '',
+  requestOfUser: '',
+  amountRange: [50, 500]
+}
+
+const WITHDRAW_REQUEST_TABLE_MAP = [
+  { key: 'paypal_email', label: 'Paypal email' },
+  { key: 'payment_method', label: 'Method' },
+  { key: 'amount', label: 'Amount' },
+  { key: 'status', label: 'Status' },
+  { key: 'createdAt', label: 'Created at' },
+  { key: 'processed_at', label: 'Processed at' },
+  { key: 'detail', label: 'Detail' },
+  { key: 'action', label: 'Action' }
+]
+
 export const useAdminWithdrawRequest = ({ type }) => {
   // ============================== STATE ==============================
-  const defaultFilters = useMemo(
-    () => ({
-      search: '',
-      status: 'ALL',
-      createdFrom: '',
-      createdTo: '',
-      requestOfShop: '',
-      requestOfUser: '',
-      amountRange: [50, 500]
-    }),
-    []
-  )
-
   const [isDenied, setDenied] = useState(false)
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
@@ -37,7 +45,7 @@ export const useAdminWithdrawRequest = ({ type }) => {
   const [shops, setShops] = useState([])
   const [users, setUsers] = useState([])
 
-  const [filters, setFilters] = useState(defaultFilters)
+  const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const skipEffect = useRef(false)
 
   const [count, setCount] = useState(null)
@@ -106,7 +114,7 @@ export const useAdminWithdrawRequest = ({ type }) => {
 
   const handleClearFilter = () => {
     skipEffect.current = true
-    setFilters(defaultFilters)
+    setFilters({ ...DEFAULT_FILTERS })
   }
 
   const handleChangePage = (event, newPage) => {
@@ -195,6 +203,8 @@ export const useAdminWithdrawRequest = ({ type }) => {
     handleOpenModal,
 
     handleApproveWithdrawRequest,
-    handleRejectWithdrawRequest
+    handleRejectWithdrawRequest,
+
+    WITHDRAW_REQUEST_TABLE_MAP
   }
 }

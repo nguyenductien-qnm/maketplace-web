@@ -14,7 +14,7 @@ function CommissionRateTable({
   commissionRates,
   categoriesRoot,
   handleOpenModal,
-  COMMISSION_RATE_HEADERS
+  COMMISSION_RATE_TABLE_MAP
 }) {
   return (
     <>
@@ -32,9 +32,9 @@ function CommissionRateTable({
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                {COMMISSION_RATE_HEADERS?.map((header) => (
-                  <TableCell key={header} align="left">
-                    {header}
+                {COMMISSION_RATE_TABLE_MAP?.map(({ key, label }) => (
+                  <TableCell key={key} align="left">
+                    {label}
                   </TableCell>
                 ))}
               </TableRow>
@@ -46,6 +46,7 @@ function CommissionRateTable({
                   commissionRate={commissionRate}
                   categoriesRoot={categoriesRoot}
                   handleOpenModal={handleOpenModal}
+                  COMMISSION_RATE_TABLE_MAP={COMMISSION_RATE_TABLE_MAP}
                 />
               ))}
             </TableBody>

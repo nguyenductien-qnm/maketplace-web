@@ -26,7 +26,7 @@ function AdminOrder({ status, name }) {
     handleMarkOrderAsShipping,
     handleMarkOrderAsDelivered,
     handleExportOrders,
-    ORDER_TABLE_HEADERS
+    ORDER_TABLE_MAP
   } = useAdminOrder({ status })
   return (
     <Paper
@@ -62,7 +62,7 @@ function AdminOrder({ status, name }) {
         handleCloseModal={handleCloseModal}
         handleMarkOrderAsShipping={handleMarkOrderAsShipping}
         handleMarkOrderAsDelivered={handleMarkOrderAsDelivered}
-        ORDER_TABLE_HEADERS={ORDER_TABLE_HEADERS}
+        ORDER_TABLE_MAP={ORDER_TABLE_MAP}
       />
 
       <OrderDetailModal

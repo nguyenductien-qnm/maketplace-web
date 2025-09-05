@@ -1,5 +1,3 @@
-import Avatar from '@mui/material/Avatar'
-import Box from '@mui/material/Box'
 import TableFooter from '@mui/material/TableFooter'
 import TablePagination from '@mui/material/TablePagination'
 import Paper from '@mui/material/Paper'
@@ -9,15 +7,11 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import Tooltip from '@mui/material/Tooltip'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import TableSkeleton from '../TableSkeleton'
 import NoData from '../NoData'
-import formatCurrency from '~/utils/formatCurrency'
-import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
+import TransactionRow from './TransactionRow'
 
 function TransactionTable({
-  type,
   count,
   page,
   rowsPerPage,
@@ -25,9 +19,9 @@ function TransactionTable({
   handleChangeRowsPerPage,
   handleOpenModal,
   loading,
-  transactions
+  transactions,
+  TRANSACTION_TABLE_MAP
 }) {
-  const isShop = type === 'VENDOR'
   return (
     <>
       {loading && <TableSkeleton columns={9} rows={12} />}
@@ -44,70 +38,21 @@ function TransactionTable({
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell align="left">
-                  {isShop ? 'Shop avatar' : 'User avatar'}
-                </TableCell>
-                <TableCell align="left">
-                  {isShop ? 'Shop name' : 'User name'}
-                </TableCell>
-                <TableCell align="left">Amount</TableCell>
-                <TableCell align="left">Type</TableCell>
-                <TableCell align="left">Status</TableCell>
-                <TableCell align="left">Created at</TableCell>
-                <TableCell align="left">Processed at</TableCell>
-                <TableCell align="left">Detail</TableCell>
+                {TRANSACTION_TABLE_MAP?.map(({ key, label }) => (
+                  <TableCell key={key} align="left">
+                    {label}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {transactions?.map((transaction) => (
-                <TableRow
+                <TransactionRow
                   key={transaction?._id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell align="left">
-                    <Avatar
-                      src={
-                        isShop
-                          ? transaction?.shop_id?.shop_avatar
-                          : transaction?.user_id?.user_avatar
-                      }
-                    />
-                  </TableCell>
-                  <TableCell align="left">
-                    {isShop
-                      ? transaction?.shop_id?.shop_name
-                      : transaction?.user_id?.user_name}
-                  </TableCell>
-                  <TableCell align="left">
-                    <b>{formatCurrency(transaction?.amount)}</b>
-                  </TableCell>
-                  <TableCell align="left">
-                    {capitalizeFirstLetter(transaction?.type)}
-                  </TableCell>
-                  <TableCell align="left">
-                    {capitalizeFirstLetter(transaction?.status)}
-                  </TableCell>
-                  <TableCell align="left">
-                    {transaction?.createdAt || 'NAN'}
-                  </TableCell>
-                  <TableCell align="left">
-                    {transaction?.processed_at || 'NAN'}
-                  </TableCell>
-                  <TableCell align="left">
-                    <Tooltip title="View recent transactions">
-                      <Box
-                        sx={{
-                          '&:hover': {
-                            cursor: 'pointer'
-                          }
-                        }}
-                        onClick={() => handleOpenModal({ transaction })}
-                      >
-                        <InfoOutlinedIcon />
-                      </Box>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
+                  transaction={transaction}
+                  handleOpenModal={handleOpenModal}
+                  TRANSACTION_TABLE_MAP={TRANSACTION_TABLE_MAP}
+                />
               ))}
             </TableBody>
             <TableFooter>

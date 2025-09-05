@@ -25,7 +25,9 @@ function AdminWallet({ type }) {
     handleChangeRowsPerPage,
     handleCloseModal,
 
-    handleOpenModal
+    handleOpenModal,
+
+    WALLET_TABLE_MAP
   } = useAdminWallet({ type })
   return (
     <Paper
@@ -47,7 +49,6 @@ function AdminWallet({ type }) {
       />
 
       <WalletTable
-        type={type}
         loading={loading}
         wallets={wallets}
         count={count}
@@ -56,6 +57,7 @@ function AdminWallet({ type }) {
         handleOpenModal={handleOpenModal}
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
+        WALLET_TABLE_MAP={WALLET_TABLE_MAP}
       />
 
       <RecentWalletTransactionsModal

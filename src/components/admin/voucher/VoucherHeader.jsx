@@ -33,13 +33,13 @@ function VoucherHeader({
         {name}
       </Typography>
       <Box sx={{ display: 'flex', gap: '10px' }}>
-        <Tooltip title="Advantage filter">
+        <Tooltip>
           <Button
             color="success"
-            variant="contained"
+            variant="outlined"
             onClick={() => handleOpenForm({ action: 'create' })}
           >
-            Add new voucher
+            Add voucher
           </Button>
         </Tooltip>
         <Tooltip title="Advantage filter">
@@ -54,11 +54,11 @@ function VoucherHeader({
             />
           </Box>
         </Tooltip>
-        <Tooltip title="Download with advantage filter">
+        <Tooltip title="Export filtered voucher(.csv)">
           <Box>
             <Button variant="contained">
               <FileDownloadOutlinedIcon />
-              Download
+              Export
             </Button>
           </Box>
         </Tooltip>

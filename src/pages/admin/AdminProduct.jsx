@@ -32,7 +32,8 @@ function AdminProduct({ status, name }) {
 
     handleOpenModal,
     handleCloseModal,
-    PRODUCT_TABLE_HEADERS
+
+    PRODUCT_TABLE_MAP
   } = useAdminProduct({ status })
   return (
     <Paper
@@ -64,7 +65,7 @@ function AdminProduct({ status, name }) {
         handleOpenModal={handleOpenModal}
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
-        PRODUCT_TABLE_HEADERS={PRODUCT_TABLE_HEADERS}
+        PRODUCT_TABLE_MAP={PRODUCT_TABLE_MAP}
       />
 
       <ProductDetailModal

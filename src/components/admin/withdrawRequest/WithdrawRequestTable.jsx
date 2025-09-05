@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box'
 import TableFooter from '@mui/material/TableFooter'
 import TablePagination from '@mui/material/TablePagination'
-import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -9,14 +8,10 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import Tooltip from '@mui/material/Tooltip'
 import TableSkeleton from '../TableSkeleton'
 import NoData from '../NoData'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import formatCurrency from '~/utils/formatCurrency'
-import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
-import DoneIcon from '@mui/icons-material/Done'
-import BlockIcon from '@mui/icons-material/Block'
+
+import WithdrawRequestRow from './WithdrawRequestRow'
 
 function WithdrawRequestTable({
   count,
@@ -27,7 +22,8 @@ function WithdrawRequestTable({
   page,
   rowsPerPage,
   handleChangePage,
-  handleChangeRowsPerPage
+  handleChangeRowsPerPage,
+  WITHDRAW_REQUEST_TABLE_MAP
 }) {
   return (
     <>
@@ -45,85 +41,22 @@ function WithdrawRequestTable({
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell align="left">Paypal email</TableCell>
-                <TableCell align="left">Method</TableCell>
-                <TableCell align="left">Amount</TableCell>
-                <TableCell align="left">Status</TableCell>
-                <TableCell align="left">Created at</TableCell>
-                <TableCell align="left">Processed at</TableCell>
-                <TableCell align="left">Detail</TableCell>
-                <TableCell align="left">Action</TableCell>
+                {WITHDRAW_REQUEST_TABLE_MAP?.map(({ key, label }) => (
+                  <TableCell key={key} align="left">
+                    {label}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {withdrawRequests?.map((request) => (
-                <TableRow
+                <WithdrawRequestRow
                   key={request?._id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell align="left">
-                    {request?.paypal_email || 'NAN'}
-                  </TableCell>
-                  <TableCell align="left">
-                    {capitalizeFirstLetter(request?.payment_method) || 'NAN'}
-                  </TableCell>
-                  <TableCell align="left">
-                    <b>{formatCurrency(request?.amount) || 'NAN'}</b>
-                  </TableCell>
-                  <TableCell align="left">
-                    {capitalizeFirstLetter(request?.status) || 'NAN'}
-                  </TableCell>
-                  <TableCell align="left">
-                    {request?.createdAt || 'NAN'}
-                  </TableCell>
-                  <TableCell align="left">
-                    {request?.processed_at || 'NAN'}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Tooltip title="View detail info">
-                      <Box
-                        sx={{
-                          '&:hover': {
-                            cursor: 'pointer'
-                          }
-                        }}
-                        onClick={() =>
-                          handleOpenModal({ action: 'detail', request })
-                        }
-                      >
-                        <InfoOutlinedIcon />
-                      </Box>
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell align="left">
-                    {request?.status === 'pending' && (
-                      <Box>
-                        <Tooltip title="Approve request">
-                          <Button
-                            variant="contained"
-                            sx={{ mr: 1 }}
-                            onClick={() =>
-                              handleApproveWithdrawRequest(request)
-                            }
-                          >
-                            <DoneIcon />
-                          </Button>
-                        </Tooltip>
-                        <Tooltip title="Reject request">
-                          <Button
-                            variant="contained"
-                            color="error"
-                            onClick={() =>
-                              handleOpenModal({ action: 'reject', request })
-                            }
-                          >
-                            <BlockIcon />
-                          </Button>
-                        </Tooltip>
-                      </Box>
-                    )}
-                  </TableCell>
-                </TableRow>
+                  request={request}
+                  handleOpenModal={handleOpenModal}
+                  handleApproveWithdrawRequest={handleApproveWithdrawRequest}
+                  WITHDRAW_REQUEST_TABLE_MAP={WITHDRAW_REQUEST_TABLE_MAP}
+                />
               ))}
             </TableBody>
             <TableFooter>

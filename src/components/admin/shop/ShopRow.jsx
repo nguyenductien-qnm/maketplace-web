@@ -9,41 +9,31 @@ import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined'
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
 import LockOpenIcon from '@mui/icons-material/LockOpen'
 import BlockIcon from '@mui/icons-material/Block'
+import { renderAvatar, renderDefault } from '~/components/common/common'
 
-function ShopRow({ shop, handleOpenModal, handleApproveShop }) {
-  return (
-    <TableRow
-      key={shop?._id}
-      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-    >
-      <TableCell component="th" scope="row">
-        <Avatar src={shop?.shop_avatar} />
-      </TableCell>
-      <TableCell align="left">{shop?.shop_name}</TableCell>
-      <TableCell align="left">{shop?.shop_email}</TableCell>
-      <TableCell align="left">{shop?.shop_phone}</TableCell>
-      <TableCell align="left">{shop?.shop_product_count}</TableCell>
-      <TableCell align="left">{shop?.shop_follower_count}</TableCell>
-      <TableCell align="left">{shop?.shop_rating}</TableCell>
-      <TableCell align="left">
-        <Tooltip title="View detail info">
-          <Box
-            sx={{
-              '&:hover': {
-                cursor: 'pointer'
-              }
-            }}
-            onClick={() => {
-              handleOpenModal({ action: 'detail', shop })
-            }}
-          >
-            <InfoOutlinedIcon />
-          </Box>
-        </Tooltip>
-      </TableCell>
-      <TableCell align="left">
-        {(shop?.shop_status === 'approved' ||
-          shop?.shop_status === 'paused') && (
+function ShopRow({ shop, handleOpenModal, handleApproveShop, SHOP_TABLE_MAP }) {
+  const renderDetailButton = () => (
+    <Tooltip title="View detail info">
+      <Box
+        sx={{
+          '&:hover': {
+            cursor: 'pointer'
+          }
+        }}
+        onClick={() => {
+          handleOpenModal({ action: 'detail', shop })
+        }}
+      >
+        <InfoOutlinedIcon />
+      </Box>
+    </Tooltip>
+  )
+
+  const renderActionButton = () => {
+    switch (shop?.shop_status) {
+      case 'approved':
+      case 'paused':
+        return (
           <Tooltip title="Ban shop">
             <Button
               className="btn-admin-shop-action"
@@ -54,9 +44,10 @@ function ShopRow({ shop, handleOpenModal, handleApproveShop }) {
               <BlockIcon />
             </Button>
           </Tooltip>
-        )}
+        )
 
-        {shop?.shop_status === 'banned' && (
+      case 'banned':
+        return (
           <Tooltip title="Unban shop">
             <Button
               className="btn-admin-shop-action"
@@ -66,9 +57,10 @@ function ShopRow({ shop, handleOpenModal, handleApproveShop }) {
               <LockOpenIcon />
             </Button>
           </Tooltip>
-        )}
+        )
 
-        {shop?.shop_status === 'pending' && (
+      case 'pending':
+        return (
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'nowrap' }}>
             <Tooltip title="Accept">
               <Button
@@ -96,8 +88,31 @@ function ShopRow({ shop, handleOpenModal, handleApproveShop }) {
               </Button>
             </Tooltip>
           </Box>
-        )}
-      </TableCell>
+        )
+
+      default:
+        return null
+    }
+  }
+
+  const RENDER_MAP = {
+    shop_avatar: renderAvatar,
+    detail: renderDetailButton,
+    action: renderActionButton
+  }
+
+  return (
+    <TableRow
+      key={shop?._id}
+      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+    >
+      {SHOP_TABLE_MAP?.map(({ key }) => (
+        <TableCell align="left" key={key}>
+          {RENDER_MAP[key]
+            ? RENDER_MAP[key]?.(shop, key)
+            : renderDefault(shop, key)}
+        </TableCell>
+      ))}
     </TableRow>
   )
 }

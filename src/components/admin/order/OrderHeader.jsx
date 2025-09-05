@@ -48,7 +48,7 @@ function OrderHeader({
           <Box>
             <Button
               className="btn-export-orders"
-              variant="outlined"
+              variant="contained"
               onClick={handleExportOrders}
             >
               <FileDownloadOutlinedIcon />

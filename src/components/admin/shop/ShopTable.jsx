@@ -21,7 +21,7 @@ function ShopTable({
   handleChangeRowsPerPage,
   handleOpenModal,
   handleApproveShop,
-  SHOP_TABLE_HEADERS
+  SHOP_TABLE_MAP
 }) {
   return (
     <>
@@ -39,9 +39,9 @@ function ShopTable({
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                {SHOP_TABLE_HEADERS?.map((header) => (
-                  <TableCell key={header} align="left">
-                    {header}
+                {SHOP_TABLE_MAP?.map(({ key, label }) => (
+                  <TableCell key={key} align="left">
+                    {label}
                   </TableCell>
                 ))}
               </TableRow>
@@ -53,6 +53,7 @@ function ShopTable({
                   shop={shop}
                   handleOpenModal={handleOpenModal}
                   handleApproveShop={handleApproveShop}
+                  SHOP_TABLE_MAP={SHOP_TABLE_MAP}
                 />
               ))}
             </TableBody>
