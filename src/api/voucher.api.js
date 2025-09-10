@@ -98,6 +98,20 @@ const enableShopVoucherByAdminAPI = async ({ payload, loadingClass }) => {
   return { status, resData: data }
 }
 
+const exportVoucherDataByAdminAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/admin/voucher/export`,
+    payload,
+    {
+      ...TOAST_MODE.ALL,
+      responseType: 'blob',
+      loadingClass
+    }
+  )
+
+  return { status, resData: data }
+}
+
 export {
   queryVoucherByOwnerAPI,
   shopUpdateVoucherAPI,
@@ -109,5 +123,6 @@ export {
   createVoucherByAdminAPI,
   updateVoucherByAdminAPI,
   disableShopVoucherByAdminAPI,
-  enableShopVoucherByAdminAPI
+  enableShopVoucherByAdminAPI,
+  exportVoucherDataByAdminAPI
 }

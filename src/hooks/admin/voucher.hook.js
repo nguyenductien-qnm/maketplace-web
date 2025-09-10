@@ -6,6 +6,7 @@ import {
   createVoucherByAdminAPI,
   disableShopVoucherByAdminAPI,
   enableShopVoucherByAdminAPI,
+  exportVoucherDataByAdminAPI,
   getVoucherDetailForAdminAPI,
   queryVoucherByAdminAPI,
   updateVoucherByAdminAPI
@@ -15,7 +16,8 @@ import { navigate } from '~/helpers/navigation'
 const LOADING_CLASS = [
   '.btn-admin-voucher-action',
   '.btn-voucher-form',
-  '.btn-reason-modal'
+  '.btn-reason-modal',
+  '.btn-export-voucher'
 ]
 
 const DEFAULT_FILTERS = {
@@ -30,7 +32,8 @@ const DEFAULT_FILTERS = {
   discountValueRange: [0, 200],
   applies: 'all',
   reservedRange: [0, 500],
-  quantityRange: [0, 500]
+  quantityRange: [0, 500],
+  sortBy: 'createdAt_desc'
 }
 
 const VOUCHER_TABLE_MAP = [
@@ -251,6 +254,23 @@ export const useAdminVoucher = ({ status }) => {
     }
   }
 
+  const handleExportData = async () => {
+    const { status: apiStatus, resData } = await exportVoucherDataByAdminAPI({
+      payload: { status, ...filters },
+      loadingClass: LOADING_CLASS
+    })
+
+    if (apiStatus === StatusCodes.OK) {
+      const blob = resData
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'vouchers.csv'
+      a.click()
+      window.URL.revokeObjectURL(url)
+    }
+  }
+
   const modalProps = {
     disable: {
       type: 'reason',
@@ -312,6 +332,7 @@ export const useAdminVoucher = ({ status }) => {
     handleCloseForm,
     handleCreateVoucher,
     handleUpdateVoucher,
+    handleExportData,
 
     VOUCHER_TABLE_MAP
   }

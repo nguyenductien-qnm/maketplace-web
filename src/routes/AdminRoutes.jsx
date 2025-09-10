@@ -1,8 +1,8 @@
-import { useSelector } from 'react-redux'
 import { Route } from 'react-router-dom'
+import { RequireAuthRoute } from './RouteGuards'
+import { useSelector } from 'react-redux'
 import AdminLayout from '~/layouts/admin/AdminLayout'
 import AdminShop from '~/pages/admin/AdminShop'
-import { RequireAuthRoute } from './RouteGuards'
 import AdminUser from '~/pages/admin/AdminUser'
 import AdminVoucher from '~/pages/admin/AdminVoucher'
 import AdminOrder from '~/pages/admin/AdminOrder'
@@ -161,6 +161,7 @@ const AdminRoutes = () => {
         </Route>
 
         <Route path="category" element={<AdminCategory />} />
+
         <Route path="commission-rate" element={<AdminCommissionRate />} />
       </Route>
     </Route>

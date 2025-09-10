@@ -13,8 +13,8 @@ function VoucherHeader({
   setFilters,
   handleFilter,
   handleClearFilter,
-  handleOpenForm
-  //   handleExportData
+  handleOpenForm,
+  handleExportData
 }) {
   return (
     <Box
@@ -56,7 +56,11 @@ function VoucherHeader({
         </Tooltip>
         <Tooltip title="Export filtered voucher(.csv)">
           <Box>
-            <Button variant="contained">
+            <Button
+              className="btn-export-voucher"
+              variant="contained"
+              onClick={handleExportData}
+            >
               <FileDownloadOutlinedIcon />
               Export
             </Button>

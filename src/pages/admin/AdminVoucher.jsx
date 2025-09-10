@@ -37,7 +37,7 @@ function AdminVoucher({ status, name }) {
     handleCloseForm,
     handleCreateVoucher,
     handleUpdateVoucher,
-
+    handleExportData,
     VOUCHER_TABLE_MAP
   } = useAdminVoucher({ status })
   return (
@@ -58,7 +58,7 @@ function AdminVoucher({ status, name }) {
         handleFilter={handleFilter}
         handleClearFilter={handleClearFilter}
         handleOpenForm={handleOpenForm}
-        // handleExportData={handleExportData}
+        handleExportData={handleExportData}
       />
 
       <VoucherTable

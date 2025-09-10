@@ -63,6 +63,7 @@ function VoucherFilter({
         >
           <h3 style={{ marginBottom: 0 }}>Advanced filters</h3>
           <Divider />
+
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Box sx={{ flex: 1 }}>
               <TypographyLabel>Search</TypographyLabel>
@@ -76,6 +77,26 @@ function VoucherFilter({
                 }
               />
             </Box>
+
+            <Box sx={{ flex: 1 }}>
+              <TypographyLabel>Type</TypographyLabel>
+              <Select
+                size="small"
+                fullWidth
+                value={filters.type || ''}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, type: e.target.value }))
+                }
+                displayEmpty
+              >
+                <MenuItem value="all">All</MenuItem>
+                <MenuItem value="percent">Percent</MenuItem>
+                <MenuItem value="fixed_amount">Fixed amount</MenuItem>
+              </Select>
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 1 }}>
             <Box sx={{ flex: 1 }}>
               <TypographyLabel>Applies</TypographyLabel>
               <Select
@@ -93,19 +114,45 @@ function VoucherFilter({
             </Box>
 
             <Box sx={{ flex: 1 }}>
-              <TypographyLabel>Type</TypographyLabel>
+              <TypographyLabel>Sort by</TypographyLabel>
               <Select
                 size="small"
                 fullWidth
-                value={filters.type || ''}
+                value={filters.sortBy || ''}
                 onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, type: e.target.value }))
+                  setFilters((prev) => ({
+                    ...prev,
+                    sortBy: e.target.value
+                  }))
                 }
                 displayEmpty
               >
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value="percent">Percent</MenuItem>
-                <MenuItem value="fixed_amount">Fixed amount</MenuItem>
+                <MenuItem value="createdAt_desc">Created (Newest)</MenuItem>
+                <MenuItem value="createdAt_asc">Created (Oldest)</MenuItem>
+
+                <MenuItem value="expiryDate_asc">
+                  Expiry Date (Soonest)
+                </MenuItem>
+                <MenuItem value="expiryDate_desc">
+                  Expiry Date (Latest)
+                </MenuItem>
+
+                <MenuItem value="discountValue_desc">
+                  Discount Value (High → Low)
+                </MenuItem>
+                <MenuItem value="discountValue_asc">
+                  Discount Value (Low → High)
+                </MenuItem>
+
+                <MenuItem value="usageLeft_desc">
+                  Usage Left (High → Low)
+                </MenuItem>
+                <MenuItem value="usageLeft_asc">
+                  Usage Left (Low → High)
+                </MenuItem>
+
+                <MenuItem value="name_asc">Name (A → Z)</MenuItem>
+                <MenuItem value="name_desc">Name (Z → A)</MenuItem>
               </Select>
             </Box>
           </Box>
@@ -141,7 +188,9 @@ function VoucherFilter({
                 fullWidth
               />
             </Box>
+          </Box>
 
+          <Box sx={{ display: 'flex', gap: 1 }}>
             <Box sx={{ flex: 1 }}>
               <TypographyLabel>Start date</TypographyLabel>
               <TextField
@@ -241,6 +290,7 @@ function VoucherFilter({
               </Box>
             )}
           </Box>
+
           <Box sx={{ display: 'flex', gap: 5 }}>
             <Box sx={{ flex: 1 }}>
               <TypographyLabel>
@@ -301,7 +351,9 @@ function VoucherFilter({
               />
             </Box>
           </Box>
+
           <Divider />
+
           <Box sx={{ alignSelf: 'end' }}>
             <Button
               onClick={handleClearFilter}
