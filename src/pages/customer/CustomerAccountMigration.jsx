@@ -26,7 +26,7 @@ function CustomerAccountMigration() {
     watch,
     reset,
     setValue,
-    handleAddressChange,
+    handleAddressChange
   } = useAccountMigration()
 
   return (

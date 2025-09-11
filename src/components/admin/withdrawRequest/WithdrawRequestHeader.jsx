@@ -44,11 +44,11 @@ function WithdrawRequestHeader({
             />
           </Box>
         </Tooltip>
-        <Tooltip title="Download with advantage filter">
+        <Tooltip title="Export filtered withdraw requests(.csv)">
           <Box>
             <Button variant="contained">
               <FileDownloadOutlinedIcon />
-              Download
+              Export
             </Button>
           </Box>
         </Tooltip>

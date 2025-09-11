@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getShopListForFilterAPI } from '~/api/shop.api'
 import { getUserListForFilterAPI } from '~/api/user.api'
 import { navigate } from '~/helpers/navigation'
@@ -17,6 +17,7 @@ const DEFAULT_FILTERS = {
   createdTo: '',
   requestOfShop: '',
   requestOfUser: '',
+  sortBy: 'createdAt_desc',
   amountRange: [50, 500]
 }
 

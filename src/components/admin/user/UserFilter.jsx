@@ -51,7 +51,7 @@ function UserFilter({
           <Divider />
           <TextField
             fullWidth
-            placeholder="Enter user name, phone, email"
+            placeholder="Enter user code, email, phone, name "
             size="small"
             value={filters.search}
             onChange={(e) =>

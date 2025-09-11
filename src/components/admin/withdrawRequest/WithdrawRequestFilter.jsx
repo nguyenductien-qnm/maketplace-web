@@ -28,7 +28,7 @@ function WithdrawRequestFilter({
 
   return (
     <Box>
-      <Button variant="contained" onClick={handleOpenFilter}>
+      <Button variant="outlined" onClick={handleOpenFilter}>
         <FilterListOutlinedIcon />
         Filters
       </Button>
@@ -60,6 +60,49 @@ function WithdrawRequestFilter({
               setFilters((prev) => ({ ...prev, search: e.target.value }))
             }
           />
+
+          <Box>
+            <TypographyLabel>Sort by</TypographyLabel>
+            <Select
+              size="small"
+              fullWidth
+              value={filters.sortBy || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, sortBy: e.target.value }))
+              }
+              displayEmpty
+            >
+              <MenuItem value="createdAt_desc">Created Date (Newest)</MenuItem>
+              <MenuItem value="createdAt_asc">Created Date (Oldest)</MenuItem>
+              <MenuItem value="amount_desc">Amount (High → Low)</MenuItem>
+              <MenuItem value="amount_asc">Amount (Low → High)</MenuItem>
+              <MenuItem value="processedAt_desc">
+                Processed Date (Newest)
+              </MenuItem>
+              <MenuItem value="processedAt_asc">
+                Processed Date (Oldest)
+              </MenuItem>
+            </Select>
+          </Box>
+
+          <Box>
+            <TypographyLabel>Status</TypographyLabel>
+            <Select
+              size="small"
+              fullWidth
+              value={filters.status || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, status: e.target.value }))
+              }
+              displayEmpty
+            >
+              <MenuItem value="ALL">All</MenuItem>
+              <MenuItem value="PENDING">Pending</MenuItem>
+              <MenuItem value="APPROVED">Approved</MenuItem>
+              <MenuItem value="REJECTED">Rejected</MenuItem>
+              <MenuItem value="COMPLETED">Completed</MenuItem>
+            </Select>
+          </Box>
           <Box sx={{ flex: 1 }}>
             <TypographyLabel>
               {type === 'VENDOR' ? 'Shop' : 'Customer'}
@@ -91,24 +134,6 @@ function WithdrawRequestFilter({
                 <TextField {...params} placeholder="Search by name..." />
               )}
             />
-          </Box>
-          <Box>
-            <TypographyLabel>Status</TypographyLabel>
-            <Select
-              size="small"
-              fullWidth
-              value={filters.status || ''}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, status: e.target.value }))
-              }
-              displayEmpty
-            >
-              <MenuItem value="ALL">All</MenuItem>
-              <MenuItem value="PENDING">Pending</MenuItem>
-              <MenuItem value="APPROVED">Approved</MenuItem>
-              <MenuItem value="REJECTED">Rejected</MenuItem>
-              <MenuItem value="COMPLETED">Completed</MenuItem>
-            </Select>
           </Box>
 
           <Box sx={{ display: 'flex', gap: 1 }}>

@@ -50,7 +50,7 @@ function ShopFilter({
           <Divider />
           <TextField
             fullWidth
-            placeholder="Enter shop name, phone, email"
+            placeholder="Enter shop code, name, email, phone"
             size="small"
             value={filters.search}
             onChange={(e) =>

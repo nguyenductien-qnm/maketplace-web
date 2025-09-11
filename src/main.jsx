@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import { Provider, useSelector } from 'react-redux'
+import { Provider } from 'react-redux'
 import { GlobalStyles } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ToastContainer } from 'react-toastify'
