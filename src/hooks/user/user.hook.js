@@ -3,25 +3,112 @@ import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import {
-  addNewAddressAPI,
-  changePasswordAPI,
-  deleteAddressAPI,
-  getAddressListAPI,
-  getUserInfoAPI,
-  setDefaultAddressAPI,
-  updateAddressAPI
+  createAddressByUserAPI,
+  changePasswordByUserAPI,
+  deleteAddressByUserAPI,
+  getAddressesByUserAPI,
+  getUserProfileAPI,
+  setDefaultAddressByUserAPI,
+  updateAddressByUserAPI
 } from '~/api/user.api'
 import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
 import {
   accountMigrationAPI,
   setupAccountAPI,
-  updateUserInfoAPI
+  updateUserProfileAPI
 } from '~/redux/user.slice'
-import formatDateForInput from '~/utils/formatDateForInput'
 import interceptorLoadingElements from '~/utils/interceptorLoading'
 import sortAddressByDefault from '~/helpers/sortAddressByDefault'
+import { StatusCodes } from 'http-status-codes'
+import { navigate } from '~/helpers/navigation'
 
 const steps = ['CHANGE YOUR PASSWORD', 'INFORMATION USER']
+
+const LOADING_CLASS_USER_ADDRESS_FORM = [
+  '.btn-action-user-address',
+  '.btn-user-set-default-address'
+]
+// ============================ USER PROFILE ============================
+export const useUserProfileForm = () => {
+  const dispatch = useDispatch()
+  const {
+    register,
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors }
+  } = useForm()
+
+  const [avatarUrl, setAvatarUrl] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchUserInfo()
+  }, [])
+
+  const fetchUserInfo = async () => {
+    try {
+      setLoading(true)
+      const { status, resData } = await getUserProfileAPI()
+      if (status === StatusCodes.OK) {
+        const { user_avatar } = resData?.metadata
+        setFieldData(resData?.metadata)
+        setAvatarUrl(user_avatar)
+      }
+    } catch (err) {
+      if (err?.status === StatusCodes.FORBIDDEN) navigate('/unauthorized')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const setFieldData = (data) => {
+    setValue('user_avatar', data?.user_avatar || '')
+    setValue('user_email', data?.user_email || '')
+    setValue('user_name', data?.user_name || '')
+    setValue('user_phone', data?.user_phone || '')
+    setValue('user_gender', data?.user_gender || '')
+    setValue('user_intro', data?.user_intro || '')
+    setValue('user_code', data?.user_code || '')
+    setValue('user_date_of_birth', data?.user_date_of_birth || '')
+    setValue('createdAt', data?.createdAt || '')
+  }
+
+  const handleUploadFileAvatar = async (event) => {
+    interceptorLoadingElements(true, '.btn-user-upload-avatar')
+    interceptorLoadingElements(true, '.btn-user-update-info')
+    const file = event.target.files[0]
+    if (!file) return
+    const url = await uploadImageToCloudinary(file)
+    if (url) {
+      setAvatarUrl(url)
+      setValue('user_avatar', url)
+    }
+
+    interceptorLoadingElements(false, '.btn-user-upload-avatar')
+    interceptorLoadingElements(false, '.btn-user-update-info')
+  }
+
+  const handleUpdateProfile = handleSubmit(async (data) => {
+    const { user_email, user_code, createdAt, user_avatar, ...rest } = data
+    await dispatch(
+      updateUserProfileAPI({
+        payload: { ...rest, user_avatar: avatarUrl },
+        loadingClass: '.btn-user-update-info'
+      })
+    )
+  })
+
+  return {
+    loading,
+    register,
+    control,
+    errors,
+    avatarUrl,
+    handleUploadFileAvatar,
+    handleUpdateProfile
+  }
+}
 
 export const useSetupAccount = () => {
   const [activeStep, setActiveStep] = useState(0)
@@ -98,77 +185,29 @@ export const useSetupAccount = () => {
   }
 }
 
-export const useChangePassword = () => {
-  const methods = useForm()
+// ============================ USER CHANGE PASSWORD FORM ============================
+export const useChangePasswordForm = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors }
+  } = useForm()
 
-  const onSubmit = methods.handleSubmit(async (data) => {
-    const result = await changePasswordAPI(data, '.btn-user-change-password')
-    if (result.status === 200) methods.reset({})
-  })
-
-  return {
-    ...methods,
-    onSubmit
-  }
-}
-
-export const useUserInfoForm = () => {
-  const dispatch = useDispatch()
-  const methods = useForm()
-
-  const { reset, getValues } = methods
-
-  const [avatarUrl, setAvatarUrl] = useState(null)
-
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      const res = await getUserInfoAPI()
-      const userInfo = res.data.metadata
-      setFieldData(userInfo)
-      setAvatarUrl(userInfo.user_avatar)
-    }
-    fetchUserInfo()
-  }, [])
-
-  const setFieldData = (userInfo) => {
-    reset({
-      user_avatar: userInfo.user_avatar,
-      user_email: userInfo.user_email,
-      user_name: userInfo.user_name,
-      user_phone: userInfo.user_phone,
-      user_gender: userInfo.user_gender || '',
-      user_intro: userInfo.user_intro,
-      user_date_of_birth: userInfo.user_date_of_birth
-        ? formatDateForInput(userInfo.user_date_of_birth)
-        : ''
+  const handleChangePassword = handleSubmit(async (data) => {
+    const { status } = await changePasswordByUserAPI({
+      payload: data,
+      loadingClass: '.btn-user-change-password'
     })
-  }
-
-  const handleUploadFileAvatar = async (event) => {
-    interceptorLoadingElements(true, '.btn-user-upload-avatar')
-    interceptorLoadingElements(true, '.btn-user-update-info')
-    const file = event.target.files[0]
-    if (!file) return
-    const url = await uploadImageToCloudinary(file)
-    if (url) setAvatarUrl(url)
-
-    const currentValue = getValues()
-    reset({ ...currentValue, user_avatar: url })
-    interceptorLoadingElements(false, '.btn-user-upload-avatar')
-    interceptorLoadingElements(false, '.btn-user-update-info')
-  }
-
-  const onSubmit = methods.handleSubmit(async (data) => {
-    await dispatch(
-      updateUserInfoAPI({ data, loadingClass: '.btn-user-update-info' })
-    )
+    if (status === StatusCodes.OK) reset(undefined)
   })
 
   return {
-    avatarUrl,
-    handleUploadFileAvatar,
-    onSubmit,
-    ...methods
+    register,
+    watch,
+    errors,
+    handleChangePassword
   }
 }
 
@@ -192,8 +231,6 @@ export const useAccountMigration = () => {
     data.district = tempAddress?.selectedDistrict
     data.ward = tempAddress?.selectedWard
 
-    console.log('data:::',data)
-
     const res = await dispatch(
       accountMigrationAPI({ data, loadingClass: '.btn-account-migration' })
     )
@@ -212,70 +249,140 @@ export const useAccountMigration = () => {
   }
 }
 
-export const useAddressList = () => {
-  const [userAddressList, setUserAddressList] = useState([])
+// ============================ USER ADDRESS ============================
+export const useUserAddresses = () => {
+  // ================= STATE =================
+
   const [loading, setLoading] = useState(true)
+  const [isDenied, setDenied] = useState(false)
+
+  const [openModal, setOpenModal] = useState(false)
+  const [action, setAction] = useState(null)
+  const [selectAddress, setSelectAddress] = useState(null)
+
+  const [addresses, setAddresses] = useState([])
+
+  // ================ EFFECTS ================
+  useEffect(() => {
+    if (isDenied) navigate('/unauthorized')
+  }, [isDenied])
 
   useEffect(() => {
-    const fetchAddressList = async () => {
-      try {
-        const res = await getAddressListAPI()
-        const sortedData = sortAddressByDefault(res.data?.metadata || [])
-        setUserAddressList(sortedData)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchAddressList()
+    fetchAddresses()
   }, [])
 
-  const addAddress = (data) => {
-    if (data.default) {
-      const updatedList = userAddressList.map((item) => ({
-        ...item,
-        default: false
-      }))
-      setUserAddressList(sortAddressByDefault([...updatedList, data]))
-      return
+  // ================ HANDLERS ================
+  const handleOpenModal = ({ action, address }) => {
+    setAction(action)
+    if (action === 'update') {
+      setSelectAddress(address)
     }
-    setUserAddressList((prev) => [...prev, data])
+    setOpenModal(true)
   }
 
-  const setDefaultAddress = async (_id) => {
-    const res = await setDefaultAddressAPI(
-      { _id },
-      '.btn-user-set-default-address'
-    )
-    if (res.status === 200) {
-      const updatedList = userAddressList.map((item) => ({
+  const handleCloseModal = () => {
+    setOpenModal(false)
+    setAction(null)
+    setSelectAddress(null)
+  }
+
+  const fetchAddresses = async () => {
+    setLoading(true)
+    try {
+      const { status, resData } = await getAddressesByUserAPI()
+      if (status === StatusCodes.OK) {
+        const { metadata } = resData
+        setAddresses(sortAddressByDefault(metadata || []))
+      }
+    } catch (err) {
+      if (err?.status === StatusCodes.FORBIDDEN) setDenied(true)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCreateAddress = async ({ data }) => {
+    const { status, resData } = await createAddressByUserAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS_USER_ADDRESS_FORM
+    })
+    if (status === StatusCodes.CREATED) {
+      const { metadata } = resData
+      if (metadata?.default) {
+        const updatedList = addresses.map((item) => ({
+          ...item,
+          default: false
+        }))
+        setAddresses(sortAddressByDefault([...updatedList, metadata]))
+        handleCloseModal()
+        return
+      }
+      setAddresses((prev) => [...prev, metadata])
+      handleCloseModal()
+    }
+  }
+
+  const handleUpdateAddress = async ({ data }) => {
+    const { status, resData } = await updateAddressByUserAPI({
+      payload: data,
+      loadingClass: LOADING_CLASS_USER_ADDRESS_FORM
+    })
+    if (status === StatusCodes.OK) {
+      const { metadata } = resData
+      setAddresses((prev) =>
+        prev.map((item) => (item._id === data._id ? metadata : item))
+      )
+      handleCloseModal()
+    }
+  }
+
+  const handleSetDefaultAddress = async ({ _id }) => {
+    const { status } = await setDefaultAddressByUserAPI({
+      payload: { _id },
+      loadingClass: LOADING_CLASS_USER_ADDRESS_FORM
+    })
+    if (status === StatusCodes.OK) {
+      const updatedList = addresses.map((item) => ({
         ...item,
         default: item._id === _id
       }))
-      setUserAddressList(sortAddressByDefault(updatedList))
+      setAddresses(sortAddressByDefault(updatedList))
     }
   }
 
-  const updateAddress = (data) => {
-    setUserAddressList((prev) =>
-      prev.map((item) => (item._id === data._id ? { ...item, ...data } : item))
-    )
+  const handleDeleteAddress = async ({ _id }) => {
+    const { status } = await deleteAddressByUserAPI({
+      payload: { _id },
+      loadingClass: LOADING_CLASS_USER_ADDRESS_FORM
+    })
+    if (status === StatusCodes.OK) {
+      handleCloseModal()
+      setAddresses((prev) => prev.filter((item) => item._id !== _id))
+    }
   }
 
-  const deleteAddress = (_id) => {
-    setUserAddressList((prev) => prev.filter((item) => item._id !== _id))
+  const handleSubmit = async ({ data }) => {
+    action === 'create'
+      ? await handleCreateAddress({ data })
+      : await handleUpdateAddress({ data })
   }
 
   return {
-    userAddressList,
+    addresses,
+    openModal,
+    action,
     loading,
-    addAddress,
-    setDefaultAddress,
-    updateAddress,
-    deleteAddress
+    selectAddress,
+    handleOpenModal,
+    handleCloseModal,
+    handleSubmit,
+    handleSetDefaultAddress,
+    handleDeleteAddress
   }
 }
 
-export const useAddressForm = ({ actionType, addressItem, onSuccess }) => {
+// ============================ USER ADDRESS FORM ============================
+export const useAddressForm = ({ action, address, onSubmit }) => {
   const {
     register,
     watch,
@@ -283,62 +390,37 @@ export const useAddressForm = ({ actionType, addressItem, onSuccess }) => {
     reset,
     handleSubmit,
     setValue,
-    clearErrors
+    clearErrors,
+    control
   } = useForm()
 
-  const [open, setOpen] = useState(false)
-  const [tempAddress, setTempAddress] = useState({
-    selectedProvince: {},
-    selectedDistrict: {},
-    selectedWard: {}
-  })
-
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => {
-    reset()
-    setOpen(false)
-  }
-
-  const handleAddressChange = (address) => setTempAddress(address)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
-    if (addressItem) {
-      setValue('full_name', addressItem.full_name)
-      setValue('phone_number', addressItem.phone_number)
+    if (action === 'update' && address) {
+      setValue('_id', address?._id || '')
+      setValue('full_name', address?.full_name || '')
+      setValue('phone_number', address?.phone_number || '')
+      setValue('province', address?.province || {})
+      setValue('district', address?.district || {})
+      setValue('ward', address?.ward || {})
+      setValue('street', address?.street || '')
+    } else {
+      reset(undefined)
     }
-  }, [addressItem, setValue])
+  }, [action, address])
 
-  const handleAddressAction = async (data) => {
-    data.province = tempAddress.selectedProvince
-    data.district = tempAddress.selectedDistrict
-    data.ward = tempAddress.selectedWard
-
-    if (actionType === 'create') {
-      const res = await addNewAddressAPI({ data })
-      if (res.status === 201) {
-        onSuccess(res.data?.metadata)
-        handleClose()
-      }
-    } else if (actionType === 'update') {
-      data._id = addressItem._id
-      const res = await updateAddressAPI({ data })
-      if (res.status === 200) {
-        onSuccess(res.data?.metadata)
-        handleClose()
-      }
+  const handleFormSubmit = handleSubmit(async (data) => {
+    setIsSubmitting(true)
+    try {
+      await onSubmit({ data })
+    } finally {
+      setIsSubmitting(false)
     }
-  }
-
-  const handleDelete = async () => {
-    if (!addressItem?._id) return
-    const res = await deleteAddressAPI({ data: { _id: addressItem._id } })
-    if (res.status === 200) {
-      onSuccess(addressItem._id, 'delete')
-      handleClose()
-    }
-  }
+  })
 
   return {
+    isSubmitting,
     register,
     watch,
     errors,
@@ -346,12 +428,7 @@ export const useAddressForm = ({ actionType, addressItem, onSuccess }) => {
     handleSubmit,
     setValue,
     clearErrors,
-    open,
-    handleOpen,
-    handleClose,
-    tempAddress,
-    handleAddressChange,
-    handleAddressAction,
-    handleDelete
+    handleFormSubmit,
+    control
   }
 }

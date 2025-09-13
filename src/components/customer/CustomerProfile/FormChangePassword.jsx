@@ -1,33 +1,22 @@
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
-import { styled } from '@mui/material'
 import Typography from '@mui/material/Typography'
+import TypographyLabel from '~/components/common/TypographyLabel'
+import { grey } from '@mui/material/colors'
+import { useChangePasswordForm } from '~/hooks/user/user.hook'
 import {
   FIELD_REQUIRED_MESSAGE,
   PASSWORD_RULE,
   PASSWORD_RULE_MESSAGE
 } from '~/utils/validators'
-import { grey } from '@mui/material/colors'
-import { useChangePassword } from '~/hooks/user/user.hook'
 
 function FormChangePassword() {
-  const TypographyCustom = styled(Typography)({
-    fontSize: '14px',
-    color: 'black',
-    fontWeight: '600',
-    marginBottom: '5px'
-  })
-
-  const {
-    register,
-    formState: { errors },
-    watch,
-    onSubmit
-  } = useChangePassword()
+  const { register, errors, watch, handleChangePassword } =
+    useChangePasswordForm()
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={handleChangePassword}>
       <Box>
         <Typography
           sx={{ fontSize: '25px', marginBottom: '20px', fontWeight: '600' }}
@@ -37,9 +26,7 @@ function FormChangePassword() {
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
           <Box>
-            <TypographyCustom>
-              Current password (leave blank to leave unchanged)
-            </TypographyCustom>
+            <TypographyLabel>Current password</TypographyLabel>
             <Box>
               <TextField
                 type="password"
@@ -58,9 +45,7 @@ function FormChangePassword() {
             </Box>
           </Box>
           <Box>
-            <TypographyCustom>
-              New password (leave blank to leave unchanged)
-            </TypographyCustom>
+            <TypographyLabel>New password</TypographyLabel>
             <TextField
               type="password"
               {...register('new_password', {
@@ -77,7 +62,7 @@ function FormChangePassword() {
             />
           </Box>
           <Box>
-            <TypographyCustom>Confirm new password</TypographyCustom>
+            <TypographyLabel>Confirm new password</TypographyLabel>
             <TextField
               type="password"
               {...register('confirm_password', {

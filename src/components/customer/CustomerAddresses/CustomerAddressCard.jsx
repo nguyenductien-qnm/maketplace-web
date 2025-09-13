@@ -3,13 +3,11 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import DividerVertical from '~/components/common/DividerVertical'
 import { blue, grey } from '@mui/material/colors'
-import CustomerAddressModal from './CustomerAddressModal'
 
 function CustomerAddressCard({
-  addressItem,
-  handleSetDefaultAddress,
-  handleDeleteAddress,
-  handleUpdateAddress
+  address,
+  handleOpenModal,
+  handleSetDefaultAddress
 }) {
   return (
     <Box
@@ -23,20 +21,20 @@ function CustomerAddressCard({
     >
       <Box>
         <Box sx={{ display: 'flex', gap: '10px', marginBottom: '5px' }}>
-          <Typography>{addressItem?.full_name}</Typography>
+          <Typography>{address?.full_name}</Typography>
           <DividerVertical />
           <Typography sx={{ color: grey[600] }}>
-            {addressItem?.phone_number}
+            {address?.phone_number}
           </Typography>
         </Box>
         <Typography sx={{ fontSize: '14px', color: grey[600] }}>
-          {addressItem?.street}
+          {address?.street}
         </Typography>
         <Typography sx={{ fontSize: '14px', color: grey[600] }}>
-          {addressItem?.ward?.WardName}, {addressItem?.district?.DistrictName},{' '}
-          {addressItem?.province?.ProvinceName}
+          {address?.ward?.WardName}, {address?.district?.DistrictName},{' '}
+          {address?.province?.ProvinceName}
         </Typography>
-        {addressItem?.default && (
+        {address?.default && (
           <Box
             sx={{
               marginTop: '10px',
@@ -55,17 +53,24 @@ function CustomerAddressCard({
         )}
       </Box>
       <Box>
-        <CustomerAddressModal
-          actionType="update"
-          addressItem={addressItem}
-          handleDeleteAddress={handleDeleteAddress}
-          handleUpdateAddress={handleUpdateAddress}
-        />
-        {!addressItem?.default && (
+        <Typography
+          onClick={() => handleOpenModal({ action: 'update', address })}
+          sx={{
+            fontSize: '14px',
+            color: blue[600],
+            textAlign: 'end',
+            marginBottom: '10px',
+            '&:hover': { fontWeight: '600', cursor: 'pointer' }
+          }}
+        >
+          Edit
+        </Typography>
+
+        {!address?.default && (
           <Button
             className="btn-user-set-default-address"
             onClick={() => {
-              handleSetDefaultAddress(addressItem._id)
+              handleSetDefaultAddress({ _id: address?._id })
             }}
             sx={{
               backgroundColor: grey[200],

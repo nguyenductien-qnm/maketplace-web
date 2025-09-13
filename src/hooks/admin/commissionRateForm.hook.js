@@ -24,22 +24,21 @@ export const useAdminCommissionRateForm = ({
       setValue('refund_rate_auto', commissionRate.refund_rate_auto || '')
       setValue('refund_rate_manual', commissionRate.refund_rate_manual || '')
     } else {
-      reset()
+      reset(undefined)
     }
   }, [action, commissionRate])
 
-  const handleFormSubmit = async (data) => {
+  const handleFormSubmit = handleSubmit(async (data) => {
     setIsSubmitting(true)
     try {
       await onSubmit({ data })
     } finally {
       setIsSubmitting(false)
     }
-  }
+  })
 
   return {
     register,
-    handleSubmit,
     errors,
     handleFormSubmit,
     isSubmitting,

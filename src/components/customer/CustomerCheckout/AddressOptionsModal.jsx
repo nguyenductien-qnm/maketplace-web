@@ -5,7 +5,7 @@ import { Button, Checkbox, Divider } from '@mui/material'
 import DividerVertical from '../../common/DividerVertical'
 import { blue, grey } from '@mui/material/colors'
 import { useEffect, useState } from 'react'
-import CustomerAddressModal from '~/components/customer/CustomerAddresses/CustomerAddressModal'
+import CustomerAddressForm from '~/components/customer/CustomerAddresses/CustomerAddressForm'
 function AddressOptionModal({
   open,
   onClose,
@@ -110,7 +110,7 @@ function AddressOptionModal({
             justifyContent: 'end'
           }}
         >
-          <CustomerAddressModal
+          <CustomerAddressForm
             handleAddAddress={handleAddAddress}
             actionType="create"
             address={null}

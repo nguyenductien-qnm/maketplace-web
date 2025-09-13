@@ -8,7 +8,6 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import { useEffect } from 'react'
 import { Controller } from 'react-hook-form'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import { useAdminCommissionRateForm } from '~/hooks/admin/commissionRateForm.hook'
@@ -26,18 +25,8 @@ function CommissionRateForm({
   onSubmit,
   commissionRate
 }) {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    handleFormSubmit,
-    isSubmitting,
-    control
-  } = useAdminCommissionRateForm({ action, commissionRate, onSubmit })
-
-  useEffect(() => {
-    console.log(isSubmitting)
-  }, [isSubmitting])
+  const { register, errors, handleFormSubmit, isSubmitting, control } =
+    useAdminCommissionRateForm({ action, commissionRate, onSubmit })
 
   return (
     <Dialog
@@ -52,7 +41,7 @@ function CommissionRateForm({
       <DialogTitle>
         {action == 'create' ? 'Create' : 'Update'} Commission Rate
       </DialogTitle>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
+      <form onSubmit={handleFormSubmit}>
         <DialogContent>
           <Box>
             <TypographyLabel variant="body2">Category</TypographyLabel>

@@ -1,6 +1,6 @@
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 function CustomerEmptyAddress() {
   return (
     <Box

@@ -1,10 +1,10 @@
 import { Box, Skeleton } from '@mui/material'
 
-function SkeletonLoaderInput() {
+function SkeletonLoaderInput({ height = 40 }) {
   return (
     <Box>
       <Skeleton variant="text" width="20%" />
-      <Skeleton variant="rounded" height={40} />
+      <Skeleton variant="rounded" height={height} />
     </Box>
   )
 }

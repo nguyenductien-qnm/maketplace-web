@@ -1,64 +1,65 @@
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 
-const getUserInfoAPI = async () => {
-  const res = await authorizedAxios.get(`${API_ROOT}/v1/api/user`, {
-    ...TOAST_MODE.NONE
-  })
-  return res
-}
-
-const changePasswordAPI = async (data, loadingClass) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/auth/change-password`,
-    data,
-    { loadingClass, ...TOAST_MODE.ALL }
-  )
-  return res
-}
-
-const getAddressListAPI = async () => {
-  const res = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/user/address-list`,
+// ============================ CUSTOMER ============================
+const getUserProfileAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/user/user/profile`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
-  return res
+  return { status, resData: data }
 }
 
-const addNewAddressAPI = async ({ data, loadingClass }) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/user/add-new-address`,
-    data,
-    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
+const changePasswordByUserAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/auth/change-password`,
+    payload,
+    { loadingClass, ...TOAST_MODE.ALL }
   )
-  return res
+  return { status, resData: data }
 }
 
-const setDefaultAddressAPI = async (data, loadingClass) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/user/set-default-address`,
-    data,
-    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
+const getAddressesByUserAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/user/user/addresses`,
+    { ...TOAST_MODE.ONLY_ERROR }
   )
-  return res
+  return { status, resData: data }
 }
 
-const deleteAddressAPI = async ({ data, loadingClass }) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/user/delete-address`,
-    data,
+const createAddressByUserAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/user/user/addresses`,
+    payload,
     { loadingClass, ...TOAST_MODE.ONLY_ERROR }
   )
-  return res
+  return { status, resData: data }
 }
 
-const updateAddressAPI = async ({ data, loadingClass }) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/user/update-address`,
-    data,
+const updateAddressByUserAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/user/user/addresses/${payload?._id}`,
+    payload,
     { loadingClass, ...TOAST_MODE.ONLY_ERROR }
   )
-  return res
+  return { status, resData: data }
+}
+
+const setDefaultAddressByUserAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/user/user/addresses/default/${payload?._id}`,
+    payload,
+    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
+const deleteAddressByUserAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.delete(
+    `${API_ROOT}/v1/api/user/user/addresses/${payload?._id}`,
+    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
 }
 
 // ============================ ADMIN ============================
@@ -112,7 +113,7 @@ const updateUserPasswordByAdminAPI = async ({ payload, loadingClass }) => {
 
 const getUserListForFilterAPI = async () => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/user/get-user-list-for-filter`,
+    `${API_ROOT}/v1/api/admin/user/get-user-list-for-filter`,
     {
       ...TOAST_MODE.NONE
     }
@@ -122,7 +123,7 @@ const getUserListForFilterAPI = async () => {
 
 const getStaffListForFilterAPI = async () => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/user/get-staff-list-for-filter`,
+    `${API_ROOT}/v1/api/admin/user/get-staff-list-for-filter`,
     {
       ...TOAST_MODE.NONE
     }
@@ -153,13 +154,13 @@ const exportUserDataAPI = async ({ payload, loadingClass }) => {
 }
 
 export {
-  getUserInfoAPI,
-  changePasswordAPI,
-  addNewAddressAPI,
-  getAddressListAPI,
-  setDefaultAddressAPI,
-  deleteAddressAPI,
-  updateAddressAPI,
+  getUserProfileAPI,
+  changePasswordByUserAPI,
+  createAddressByUserAPI,
+  getAddressesByUserAPI,
+  setDefaultAddressByUserAPI,
+  deleteAddressByUserAPI,
+  updateAddressByUserAPI,
   queryUserByAdminAPI,
   banUserByAdminAPI,
   unbanUserByAdminAPI,

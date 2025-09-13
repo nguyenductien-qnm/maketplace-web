@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import { navigate } from '~/helpers/navigation'
-import { getAddressListAPI } from '~/api/user.api'
+import { getAddressesByUserAPI } from '~/api/user.api'
 import { checkoutAPI } from '~/api/cart.api'
 import { placeOrderAPI } from '~/api/order.api'
 import { getVoucherForCustomerAPI } from '~/api/voucher.api'
@@ -9,6 +9,7 @@ import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 import PayPalSvg from '~/assets/user/svgIcon/paypal.svg'
 import CodSvg from '~/assets/user/svgIcon/cod.svg'
 import { useSearchParams } from 'react-router-dom'
+import { StatusCodes } from 'http-status-codes'
 export const useCheckout = () => {
   const paymentMethods = [
     { id: 1, name: 'Paypal', img: PayPalSvg },
@@ -44,8 +45,11 @@ export const useCheckout = () => {
 
   useEffect(() => {
     const getAddress = async () => {
-      const res = await getAddressListAPI()
-      setAddresses(sortAddressByDefault(res.data.metadata))
+      const { status, resData } = await getAddressesByUserAPI()
+      if (status === StatusCodes.OK) {
+        const { metadata } = resData
+        setAddresses(sortAddressByDefault(metadata))
+      }
     }
     getAddress()
   }, [])

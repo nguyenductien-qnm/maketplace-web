@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { Navigate, Route } from 'react-router-dom'
 import UserAccountLayout from '~/layouts/user/UserAccountLayout'
-import CustomerAccountDetail from '~/pages/customer/CustomerAccountDetail'
+import CustomerProfile from '~/pages/customer/CustomerProfile'
 import CustomerAccountMigration from '~/pages/customer/CustomerAccountMigration'
 import CustomerAddresses from '~/pages/customer/CustomerAddresses'
 import CustomerDashboard from '~/pages/customer/CustomerDashBoard'
@@ -23,7 +23,7 @@ const CustomerRoutes = () => {
         <Route path="orders" element={<CustomerOrders />} />
         <Route path="order-detail" element={<CustomerOrderDetail />} />
         <Route path="notifications" element={<CustomerNotifications />} />
-        <Route path="account-details" element={<CustomerAccountDetail />} />
+        <Route path="profile" element={<CustomerProfile />} />
         <Route path="addresses" element={<CustomerAddresses />} />
         <Route path="wallet" element={<CustomerWallet />} />
         <Route

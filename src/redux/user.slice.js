@@ -43,16 +43,15 @@ export const setupAccountAPI = createAsyncThunk(
   }
 )
 
-export const updateUserInfoAPI = createAsyncThunk(
-  'user/updateUserInfoAPI',
-  async ({ data, loadingClass }) => {
-    delete data.user_email
-    const res = await authorizedAxios.post(
-      `${API_ROOT}/v1/api/user/update-info`,
-      data,
+export const updateUserProfileAPI = createAsyncThunk(
+  'user/updateUserProfileAPI',
+  async ({ payload, loadingClass }) => {
+    const { status, data } = await authorizedAxios.put(
+      `${API_ROOT}/v1/api/user/user/profile`,
+      payload,
       { loadingClass, ...TOAST_MODE.ALL }
     )
-    return res
+    return { status, resData: data }
   }
 )
 
@@ -96,9 +95,11 @@ export const userSlice = createSlice({
         state.currentUser = action.payload.data.metadata
       })
 
-      .addCase(updateUserInfoAPI.fulfilled, (state, action) => {
-        state.currentUser.user_name = action.payload.data.metadata.user_name
-        state.currentUser.user_avatar = action.payload.data.metadata.user_avatar
+      .addCase(updateUserProfileAPI.fulfilled, (state, action) => {
+        state.currentUser.user_name =
+          action.payload?.resData?.metadata?.user_name
+        state.currentUser.user_avatar =
+          action.payload?.resData?.metadata?.user_avatar
       })
 
       .addCase(accountMigrationAPI.fulfilled, (state) => {

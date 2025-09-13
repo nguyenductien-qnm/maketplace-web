@@ -7,17 +7,20 @@ const apiGetProvinces = async () => {
 }
 
 const apiGetDistricts = async (provinceId) => {
-  const districts = await axios.post(`${API_ROOT}/v1/api/ghn/get-district`, {
-    provinceId
-  })
-  return districts.data
+  const { status, data } = await axios.post(
+    `${API_ROOT}/v1/api/ghn/get-district`,
+    {
+      provinceId
+    }
+  )
+  return { status, resData: data }
 }
 
 const apiGetWards = async (districtId) => {
-  const wards = await axios.post(`${API_ROOT}/v1/api/ghn/get-ward`, {
+  const { status, data } = await axios.post(`${API_ROOT}/v1/api/ghn/get-ward`, {
     districtId
   })
-  return wards.data
+  return { status, resData: data }
 }
 
 export { apiGetProvinces, apiGetDistricts, apiGetWards }
