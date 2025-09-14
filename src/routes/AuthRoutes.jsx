@@ -1,13 +1,9 @@
-import { Route } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-
 import CustomerAuth from '~/pages/customer/CustomerAuth'
 import CustomerVerifyAccount from '~/pages/customer/CustomerVerifyAccount'
+import { Route } from 'react-router-dom'
 import { RequireGuestRoute } from '~/routes/RouteGuards'
 
-const AuthRoutes = () => {
-  const user = useSelector((state) => state.user.currentUser)
-
+const AuthRoutes = ({ user }) => {
   return (
     <Route element={<RequireGuestRoute user={user} />}>
       <Route path=":page" element={<CustomerAuth />} />

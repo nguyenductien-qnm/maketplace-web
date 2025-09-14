@@ -68,17 +68,17 @@ function CustomerAddresses() {
               <Divider />
             </Box>
           ))}
-
-          <CustomerAddressForm
-            action={action}
-            open={openModal}
-            onSubmit={handleSubmit}
-            onClose={handleCloseModal}
-            address={selectAddress}
-            handleDeleteAddress={handleDeleteAddress}
-          />
         </Box>
       )}
+
+      <CustomerAddressForm
+        action={action}
+        open={openModal}
+        onSubmit={handleSubmit}
+        onClose={handleCloseModal}
+        address={selectAddress}
+        handleDeleteAddress={handleDeleteAddress}
+      />
     </Box>
   )
 }

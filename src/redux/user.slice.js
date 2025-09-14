@@ -21,7 +21,7 @@ export const loginAPI = createAsyncThunk(
 )
 
 export const verifyAccountAPI = createAsyncThunk(
-  'user/verifyAccount',
+  'user/verifyAccountAPI',
   async ({ otp }) => {
     const res = await authorizedAxios.get(
       `${API_ROOT}/v1/api/auth/verify-account/${otp}`,
@@ -32,10 +32,10 @@ export const verifyAccountAPI = createAsyncThunk(
 )
 
 export const setupAccountAPI = createAsyncThunk(
-  'user/setupAccount',
+  'user/setupAccountAPI',
   async ({ data, loadingClass }) => {
-    const res = await authorizedAxios.post(
-      `${API_ROOT}/v1/api/user/setup-account`,
+    const res = await authorizedAxios.put(
+      `${API_ROOT}/v1/api/user/user/setup-account`,
       data,
       { loadingClass, ...TOAST_MODE.ALL }
     )

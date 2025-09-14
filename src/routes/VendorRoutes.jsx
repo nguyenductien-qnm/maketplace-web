@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import VendorLayout from '~/layouts/user/VendorLayout'
 import VendorDashboard from '~/pages/vendor/VendorDashboard'
 import VendorOrders from '~/pages/vendor/VendorOrders'
@@ -8,12 +8,9 @@ import VendorProducts from '~/pages/vendor/VendorProducts'
 import VendorProfile from '~/pages/vendor/VendorProfile'
 import VendorVoucher from '~/pages/vendor/VendorVouchers'
 import VendorWallet from '~/pages/vendor/VendorWallet'
-import { useSelector } from 'react-redux'
 import { RequireAuthRoute } from './RouteGuards'
 
-const VendorRoutes = () => {
-  const user = useSelector((state) => state.user.currentUser)
-
+const VendorRoutes = ({ user }) => {
   return (
     <Route element={<RequireAuthRoute user={user} allowedRoles={['SHOP']} />}>
       <Route element={<VendorLayout />}>

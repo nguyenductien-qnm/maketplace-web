@@ -11,16 +11,15 @@ import { useSetupAccount } from '~/hooks/user/user.hook'
 
 function CustomerSetupAccount() {
   const {
-    steps,
+    register,
+    errors,
+    watch,
+    STEPS_SETUP_ACCOUNT,
     activeStep,
     isStepSkipped,
-    formRef,
     handleNext,
     handleBack,
-    handleSkip,
-    handleSubmitPassword,
-    handleSubmitInfo,
-    finishProgress
+    handleFormSubmit
   } = useSetupAccount()
 
   return (
@@ -34,7 +33,7 @@ function CustomerSetupAccount() {
     >
       <Box sx={{ width: '40%' }}>
         <Stepper activeStep={activeStep}>
-          {steps.map((label, index) => {
+          {STEPS_SETUP_ACCOUNT.map((label, index) => {
             const stepProps = {}
             const labelProps = {}
 
@@ -49,7 +48,7 @@ function CustomerSetupAccount() {
           })}
         </Stepper>
 
-        {activeStep === steps.length ? (
+        {activeStep === STEPS_SETUP_ACCOUNT.length ? (
           <Fragment>
             <Typography sx={{ mt: 2, mb: 1 }}>
               All steps completed - you&apos;re finished
@@ -58,7 +57,7 @@ function CustomerSetupAccount() {
               <Box sx={{ flex: '1 1 auto' }} />
               <Button
                 className="btn-auth-setup-account"
-                onClick={() => finishProgress()}
+                onClick={handleFormSubmit}
               >
                 Confirm
               </Button>
@@ -68,14 +67,12 @@ function CustomerSetupAccount() {
           <Fragment>
             {activeStep == 0 ? (
               <FormSetPassword
-                ref={formRef}
-                handleSubmitPassword={handleSubmitPassword}
+                register={register}
+                errors={errors}
+                watch={watch}
               />
             ) : (
-              <FormSetInfoUser
-                ref={formRef}
-                handleSubmitInfo={handleSubmitInfo}
-              />
+              <FormSetInfoUser register={register} errors={errors} />
             )}
 
             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
@@ -87,13 +84,10 @@ function CustomerSetupAccount() {
                 Back
               </Button>
               <Box sx={{ flex: '1 1 auto' }} />
-              {activeStep === 1 && (
-                <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-                  Skip
-                </Button>
-              )}
               <Button onClick={handleNext}>
-                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                {activeStep === STEPS_SETUP_ACCOUNT.length - 1
+                  ? 'Finish'
+                  : 'Next'}
               </Button>
             </Box>
           </Fragment>

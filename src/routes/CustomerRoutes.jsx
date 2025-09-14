@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux'
 import { Navigate, Route } from 'react-router-dom'
 import UserAccountLayout from '~/layouts/user/UserAccountLayout'
 import CustomerProfile from '~/pages/customer/CustomerProfile'
@@ -11,8 +10,7 @@ import CustomerOrders from '~/pages/customer/CustomerOrders'
 import CustomerWallet from '~/pages/customer/CustomerWallet'
 import { RequireAuthRoute } from './RouteGuards'
 
-const CustomerRoutes = () => {
-  const user = useSelector((state) => state.user.currentUser)
+const CustomerRoutes = ({ user }) => {
   const isShopUser = user?.user_role?.includes('SHOP')
 
   return (

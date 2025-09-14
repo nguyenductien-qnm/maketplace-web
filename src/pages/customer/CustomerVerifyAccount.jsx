@@ -1,31 +1,20 @@
-import { Box, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import CircularProgress from '@mui/material/CircularProgress'
-import { green, red } from '@mui/material/colors'
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
 import ThumbDownOffAltOutlinedIcon from '@mui/icons-material/ThumbDownOffAltOutlined'
-import { verifyAccountAPI } from '~/redux/user.slice'
+import { styled } from '@mui/material'
+import { green, red } from '@mui/material/colors'
+import { useUserVerifyAccount } from '~/hooks/user/user.hook'
 
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+const BoxCustom = styled(Box)({
+  display: 'flex',
+  justifyContent: 'center',
+  marginBottom: '20px'
+})
 
 function CustomerVerifyAccount() {
-  const dispatch = useDispatch()
-  const otp = useParams()
-  const [stateVerify, setStateVerify] = useState('pending')
-
-  useEffect(() => {
-    const verify = async () => {
-      const res = await dispatch(verifyAccountAPI(otp))
-      if (res.payload?.status !== 200) {
-        setStateVerify('failure')
-      } else {
-        setStateVerify('success')
-      }
-    }
-    verify()
-  }, [])
+  const { state } = useUserVerifyAccount()
 
   return (
     <Box
@@ -39,51 +28,33 @@ function CustomerVerifyAccount() {
         gap: '20px'
       }}
     >
-      {stateVerify === 'pending' && (
+      {state === 'pending' && (
         <Box>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '20px'
-            }}
-          >
+          <BoxCustom>
             <CircularProgress />
-          </Box>
+          </BoxCustom>
           <Typography>Pending verify account...</Typography>
         </Box>
       )}
 
-      {stateVerify == 'success' && (
+      {state == 'success' && (
         <Box>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '20px'
-            }}
-          >
+          <BoxCustom>
             <CheckCircleOutlineOutlinedIcon
               sx={{ fontSize: '40px', color: green[600] }}
             />
-          </Box>
+          </BoxCustom>
           <Typography>Active account success</Typography>
         </Box>
       )}
 
-      {stateVerify === 'failure' && (
+      {state === 'failure' && (
         <Box>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '20px'
-            }}
-          >
+          <BoxCustom>
             <ThumbDownOffAltOutlinedIcon
               sx={{ fontSize: '40px', color: red[600] }}
             />
-          </Box>
+          </BoxCustom>
           <Typography>Active account failure</Typography>
         </Box>
       )}

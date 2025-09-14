@@ -1,6 +1,5 @@
 import { Route } from 'react-router-dom'
 import { RequireAuthRoute } from './RouteGuards'
-import { useSelector } from 'react-redux'
 import AdminLayout from '~/layouts/admin/AdminLayout'
 import AdminShop from '~/pages/admin/AdminShop'
 import AdminUser from '~/pages/admin/AdminUser'
@@ -13,9 +12,7 @@ import AdminCommissionRate from '~/pages/admin/AdminCommissionRate'
 import AdminWallet from '~/pages/admin/AdminWallet'
 import AdminTransaction from '~/pages/admin/AdminTransaction'
 
-const AdminRoutes = () => {
-  const user = useSelector((state) => state.user.currentUser)
-
+const AdminRoutes = ({ user }) => {
   return (
     <Route element={<RequireAuthRoute user={user} allowedRoles={['ADMIN']} />}>
       <Route element={<AdminLayout />}>

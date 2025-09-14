@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   createAddressByUserAPI,
   changePasswordByUserAPI,
@@ -15,21 +15,22 @@ import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
 import {
   accountMigrationAPI,
   setupAccountAPI,
-  updateUserProfileAPI
+  updateUserProfileAPI,
+  verifyAccountAPI
 } from '~/redux/user.slice'
 import interceptorLoadingElements from '~/utils/interceptorLoading'
 import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 import { StatusCodes } from 'http-status-codes'
 import { navigate } from '~/helpers/navigation'
 
-const steps = ['CHANGE YOUR PASSWORD', 'INFORMATION USER']
+const STEPS_SETUP_ACCOUNT = ['CHANGE YOUR PASSWORD', 'INFORMATION USER']
 
 const LOADING_CLASS_USER_ADDRESS_FORM = [
   '.btn-action-user-address',
   '.btn-user-set-default-address'
 ]
 // ============================ USER PROFILE ============================
-export const useUserProfileForm = () => {
+const useUserProfileForm = () => {
   const dispatch = useDispatch()
   const {
     register,
@@ -110,83 +111,81 @@ export const useUserProfileForm = () => {
   }
 }
 
-export const useSetupAccount = () => {
-  const [activeStep, setActiveStep] = useState(0)
-  const [skipped, setSkipped] = useState(new Set())
-  const [formData, setFormData] = useState({
-    new_password: '',
-    confirm_password: '',
-    userInfo: {}
-  })
-
+// ============================ USER VERIFY ACCOUNT ============================
+const useUserVerifyAccount = () => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const formRef = useRef(null)
+  const { otp } = useParams()
+  const [state, setState] = useState('pending')
 
-  const isStepSkipped = (step) => skipped.has(step)
+  useEffect(() => {
+    handleVerifyAccount()
+  }, [])
 
-  const handleNext = () => {
-    if (activeStep === 0) {
-      formRef.current?.submitFormPassword()
+  const handleVerifyAccount = async () => {
+    const res = await dispatch(verifyAccountAPI({ otp }))
+
+    if (res.payload?.status === StatusCodes.OK) {
+      setState('success')
     } else {
-      formRef.current?.submitFormInfo()
+      setState('failure')
     }
   }
 
+  return { state }
+}
+
+// ============================ USER SETUP ACCOUNT ============================
+const useSetupAccount = () => {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    watch
+  } = useForm()
+
+  const [activeStep, setActiveStep] = useState(0)
+  const [skipped, setSkipped] = useState(new Set())
+
+  const dispatch = useDispatch()
+
+  const isStepSkipped = (step) => skipped.has(step)
+
+  const handleNext = handleSubmit(() => {
+    setActiveStep((prev) => prev + 1)
+  })
+
   const handleBack = () => setActiveStep((prev) => prev - 1)
 
-  const handleSkip = () => {
-    setSkipped((prev) => new Set(prev).add(activeStep))
-    setActiveStep((prev) => prev + 1)
-  }
+  const handleValidateData = handleSubmit()
 
-  const handleSubmitPassword = (data) => {
-    setFormData((prev) => ({
-      ...prev,
-      new_password: data.new_password,
-      confirm_password: data.confirm_password
-    }))
-    setActiveStep((prev) => prev + 1)
-  }
-
-  const handleSubmitInfo = async (data) => {
-    await new Promise((resolve) => {
-      setFormData((prev) => {
-        resolve()
-        return { ...prev, userInfo: data }
-      })
-    })
-    setActiveStep((prev) => prev + 1)
-  }
-
-  const finishProgress = async () => {
+  const handleFormSubmit = handleSubmit(async (data) => {
     const res = await dispatch(
       setupAccountAPI({
-        data: formData,
+        data,
         loadingClass: '.btn-auth-setup-account'
       })
     )
     if (res.payload?.status === 200) {
       setTimeout(() => navigate('/home'), 1000)
     }
-  }
+  })
 
   return {
-    steps,
+    register,
+    errors,
+    watch,
+    STEPS_SETUP_ACCOUNT,
     activeStep,
     isStepSkipped,
-    formRef,
     handleNext,
     handleBack,
-    handleSkip,
-    handleSubmitPassword,
-    handleSubmitInfo,
-    finishProgress
+    handleFormSubmit,
+    handleValidateData
   }
 }
 
 // ============================ USER CHANGE PASSWORD FORM ============================
-export const useChangePasswordForm = () => {
+const useChangePasswordForm = () => {
   const {
     register,
     handleSubmit,
@@ -211,7 +210,7 @@ export const useChangePasswordForm = () => {
   }
 }
 
-export const useAccountMigration = () => {
+const useAccountMigration = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [tempAddress, setTempAddress] = useState({
@@ -250,9 +249,7 @@ export const useAccountMigration = () => {
 }
 
 // ============================ USER ADDRESS ============================
-export const useUserAddresses = () => {
-  // ================= STATE =================
-
+const useUserAddresses = () => {
   const [loading, setLoading] = useState(true)
   const [isDenied, setDenied] = useState(false)
 
@@ -262,7 +259,6 @@ export const useUserAddresses = () => {
 
   const [addresses, setAddresses] = useState([])
 
-  // ================ EFFECTS ================
   useEffect(() => {
     if (isDenied) navigate('/unauthorized')
   }, [isDenied])
@@ -271,7 +267,6 @@ export const useUserAddresses = () => {
     fetchAddresses()
   }, [])
 
-  // ================ HANDLERS ================
   const handleOpenModal = ({ action, address }) => {
     setAction(action)
     if (action === 'update') {
@@ -382,7 +377,7 @@ export const useUserAddresses = () => {
 }
 
 // ============================ USER ADDRESS FORM ============================
-export const useAddressForm = ({ action, address, onSubmit }) => {
+const useAddressForm = ({ action, address, onSubmit }) => {
   const {
     register,
     watch,
@@ -431,4 +426,14 @@ export const useAddressForm = ({ action, address, onSubmit }) => {
     handleFormSubmit,
     control
   }
+}
+
+export {
+  useUserProfileForm,
+  useSetupAccount,
+  useChangePasswordForm,
+  useAccountMigration,
+  useUserAddresses,
+  useAddressForm,
+  useUserVerifyAccount
 }

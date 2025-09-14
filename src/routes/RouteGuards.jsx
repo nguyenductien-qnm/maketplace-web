@@ -13,6 +13,8 @@ export const RequireAuthRoute = ({ user, allowedRoles = [] }) => {
   return <Outlet />
 }
 
-export function RequireGuestRoute({ user }) {
-  return user ? <Navigate to="/home" replace /> : <Outlet />
+export const RequireGuestRoute = ({ user }) => {
+  console.log('user:::', user)
+  // return user ? <Navigate to="/home" replace /> : <Outlet />
+  return <Outlet />
 }
