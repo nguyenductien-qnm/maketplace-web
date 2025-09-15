@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 function VendorDashboardButton() {
-  const shopCountNotification = useSelector(
+  const notificationCount = useSelector(
     (state) => state.notification.shop_notifications_count
   )
 
@@ -25,7 +25,7 @@ function VendorDashboardButton() {
         Go to vendor dashboard
       </Link>
 
-      {shopCountNotification > 0 && (
+      {notificationCount > 0 && (
         <Typography
           component={Link}
           to="/vendor/notifications"
@@ -48,9 +48,9 @@ function VendorDashboardButton() {
               fontWeight: 'bold'
             }}
           >
-            {shopCountNotification}
+            {notificationCount}
           </Box>{' '}
-          new notification{shopCountNotification > 1 ? 's' : ''})
+          new notification{notificationCount > 1 ? 's' : ''})
         </Typography>
       )}
     </Box>

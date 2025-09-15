@@ -19,6 +19,15 @@ const changePasswordByUserAPI = async ({ payload, loadingClass }) => {
   return { status, resData: data }
 }
 
+const accountMigrationByUserAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/user/user/account-migration`,
+    payload,
+    { loadingClass, ...TOAST_MODE.ALL }
+  )
+  return { status, resData: data }
+}
+
 const getAddressesByUserAPI = async () => {
   const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/user/user/addresses`,
@@ -168,5 +177,6 @@ export {
   updateUserPasswordByAdminAPI,
   exportUserDataAPI,
   getUserListForFilterAPI,
-  getStaffListForFilterAPI
+  getStaffListForFilterAPI,
+  accountMigrationByUserAPI
 }

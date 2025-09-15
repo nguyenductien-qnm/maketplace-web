@@ -35,6 +35,14 @@ export const getShopByUserAPI = async (data) => {
   return res
 }
 
+const getShopStatusByOwnerAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/user/shop/status`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
 // ============================ ADMIN ============================
 
 const queryShopByAdminAPI = async ({ payload }) => {
@@ -141,5 +149,6 @@ export {
   rejectShopByAdminAPI,
   getShopDetailAPI,
   getShopListForFilterAPI,
-  exportShopDataByAdminAPI
+  exportShopDataByAdminAPI,
+  getShopStatusByOwnerAPI
 }

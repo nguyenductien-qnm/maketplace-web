@@ -1,130 +1,16 @@
-import { Box, TextField, Select, MenuItem } from '@mui/material'
-import { useEffect, useState } from 'react'
-import {
-  apiGetDistricts,
-  apiGetProvinces,
-  apiGetWards
-} from '~/helpers/getAddress'
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
 import TypographyLabel from './TypographyLabel'
-import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import FieldErrorAlert from './FieldErrorAlert'
-import { StatusCodes } from 'http-status-codes'
+import { Controller } from 'react-hook-form'
+import { useAddressOptions } from '~/hooks/common/address.hook'
+import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 
-function FormAddress({
-  register,
-  errors,
-  setValue,
-  address,
-  actionType,
-  handleAddressChange,
-  clearErrors
-}) {
-  const [init, setInit] = useState(true)
-  const [listProvinces, setListProvinces] = useState([])
-  const [listDistricts, setListDistricts] = useState([])
-  const [listWards, setListWards] = useState([])
-
-  const [selectedProvince, setSelectedProvince] = useState({})
-  const [selectedDistrict, setSelectedDistrict] = useState({})
-  const [selectedWard, setSelectedWard] = useState({})
-
-  const getAndSetListProvinces = async () => {
-    const { status, resData } = await apiGetProvinces()
-    if (status === StatusCodes.OK) setListProvinces(resData?.metadata || [])
-  }
-
-  const getAndSetListDistricts = async (provinceId) => {
-    provinceId = Number(provinceId)
-    setListDistricts(await apiGetDistricts(provinceId))
-  }
-
-  const getAndSetListWards = async (districtId) => {
-    districtId = Number(districtId)
-    setListWards(await apiGetWards(districtId))
-  }
-
-  const setValueAddress = async () => {
-    address.province.provinceID = Number(address.province.ProvinceID)
-    address.district.DistrictID = Number(address.district.DistrictID)
-    await getAndSetListDistricts(address.province.provinceID)
-    await getAndSetListWards(address.district.DistrictID)
-    setSelectedProvince(address.province)
-    setSelectedDistrict(address.district)
-    setSelectedWard(address.ward)
-    setValue('province', address.province.provinceID)
-    setValue('district', address.district.DistrictID)
-    setValue('ward', address.ward.WardCode)
-    setValue('street', address?.street)
-    setTimeout(() => {
-      setInit(false)
-    }, 2000)
-  }
-
-  const handleChangeProvince = (e) => {
-    const provinceID = e.target.value
-    const selected = listProvinces.find(
-      (item) => item.ProvinceID === provinceID
-    )
-    setSelectedWard({})
-    setSelectedDistrict({})
-    setSelectedProvince(selected)
-    clearErrors('province')
-  }
-
-  const handleChangeDistrict = (e) => {
-    const districtID = e.target.value
-    const selected = listDistricts.find(
-      (item) => item.DistrictID === districtID
-    )
-    setSelectedWard({})
-    setSelectedDistrict(selected)
-    clearErrors('district')
-  }
-
-  const handleChangeWard = (e) => {
-    const wardCode = e.target.value
-    const selected = listWards.find((item) => item.WardCode === wardCode)
-    setSelectedWard(selected)
-    clearErrors('ward')
-  }
-
-  useEffect(() => {
-    if (actionType === 'create') {
-      setInit(false)
-    } else if (actionType === 'update') {
-      setValueAddress()
-    }
-  }, [actionType])
-
-  useEffect(() => {
-    getAndSetListProvinces()
-  }, [])
-
-  useEffect(() => {
-    if (selectedProvince && selectedProvince.ProvinceID && !init) {
-      setValue('ward', '')
-      setValue('district', '')
-      setListDistricts([])
-      setListWards([])
-      getAndSetListDistricts(selectedProvince.ProvinceID)
-    }
-  }, [selectedProvince])
-
-  useEffect(() => {
-    if (selectedDistrict && selectedDistrict.DistrictID && !init) {
-      setValue('ward', '')
-      setListWards([])
-      getAndSetListWards(selectedDistrict.DistrictID)
-    }
-  }, [selectedDistrict])
-
-  useEffect(() => {
-    handleAddressChange({
-      selectedProvince,
-      selectedDistrict,
-      selectedWard
-    })
-  }, [selectedWard])
+function FormAddress({ address, control, errors }) {
+  const { provinces, districts, wards, loadDistricts, loadWards } =
+    useAddressOptions({ address })
 
   return (
     <Box
@@ -135,81 +21,127 @@ function FormAddress({
         gap: '15px'
       }}
     >
-      <Box>
-        <TypographyLabel>Province/city</TypographyLabel>
-        <Select
-          {...register('province', {
+      <Box sx={{ mb: 1 }}>
+        <TypographyLabel>Province</TypographyLabel>
+        <Controller
+          name="province"
+          control={control}
+          defaultValue={address?.province || null}
+          rules={{
             required: FIELD_REQUIRED_MESSAGE
-          })}
-          sx={{ minWidth: '100%' }}
-          size="small"
-          error={!!errors['province']}
-          value={selectedProvince?.ProvinceID || ''}
-          onChange={(e) => handleChangeProvince(e)}
-          disabled={listProvinces.length === 0}
-        >
-          {listProvinces &&
-            listProvinces.map((item, index) => (
-              <MenuItem key={index} value={item.ProvinceID}>
-                {item.ProvinceName}
-              </MenuItem>
-            ))}
-        </Select>
+          }}
+          render={({ field }) => (
+            <Select
+              size="small"
+              sx={{ width: '100%' }}
+              error={!!errors['province']}
+              value={field.value?.ProvinceID || ''}
+              disabled={provinces?.length === 0}
+              onChange={(e) => {
+                const selected = provinces.find(
+                  (p) => p.ProvinceID === e.target.value
+                )
+                field.onChange(selected)
+                loadDistricts(selected.ProvinceID)
+              }}
+            >
+              {provinces?.map((p) => (
+                <MenuItem key={p.ProvinceID} value={p.ProvinceID}>
+                  {p.ProvinceName}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
+        />
         <FieldErrorAlert errors={errors} fieldName="province" />
       </Box>
 
-      <Box>
+      <Box sx={{ mb: 1 }}>
         <TypographyLabel>District</TypographyLabel>
-        <Select
-          {...register('district', {
+        <Controller
+          name="district"
+          control={control}
+          defaultValue={address?.district || null}
+          rules={{
             required: FIELD_REQUIRED_MESSAGE
-          })}
-          size="small"
-          sx={{ minWidth: '100%' }}
-          value={selectedDistrict?.DistrictID || ''}
-          onChange={(e) => handleChangeDistrict(e)}
-          disabled={listDistricts.length === 0}
-        >
-          {listDistricts &&
-            listDistricts.map((item, index) => (
-              <MenuItem key={index} value={item.DistrictID}>
-                {item.DistrictName}
-              </MenuItem>
-            ))}
-        </Select>
+          }}
+          render={({ field }) => (
+            <Select
+              size="small"
+              sx={{ width: '100%' }}
+              value={field.value?.DistrictID || ''}
+              disabled={districts?.length === 0}
+              error={!!errors['district']}
+              onChange={(e) => {
+                const selected = districts.find(
+                  (d) => d.DistrictID === e.target.value
+                )
+                field.onChange(selected)
+                loadWards(selected.DistrictID)
+              }}
+            >
+              {districts?.map((d) => (
+                <MenuItem key={d.DistrictID} value={d.DistrictID}>
+                  {d.DistrictName}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
+        />
         <FieldErrorAlert errors={errors} fieldName="district" />
       </Box>
 
-      <Box>
+      <Box sx={{ mb: 1 }}>
         <TypographyLabel>Ward</TypographyLabel>
-        <Select
-          size="small"
-          sx={{ minWidth: '100%' }}
-          {...register('ward', {
+        <Controller
+          name="ward"
+          control={control}
+          defaultValue={address?.ward || null}
+          rules={{
             required: FIELD_REQUIRED_MESSAGE
-          })}
-          value={selectedWard?.WardCode || ''}
-          onChange={(e) => handleChangeWard(e)}
-          disabled={listWards.length === 0}
-        >
-          {listWards &&
-            listWards.map((item, index) => (
-              <MenuItem key={index} value={item.WardCode}>
-                {item.WardName}
-              </MenuItem>
-            ))}
-        </Select>
+          }}
+          render={({ field }) => (
+            <Select
+              size="small"
+              sx={{ width: '100%' }}
+              value={field.value?.WardCode || ''}
+              disabled={wards?.length === 0}
+              error={!!errors['ward']}
+              onChange={(e) => {
+                const selected = wards.find(
+                  (w) => w.WardCode === e.target.value
+                )
+                field.onChange(selected)
+              }}
+            >
+              {wards?.map((w) => (
+                <MenuItem key={w.WardCode} value={w.WardCode}>
+                  {w.WardName}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
+        />
         <FieldErrorAlert errors={errors} fieldName="ward" />
       </Box>
 
-      <Box>
+      <Box sx={{ mb: 1 }}>
         <TypographyLabel>Street</TypographyLabel>
-        <TextField
-          size="small"
-          sx={{ minWidth: '100%' }}
-          {...register('street', {
+        <Controller
+          name="street"
+          control={control}
+          defaultValue={address?.street || ''}
+          rules={{
             required: FIELD_REQUIRED_MESSAGE
-          })}
+          }}
+          render={({ field }) => (
+            <TextField
+              error={!!errors['street']}
+              size="small"
+              sx={{ width: '100%' }}
+              {...field}
+            />
+          )}
         />
         <FieldErrorAlert errors={errors} fieldName="street" />
       </Box>

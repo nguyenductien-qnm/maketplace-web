@@ -1,13 +1,14 @@
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
-import Modal from '@mui/material/Modal'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import TextField from '@mui/material/TextField'
-import Checkbox from '@mui/material/Checkbox'
 import Fade from '@mui/material/Fade'
+import Modal from '@mui/material/Modal'
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import FormControlLabel from '@mui/material/FormControlLabel'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import FieldErrorAlert from '~/components/common/FieldErrorAlert'
+import FormAddress from '~/components/common/FormAddress'
 import {
   FIELD_REQUIRED_MESSAGE,
   NAME_RULE,
@@ -18,9 +19,6 @@ import {
 import { grey } from '@mui/material/colors'
 import { useAddressForm } from '~/hooks/user/user.hook'
 import { modalConfig, modalStyle } from '~/config/modal'
-import { Controller } from 'react-hook-form'
-import { useAddressOptions } from '~/hooks/common/address.hook'
-import { MenuItem, Select } from '@mui/material'
 
 function CustomerAddressForm({
   action,
@@ -36,9 +34,6 @@ function CustomerAddressForm({
       address,
       onSubmit
     })
-
-  const { provinces, districts, wards, loadDistricts, loadWards } =
-    useAddressOptions({ address })
 
   return (
     <Modal
@@ -90,103 +85,7 @@ function CustomerAddressForm({
               </Box>
             </Box>
 
-            <Box sx={{ mb: 1 }}>
-              <TypographyLabel>Province</TypographyLabel>
-              <Controller
-                name="province"
-                control={control}
-                defaultValue={address?.province || null}
-                render={({ field }) => (
-                  <Select
-                    size="small"
-                    sx={{ width: '100%' }}
-                    value={field.value?.ProvinceID || ''}
-                    onChange={(e) => {
-                      const selected = provinces.find(
-                        (p) => p.ProvinceID === e.target.value
-                      )
-                      field.onChange(selected)
-                      loadDistricts(selected.ProvinceID)
-                    }}
-                  >
-                    {provinces?.map((p) => (
-                      <MenuItem key={p.ProvinceID} value={p.ProvinceID}>
-                        {p.ProvinceName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </Box>
-
-            <Box sx={{ mb: 1 }}>
-              <TypographyLabel>District</TypographyLabel>
-              <Controller
-                name="district"
-                control={control}
-                defaultValue={address?.district || null}
-                render={({ field }) => (
-                  <Select
-                    size="small"
-                    sx={{ width: '100%' }}
-                    value={field.value?.DistrictID || ''}
-                    onChange={(e) => {
-                      const selected = districts.find(
-                        (d) => d.DistrictID === e.target.value
-                      )
-                      field.onChange(selected)
-                      loadWards(selected.DistrictID)
-                    }}
-                  >
-                    {districts?.map((d) => (
-                      <MenuItem key={d.DistrictID} value={d.DistrictID}>
-                        {d.DistrictName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </Box>
-
-            <Box sx={{ mb: 1 }}>
-              <TypographyLabel>Ward</TypographyLabel>
-              <Controller
-                name="ward"
-                control={control}
-                defaultValue={address?.ward || null}
-                render={({ field }) => (
-                  <Select
-                    size="small"
-                    sx={{ width: '100%' }}
-                    value={field.value?.WardCode || ''}
-                    onChange={(e) => {
-                      const selected = wards.find(
-                        (w) => w.WardCode === e.target.value
-                      )
-                      field.onChange(selected)
-                    }}
-                  >
-                    {wards?.map((w) => (
-                      <MenuItem key={w.WardCode} value={w.WardCode}>
-                        {w.WardName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </Box>
-
-            <Box sx={{ mb: 1 }}>
-              <TypographyLabel>Street</TypographyLabel>
-              <Controller
-                name="street"
-                control={control}
-                defaultValue={address?.street || ''}
-                render={({ field }) => (
-                  <TextField size="small" sx={{ width: '100%' }} {...field} />
-                )}
-              />
-            </Box>
+            <FormAddress address={address} control={control} errors={errors} />
 
             {action === 'create' && (
               <FormControlLabel

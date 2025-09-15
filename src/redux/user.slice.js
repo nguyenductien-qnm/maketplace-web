@@ -66,18 +66,6 @@ export const logoutAPI = createAsyncThunk(
   }
 )
 
-export const accountMigrationAPI = createAsyncThunk(
-  'user/accountMigrationAPI',
-  async ({ data, loadingClass }) => {
-    const res = await authorizedAxios.post(
-      `${API_ROOT}/v1/api/user/account-migration`,
-      data,
-      { loadingClass, ...TOAST_MODE.ALL }
-    )
-    return res
-  }
-)
-
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -100,10 +88,6 @@ export const userSlice = createSlice({
           action.payload?.resData?.metadata?.user_name
         state.currentUser.user_avatar =
           action.payload?.resData?.metadata?.user_avatar
-      })
-
-      .addCase(accountMigrationAPI.fulfilled, (state) => {
-        state.currentUser.user_role.push('SHOP')
       })
 
       .addCase(logoutAPI.fulfilled, (state) => {

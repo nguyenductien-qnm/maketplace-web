@@ -1,20 +1,19 @@
-import styled from '@emotion/styled'
-import { Box, Typography } from '@mui/material'
+import styled from 'styled-components'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import { blue } from '@mui/material/colors'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { navigate } from '~/helpers/navigation'
 import { logoutAPI } from '~/redux/user.slice'
 import { TOAST_MODE } from '~/utils/constants'
 
-function AccountOverview() {
+function AccountOverview({ user }) {
   const CustomLink = styled(Link)({
     color: blue[600],
     fontSize: '14px',
     fontWeight: '600'
   })
   const dispatch = useDispatch()
-  const user = useSelector((state) => state.user.currentUser)
   return (
     <Box sx={{ marginBottom: '50px' }}>
       <Typography

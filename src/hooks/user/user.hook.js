@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import {
   createAddressByUserAPI,
   changePasswordByUserAPI,
@@ -9,11 +9,11 @@ import {
   getAddressesByUserAPI,
   getUserProfileAPI,
   setDefaultAddressByUserAPI,
-  updateAddressByUserAPI
+  updateAddressByUserAPI,
+  accountMigrationByUserAPI
 } from '~/api/user.api'
 import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
 import {
-  accountMigrationAPI,
   setupAccountAPI,
   updateUserProfileAPI,
   verifyAccountAPI
@@ -22,6 +22,7 @@ import interceptorLoadingElements from '~/utils/interceptorLoading'
 import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 import { StatusCodes } from 'http-status-codes'
 import { navigate } from '~/helpers/navigation'
+import { getShopStatusByOwnerAPI } from '~/api/shop.api'
 
 const STEPS_SETUP_ACCOUNT = ['CHANGE YOUR PASSWORD', 'INFORMATION USER']
 
@@ -210,42 +211,51 @@ const useChangePasswordForm = () => {
   }
 }
 
-const useAccountMigration = () => {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const [tempAddress, setTempAddress] = useState({
-    selectedProvince: {},
-    selectedDistrict: {},
-    selectedWard: {}
+// ============================ USER ACCOUNT MIGRATION ============================
+const useUserAccountMigration = () => {
+  const {
+    register,
+    formState: { errors },
+    control,
+    handleSubmit
+  } = useForm()
+
+  const handleFormSubmit = handleSubmit(async (data) => {
+    const { status } = await accountMigrationByUserAPI({
+      payload: data,
+      loadingClass: '.btn-account-migration'
+    })
+    if (status === StatusCodes.CREATED) navigate('/my-account/dashboard')
   })
 
-  const methods = useForm()
+  return { register, errors, control, handleFormSubmit }
+}
 
-  const handleAddressChange = (address) => {
-    setTempAddress(address)
-  }
+// ============================ USER OWNER SHOP STATUS ============================
+const useOwnerShopStatus = () => {
+  const [shopStatus, setShopStatus] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const user = useSelector((state) => state.user.currentUser)
 
-  const onSubmit = methods.handleSubmit(async (data) => {
-    data.province = tempAddress?.selectedProvince
-    data.district = tempAddress?.selectedDistrict
-    data.ward = tempAddress?.selectedWard
+  useEffect(() => {
+    handleCheckIsPendingShop()
+  }, [])
 
-    const res = await dispatch(
-      accountMigrationAPI({ data, loadingClass: '.btn-account-migration' })
-    )
-    if (res.payload.status === 200) {
-      setTimeout(() => {
-        navigate('/my-account/dashboard')
-      }, 500)
+  const handleCheckIsPendingShop = async () => {
+    try {
+      const { status, resData } = await getShopStatusByOwnerAPI()
+      if (status === StatusCodes?.OK) {
+        const { status } = resData?.metadata
+        setShopStatus(status)
+      }
+    } catch (err) {
+      navigate('/home')
+    } finally {
+      setLoading(false)
     }
-  })
-
-  return {
-    ...methods,
-    handleAddressChange,
-    onSubmit,
-    tempAddress
   }
+
+  return { user, loading, shopStatus }
 }
 
 // ============================ USER ADDRESS ============================
@@ -432,8 +442,9 @@ export {
   useUserProfileForm,
   useSetupAccount,
   useChangePasswordForm,
-  useAccountMigration,
+  useUserAccountMigration,
   useUserAddresses,
   useAddressForm,
-  useUserVerifyAccount
+  useUserVerifyAccount,
+  useOwnerShopStatus
 }
