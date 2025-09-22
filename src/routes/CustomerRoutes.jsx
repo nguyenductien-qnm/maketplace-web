@@ -1,7 +1,6 @@
 import { Navigate, Route } from 'react-router-dom'
 import UserAccountLayout from '~/layouts/user/UserAccountLayout'
 import CustomerProfile from '~/pages/customer/CustomerProfile'
-import CustomerAccountMigration from '~/pages/customer/CustomerAccountMigration'
 import CustomerAddresses from '~/pages/customer/CustomerAddresses'
 import CustomerDashboard from '~/pages/customer/CustomerDashBoard'
 import CustomerNotifications from '~/pages/customer/CustomerNotification'
@@ -11,8 +10,6 @@ import CustomerWallet from '~/pages/customer/CustomerWallet'
 import { RequireAuthRoute } from './RouteGuards'
 
 const CustomerRoutes = ({ user }) => {
-  const isShopUser = user?.user_role?.includes('SHOP')
-
   return (
     <Route element={<RequireAuthRoute user={user} allowedRoles={['USER']} />}>
       <Route element={<UserAccountLayout />}>
@@ -24,16 +21,6 @@ const CustomerRoutes = ({ user }) => {
         <Route path="profile" element={<CustomerProfile />} />
         <Route path="addresses" element={<CustomerAddresses />} />
         <Route path="wallet" element={<CustomerWallet />} />
-        <Route
-          path="account-migration"
-          element={
-            isShopUser ? (
-              <Navigate to="/my-account/dashboard" replace />
-            ) : (
-              <CustomerAccountMigration />
-            )
-          }
-        />
       </Route>
     </Route>
   )

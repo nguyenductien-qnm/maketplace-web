@@ -4,7 +4,7 @@ import CartTable from '~/components/customer/CustomerShoppingCart/CartTable/Cart
 import CartSummary from '~/components/customer/CustomerShoppingCart/CartSummary'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import NotificationModal from '~/components/common/NotificationModal'
+import NotificationDialog from '~/components/common/NotificationDialog'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import { useShoppingCart } from '~/hooks/user/cart.hook'
 
@@ -74,7 +74,7 @@ function CustomerShoppingCart() {
         </Grid>
       )}
 
-      <NotificationModal
+      <NotificationDialog
         header={modalContent.header}
         content={modalContent.content}
         open={openModal}

@@ -36,7 +36,7 @@ const contentMapShopStatus = {
 
 const BecomeVendorButton = (
   <Link
-    to="/my-account/account-migration"
+    to="/register-shop"
     style={{
       backgroundColor: grey[200],
       color: 'black',

@@ -14,7 +14,5 @@ export const RequireAuthRoute = ({ user, allowedRoles = [] }) => {
 }
 
 export const RequireGuestRoute = ({ user }) => {
-  console.log('user:::', user)
-  // return user ? <Navigate to="/home" replace /> : <Outlet />
-  return <Outlet />
+  return user ? <Navigate to="/home" replace /> : <Outlet />
 }

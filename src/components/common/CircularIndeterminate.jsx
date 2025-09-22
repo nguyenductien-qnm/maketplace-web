@@ -1,10 +1,10 @@
 import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
 
-function CircularIndeterminate() {
+function CircularIndeterminate({ size }) {
   return (
     <Box sx={{ display: 'flex' }}>
-      <CircularProgress />
+      <CircularProgress {...(size ? { size } : {})} />
     </Box>
   )
 }

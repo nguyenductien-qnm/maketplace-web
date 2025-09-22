@@ -11,10 +11,12 @@ export const checkShopUrlAPI = async (data) => {
 }
 
 export const getShopByOwnerAPI = async () => {
-  return await authorizedAxios.get(
-    `${API_ROOT}/v1/api/shop/get-shop-by-owner`,
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/shop`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
+
+  return { status, resData: data }
 }
 
 export const updateProfileShopAPI = async (data, loadingClass) => {
@@ -39,6 +41,24 @@ const getShopStatusByOwnerAPI = async () => {
   const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/user/shop/status`,
     { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
+const checkBasicShopInfoAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/user/shop/check-basic-info`,
+    payload,
+    { ...TOAST_MODE.NONE, loadingClass }
+  )
+  return { status, resData: data }
+}
+
+const checkBusinessLicenseAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/user/shop/check-business-license`,
+    payload,
+    { ...TOAST_MODE.NONE, loadingClass }
   )
   return { status, resData: data }
 }
@@ -150,5 +170,7 @@ export {
   getShopDetailAPI,
   getShopListForFilterAPI,
   exportShopDataByAdminAPI,
-  getShopStatusByOwnerAPI
+  getShopStatusByOwnerAPI,
+  checkBasicShopInfoAPI,
+  checkBusinessLicenseAPI
 }

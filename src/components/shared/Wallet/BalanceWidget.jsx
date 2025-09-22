@@ -14,7 +14,7 @@ import {
   Typography
 } from '@mui/material'
 import { useState } from 'react'
-import NotificationModal from '~/components/common/NotificationModal'
+import NotificationDialog from '~/components/common/NotificationDialog'
 import WithdrawModal from './WithdrawModal'
 import formatCurrency from '~/utils/formatCurrency'
 import { toast } from 'react-toastify'
@@ -136,7 +136,7 @@ function BalanceWidget({
           </Box>
         </CardContent>
       </Card>
-      <NotificationModal
+      <NotificationDialog
         open={openModalNotification}
         onClose={() => setOpenModalNotification(false)}
         header={header}

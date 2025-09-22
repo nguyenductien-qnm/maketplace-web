@@ -28,6 +28,8 @@ import CustomerShoppingCart from './pages/customer/CustomerShoppingCart'
 import CustomerCheckOut from './pages/customer/CustomerCheckout'
 import CustomerSetupAccount from './pages/customer/CustomerSetupAccount'
 import PublicRoutes from './routes/PublicRoutes'
+import { RequireAuthRoute } from './routes/RouteGuards'
+import CustomerRegisterShop from './pages/customer/CustomerRegisterShop'
 
 function App() {
   const navigate = useNavigate()
@@ -82,6 +84,8 @@ function App() {
     }
   }, [user?._id])
 
+  const isShop = user?.user_role?.includes('SHOP')
+
   const isPendingSetup =
     user?.user_status === 'pending_setup' &&
     location.pathname !== '/setup-account'
@@ -111,7 +115,20 @@ function App() {
           {AdminRoutes({ user })}
         </Route>
 
-        <Route path="/setup-account" element={<CustomerSetupAccount />} />
+        <Route element={<RequireAuthRoute user={user} />}>
+          <Route path="/setup-account" element={<CustomerSetupAccount />} />
+
+          <Route
+            path="register-shop"
+            element={
+              isShop ? (
+                <Navigate to="/my-account/dashboard" replace />
+              ) : (
+                <CustomerRegisterShop />
+              )
+            }
+          />
+        </Route>
 
         <Route path="/unauthorized" element={<AccessDeniedPage />} />
         <Route path="/cart" element={<CustomerShoppingCart />} />

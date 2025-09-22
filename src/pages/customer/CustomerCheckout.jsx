@@ -4,7 +4,7 @@ import CheckoutItem from '~/components/customer/CustomerCheckout/CheckoutItem'
 import PaymentOverview from '~/components/customer/CustomerCheckout/PaymentOverview'
 import PaymentMethods from '~/components/customer/CustomerCheckout/PaymentMethods'
 import VoucherOverview from '~/components/customer/CustomerCheckout/VoucherOverview'
-import NotificationModal from '~/components/common/NotificationModal'
+import NotificationDialog from '~/components/common/NotificationDialog'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
@@ -99,7 +99,7 @@ function CustomerCheckOut() {
           paymentMethodSelected={paymentMethodSelected}
         />
       </Box>
-      <NotificationModal
+      <NotificationDialog
         header={modalContent.header}
         content={modalContent.content}
         open={openModal}

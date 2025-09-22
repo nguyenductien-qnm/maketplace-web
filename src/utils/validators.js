@@ -20,6 +20,15 @@ export const NAME_RULE = /^[A-Za-zÀ-ỹà-ỹ\s]{3,50}$/
 export const NAME_RULE_MESSAGE =
   'Please enter a valid name (3-50 letters and spaces only).'
 
+// ==================== national ID ============================
+export const NATIONAL_ID_RULE = /^[0-9]{12}$/
+export const NATIONAL_ID_MESSAGE =
+  'Please enter a valid National ID (exactly 12 digits).'
+
+// ==================== national ID ============================
+export const TAX_CODE_RULE = /^\d{10}(-\d{3})?$/
+export const TAX_CODE_MESSAGE = 'Tax code must be 10 digits or 10 digits-xxx.'
+
 // ==================== category name ============================
 export const CATEGORY_NAME_RULE = /^[A-Za-zÀ-ỹà-ỹ\s&',’\-]{3,50}$/
 export const CATEGORY_NAME_RULE_MESSAGE =

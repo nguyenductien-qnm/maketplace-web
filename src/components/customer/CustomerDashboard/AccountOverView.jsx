@@ -7,12 +7,13 @@ import { Link } from 'react-router-dom'
 import { logoutAPI } from '~/redux/user.slice'
 import { TOAST_MODE } from '~/utils/constants'
 
+const CustomLink = styled(Link)({
+  color: blue[600],
+  fontSize: '14px',
+  fontWeight: '600'
+})
+
 function AccountOverview({ user }) {
-  const CustomLink = styled(Link)({
-    color: blue[600],
-    fontSize: '14px',
-    fontWeight: '600'
-  })
   const dispatch = useDispatch()
   return (
     <Box sx={{ marginBottom: '50px' }}>

@@ -12,7 +12,7 @@ import RemoveIcon from '@mui/icons-material/Remove'
 import Grid from '@mui/material/Grid2'
 import { blue, red } from '@mui/material/colors'
 import { useState } from 'react'
-import NotificationModal from '~/components/common/NotificationModal'
+import NotificationDialog from '~/components/common/NotificationDialog'
 
 function ActionButton({
   shop,
@@ -101,7 +101,7 @@ function ActionButton({
         </Grid>
       </Grid>
 
-      <NotificationModal
+      <NotificationDialog
         header="Contact Information"
         content={content}
         open={open}

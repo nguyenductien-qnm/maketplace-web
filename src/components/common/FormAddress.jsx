@@ -7,8 +7,9 @@ import FieldErrorAlert from './FieldErrorAlert'
 import { Controller } from 'react-hook-form'
 import { useAddressOptions } from '~/hooks/common/address.hook'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
+import { FormControl, FormHelperText, Typography } from '@mui/material'
 
-function FormAddress({ address, control, errors }) {
+function FormAddress({ address, control, errors, isLarge = false }) {
   const { provinces, districts, wards, loadDistricts, loadWards } =
     useAddressOptions({ address })
 
@@ -31,29 +32,31 @@ function FormAddress({ address, control, errors }) {
             required: FIELD_REQUIRED_MESSAGE
           }}
           render={({ field }) => (
-            <Select
-              size="small"
-              sx={{ width: '100%' }}
-              error={!!errors['province']}
-              value={field.value?.ProvinceID || ''}
-              disabled={provinces?.length === 0}
-              onChange={(e) => {
-                const selected = provinces.find(
-                  (p) => p.ProvinceID === e.target.value
-                )
-                field.onChange(selected)
-                loadDistricts(selected.ProvinceID)
-              }}
-            >
-              {provinces?.map((p) => (
-                <MenuItem key={p.ProvinceID} value={p.ProvinceID}>
-                  {p.ProvinceName}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl fullWidth error={!!errors['province']}>
+              <Select
+                size={isLarge ? '' : 'small'}
+                value={field?.value?.ProvinceID || ''}
+                disabled={provinces?.length === 0}
+                onChange={(e) => {
+                  const selected = provinces.find(
+                    (p) => p.ProvinceID === e.target.value
+                  )
+                  field.onChange(selected)
+                  loadDistricts(selected.ProvinceID)
+                }}
+              >
+                {provinces?.map((p) => (
+                  <MenuItem key={p.ProvinceID} value={p.ProvinceID}>
+                    {p.ProvinceName}
+                  </MenuItem>
+                ))}
+              </Select>
+              {errors?.province && (
+                <FormHelperText>{errors.province.message}</FormHelperText>
+              )}
+            </FormControl>
           )}
         />
-        <FieldErrorAlert errors={errors} fieldName="province" />
       </Box>
 
       <Box sx={{ mb: 1 }}>
@@ -66,29 +69,39 @@ function FormAddress({ address, control, errors }) {
             required: FIELD_REQUIRED_MESSAGE
           }}
           render={({ field }) => (
-            <Select
-              size="small"
-              sx={{ width: '100%' }}
-              value={field.value?.DistrictID || ''}
-              disabled={districts?.length === 0}
-              error={!!errors['district']}
-              onChange={(e) => {
-                const selected = districts.find(
-                  (d) => d.DistrictID === e.target.value
-                )
-                field.onChange(selected)
-                loadWards(selected.DistrictID)
-              }}
-            >
-              {districts?.map((d) => (
-                <MenuItem key={d.DistrictID} value={d.DistrictID}>
-                  {d.DistrictName}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl fullWidth error={!!errors['district']}>
+              <Select
+                size={isLarge ? '' : 'small'}
+                value={field?.value?.DistrictID || ''}
+                disabled={districts?.length === 0}
+                onChange={(e) => {
+                  const selected = districts.find(
+                    (d) => d.DistrictID === e.target.value
+                  )
+                  field.onChange(selected)
+                  loadWards(selected.DistrictID)
+                }}
+                sx={{
+                  '&.Mui-disabled.Mui-error': {
+                    color: 'error.main',
+                    '.MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'error.main'
+                    }
+                  }
+                }}
+              >
+                {districts?.map((d) => (
+                  <MenuItem key={d.DistrictID} value={d.DistrictID}>
+                    {d.DistrictName}
+                  </MenuItem>
+                ))}
+              </Select>
+              {errors?.district && (
+                <FormHelperText>{errors.district.message}</FormHelperText>
+              )}
+            </FormControl>
           )}
         />
-        <FieldErrorAlert errors={errors} fieldName="district" />
       </Box>
 
       <Box sx={{ mb: 1 }}>
@@ -101,28 +114,38 @@ function FormAddress({ address, control, errors }) {
             required: FIELD_REQUIRED_MESSAGE
           }}
           render={({ field }) => (
-            <Select
-              size="small"
-              sx={{ width: '100%' }}
-              value={field.value?.WardCode || ''}
-              disabled={wards?.length === 0}
-              error={!!errors['ward']}
-              onChange={(e) => {
-                const selected = wards.find(
-                  (w) => w.WardCode === e.target.value
-                )
-                field.onChange(selected)
-              }}
-            >
-              {wards?.map((w) => (
-                <MenuItem key={w.WardCode} value={w.WardCode}>
-                  {w.WardName}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl fullWidth error={!!errors['ward']}>
+              <Select
+                size={isLarge ? '' : 'small'}
+                value={field?.value?.WardCode || ''}
+                disabled={wards?.length === 0}
+                onChange={(e) => {
+                  const selected = wards.find(
+                    (w) => w.WardCode === e.target.value
+                  )
+                  field.onChange(selected)
+                }}
+                sx={{
+                  '&.Mui-disabled.Mui-error': {
+                    color: 'error.main',
+                    '.MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'error.main'
+                    }
+                  }
+                }}
+              >
+                {wards?.map((w) => (
+                  <MenuItem key={w.WardCode} value={w.WardCode}>
+                    {w.WardName}
+                  </MenuItem>
+                ))}
+              </Select>
+              {errors?.ward && (
+                <FormHelperText>{errors.ward.message}</FormHelperText>
+              )}
+            </FormControl>
           )}
         />
-        <FieldErrorAlert errors={errors} fieldName="ward" />
       </Box>
 
       <Box sx={{ mb: 1 }}>
@@ -137,13 +160,13 @@ function FormAddress({ address, control, errors }) {
           render={({ field }) => (
             <TextField
               error={!!errors['street']}
-              size="small"
+              size={isLarge ? '' : 'small'}
+              helperText={errors?.street?.message}
               sx={{ width: '100%' }}
               {...field}
             />
           )}
         />
-        <FieldErrorAlert errors={errors} fieldName="street" />
       </Box>
     </Box>
   )

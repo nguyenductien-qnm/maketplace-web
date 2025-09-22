@@ -19,9 +19,18 @@ const changePasswordByUserAPI = async ({ payload, loadingClass }) => {
   return { status, resData: data }
 }
 
-const accountMigrationByUserAPI = async ({ payload, loadingClass }) => {
+const registerShopPersonalAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/user/user/account-migration`,
+    `${API_ROOT}/v1/api/user/shop/register/personal`,
+    payload,
+    { loadingClass, ...TOAST_MODE.ALL }
+  )
+  return { status, resData: data }
+}
+
+const registerShopBusinessAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/user/shop/register/business`,
     payload,
     { loadingClass, ...TOAST_MODE.ALL }
   )
@@ -178,5 +187,6 @@ export {
   exportUserDataAPI,
   getUserListForFilterAPI,
   getStaffListForFilterAPI,
-  accountMigrationByUserAPI
+  registerShopPersonalAPI,
+  registerShopBusinessAPI
 }

@@ -1,23 +1,26 @@
 import axios from 'axios'
-import { API_ROOT } from '~/utils/constants'
+import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 
 const getProvincesAPI = async () => {
   const { status, data } = await axios.get(
-    `${API_ROOT}/v1/api/address/province`
+    `${API_ROOT}/v1/api/address/province`,
+    { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
 }
 
 const getDistrictsAPI = async (provinceId) => {
   const { status, data } = await axios.get(
-    `${API_ROOT}/v1/api/address/district/${provinceId}`
+    `${API_ROOT}/v1/api/address/district/${provinceId}`,
+    { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
 }
 
 const getWardsAPI = async (districtId) => {
   const { status, data } = await axios.get(
-    `${API_ROOT}/v1/api/address/ward/${districtId}`
+    `${API_ROOT}/v1/api/address/ward/${districtId}`,
+    { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
 }

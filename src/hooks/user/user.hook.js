@@ -9,8 +9,7 @@ import {
   getAddressesByUserAPI,
   getUserProfileAPI,
   setDefaultAddressByUserAPI,
-  updateAddressByUserAPI,
-  accountMigrationByUserAPI
+  updateAddressByUserAPI
 } from '~/api/user.api'
 import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
 import {
@@ -22,14 +21,24 @@ import interceptorLoadingElements from '~/utils/interceptorLoading'
 import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 import { StatusCodes } from 'http-status-codes'
 import { navigate } from '~/helpers/navigation'
-import { getShopStatusByOwnerAPI } from '~/api/shop.api'
+import { checkBasicShopInfoAPI, getShopStatusByOwnerAPI } from '~/api/shop.api'
+import { toast } from 'react-toastify'
 
 const STEPS_SETUP_ACCOUNT = ['CHANGE YOUR PASSWORD', 'INFORMATION USER']
+
+const STEPS_ACCOUNT_MIGRATION = [
+  'Basic Info',
+  'Shop Type & Tax',
+  'Payment & Refund ',
+  'Review'
+]
 
 const LOADING_CLASS_USER_ADDRESS_FORM = [
   '.btn-action-user-address',
   '.btn-user-set-default-address'
 ]
+
+const LOADING_CLASS_ACCOUNT_MIGRATION = ['.btn-action-account-migration']
 // ============================ USER PROFILE ============================
 const useUserProfileForm = () => {
   const dispatch = useDispatch()
@@ -212,24 +221,6 @@ const useChangePasswordForm = () => {
 }
 
 // ============================ USER ACCOUNT MIGRATION ============================
-const useUserAccountMigration = () => {
-  const {
-    register,
-    formState: { errors },
-    control,
-    handleSubmit
-  } = useForm()
-
-  const handleFormSubmit = handleSubmit(async (data) => {
-    const { status } = await accountMigrationByUserAPI({
-      payload: data,
-      loadingClass: '.btn-account-migration'
-    })
-    if (status === StatusCodes.CREATED) navigate('/my-account/dashboard')
-  })
-
-  return { register, errors, control, handleFormSubmit }
-}
 
 // ============================ USER OWNER SHOP STATUS ============================
 const useOwnerShopStatus = () => {
@@ -442,7 +433,6 @@ export {
   useUserProfileForm,
   useSetupAccount,
   useChangePasswordForm,
-  useUserAccountMigration,
   useUserAddresses,
   useAddressForm,
   useUserVerifyAccount,
