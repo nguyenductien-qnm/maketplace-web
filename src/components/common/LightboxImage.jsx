@@ -1,6 +1,6 @@
-import { Box } from '@mui/material'
-import { useEffect, useState } from 'react'
+import Box from '@mui/material/Box'
 import CloseIcon from '@mui/icons-material/Close'
+import { useEffect, useState } from 'react'
 
 function LightboxImage({ src, onClose }) {
   const [imageSrc, setImageSrc] = useState('')

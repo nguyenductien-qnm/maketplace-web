@@ -1,0 +1,2 @@
+const useVendorSettingForm = () => {}
+export { useVendorSettingForm }

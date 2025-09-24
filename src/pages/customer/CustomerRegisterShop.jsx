@@ -8,10 +8,10 @@ import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
 import ReviewInformation from '~/components/customer/CustomerRegisterShop/ReviewInformation'
+import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import { Fragment, useEffect } from 'react'
 import { useUserRegisterShop } from '~/hooks/user/registerShop.hook'
 import { useOwnerShopStatus } from '~/hooks/user/user.hook'
-import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import { navigate } from '~/helpers/navigation'
 
 function CustomerRegisterShop() {

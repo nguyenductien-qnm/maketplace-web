@@ -1,4 +1,6 @@
-import { styled, Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
+import { styled } from '@mui/material'
+
 const TypographyLabel = styled(Typography)({
   fontSize: '14px',
   color: 'black',

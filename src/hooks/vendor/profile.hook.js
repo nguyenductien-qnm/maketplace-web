@@ -1,34 +1,35 @@
+import buildFormData from '~/helpers/buildFormData'
 import { StatusCodes } from 'http-status-codes'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import {
-  checkShopUrlAPI,
-  getShopByOwnerAPI,
-  updateProfileShopAPI
-} from '~/api/shop.api'
-import { uploadImageToCloudinary } from '~/helpers/apiSendImage'
-import { prepareImageForStorage } from '~/helpers/resizeImage'
-import interceptorLoadingElements from '~/utils/interceptorLoading'
+import { getShopByOwnerAPI, updateProfileShopAPI } from '~/api/shop.api'
 
-export const useVendorProfileForm = () => {
+const LOADING_CLASS = ['.btn-shop-update-profile', '.btn-upload-image']
+
+const useVendorProfileForm = () => {
   const {
     register,
     control,
+    watch,
     handleSubmit,
     setValue,
     formState: { errors }
   } = useForm()
 
-  const [avatarUrl, setAvatarUrl] = useState(null)
-  const [bannerUrl, setBannerUrl] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [address, setAddress] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [shop, setShop] = useState(null)
+  const [openLightBox, setOpenLightBox] = useState(false)
+  const [selectImg, setSelectImg] = useState(null)
+
+  const shopAvatar = watch('shop_avatar')
+  const shopBanner = watch('shop_banner')
 
   useEffect(() => {
-    fetchShopInfo()
+    fetchShop()
   }, [])
 
-  const fetchShopInfo = async () => {
+  const fetchShop = async () => {
     try {
       setLoading(true)
       const { status, resData } = await getShopByOwnerAPI()
@@ -47,71 +48,43 @@ export const useVendorProfileForm = () => {
   }
 
   const setFieldData = (data) => {
-    const { shop_address: address } = data
-    setValue('shop_code', data?.shop_code || '')
-    setValue('shop_email', data?.shop_email || '')
+    setValue('shop_avatar', data?.shop_avatar || '')
+    setValue('shop_banner', data?.shop_banner || '')
     setValue('shop_name', data?.shop_name || '')
-    setValue('shop_phone', data?.shop_phone || '')
-    setValue('shop_slug', data?.shop_slug || '')
     setValue('shop_intro', data?.shop_intro || '')
-    setValue('province', address?.province || {})
-    setValue('district', address?.district || {})
-    setValue('ward', address?.ward || {})
-    setValue('street', address?.street || '')
-    setValue('createdAt', data?.createdAt || '')
-  }
-
-  const handleUploadImage = async (e, type = 'avatar') => {
-    interceptorLoadingElements(true, [
-      '.btn-shop-upload-banner',
-      '.btn-shop-upload-avatar',
-      '.btn-shop-update-profile'
-    ])
-    const file = e.target.files[0]
-    if (!file) return
-    const url = await uploadImageToCloudinary(file)
-    if (url) {
-      const image = prepareImageForStorage(
-        url,
-        type === 'avatar'
-          ? { width: 180, height: 180 }
-          : { width: 1000, height: 200 }
-      )
-      type === 'avatar' ? setAvatarUrl(image) : setBannerUrl(image)
-      setValue(type === 'avatar' ? 'shop_avatar' : 'shop_banner', image)
-    }
-
-    interceptorLoadingElements(false, [
-      '.btn-shop-upload-banner',
-      '.btn-shop-upload-avatar',
-      '.btn-shop-update-profile'
-    ])
+    setShop(data)
   }
 
   const handleFormSubmit = handleSubmit(async (data) => {
-    console.log('data:::', data)
-    // const updatedData = {
-    //   ...data,
-    //   shop_address: {
-    //     province: selectedProvince,
-    //     district: selectedDistrict,
-    //     ward: selectedWard,
-    //     street: data.street
-    //   }
-    // }
+    try {
+      setSubmitting(true)
 
-    // await updateProfileShopAPI(updatedData, '.btn-shop-update-profile')
+      const formData = buildFormData(data)
+
+      await updateProfileShopAPI({
+        payload: formData,
+        loadingClass: LOADING_CLASS
+      })
+    } finally {
+      setSubmitting(false)
+    }
   })
 
   return {
-    address,
     loading,
+    submitting,
+    openLightBox,
+    setOpenLightBox,
+    selectImg,
+    setSelectImg,
+    shop,
+    shopAvatar,
+    shopBanner,
     register,
     control,
     errors,
-    avatarUrl,
-    bannerUrl,
-    handleUploadImage,
     handleFormSubmit
   }
 }
+
+export { useVendorProfileForm }

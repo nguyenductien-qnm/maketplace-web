@@ -1,4 +1,3 @@
-import { Route } from 'react-router-dom'
 import VendorLayout from '~/layouts/user/VendorLayout'
 import VendorDashboard from '~/pages/vendor/VendorDashboard'
 import VendorOrders from '~/pages/vendor/VendorOrders'
@@ -8,7 +7,9 @@ import VendorProducts from '~/pages/vendor/VendorProducts'
 import VendorProfile from '~/pages/vendor/VendorProfile'
 import VendorVoucher from '~/pages/vendor/VendorVouchers'
 import VendorWallet from '~/pages/vendor/VendorWallet'
+import VendorSetting from '~/pages/vendor/VendorSetting'
 import { RequireAuthRoute } from './RouteGuards'
+import { Route } from 'react-router-dom'
 
 const VendorRoutes = ({ user }) => {
   return (
@@ -23,6 +24,7 @@ const VendorRoutes = ({ user }) => {
         <Route path="profile" element={<VendorProfile />} />
         <Route path="vouchers" element={<VendorVoucher />} />
         <Route path="wallet" element={<VendorWallet />} />
+        <Route path="setting" element={<VendorSetting />} />
       </Route>
     </Route>
   )

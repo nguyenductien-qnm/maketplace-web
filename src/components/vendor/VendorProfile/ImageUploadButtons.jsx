@@ -1,41 +1,43 @@
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import VisuallyHiddenInput from '~/components/common/VisuallyHiddenInput'
+import UploadButton from '~/components/common/UploadButton'
+import { Controller } from 'react-hook-form'
 
-function InputUploadButton({ handleUploadImage }) {
+function InputUploadButton({ control }) {
   return (
     <Box sx={{ display: 'flex', gap: '10px' }}>
-      <Button
-        className="btn-shop-upload-avatar"
-        component="label"
-        role={undefined}
-        variant="contained"
-        tabIndex={-1}
-        startIcon={<CloudUploadIcon />}
-      >
-        Upload Avatar
-        <VisuallyHiddenInput
-          type="file"
-          onChange={(e) => handleUploadImage(e, 'avatar')}
-          multiple
-        />
-      </Button>
-      <Button
-        className="btn-shop-upload-banner"
-        component="label"
-        role={undefined}
-        variant="contained"
-        tabIndex={-1}
-        startIcon={<CloudUploadIcon />}
-      >
-        Upload Banner
-        <VisuallyHiddenInput
-          type="file"
-          onChange={(e) => handleUploadImage(e, 'banner')}
-          multiple
-        />
-      </Button>
+      <Controller
+        name="shop_avatar"
+        control={control}
+        render={({ field }) => (
+          <UploadButton
+            label="Upload Avatar"
+            inputProps={{
+              onChange: (e) => {
+                const file = e.target.files?.[0]
+                if (!file || file.length === 0) return
+                field.onChange(file)
+              }
+            }}
+          />
+        )}
+      />
+
+      <Controller
+        name="shop_banner"
+        control={control}
+        render={({ field }) => (
+          <UploadButton
+            label="Upload Banner"
+            inputProps={{
+              onChange: (e) => {
+                const file = e.target.files?.[0]
+                if (!file || file.length === 0) return
+                field.onChange(file)
+              }
+            }}
+          />
+        )}
+      />
     </Box>
   )
 }

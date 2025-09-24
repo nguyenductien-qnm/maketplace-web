@@ -19,11 +19,16 @@ export const getShopByOwnerAPI = async () => {
   return { status, resData: data }
 }
 
-export const updateProfileShopAPI = async (data, loadingClass) => {
-  return await authorizedAxios.post(`${API_ROOT}/v1/api/shop/update`, data, {
-    loadingClass,
-    ...TOAST_MODE.ALL
-  })
+const updateProfileShopAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/shop/shop`,
+    payload,
+    {
+      loadingClass,
+      ...TOAST_MODE.ALL
+    }
+  )
+  return { status, resData: data }
 }
 
 export const getShopByUserAPI = async (data) => {
@@ -172,5 +177,6 @@ export {
   exportShopDataByAdminAPI,
   getShopStatusByOwnerAPI,
   checkBasicShopInfoAPI,
-  checkBusinessLicenseAPI
+  checkBusinessLicenseAPI,
+  updateProfileShopAPI
 }

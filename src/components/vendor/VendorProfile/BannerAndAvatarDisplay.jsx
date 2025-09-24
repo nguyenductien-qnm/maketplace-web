@@ -4,6 +4,7 @@ import Avatar from '@mui/material/Avatar'
 function BannerAndAvatarDisplay({ shopBanner, shopAvatar }) {
   const defaultBanner =
     'https://i.pinimg.com/736x/58/c3/33/58c33377dfcbb3022493dec49d098b02.jpg'
+
   return (
     <Box sx={{ position: 'relative' }}>
       <img
@@ -13,7 +14,13 @@ function BannerAndAvatarDisplay({ shopBanner, shopAvatar }) {
           objectFit: 'cover',
           borderRadius: '5px'
         }}
-        src={shopBanner || defaultBanner}
+        src={
+          shopBanner
+            ? shopBanner instanceof File
+              ? URL.createObjectURL(shopBanner)
+              : shopBanner
+            : defaultBanner
+        }
       />
       <Avatar
         sx={{
@@ -23,7 +30,13 @@ function BannerAndAvatarDisplay({ shopBanner, shopAvatar }) {
           bottom: 30,
           left: 30
         }}
-        src={shopAvatar || undefined}
+        src={
+          shopAvatar
+            ? shopAvatar instanceof File
+              ? URL.createObjectURL(shopAvatar)
+              : shopAvatar
+            : undefined
+        }
       ></Avatar>
     </Box>
   )

@@ -3,11 +3,10 @@ import TextField from '@mui/material/TextField'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import TypographyLabel from './TypographyLabel'
-import FieldErrorAlert from './FieldErrorAlert'
 import { Controller } from 'react-hook-form'
 import { useAddressOptions } from '~/hooks/common/address.hook'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
-import { FormControl, FormHelperText, Typography } from '@mui/material'
+import { FormControl, FormHelperText } from '@mui/material'
 
 function FormAddress({ address, control, errors, isLarge = false }) {
   const { provinces, districts, wards, loadDistricts, loadWards } =

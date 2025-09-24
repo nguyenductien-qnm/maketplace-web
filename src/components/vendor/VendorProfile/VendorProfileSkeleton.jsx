@@ -1,4 +1,6 @@
-import { Box, Grid2, Skeleton } from '@mui/material'
+import Box from '@mui/material/Box'
+import Skeleton from '@mui/material/Skeleton'
+import Grid2 from '@mui/material/Unstable_Grid2'
 import SkeletonLoaderInput from '~/components/common/SkeletonLoaderInput'
 
 function VendorProfileSkeleton() {
