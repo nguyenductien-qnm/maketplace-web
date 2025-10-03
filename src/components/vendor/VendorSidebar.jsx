@@ -72,7 +72,7 @@ function VendorSideBar() {
         Wallet
       </CustomLink>
       <Divider />
-      <CustomLink to="/vendor/metric" isActive={checkUrl('metric')}>
+      <CustomLink to="/vendor/metrics" isActive={checkUrl('metric')}>
         <LegendToggleIcon />
         Metrics
       </CustomLink>

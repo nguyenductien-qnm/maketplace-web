@@ -7,7 +7,6 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import TypographyLabel from '~/components/common/TypographyLabel'
-import FieldErrorAlert from '~/components/common/FieldErrorAlert'
 import FormAddress from '~/components/common/FormAddress'
 import {
   FIELD_REQUIRED_MESSAGE,
@@ -28,12 +27,18 @@ function CustomerAddressForm({
   onClose,
   handleDeleteAddress
 }) {
-  const { register, handleFormSubmit, errors, isSubmitting, control } =
-    useAddressForm({
-      action,
-      address,
-      onSubmit
-    })
+  const {
+    register,
+    setValue,
+    errors,
+    isSubmitting,
+    control,
+    handleFormSubmit
+  } = useAddressForm({
+    action,
+    address,
+    onSubmit
+  })
 
   return (
     <Modal
@@ -62,9 +67,9 @@ function CustomerAddressForm({
                     required: FIELD_REQUIRED_MESSAGE,
                     pattern: { value: NAME_RULE, message: NAME_RULE_MESSAGE }
                   })}
+                  helperText={errors?.full_name?.message}
                   error={!!errors.full_name}
                 />
-                <FieldErrorAlert errors={errors} fieldName="full_name" />
               </Box>
 
               <Box sx={{ flex: 1 }}>
@@ -80,12 +85,17 @@ function CustomerAddressForm({
                   onInput={(e) => {
                     e.target.value = e.target.value.replace(/[^0-9]/g, '')
                   }}
+                  helperText={errors?.phone_number?.message}
                 />
-                <FieldErrorAlert errors={errors} fieldName="phone_number" />
               </Box>
             </Box>
 
-            <FormAddress address={address} control={control} errors={errors} />
+            <FormAddress
+              address={address}
+              control={control}
+              errors={errors}
+              setValue={setValue}
+            />
 
             {action === 'create' && (
               <FormControlLabel

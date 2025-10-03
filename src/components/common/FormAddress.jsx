@@ -8,7 +8,7 @@ import { useAddressOptions } from '~/hooks/common/address.hook'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import { FormControl, FormHelperText } from '@mui/material'
 
-function FormAddress({ address, control, errors, isLarge = false }) {
+function FormAddress({ address, control, errors, setValue, isLarge = false }) {
   const { provinces, districts, wards, loadDistricts, loadWards } =
     useAddressOptions({ address })
 
@@ -26,7 +26,7 @@ function FormAddress({ address, control, errors, isLarge = false }) {
         <Controller
           name="province"
           control={control}
-          defaultValue={address?.province || null}
+          defaultValue=""
           rules={{
             required: FIELD_REQUIRED_MESSAGE
           }}
@@ -41,6 +41,8 @@ function FormAddress({ address, control, errors, isLarge = false }) {
                     (p) => p.ProvinceID === e.target.value
                   )
                   field.onChange(selected)
+                  setValue('district', null)
+                  setValue('ward', null)
                   loadDistricts(selected.ProvinceID)
                 }}
               >
@@ -63,7 +65,7 @@ function FormAddress({ address, control, errors, isLarge = false }) {
         <Controller
           name="district"
           control={control}
-          defaultValue={address?.district || null}
+          defaultValue=""
           rules={{
             required: FIELD_REQUIRED_MESSAGE
           }}
@@ -78,6 +80,7 @@ function FormAddress({ address, control, errors, isLarge = false }) {
                     (d) => d.DistrictID === e.target.value
                   )
                   field.onChange(selected)
+                  setValue('ward', null)
                   loadWards(selected.DistrictID)
                 }}
                 sx={{
@@ -108,7 +111,7 @@ function FormAddress({ address, control, errors, isLarge = false }) {
         <Controller
           name="ward"
           control={control}
-          defaultValue={address?.ward || null}
+          defaultValue=""
           rules={{
             required: FIELD_REQUIRED_MESSAGE
           }}
@@ -152,7 +155,7 @@ function FormAddress({ address, control, errors, isLarge = false }) {
         <Controller
           name="street"
           control={control}
-          defaultValue={address?.street || ''}
+          defaultValue=""
           rules={{
             required: FIELD_REQUIRED_MESSAGE
           }}

@@ -1,6 +1,7 @@
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 
+// ============================ CUSTOMER ============================
 export const checkShopUrlAPI = async (data) => {
   const res = await authorizedAxios.post(
     `${API_ROOT}/v1/api/shop/check-url`,
@@ -8,27 +9,6 @@ export const checkShopUrlAPI = async (data) => {
     { ...TOAST_MODE.NONE }
   )
   return res
-}
-
-export const getShopByOwnerAPI = async () => {
-  const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/shop/shop`,
-    { ...TOAST_MODE.ONLY_ERROR }
-  )
-
-  return { status, resData: data }
-}
-
-const updateProfileShopAPI = async ({ payload, loadingClass }) => {
-  const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/shop/shop`,
-    payload,
-    {
-      loadingClass,
-      ...TOAST_MODE.ALL
-    }
-  )
-  return { status, resData: data }
 }
 
 export const getShopByUserAPI = async (data) => {
@@ -40,14 +20,6 @@ export const getShopByUserAPI = async (data) => {
     }
   )
   return res
-}
-
-const getShopStatusByOwnerAPI = async () => {
-  const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/user/shop/status`,
-    { ...TOAST_MODE.ONLY_ERROR }
-  )
-  return { status, resData: data }
 }
 
 const checkBasicShopInfoAPI = async ({ payload, loadingClass }) => {
@@ -65,6 +37,90 @@ const checkBusinessLicenseAPI = async ({ payload, loadingClass }) => {
     payload,
     { ...TOAST_MODE.NONE, loadingClass }
   )
+  return { status, resData: data }
+}
+
+// ============================ VENDOR ============================
+const getShopStatusByOwnerAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/user/shop/status`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
+const getShopInfoByOwnerAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/shop`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+
+  return { status, resData: data }
+}
+
+const getShopSettingByOwnerAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/shop/setting`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+
+  return { status, resData: data }
+}
+
+const updateShopInfoByOwnerAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/shop/shop`,
+    payload,
+    {
+      loadingClass,
+      ...TOAST_MODE.ALL
+    }
+  )
+  return { status, resData: data }
+}
+
+const updateAddressSettingByOwnerAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/shop/shop/address`,
+    payload,
+    {
+      loadingClass,
+      ...TOAST_MODE.ALL
+    }
+  )
+  return { status, resData: data }
+}
+
+const updateAlertSettingByOwnerAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/shop/shop/alert`,
+    payload,
+    {
+      loadingClass,
+      ...TOAST_MODE.ALL
+    }
+  )
+  return { status, resData: data }
+}
+
+const updateOperationSettingByOwnerAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/shop/shop/operation`,
+    payload,
+    {
+      loadingClass,
+      ...TOAST_MODE.ALL
+    }
+  )
+  return { status, resData: data }
+}
+
+const getShopMetricsByOwnerAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/shop/metrics`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+
   return { status, resData: data }
 }
 
@@ -178,5 +234,11 @@ export {
   getShopStatusByOwnerAPI,
   checkBasicShopInfoAPI,
   checkBusinessLicenseAPI,
-  updateProfileShopAPI
+  updateShopInfoByOwnerAPI,
+  getShopInfoByOwnerAPI,
+  getShopSettingByOwnerAPI,
+  updateAlertSettingByOwnerAPI,
+  updateOperationSettingByOwnerAPI,
+  updateAddressSettingByOwnerAPI,
+  getShopMetricsByOwnerAPI
 }

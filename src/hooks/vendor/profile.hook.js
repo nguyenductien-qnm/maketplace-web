@@ -2,7 +2,7 @@ import buildFormData from '~/helpers/buildFormData'
 import { StatusCodes } from 'http-status-codes'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { getShopByOwnerAPI, updateProfileShopAPI } from '~/api/shop.api'
+import { getShopInfoByOwnerAPI, updateShopInfoByOwnerAPI } from '~/api/shop.api'
 
 const LOADING_CLASS = ['.btn-shop-update-profile', '.btn-upload-image']
 
@@ -32,13 +32,12 @@ const useVendorProfileForm = () => {
   const fetchShop = async () => {
     try {
       setLoading(true)
-      const { status, resData } = await getShopByOwnerAPI()
+      const { status, resData } = await getShopInfoByOwnerAPI()
       if (status === StatusCodes.OK) {
-        const { shop_avatar, shop_banner, shop_address } = resData?.metadata
+        const { shop_avatar, shop_banner } = resData?.metadata
         setFieldData(resData?.metadata)
         setAvatarUrl(shop_avatar)
         setBannerUrl(shop_banner)
-        setAddress(shop_address)
       }
     } catch (err) {
       if (err?.status === StatusCodes.FORBIDDEN) navigate('/unauthorized')
@@ -61,7 +60,7 @@ const useVendorProfileForm = () => {
 
       const formData = buildFormData(data)
 
-      await updateProfileShopAPI({
+      await updateShopInfoByOwnerAPI({
         payload: formData,
         loadingClass: LOADING_CLASS
       })
