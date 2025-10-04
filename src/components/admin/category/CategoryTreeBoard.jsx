@@ -22,7 +22,7 @@ function CategoryTreeBoard({
   handleOpenModal,
   handleDrop
 }) {
-  const rootNodes = categoriesTree.filter((node) => node.parent === 0)
+  const rootNodes = categoriesTree?.filter((node) => node.parent === 0)
 
   return (
     <>

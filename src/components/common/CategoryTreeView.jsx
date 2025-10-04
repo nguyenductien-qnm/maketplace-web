@@ -58,7 +58,7 @@ function CategoryTreeView({ value = [], onChange, categories = [], multi }) {
   )
 
   return (
-    <Box sx={{ minHeight: 352, minWidth: 290 }}>
+    <Box sx={{ height: 'auto', minWidth: 290 }}>
       <SimpleTreeView
         multiSelect={multi}
         checkboxSelection
@@ -66,7 +66,7 @@ function CategoryTreeView({ value = [], onChange, categories = [], multi }) {
         defaultExpandedItems={expandedItems}
         onSelectedItemsChange={(e, selected) => onChange?.(selected)}
       >
-        {categories.map((cat) => renderTree(cat))}
+        {categories?.map((cat) => renderTree(cat))}
       </SimpleTreeView>
     </Box>
   )

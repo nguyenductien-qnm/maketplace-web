@@ -67,6 +67,15 @@ const getShopSettingByOwnerAPI = async () => {
   return { status, resData: data }
 }
 
+const getShopMetricsByOwnerAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/shop/metrics`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+
+  return { status, resData: data }
+}
+
 const updateShopInfoByOwnerAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.put(
     `${API_ROOT}/v1/api/shop/shop`,
@@ -115,12 +124,15 @@ const updateOperationSettingByOwnerAPI = async ({ payload, loadingClass }) => {
   return { status, resData: data }
 }
 
-const getShopMetricsByOwnerAPI = async () => {
-  const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/shop/shop/metrics`,
-    { ...TOAST_MODE.ONLY_ERROR }
+const updateCustomCategoriesByOwnerAPI = async ({ payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/shop/shop/categories`,
+    payload,
+    {
+      loadingClass,
+      ...TOAST_MODE.ALL
+    }
   )
-
   return { status, resData: data }
 }
 
@@ -240,5 +252,6 @@ export {
   updateAlertSettingByOwnerAPI,
   updateOperationSettingByOwnerAPI,
   updateAddressSettingByOwnerAPI,
-  getShopMetricsByOwnerAPI
+  getShopMetricsByOwnerAPI,
+  updateCustomCategoriesByOwnerAPI
 }

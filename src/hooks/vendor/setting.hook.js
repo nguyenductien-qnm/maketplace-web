@@ -6,8 +6,10 @@ import {
   getShopSettingByOwnerAPI,
   updateAddressSettingByOwnerAPI,
   updateAlertSettingByOwnerAPI,
+  updateCustomCategoriesByOwnerAPI,
   updateOperationSettingByOwnerAPI
 } from '~/api/shop.api'
+import { useSelector } from 'react-redux'
 
 const ADDRESS_FIELDS = ['province', 'district', 'ward', 'street']
 
@@ -27,6 +29,9 @@ const LOADING_CLASS = ['.btn-action-setting-owner']
 const useVendorSetting = () => {
   const [loading, setLoading] = useState(true)
   const [address, setAddress] = useState(null)
+  const [open, setOpen] = useState(false)
+  const [shopCategories, setShopCategories] = useState([])
+  const categoriesTree = useSelector((state) => state.categories.categories)
 
   const {
     register,
@@ -59,8 +64,9 @@ const useVendorSetting = () => {
   }
 
   const setFieldData = (data) => {
-    const { shop_alerts: alerts, shop_address: address } = data
+    const { shop_alerts: alerts, shop_address: address, shop_categories } = data
     setAddress(address)
+    setShopCategories(shop_categories || [])
 
     setValue('alert_low_stock_enabled', alerts?.alert_low_stock.enabled)
     setValue('alert_low_stock_threshold', alerts?.alert_low_stock.threshold)
@@ -76,7 +82,7 @@ const useVendorSetting = () => {
     setValue('street', address?.street || '')
   }
 
-  const handleFormAddressSubmit = handleSubmit(async () => {
+  const handleAddressFormSubmit = handleSubmit(async () => {
     const payload = Object.fromEntries(
       ADDRESS_FIELDS.map((field) => [field, getValues(field)])
     )
@@ -87,14 +93,14 @@ const useVendorSetting = () => {
     })
   })
 
-  const handleFormAlertSubmit = handleSubmit(async () => {
+  const handleAlertFormSubmit = handleSubmit(async () => {
     const payload = Object.fromEntries(
       ALERT_FIELDS.map((field) => [field, getValues(field)])
     )
     await updateAlertSettingByOwnerAPI({ payload, loadingClass: LOADING_CLASS })
   })
 
-  const handleFormOperationSubmit = handleSubmit(async () => {
+  const handleOperationFormSubmit = handleSubmit(async () => {
     const payload = Object.fromEntries(
       OPERATION_FIELDS.map((field) => [field, getValues(field)])
     )
@@ -104,16 +110,32 @@ const useVendorSetting = () => {
     })
   })
 
+  const handleCustomCategoriesFormSubmit = async (data) => {
+    const { status, resData } = await updateCustomCategoriesByOwnerAPI({
+      payload: { shop_categories: data },
+      loadingClass: LOADING_CLASS
+    })
+    if (status === StatusCodes.OK) {
+      setShopCategories(resData?.metadata || [])
+      setOpen(false)
+    }
+  }
+
   return {
     loading,
     address,
+    shopCategories,
     register,
     setValue,
     errors,
     control,
-    handleFormAddressSubmit,
-    handleFormAlertSubmit,
-    handleFormOperationSubmit
+    categoriesTree,
+    open,
+    setOpen,
+    handleAddressFormSubmit,
+    handleAlertFormSubmit,
+    handleOperationFormSubmit,
+    handleCustomCategoriesFormSubmit
   }
 }
 export { useVendorSetting }

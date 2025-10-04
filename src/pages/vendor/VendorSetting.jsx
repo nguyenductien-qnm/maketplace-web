@@ -5,6 +5,7 @@ import TypographyTitle from '~/components/common/TypographyTitle'
 import AlertsForm from '~/components/vendor/VendorSetting/AlertsForm'
 import OperationForm from '~/components/vendor/VendorSetting/OperationForm'
 import VendorSettingSkeleton from '~/components/vendor/VendorSetting/VendorSettingSkeleton'
+import CustomCategories from '~/components/vendor/VendorSetting/CustomCategories'
 import { grey } from '@mui/material/colors'
 import { useVendorSetting } from '~/hooks/vendor/setting.hook'
 
@@ -12,13 +13,18 @@ function VendorSetting() {
   const {
     loading,
     address,
+    shopCategories,
     register,
     setValue,
     errors,
     control,
-    handleFormAddressSubmit,
-    handleFormAlertSubmit,
-    handleFormOperationSubmit
+    categoriesTree,
+    open,
+    setOpen,
+    handleAddressFormSubmit,
+    handleAlertFormSubmit,
+    handleOperationFormSubmit,
+    handleCustomCategoriesFormSubmit
   } = useVendorSetting()
 
   return (
@@ -35,7 +41,7 @@ function VendorSetting() {
               mt: 3
             }}
           >
-            <form onSubmit={handleFormAddressSubmit}>
+            <form onSubmit={handleAddressFormSubmit}>
               <TypographyTitle sx={{ mb: 2 }}>Address</TypographyTitle>
               <FormAddress
                 address={address}
@@ -59,13 +65,21 @@ function VendorSetting() {
             register={register}
             control={control}
             errors={errors}
-            handleFormSubmit={handleFormAlertSubmit}
+            handleFormSubmit={handleAlertFormSubmit}
           />
 
           <OperationForm
             control={control}
             errors={errors}
-            handleFormSubmit={handleFormOperationSubmit}
+            handleFormSubmit={handleOperationFormSubmit}
+          />
+
+          <CustomCategories
+            shopCategories={shopCategories}
+            open={open}
+            setOpen={setOpen}
+            categoriesTree={categoriesTree}
+            handleFormSubmit={handleCustomCategoriesFormSubmit}
           />
         </Box>
       )}
