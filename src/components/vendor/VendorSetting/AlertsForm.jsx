@@ -12,6 +12,8 @@ import {
   NUMBER_RULE,
   NUMBER_RULE_MESSAGE
 } from '~/utils/validators'
+import { Typography } from '@mui/material'
+import InfoIcon from '@mui/icons-material/Info'
 
 const FlexBox = styled(Box)({
   display: 'flex',
@@ -19,7 +21,13 @@ const FlexBox = styled(Box)({
   gap: 2
 })
 
-function AlertsForm({ register, control, errors, handleFormSubmit }) {
+function AlertsForm({
+  register,
+  control,
+  errors,
+  handleOpenDialog,
+  handleFormSubmit
+}) {
   const AlertItem = ({ label, name, flex = 1 }) => {
     return (
       <FlexBox flex={flex}>
@@ -49,7 +57,6 @@ function AlertsForm({ register, control, errors, handleFormSubmit }) {
           borderColor: grey[400],
           borderRadius: 1,
           p: 4,
-          mt: 3
         }}
       >
         <TypographyTitle>Alerts</TypographyTitle>
@@ -87,9 +94,29 @@ function AlertsForm({ register, control, errors, handleFormSubmit }) {
           <AlertItem label="Alert New Review" name="alert_new_review" />
         </FlexBox>
 
+        <Box
+          onClick={() => handleOpenDialog('ALERT')}
+          sx={{
+            mt: 3,
+            display: 'flex',
+            gap: 1,
+            alignItems: 'center',
+            cursor: 'pointer',
+            justifyContent: 'end'
+          }}
+        >
+          <InfoIcon sx={{ fontSize: '16px' }} />
+          <Typography
+            variant="subtitle2"
+            sx={{ ':hover': { textDecoration: 'underLine' } }}
+          >
+            Learn more about shop alerts
+          </Typography>
+        </Box>
+
         <Button
           className="btn-action-setting-owner"
-          sx={{ mt: 5 }}
+          sx={{ mt: 3 }}
           variant="contained"
           fullWidth
           type="submit"

@@ -1,24 +1,41 @@
-import { Box, Button, Fade, Modal, Typography } from '@mui/material'
+import { Alert, Box, Button, Fade, Modal, Typography } from '@mui/material'
+import { useEffect } from 'react'
 import { Controller } from 'react-hook-form'
 import CategoryTreeView from '~/components/common/CategoryTreeView'
+import TypographyTitle from '~/components/common/TypographyTitle'
 import { modalConfig, modalStyle } from '~/config/modal'
 import useVendorCustomCategories from '~/hooks/vendor/customCategories.hook'
 
-function CustomCategoriesModal({ open, onClose, categoryTree, onSubmit }) {
-  const { control, isSubmitting, handleFormSubmit } = useVendorCustomCategories(
-    {
+function CustomCategoriesModal({
+  shopCategoriesCode,
+  open,
+  onClose,
+  categoryTree,
+  onSubmit
+}) {
+  const { control, setValue, isSubmitting, handleFormSubmit } =
+    useVendorCustomCategories({
       onSubmit
+    })
+
+  useEffect(() => {
+    if (shopCategoriesCode) {
+      setValue('shop_categories', shopCategoriesCode)
     }
-  )
+  }, [shopCategoriesCode])
 
   return (
     <Modal open={open} onClose={onClose} {...modalConfig}>
       <Fade in={open}>
         <form onSubmit={handleFormSubmit}>
-          <Box sx={modalStyle(600)}>
-            <Typography variant="h6" mb={2}>
-              Custom your shop categories
-            </Typography>
+          <Box sx={modalStyle(700)}>
+            <TypographyTitle>Custom Shop Categories</TypographyTitle>
+
+            <Alert severity="warning" sx={{ mb: 3, mt: 1 }}>
+              When selecting categories, please make sure to include all related
+              parent and child categories to ensure proper product
+              classification.
+            </Alert>
 
             <Controller
               name="shop_categories"

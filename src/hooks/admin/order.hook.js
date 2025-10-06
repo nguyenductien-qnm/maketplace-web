@@ -75,7 +75,7 @@ export const useAdminOrder = ({ status }) => {
   }, [status, page, rowsPerPage])
 
   useEffect(() => {
-    if (isDenied) navigate('/unauthorized')
+    if (isDenied) navigate('/access-denied')
   }, [isDenied])
 
   // ================= API =================

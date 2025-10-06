@@ -38,7 +38,7 @@ export const useAdminCommissionRate = () => {
 
   // ================ EFFECTS ================
   useEffect(() => {
-    if (isDenied) navigate('/unauthorized')
+    if (isDenied) navigate('/access-denied')
   }, [isDenied])
 
   useEffect(() => {

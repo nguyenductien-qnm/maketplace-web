@@ -1,2 +1,0 @@
-const useVendorSettingForm = () => {}
-export { useVendorSettingForm }

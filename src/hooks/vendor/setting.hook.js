@@ -1,7 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { navigate } from '~/helpers/navigation'
 import {
   getShopSettingByOwnerAPI,
   updateAddressSettingByOwnerAPI,
@@ -10,6 +9,7 @@ import {
   updateOperationSettingByOwnerAPI
 } from '~/api/shop.api'
 import { useSelector } from 'react-redux'
+import { asyncHandlerShop } from '~/helpers/asyncHandler'
 
 const ADDRESS_FIELDS = ['province', 'district', 'ward', 'street']
 
@@ -30,8 +30,44 @@ const useVendorSetting = () => {
   const [loading, setLoading] = useState(true)
   const [address, setAddress] = useState(null)
   const [open, setOpen] = useState(false)
-  const [shopCategories, setShopCategories] = useState([])
+  const [openDialog, setOpenDialog] = useState(false)
+  const [dialogType, setDialogType] = useState(null)
+  const [shopCategoriesTree, setShopCategoriesTree] = useState([])
+  const [shopCategoriesCode, setShopCategoriesCode] = useState([])
   const categoriesTree = useSelector((state) => state.categories.categories)
+
+  const DIALOG_CONTENT = {
+    ADDRESS: {
+      open: openDialog,
+      onClose: () => setOpenDialog(false),
+      header: 'Why We Request Your Address',
+      content:
+        'We need your address to ensure accurate delivery, proper shop management, and to calculate shipping fees based on your shop location.'
+    },
+    ALERT: {
+      open: openDialog,
+      onClose: () => setOpenDialog(false),
+      header: 'Learn More About Shop Alerts',
+      content:
+        'These alerts will be sent to your registered email address to keep you updated on important shop activities such as new orders, low stock, and customer reviews.'
+    },
+
+    REFUND: {
+      open: openDialog,
+      onClose: () => setOpenDialog(false),
+      header: 'Learn More About Refund Types',
+      content:
+        'Refund type determines how refund requests are handled. “Auto” means refunds are automatically approved by the system, helping you save platform fees. “Manual” allows you to review and approve refund requests yourself — giving you more control but with slightly higher platform fees.'
+    },
+
+    CATEGORIES: {
+      open: openDialog,
+      onClose: () => setOpenDialog(false),
+      header: 'Learn More About Custom Categories',
+      content:
+        'You can only create products under the categories you have customized. When selecting categories, make sure to include both parent and child categories to ensure proper product classification and visibility.'
+    }
+  }
 
   const {
     register,
@@ -47,26 +83,29 @@ const useVendorSetting = () => {
   }, [])
 
   const fetchShop = async () => {
-    try {
-      setLoading(true)
-      const { status, resData } = await getShopSettingByOwnerAPI()
-      if (status === StatusCodes.OK) {
-        const { metadata: data } = resData
-        setFieldData(data)
-      }
-    } catch (err) {
-      const { status } = err
-      if (status === StatusCodes.FORBIDDEN || status === StatusCodes.NOT_FOUND)
-        navigate('/unauthorized')
-    } finally {
-      setLoading(false)
+    setLoading(true)
+    const [res] = await asyncHandlerShop(
+      async () => await getShopSettingByOwnerAPI()
+    )
+
+    if (res?.status === StatusCodes.OK) {
+      const { metadata: data } = res.resData
+      setFieldData(data)
     }
+
+    setLoading(false)
   }
 
   const setFieldData = (data) => {
-    const { shop_alerts: alerts, shop_address: address, shop_categories } = data
+    const {
+      shop_alerts: alerts,
+      shop_address: address,
+      shop_categories_tree,
+      shop_categories_code
+    } = data
     setAddress(address)
-    setShopCategories(shop_categories || [])
+    setShopCategoriesTree(shop_categories_tree || [])
+    setShopCategoriesCode(shop_categories_code || [])
 
     setValue('alert_low_stock_enabled', alerts?.alert_low_stock.enabled)
     setValue('alert_low_stock_threshold', alerts?.alert_low_stock.threshold)
@@ -80,6 +119,11 @@ const useVendorSetting = () => {
     setValue('district', address?.district || {})
     setValue('ward', address?.ward || {})
     setValue('street', address?.street || '')
+  }
+
+  const handleOpenDialog = (type) => {
+    setDialogType(type)
+    setOpenDialog(true)
   }
 
   const handleAddressFormSubmit = handleSubmit(async () => {
@@ -116,7 +160,9 @@ const useVendorSetting = () => {
       loadingClass: LOADING_CLASS
     })
     if (status === StatusCodes.OK) {
-      setShopCategories(resData?.metadata || [])
+      const { shop_categories_code, shop_categories_tree } = resData?.metadata
+      setShopCategoriesTree(shop_categories_tree || [])
+      setShopCategoriesCode(shop_categories_code || [])
       setOpen(false)
     }
   }
@@ -124,7 +170,11 @@ const useVendorSetting = () => {
   return {
     loading,
     address,
-    shopCategories,
+    openDialog,
+    dialogType,
+    handleOpenDialog,
+    shopCategoriesTree,
+    shopCategoriesCode,
     register,
     setValue,
     errors,
@@ -135,7 +185,8 @@ const useVendorSetting = () => {
     handleAddressFormSubmit,
     handleAlertFormSubmit,
     handleOperationFormSubmit,
-    handleCustomCategoriesFormSubmit
+    handleCustomCategoriesFormSubmit,
+    DIALOG_CONTENT
   }
 }
 export { useVendorSetting }

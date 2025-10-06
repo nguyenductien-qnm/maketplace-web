@@ -60,7 +60,7 @@ export const useAdminUser = ({ status }) => {
   // ============================== EFFECT ==============================
 
   useEffect(() => {
-    if (isDenied) navigate('/unauthorized')
+    if (isDenied) navigate('/access-denied')
   }, [isDenied])
 
   useEffect(() => {

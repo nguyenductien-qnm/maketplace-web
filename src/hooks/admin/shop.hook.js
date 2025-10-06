@@ -63,7 +63,7 @@ export const useAdminShop = ({ status }) => {
 
   // ============================== EFFECT ==============================
   useEffect(() => {
-    if (isDenied) navigate('/unauthorized')
+    if (isDenied) navigate('/access-denied')
   }, [isDenied])
 
   useEffect(() => {

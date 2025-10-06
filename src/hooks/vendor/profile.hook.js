@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { getShopInfoByOwnerAPI, updateShopInfoByOwnerAPI } from '~/api/shop.api'
+import { asyncHandlerShop } from '~/helpers/asyncHandler'
 
 const LOADING_CLASS = ['.btn-shop-update-profile', '.btn-upload-image']
 
@@ -30,25 +31,23 @@ const useVendorProfileForm = () => {
   }, [])
 
   const fetchShop = async () => {
-    try {
-      setLoading(true)
-      const { status, resData } = await getShopInfoByOwnerAPI()
-      if (status === StatusCodes.OK) {
-        const { shop_avatar, shop_banner } = resData?.metadata
-        setFieldData(resData?.metadata)
-        setAvatarUrl(shop_avatar)
-        setBannerUrl(shop_banner)
-      }
-    } catch (err) {
-      if (err?.status === StatusCodes.FORBIDDEN) navigate('/unauthorized')
-    } finally {
-      setLoading(false)
+    setLoading(true)
+    const [res] = await asyncHandlerShop(
+      async () => await getShopInfoByOwnerAPI()
+    )
+
+    setLoading(false)
+
+    if (res?.status === StatusCodes.OK) {
+      const { metadata: data } = res.resData
+      setFieldData(data)
     }
   }
 
   const setFieldData = (data) => {
-    setValue('shop_avatar', data?.shop_avatar || '')
-    setValue('shop_banner', data?.shop_banner || '')
+    const { shop_avatar, shop_banner } = data
+    setValue('shop_avatar', shop_avatar || '')
+    setValue('shop_banner', shop_banner || '')
     setValue('shop_name', data?.shop_name || '')
     setValue('shop_intro', data?.shop_intro || '')
     setShop(data)
@@ -57,9 +56,7 @@ const useVendorProfileForm = () => {
   const handleFormSubmit = handleSubmit(async (data) => {
     try {
       setSubmitting(true)
-
       const formData = buildFormData(data)
-
       await updateShopInfoByOwnerAPI({
         payload: formData,
         loadingClass: LOADING_CLASS

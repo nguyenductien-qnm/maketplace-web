@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 const useVendorCustomCategories = ({ onSubmit }) => {
-  const { control, getValues, handleSubmit } = useForm()
+  const { control, getValues, handleSubmit, setValue } = useForm()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleFormSubmit = handleSubmit(async () => {
@@ -20,6 +20,7 @@ const useVendorCustomCategories = ({ onSubmit }) => {
 
   return {
     control,
+    setValue,
     isSubmitting,
     handleFormSubmit
   }

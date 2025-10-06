@@ -38,7 +38,7 @@ export const useAdminCategory = () => {
   }, [])
 
   useEffect(() => {
-    if (isDenied) navigate('/unauthorized')
+    if (isDenied) navigate('/access-denied')
   }, [isDenied])
 
   // ================= API CALL =================

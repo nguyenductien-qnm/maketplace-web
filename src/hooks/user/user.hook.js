@@ -67,7 +67,7 @@ const useUserProfileForm = () => {
         setAvatarUrl(user_avatar)
       }
     } catch (err) {
-      if (err?.status === StatusCodes.FORBIDDEN) navigate('/unauthorized')
+      if (err?.status === StatusCodes.FORBIDDEN) navigate('/access-denied')
     } finally {
       setLoading(false)
     }
@@ -261,7 +261,7 @@ const useUserAddresses = () => {
   const [addresses, setAddresses] = useState([])
 
   useEffect(() => {
-    if (isDenied) navigate('/unauthorized')
+    if (isDenied) navigate('/access-denied')
   }, [isDenied])
 
   useEffect(() => {

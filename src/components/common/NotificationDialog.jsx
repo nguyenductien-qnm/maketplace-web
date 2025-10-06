@@ -23,7 +23,9 @@ function NotificationDialog({ header, content, open, onClose }) {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Close</Button>
+        <Button color="secondary" variant="outlined" onClick={onClose}>
+          Close
+        </Button>
       </DialogActions>
     </Dialog>
   )

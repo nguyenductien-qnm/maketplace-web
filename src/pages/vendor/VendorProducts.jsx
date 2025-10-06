@@ -4,7 +4,6 @@ import Button from '@mui/material/Button'
 import TabContext from '@mui/lab/TabContext'
 import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
-import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined'
 import ProductTable from '~/components/vendor/VendorProduct/ProductTable'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
@@ -12,8 +11,9 @@ import { useState } from 'react'
 const TAB_LABELS = {
   ALL: 'All',
   PUBLIC: 'Published',
-  PENDING_REVIEW: 'Pending',
   OUT_OF_STOCK: 'Out of Stock',
+  PENDING_REVIEW: 'Pending',
+  VIOLATE: 'Violate',
   DRAFT: 'Draft',
   RECYCLE_BIN: 'Recycle Bin'
 }
@@ -47,9 +47,8 @@ function VendorProducts() {
           </TabList>
 
           <Link to="/vendor/create-product">
-            <Button variant="contained" color="primary" sx={{ height: '30px' }}>
-              <BusinessCenterOutlinedIcon />
-              Add new product
+            <Button variant="contained" color="primary">
+              Create product
             </Button>
           </Link>
         </Box>

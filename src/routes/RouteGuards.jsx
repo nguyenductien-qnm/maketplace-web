@@ -7,7 +7,7 @@ export const RequireAuthRoute = ({ user, allowedRoles = [] }) => {
     allowedRoles.length &&
     !allowedRoles.some((role) => user.user_role?.includes(role))
   ) {
-    return <Navigate to="/unauthorized" replace />
+    return <Navigate to="/access-denied" replace />
   }
 
   return <Outlet />

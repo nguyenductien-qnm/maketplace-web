@@ -6,11 +6,18 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import TypographyTitle from '~/components/common/TypographyTitle'
+import InfoIcon from '@mui/icons-material/Info'
 import { grey } from '@mui/material/colors'
 import { Controller } from 'react-hook-form'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
+import { Typography } from '@mui/material'
 
-function OperationForm({ control, errors, handleFormSubmit }) {
+function OperationForm({
+  control,
+  errors,
+  handleOpenDialog,
+  handleFormSubmit
+}) {
   return (
     <form onSubmit={handleFormSubmit}>
       <Box
@@ -18,8 +25,7 @@ function OperationForm({ control, errors, handleFormSubmit }) {
           border: '2px dashed',
           borderColor: grey[400],
           borderRadius: 1,
-          p: 4,
-          mt: 3
+          p: 4
         }}
       >
         <TypographyTitle>Operation</TypographyTitle>
@@ -72,6 +78,27 @@ function OperationForm({ control, errors, handleFormSubmit }) {
             </Box>
           </Box>
         </Box>
+
+        <Box
+          onClick={() => handleOpenDialog('REFUND')}
+          sx={{
+            mt: 3,
+            display: 'flex',
+            gap: 1,
+            alignItems: 'center',
+            cursor: 'pointer',
+            justifyContent: 'end'
+          }}
+        >
+          <InfoIcon sx={{ fontSize: '16px' }} />
+          <Typography
+            variant="subtitle2"
+            sx={{ ':hover': { textDecoration: 'underLine' } }}
+          >
+            Learn more about refund types
+          </Typography>
+        </Box>
+
         <Button
           className="btn-action-setting-owner"
           type="submit"

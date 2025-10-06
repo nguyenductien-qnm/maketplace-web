@@ -130,7 +130,7 @@ function App() {
           />
         </Route>
 
-        <Route path="/unauthorized" element={<AccessDeniedPage />} />
+        <Route path="/access-denied" element={<AccessDeniedPage />} />
         <Route path="/cart" element={<CustomerShoppingCart />} />
         <Route path="/checkout" element={<CustomerCheckOut />} />
       </Routes>

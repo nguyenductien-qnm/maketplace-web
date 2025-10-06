@@ -66,7 +66,7 @@ export const useAdminTransaction = ({ type }) => {
   // ============================== EFFECT ==============================
 
   useEffect(() => {
-    if (isDenied) navigate('/unauthorized')
+    if (isDenied) navigate('/access-denied')
   }, [isDenied])
 
   useEffect(() => {
