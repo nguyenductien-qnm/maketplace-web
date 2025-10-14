@@ -14,18 +14,30 @@ const VisuallyHiddenInput = styled('input')({
   width: 1
 })
 
-function UploadButton({ label, inputProps }) {
+function UploadButton({
+  label,
+  multiple = false,
+  inputProps = {},
+  sx = {},
+  variant = 'contained'
+}) {
   return (
     <Button
       component="label"
       role={undefined}
-      variant="contained"
+      variant={variant}
       tabIndex={-1}
       startIcon={<CloudUploadIcon />}
       className="btn-upload-image"
+      sx={{ ...sx }}
     >
       {label}
-      <VisuallyHiddenInput type="file" accept="image/*" {...inputProps} />
+      <VisuallyHiddenInput
+        type="file"
+        accept="image/*"
+        {...inputProps}
+        multiple={multiple}
+      />
     </Button>
   )
 }

@@ -12,9 +12,9 @@ export const PASSWORD_RULE_MESSAGE =
 export const PASSWORD_CONFIRMATION_MESSAGE =
   'Password confirmation does not match!'
 // ==================== product name ============================
-export const PRODUCT_NAME_RULE = /^[A-Za-zÀ-ỹ0-9\s\-_,.()]{3,255}$/
+export const PRODUCT_NAME_RULE = /^[A-Za-zÀ-ỹ0-9\s\-_,.():]{10,120}$/
 export const PRODUCT_NAME_RULE_MESSAGE =
-  'Product name can only contain letters, numbers, spaces, hyphens, underscores, commas, periods, and parentheses, and must be between 3 and 255 characters long.'
+  'Product name: 10-120 characters, alphanumeric and basic punctuation only.'
 // ==================== name ============================
 export const NAME_RULE = /^[A-Za-zÀ-ỹà-ỹ\s]{3,50}$/
 export const NAME_RULE_MESSAGE =

@@ -1,27 +1,17 @@
 import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
+import Grid2 from '@mui/material/Grid2'
 import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
-import {
-  useFormContext,
-  useFieldArray,
-  useWatch,
-  Controller
-} from 'react-hook-form'
-import { grey, red } from '@mui/material/colors'
 import TypographyLabel from '~/components/common/TypographyLabel'
-import {
-  FIELD_REQUIRED_MESSAGE,
-  NUMBER_RULE,
-  NUMBER_RULE_MESSAGE
-} from '~/utils/validators'
-import { NumericFormat } from 'react-number-format'
+import { grey, red } from '@mui/material/colors'
+import { useFormContext, useFieldArray, useWatch } from 'react-hook-form'
+import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 
 function SKUForm() {
   const {
-    control,
     register,
+    control,
+    watch,
     formState: { errors }
   } = useFormContext()
 
@@ -33,38 +23,71 @@ function SKUForm() {
   const selectedVariations =
     useWatch({ control, name: 'product_classifications' }) || []
 
+  const productClassifications = watch('product_classifications')
+
   return (
-    <Box sx={{ marginBottom: '5px' }}>
+    <Grid2 container rowSpacing={2} mt={2}>
       {fields.map((field, index) => (
-        <Paper
-          elevation={2}
-          sx={{ padding: '10px', marginTop: '20px' }}
-          key={field.id}
+        <Grid2
+          key={index}
+          size={12}
+          sx={{
+            borderRadius: '5px',
+            p: 3,
+            backgroundColor: grey[100],
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+          }}
         >
           <Box
+            key={field.id}
             sx={{
               display: 'flex',
-              justifyContent: 'space-between',
-              marginBottom: '15px'
+              justifyContent: 'flex-end'
             }}
           >
-            <Typography sx={{ fontWeight: '600', color: grey[500] }}>
-              Product SKU
-            </Typography>
-            {fields.length > 1 && (
-              <HighlightOffOutlinedIcon
-                onClick={() => remove(index)}
-                sx={{
-                  color: red[600],
-                  '&:hover': { cursor: 'pointer' }
-                }}
-              />
-            )}
+            <HighlightOffOutlinedIcon
+              onClick={() => remove(index)}
+              sx={{
+                color: red[500],
+                '&:hover': { cursor: 'pointer' }
+              }}
+            />
           </Box>
 
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-            {/* Product Price */}
-            <Box sx={{ flex: 1, maxWidth: '300px', minWidth: '200px' }}>
+            {/* {selectedVariations.map((variation) => ( */}
+            <Box
+              sx={{ flex: 1, maxWidth: '300px', minWidth: '200px' }}
+              // key={variation}
+            >
+              <TypographyLabel>Variation 1</TypographyLabel>
+              <TextField
+                {...register(`product_sku.${index}.${variation}`, {
+                  required: FIELD_REQUIRED_MESSAGE
+                })}
+                error={!!errors.product_sku?.[index]?.[variation]}
+                helperText={errors.product_sku?.[index]?.[variation]?.message}
+                fullWidth
+                sx={{
+                  '& .MuiInputBase-root': {
+                    backgroundColor: 'white',
+                    borderRadius: 1
+                  }
+                }}
+              />
+            </Box>
+            {/* ))} */}
+          </Box>
+        </Grid2>
+      ))}
+    </Grid2>
+  )
+}
+
+export default SKUForm
+
+{
+  /* <Box sx={{ flex: 1, maxWidth: '300px', minWidth: '200px' }}>
               <TypographyLabel>Product Price</TypographyLabel>
               <Controller
                 name={`product_sku.${index}.price`}
@@ -107,30 +130,5 @@ function SKUForm() {
                 size="small"
                 fullWidth
               />
-            </Box>
-
-            {selectedVariations.map((variation) => (
-              <Box
-                sx={{ flex: 1, maxWidth: '300px', minWidth: '200px' }}
-                key={variation}
-              >
-                <TypographyLabel>{variation}</TypographyLabel>
-                <TextField
-                  {...register(`product_sku.${index}.${variation}`, {
-                    required: FIELD_REQUIRED_MESSAGE
-                  })}
-                  error={!!errors.product_sku?.[index]?.[variation]}
-                  helperText={errors.product_sku?.[index]?.[variation]?.message}
-                  size="small"
-                  fullWidth
-                />
-              </Box>
-            ))}
-          </Box>
-        </Paper>
-      ))}
-    </Box>
-  )
+            </Box> */
 }
-
-export default SKUForm

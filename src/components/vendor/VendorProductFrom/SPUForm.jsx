@@ -26,13 +26,13 @@ import { getImageForPreview } from '~/helpers/resizeImage'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useSelector } from 'react-redux'
 const visibilityOptions = [
   { id: 'private', name: 'Private' },
   { id: 'public', name: 'Public' }
 ]
 
 function SPUForm({
+  categoriesTree,
   handleUploadThumb,
   handleUploadGallery,
   handleDeleteGallery
@@ -54,7 +54,6 @@ function SPUForm({
     control,
     name: 'product_specs'
   })
-  const categories = useSelector((state) => state?.categories?.categories)
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
@@ -64,6 +63,8 @@ function SPUForm({
             <TypographyLabel>Product name</TypographyLabel>
             <TextField
               fullWidth
+              multiline
+              rows={2}
               size="small"
               {...register('product_name', {
                 required: FIELD_REQUIRED_MESSAGE,
@@ -87,6 +88,7 @@ function SPUForm({
                   rules={{ required: FIELD_REQUIRED_MESSAGE }}
                   render={({ field: { ref, ...field } }) => (
                     <NumericFormat
+                      fullWidth
                       {...field}
                       error={!!errors.product_min_price}
                       helperText={errors?.product_min_price?.message}
@@ -113,6 +115,7 @@ function SPUForm({
                   rules={{ required: FIELD_REQUIRED_MESSAGE }}
                   render={({ field: { ref, ...field } }) => (
                     <NumericFormat
+                      fullWidth
                       {...field}
                       error={!!errors.product_max_price}
                       helperText={errors?.product_max_price?.message}
@@ -152,8 +155,8 @@ function SPUForm({
           </Grid2>
 
           <Grid2 size={12}>
-            <Box sx={{ display: 'flex', gap: '15px' }}>
-              <Box>
+            <Grid2 container spacing={2}>
+              <Grid2 size={3}>
                 <TypographyLabel>Length (cm)</TypographyLabel>
                 <TextField
                   fullWidth
@@ -169,9 +172,9 @@ function SPUForm({
                   error={!!errors?.product_dimensions?.length}
                   helperText={errors?.product_dimensions?.length?.message}
                 />
-              </Box>
+              </Grid2>
 
-              <Box>
+              <Grid2 size={3}>
                 <TypographyLabel>Width (cm)</TypographyLabel>
                 <TextField
                   size="small"
@@ -187,9 +190,9 @@ function SPUForm({
                   error={!!errors?.product_dimensions?.width}
                   helperText={errors?.product_dimensions?.width?.message}
                 />
-              </Box>
+              </Grid2>
 
-              <Box>
+              <Grid2 size={3}>
                 <TypographyLabel>Height (cm)</TypographyLabel>
                 <TextField
                   size="small"
@@ -205,9 +208,9 @@ function SPUForm({
                   error={!!errors?.product_dimensions?.height}
                   helperText={errors?.product_dimensions?.height?.message}
                 />
-              </Box>
+              </Grid2>
 
-              <Box>
+              <Grid2 size={3}>
                 <TypographyLabel>Weight (kg)</TypographyLabel>
                 <TextField
                   size="small"
@@ -223,13 +226,12 @@ function SPUForm({
                   error={!!errors?.product_dimensions?.weight}
                   helperText={errors?.product_dimensions?.weight?.message}
                 />
-              </Box>
-            </Box>
+              </Grid2>
+            </Grid2>
           </Grid2>
 
           <Grid2 size={12}>
             <TypographyLabel>Product categories</TypographyLabel>
-
             <Controller
               name="product_category"
               control={control}
@@ -242,7 +244,7 @@ function SPUForm({
                     onChange={(newSelected) => {
                       field.onChange(newSelected)
                     }}
-                    categories={categories}
+                    categories={categoriesTree}
                   />
                   {errors.product_category && (
                     <FormHelperText error sx={{ mt: 1 }}>

@@ -1,17 +1,14 @@
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT, TOAST_MODE } from '~/utils/constants'
-
-// ============================ COMMON ============================
-const getCategoriesAPI = async () => {
+// ============================ VENDOR ============================
+const getCategoriesByOwnerAPI = async () => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/category`,
+    `${API_ROOT}/v1/api/shop/shop/categories`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
 }
-
 // ============================ ADMIN ============================
-
 const getCategoriesRootByAdminAPI = async () => {
   const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/admin/category/root`,
@@ -112,6 +109,15 @@ const exportCategoryDataByAdminAPI = async ({ loadingClass }) => {
   return { status, resData: data }
 }
 
+// ============================ COMMON ============================
+const getCategoriesAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/category`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
 export {
   createCategoryRootAPI,
   queryCategoriesByAdminAPI,
@@ -123,5 +129,6 @@ export {
   deleteCategoryByAdminAPI,
   getCategoriesRootByAdminAPI,
   getCategoriesAPI,
-  exportCategoryDataByAdminAPI
+  exportCategoryDataByAdminAPI,
+  getCategoriesByOwnerAPI
 }
