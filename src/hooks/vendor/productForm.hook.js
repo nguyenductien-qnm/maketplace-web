@@ -9,7 +9,15 @@ import { useForm } from 'react-hook-form'
 import { useLocation, useParams } from 'react-router-dom'
 import { getCategoriesByOwnerAPI } from '~/api/category.api'
 import { StatusCodes } from 'http-status-codes'
-import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
+import {
+  FIELD_REQUIRED_MESSAGE,
+  PRODUCT_PRICE_MAX,
+  PRODUCT_PRICE_MESSAGE,
+  PRODUCT_PRICE_MIN,
+  PRODUCT_STOCK_MAX,
+  PRODUCT_STOCK_MESSAGE,
+  PRODUCT_STOCK_MIN
+} from '~/utils/validators'
 import { pick } from 'lodash'
 const DEFAULT_VALUES = {
   enable_variations: false,
@@ -116,15 +124,27 @@ export const useVendorProductForm = () => {
   }
 
   const handleApplyAll = (price, stock) => {
+    if (stock < PRODUCT_STOCK_MIN || stock > PRODUCT_STOCK_MAX) {
+      toast.error(PRODUCT_STOCK_MESSAGE)
+      return
+    }
+    const numValue = parseFloat(String(price).replace(/[$,]/g, ''))
+    if (numValue < PRODUCT_PRICE_MIN + 0.01 || numValue > PRODUCT_PRICE_MAX) {
+      toast.error(PRODUCT_PRICE_MESSAGE)
+      return
+    }
     const updateProductSKUs = productSKUs.map((p) => ({ ...p, price, stock }))
+    clearErrors('product_skus')
     setValue('product_skus', updateProductSKUs)
   }
 
   const handleAddVariation = () => {
-    setValue('product_variations', [
-      ...productVariations,
-      { name: '', options: [{ value: '' }] }
-    ])
+    if (productVariations.length < 2) {
+      setValue('product_variations', [
+        ...productVariations,
+        { name: '', options: [{ value: '' }] }
+      ])
+    }
   }
 
   const handleChangeVariation = (e, variationIndex) => {
@@ -382,24 +402,6 @@ export const useVendorProductForm = () => {
   //   },
   //   [setError]
   // )
-
-  // const handleAddVariation = () => {
-  //   const currentVariations = getValues('product_classifications') || []
-
-  //   if (currentVariations.length === 0) {
-  //     toast.error('Please select variation first')
-  //     return
-  //   }
-
-  //   let newProductSKU = { price: '', stock: '' }
-
-  //   currentVariations.forEach((variation) => {
-  //     newProductSKU[variation] = ''
-  //   })
-
-  //   const currentProductSKU = getValues('product_sku') || []
-  //   setValue('product_sku', [...currentProductSKU, newProductSKU])
-  // }
 
   // const onSubmit = handleSubmit(async (formData) => {
   //   let data = formatData(formData)

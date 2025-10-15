@@ -1,12 +1,18 @@
+import Box from '@mui/material/Box'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import Grid2 from '@mui/material/Grid2'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import UploadButton from '~/components/common/UploadButton'
 import SortableItem from './SortableItem'
 import DragOverlayImage from './DragOverlayImage'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import LightboxImage from '~/components/common/LightboxImage'
 import { useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { SortableContext } from '@dnd-kit/sortable'
 import { useProductImages } from '~/hooks/vendor/product/productImage'
+import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import {
   DndContext,
   useSensor,
@@ -14,9 +20,6 @@ import {
   PointerSensor,
   TouchSensor
 } from '@dnd-kit/core'
-import { Typography } from '@mui/material'
-import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
-import LightboxImage from '~/components/common/LightboxImage'
 
 function ProductImagesUpload({ form }) {
   const { control, errors } = form
@@ -69,7 +72,16 @@ function ProductImagesUpload({ form }) {
   const errorMessage = errors?.product_images?.root?.message
   return (
     <Grid2 size={12}>
-      <TypographyLabel>Product Images</TypographyLabel>
+      <Box sx={{ display: 'flex', gap: 1 }}>
+        <TypographyLabel>Product Images</TypographyLabel>
+        <Tooltip
+          arrow
+          placement="top"
+          title="Upload 1-9 product images. Recommended dimensions: 1200x1200px (scale 1:1). First image will be the main display image."
+        >
+          <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
+        </Tooltip>
+      </Box>
       <DndContext
         sensors={sensors}
         onDragStart={handleDragStart}

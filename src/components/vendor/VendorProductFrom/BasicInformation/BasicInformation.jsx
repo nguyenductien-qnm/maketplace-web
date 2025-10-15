@@ -1,3 +1,7 @@
+import Box from '@mui/material/Box'
+import InputAdornment from '@mui/material/InputAdornment'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import Card from '@mui/material/Card'
 import FormHelperText from '@mui/material/FormHelperText'
 import TextField from '@mui/material/TextField'
@@ -5,8 +9,10 @@ import Grid2 from '@mui/material/Grid2'
 import CategoryTreeView from '~/components/common/CategoryTreeView'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import TypographyTitle from '~/components/common/TypographyTitle'
-import ProductImagesUpload from '../ProductImagesUpload/ProductImagesUpload'
+import ProductImagesUpload from './ProductImagesUpload/ProductImagesUpload'
 import ReactQuill from 'react-quill'
+import DividerVertical from '~/components/common/DividerVertical'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { Controller } from 'react-hook-form'
 import {
   FIELD_REQUIRED_MESSAGE,
@@ -14,14 +20,20 @@ import {
   PRODUCT_NAME_RULE_MESSAGE
 } from '~/utils/validators'
 import 'react-quill/dist/quill.snow.css'
-import { Box, InputAdornment, Typography } from '@mui/material'
-import DividerVertical from '~/components/common/DividerVertical'
 
 const LABELS = {
   TITLE: 'Basic Information',
   PRODUCT_NAME: 'Product Name',
   CATEGORY: 'Product Category',
   DESCRIPTION: 'Product Description'
+}
+
+const TOOLTIP = {
+  PRODUCT_NAME:
+    'Product name must be 10-120 characters. Only letters, numbers, spaces and special characters (- _ , . ( ) :) are allowed.',
+  CATEGORY: `Select only 1 category for your product. If you don't have a suitable category, go to Settings to customize your shop categories based on platform's available categories.`,
+  DESCRIPTION:
+    'Product description must be 100-3000 characters. Provide detailed information about your product including materials, dimensions, features, and benefits.'
 }
 
 const FieldError = ({ error }) =>
@@ -36,15 +48,20 @@ function BasicInformation({ form, categoriesTree }) {
 
   return (
     <Card sx={{ p: 3 }}>
-      <TypographyTitle>{LABELS.TITLE}</TypographyTitle>
+      <TypographyTitle sx={{ mb: 3 }}>{LABELS.TITLE}</TypographyTitle>
 
-      <Grid2 container spacing={2} sx={{ mt: 2 }}>
+      <Grid2 container rowSpacing={3} sx={{ mt: 2 }}>
         <Grid2 size={12}>
           <ProductImagesUpload form={form} />
         </Grid2>
 
         <Grid2 size={12}>
-          <TypographyLabel>{LABELS.PRODUCT_NAME}</TypographyLabel>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <TypographyLabel>{LABELS.PRODUCT_NAME}</TypographyLabel>
+            <Tooltip arrow placement="top" title={TOOLTIP.PRODUCT_NAME}>
+              <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
+            </Tooltip>
+          </Box>
           <TextField
             fullWidth
             {...register('product_name', {
@@ -72,7 +89,12 @@ function BasicInformation({ form, categoriesTree }) {
         </Grid2>
 
         <Grid2 size={12}>
-          <TypographyLabel>{LABELS.CATEGORY}</TypographyLabel>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <TypographyLabel>{LABELS.CATEGORY}</TypographyLabel>
+            <Tooltip arrow placement="top" title={TOOLTIP.CATEGORY}>
+              <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
+            </Tooltip>
+          </Box>
           <Controller
             name="product_category"
             control={control}
@@ -92,7 +114,12 @@ function BasicInformation({ form, categoriesTree }) {
         </Grid2>
 
         <Grid2 size={12}>
-          <TypographyLabel>{LABELS.DESCRIPTION}</TypographyLabel>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <TypographyLabel>{LABELS.DESCRIPTION}</TypographyLabel>
+            <Tooltip arrow placement="top" title={TOOLTIP.DESCRIPTION}>
+              <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
+            </Tooltip>
+          </Box>
           <Controller
             name="product_description"
             control={control}

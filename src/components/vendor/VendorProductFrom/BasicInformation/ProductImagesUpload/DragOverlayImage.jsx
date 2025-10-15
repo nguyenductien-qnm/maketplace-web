@@ -1,5 +1,5 @@
+import Box from '@mui/material/Box'
 import { DragOverlay } from '@dnd-kit/core'
-import { Box } from '@mui/material'
 
 function DragOverlayImage({ fieldsImage, activeId }) {
   return (

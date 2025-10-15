@@ -8,15 +8,26 @@ import Box from '@mui/material/Box'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import TypographyTitle from '~/components/common/TypographyTitle'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
+import InputAdornment from '@mui/material/InputAdornment'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
+import DividerVertical from '~/components/common/DividerVertical'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { red } from '@mui/material/colors'
 import { toast } from 'react-toastify'
 import { Controller } from 'react-hook-form'
 import { useProductAttributes } from '~/hooks/vendor/product/productAttribute'
-import { InputAdornment, Typography } from '@mui/material'
-import DividerVertical from '~/components/common/DividerVertical'
+import {
+  PRODUCT_ATTRIBUTE_KEY_MESSAGE,
+  PRODUCT_ATTRIBUTE_KEY_RULE,
+  PRODUCT_ATTRIBUTE_VALUE_MESSAGE,
+  PRODUCT_ATTRIBUTE_VALUE_RULE,
+  PRODUCT_TAG_RULE,
+  PRODUCT_TAG_RULE_MESSAGE
+} from '~/utils/validators'
 
 const LIMITS = {
-  MAX_TAGS: 30
+  MAX_TAGS: 10
 }
 
 const MESSAGES = {
@@ -32,6 +43,12 @@ const MESSAGES = {
   MAX_TAGS_WARNING: `You can add up to ${LIMITS.MAX_TAGS} items only`
 }
 
+const TOOLTIP = {
+  TAGS: 'Add up to 10 tags to help buyers find your product easily. Each tag can contain letters only and maximum 20 characters.',
+  ATTRIBUTES:
+    'Add custom attributes for your product (e.g., Color, Size, Material). Key: maximum 20 characters, Value: maximum 50 characters. Only letters, numbers and commas allowed.'
+}
+
 const AttributeField = ({
   register,
   watch,
@@ -43,7 +60,17 @@ const AttributeField = ({
 }) => (
   <TextField
     {...register(`product_attributes.${index}.${fieldType}`, {
-      required: errorMessage
+      required: errorMessage,
+      pattern: {
+        value:
+          fieldType == 'key'
+            ? PRODUCT_ATTRIBUTE_KEY_RULE
+            : PRODUCT_ATTRIBUTE_VALUE_RULE,
+        message:
+          fieldType == 'key'
+            ? PRODUCT_ATTRIBUTE_KEY_MESSAGE
+            : PRODUCT_ATTRIBUTE_VALUE_MESSAGE
+      }
     })}
     error={!!errors.product_attributes?.[index]?.[fieldType]}
     fullWidth
@@ -73,61 +100,105 @@ function DetailInformation({ form }) {
 
   return (
     <Card sx={{ p: 3 }}>
-      <TypographyTitle>{MESSAGES.TITLE}</TypographyTitle>
+      <TypographyTitle sx={{ mb: 3 }}>{MESSAGES.TITLE}</TypographyTitle>
 
-      <Grid2 container spacing={2} sx={{ mt: 2 }}>
+      <Grid2 container rowSpacing={3} sx={{ mt: 2 }}>
         <Grid2 size={12}>
-          <TypographyLabel>{MESSAGES.TAGS}</TypographyLabel>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <TypographyLabel>{MESSAGES.TAGS}</TypographyLabel>
+            <Tooltip arrow placement="top" title={TOOLTIP.TAGS}>
+              <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
+            </Tooltip>
+          </Box>
           <Controller
             name="product_tags"
             control={control}
             defaultValue={[]}
-            render={({ field }) => (
-              <Autocomplete
-                fullWidth
-                multiple
-                freeSolo
-                options={[]}
-                value={field.value}
-                onChange={(event, newValue) => {
-                  if (newValue?.length > LIMITS.MAX_TAGS) {
-                    toast.warn(MESSAGES.MAX_TAGS_WARNING)
-                    return
+            rules={{
+              validate: {
+                validTags: (value) => {
+                  if (!value || value.length === 0) return true
+
+                  const invalidTags = value.filter(
+                    (tag) => !PRODUCT_TAG_RULE.test(tag)
+                  )
+                  if (invalidTags.length > 0) {
+                    return `Invalid tags: ${invalidTags.join(
+                      ', '
+                    )}. ${PRODUCT_TAG_RULE_MESSAGE}`
                   }
-                  field.onChange(newValue)
-                }}
-                renderTags={(value, getTagProps) =>
-                  value.map((option, index) => (
-                    <Chip
-                      variant="outlined"
-                      label={option}
-                      {...getTagProps({ index })}
-                      key={`tag-${index}`}
-                    />
-                  ))
+                  return true
                 }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    fullWidth
-                    variant="outlined"
-                    placeholder={MESSAGES.TAGS_PLACEHOLDER}
-                  />
-                )}
-              />
+              }
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <>
+                <Autocomplete
+                  fullWidth
+                  multiple
+                  freeSolo
+                  options={[]}
+                  value={field.value}
+                  onChange={(event, newValue) => {
+                    if (newValue.length < field.value.length) {
+                      field.onChange(newValue)
+                      return
+                    }
+                    const lastTag = newValue[newValue.length - 1]
+                    if (lastTag && !PRODUCT_TAG_RULE.test(lastTag)) {
+                      toast.error(PRODUCT_TAG_RULE_MESSAGE)
+                      return
+                    }
+                    if (newValue.length > LIMITS.MAX_TAGS) {
+                      toast.warn(MESSAGES.MAX_TAGS_WARNING)
+                      return
+                    }
+                    field.onChange(newValue)
+                  }}
+                  renderTags={(value, getTagProps) =>
+                    value.map((option, index) => {
+                      const isInvalid = !PRODUCT_TAG_RULE.test(option)
+                      return (
+                        <Chip
+                          variant="outlined"
+                          label={option}
+                          {...getTagProps({ index })}
+                          key={`tag-${index}`}
+                          color={isInvalid ? 'error' : 'default'}
+                        />
+                      )
+                    })
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      fullWidth
+                      variant="outlined"
+                      placeholder={
+                        field.value?.length >= LIMITS.MAX_TAGS
+                          ? `Maximum ${LIMITS.MAX_TAGS} tags reached`
+                          : MESSAGES.TAGS_PLACEHOLDER
+                      }
+                      error={!!error}
+                      helperText={
+                        error?.message ||
+                        `${field.value?.length || 0}/${LIMITS.MAX_TAGS} tags`
+                      }
+                    />
+                  )}
+                />
+              </>
             )}
           />
-          <Typography
-            variant="caption"
-            color="textSecondary"
-            sx={{ mt: 1, display: 'block' }}
-          >
-            {watch('product_tags').length} / 10 product tags
-          </Typography>
         </Grid2>
 
         <Grid2 size={12}>
-          <TypographyLabel>{MESSAGES.ATTRIBUTES}</TypographyLabel>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <TypographyLabel>{MESSAGES.ATTRIBUTES}</TypographyLabel>
+            <Tooltip arrow placement="top" title={TOOLTIP.ATTRIBUTES}>
+              <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
+            </Tooltip>
+          </Box>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {fieldsAttribute.map((field, index) => (
               <Box

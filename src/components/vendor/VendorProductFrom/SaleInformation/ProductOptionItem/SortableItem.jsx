@@ -5,7 +5,11 @@ import OpenWithOutlinedIcon from '@mui/icons-material/OpenWithOutlined'
 import { grey } from '@mui/material/colors'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
+import {
+  FIELD_REQUIRED_MESSAGE,
+  PRODUCT_VARIATION_OPTION_MESSAGE,
+  PRODUCT_VARIATION_OPTION_RULE
+} from '~/utils/validators'
 import { InputAdornment, Typography } from '@mui/material'
 import DividerVertical from '~/components/common/DividerVertical'
 import { useState } from 'react'
@@ -63,7 +67,13 @@ function SortableItem({
           }}
           {...register(
             `product_variations.${variationIndex}.options.${index}.value`,
-            { required: FIELD_REQUIRED_MESSAGE }
+            {
+              required: FIELD_REQUIRED_MESSAGE,
+              pattern: {
+                value: PRODUCT_VARIATION_OPTION_RULE,
+                message: PRODUCT_VARIATION_OPTION_MESSAGE
+              }
+            }
           )}
           error={
             !!errors?.product_variations?.[variationIndex]?.options?.[index]

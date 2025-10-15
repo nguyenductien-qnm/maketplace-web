@@ -65,7 +65,7 @@ function SortableItem({
               height: '25px',
               backgroundColor: grey[400],
               borderRadius: '0 0 4px 4px',
-              width: '133px',
+              width: '100%',
               position: 'absolute',
               bottom: 0,
               left: 0,

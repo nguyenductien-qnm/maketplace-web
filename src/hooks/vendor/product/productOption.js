@@ -1,9 +1,11 @@
 import { useRef } from 'react'
 import { useFieldArray } from 'react-hook-form'
-import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
+import { toast } from 'react-toastify'
+import { FIELD_REQUIRED_MESSAGE, MAX_TOTAL_VARIANTS } from '~/utils/validators'
 
 export const useProductOptions = ({
   control,
+  watch,
   errors,
   setError,
   clearErrors,
@@ -15,6 +17,16 @@ export const useProductOptions = ({
   })
 
   const debounceRef = useRef(null)
+
+  const calculateTotalCombinations = (variations) => {
+    if (!variations || variations.length === 0) return 0
+
+    return variations.reduce((total, variation) => {
+      const optionCount =
+        variation.options?.filter((opt) => opt.value?.trim()).length || 0
+      return total === 0 ? optionCount : total * optionCount
+    }, 0)
+  }
 
   const handleAddOption = () => {
     const error = errors?.product_variations?.[variationIndex]?.options
@@ -32,6 +44,26 @@ export const useProductOptions = ({
         )
         return
       }
+    }
+
+    const allVariations = watch('product_variations')
+
+    const updatedVariations = allVariations.map((v, idx) => {
+      if (idx === variationIndex) {
+        return {
+          ...v,
+          options: [...v.options, { value: 'temp' }]
+        }
+      }
+      return v
+    })
+
+    const totalCombinations = calculateTotalCombinations(updatedVariations)
+
+    if (totalCombinations > MAX_TOTAL_VARIANTS) {
+      toast.error(`Cannot add more options. Total combinations maximum is 96`)
+
+      return
     }
     append({ value: '' })
   }

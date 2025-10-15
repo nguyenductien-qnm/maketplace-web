@@ -1,14 +1,15 @@
 import Grid2 from '@mui/material/Grid2'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import SortableItem from './SortableItem'
+import DragOverlayOption from './DragOverlayOption'
+import { useState } from 'react'
 import { DndContext } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
-import { useState } from 'react'
-import SortableItem from './SortableItem'
-import { Box, Button } from '@mui/material'
 import { useProductOptions } from '~/hooks/vendor/product/productOption'
-import DragOverlayOption from './DragOverlayOption'
 
 function ProductOptionItem({ form, variationIndex }) {
-  const { register, control, errors, setError, clearErrors } = form
+  const { control, errors, setError, clearErrors, watch } = form
 
   const {
     fieldsOptions,
@@ -19,6 +20,7 @@ function ProductOptionItem({ form, variationIndex }) {
     handleMoveOption
   } = useProductOptions({
     control,
+    watch,
     errors,
     setError,
     clearErrors,

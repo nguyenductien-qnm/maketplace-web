@@ -9,14 +9,18 @@ import TypographyTitle from '~/components/common/TypographyTitle'
 import AddIcon from '@mui/icons-material/Add'
 import ProductSKUTable from './ProductSKUTable'
 import ProductVariationItem from './ProductVariationItem'
-import { Controller } from 'react-hook-form'
-import { NumericFormat } from 'react-number-format'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { grey } from '@mui/material/colors'
 import { useState } from 'react'
+import { Controller } from 'react-hook-form'
+import { NumericFormat } from 'react-number-format'
 import {
   FIELD_REQUIRED_MESSAGE,
-  NUMBER_RULE,
-  NUMBER_RULE_MESSAGE
+  PRODUCT_PRICE_MAX,
+  PRODUCT_PRICE_MESSAGE,
+  PRODUCT_STOCK_MAX,
+  PRODUCT_STOCK_MESSAGE,
+  PRODUCT_STOCK_MIN
 } from '~/utils/validators'
 
 const MESSAGES = {
@@ -26,8 +30,17 @@ const MESSAGES = {
   ENABLE_VARIATIONS: 'Enable Variations',
   PRODUCT_PRICE: 'Product Price',
   PRODUCT_STOCK: 'Product Stock',
-  VARIATION_LIST: 'Variation List',
-  APPLY_ALL_TOOLTIP: 'Apply price and stock to all SKU combinations'
+  VARIATION_LIST: 'Variation List'
+}
+
+const TOOLTIP = {
+  VARIATIONS:
+    'Maximum 2 variations. Total variants (option combinations) cannot exceed 96.',
+  APPLY_ALL: 'Apply price and stock to all SKU combinations',
+  PRICE:
+    'Enter product price. Maximum: $2,000 USD. Price must be greater than 0.',
+  STOCK:
+    'Enter available stock quantity. Must be between 1 and 10,000,000 units.'
 }
 
 const PriceInput = (props) => (
@@ -49,10 +62,16 @@ const StockInput = ({ register, name, error, helperText, ...props }) => (
     type="number"
     {...register(name, {
       required: FIELD_REQUIRED_MESSAGE,
-      pattern: {
-        value: NUMBER_RULE,
-        message: NUMBER_RULE_MESSAGE
-      }
+      min: {
+        value: PRODUCT_STOCK_MIN,
+        message: PRODUCT_STOCK_MESSAGE
+      },
+      max: {
+        value: PRODUCT_STOCK_MAX,
+        message: PRODUCT_STOCK_MESSAGE
+      },
+      validate: (value) =>
+        Number.isInteger(Number(value)) || 'Stock must be a whole number'
     })}
     error={!!error}
     helperText={helperText}
@@ -70,13 +89,16 @@ function SaleInformation({ form, variations, variationHandlers, onApplyAll }) {
 
   return (
     <Card sx={{ p: 3 }}>
-      <TypographyTitle>{MESSAGES.TITLE}</TypographyTitle>
+      <TypographyTitle sx={{ mb: 3 }}>{MESSAGES.TITLE}</TypographyTitle>
 
-      <Grid2 container rowSpacing={2}>
+      <Grid2 container rowSpacing={3}>
         <Grid2 size={12}>
-          <TypographyLabel sx={{ mt: 3 }}>
-            {MESSAGES.VARIATIONS}
-          </TypographyLabel>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <TypographyLabel>{MESSAGES.VARIATIONS}</TypographyLabel>
+            <Tooltip arrow placement="top" title={TOOLTIP.VARIATIONS}>
+              <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
+            </Tooltip>
+          </Box>
         </Grid2>
 
         {isEnabled &&
@@ -162,11 +184,34 @@ function SaleInformation({ form, variations, variationHandlers, onApplyAll }) {
             </Grid2>
 
             <Grid2 size={12}>
-              <TypographyLabel>{MESSAGES.PRODUCT_PRICE}</TypographyLabel>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <TypographyLabel>{MESSAGES.PRODUCT_PRICE}</TypographyLabel>
+                <Tooltip arrow placement="top" title={TOOLTIP.PRICE}>
+                  <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
+                </Tooltip>
+              </Box>
               <Controller
                 name="product_price"
                 control={control}
-                rules={{ required: FIELD_REQUIRED_MESSAGE }}
+                rules={{
+                  required: FIELD_REQUIRED_MESSAGE,
+                  validate: {
+                    positive: (value) => {
+                      const numValue = parseFloat(
+                        String(value).replace(/[$,]/g, '')
+                      )
+                      return numValue > 0 || PRODUCT_PRICE_MESSAGE
+                    },
+                    maxPrice: (value) => {
+                      const numValue = parseFloat(
+                        String(value).replace(/[$,]/g, '')
+                      )
+                      return (
+                        numValue <= PRODUCT_PRICE_MAX || PRODUCT_PRICE_MESSAGE
+                      )
+                    }
+                  }
+                }}
                 render={({ field: { ref, ...field } }) => (
                   <PriceInput
                     {...field}
@@ -183,7 +228,12 @@ function SaleInformation({ form, variations, variationHandlers, onApplyAll }) {
             </Grid2>
 
             <Grid2 size={12}>
-              <TypographyLabel>{MESSAGES.PRODUCT_STOCK}</TypographyLabel>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <TypographyLabel>{MESSAGES.PRODUCT_STOCK}</TypographyLabel>
+                <Tooltip arrow placement="top" title={TOOLTIP.STOCK}>
+                  <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
+                </Tooltip>
+              </Box>
               <StockInput
                 register={register}
                 name="product_stock"

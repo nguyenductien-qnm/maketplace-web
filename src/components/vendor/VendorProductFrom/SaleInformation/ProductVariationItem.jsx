@@ -1,13 +1,18 @@
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Grid2 from '@mui/material/Grid2'
+import InputAdornment from '@mui/material/InputAdornment'
+import Typography from '@mui/material/Typography'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import ProductOptionItem from './ProductOptionItem/ProductOptionItem'
-import { grey, red } from '@mui/material/colors'
-import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
-import { InputAdornment, Typography } from '@mui/material'
 import DividerVertical from '~/components/common/DividerVertical'
+import { grey, red } from '@mui/material/colors'
+import {
+  FIELD_REQUIRED_MESSAGE,
+  PRODUCT_VARIATION_NAME_MESSAGE,
+  PRODUCT_VARIATION_NAME_RULE
+} from '~/utils/validators'
 
 function ProductVariationItem({
   form,
@@ -15,7 +20,7 @@ function ProductVariationItem({
   handleChangeVariation,
   handleRemoveVariation
 }) {
-  const { register, control, errors, setError, clearErrors, watch } = form
+  const { register, errors, watch } = form
   return (
     <Grid2
       container
@@ -44,7 +49,11 @@ function ProductVariationItem({
           >
             <TextField
               {...register(`product_variations.${variationIndex}.name`, {
-                required: FIELD_REQUIRED_MESSAGE
+                required: FIELD_REQUIRED_MESSAGE,
+                pattern: {
+                  value: PRODUCT_VARIATION_NAME_RULE,
+                  message: PRODUCT_VARIATION_NAME_MESSAGE
+                }
               })}
               size="small"
               onChange={(e) => handleChangeVariation(e, variationIndex)}

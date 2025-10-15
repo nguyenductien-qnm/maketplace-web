@@ -9,14 +9,33 @@ import { grey } from '@mui/material/colors'
 import { Controller } from 'react-hook-form'
 import { NumericFormat } from 'react-number-format'
 import { useProductSKUsTable } from '~/hooks/vendor/product/productSKUsTable'
-import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
+import {
+  FIELD_REQUIRED_MESSAGE,
+  PRODUCT_PRICE_MAX,
+  PRODUCT_PRICE_MESSAGE,
+  PRODUCT_STOCK_MAX,
+  PRODUCT_STOCK_MESSAGE,
+  PRODUCT_STOCK_MIN
+} from '~/utils/validators'
 
 function ProductSKUTable({ form }) {
   const renderPriceInput = (index) => (
     <Controller
       name={`product_skus.${index}.price`}
       control={form.control}
-      rules={{ required: FIELD_REQUIRED_MESSAGE }}
+      rules={{
+        required: FIELD_REQUIRED_MESSAGE,
+        validate: {
+          positive: (value) => {
+            const numValue = parseFloat(String(value).replace(/[$,]/g, ''))
+            return numValue > 0 || PRODUCT_PRICE_MESSAGE
+          },
+          maxPrice: (value) => {
+            const numValue = parseFloat(String(value).replace(/[$,]/g, ''))
+            return numValue <= PRODUCT_PRICE_MAX || PRODUCT_PRICE_MESSAGE
+          }
+        }
+      }}
       render={({ field: { ref, ...field } }) => (
         <NumericFormat
           placeholder="Price"
@@ -29,6 +48,8 @@ function ProductSKUTable({ form }) {
           fixedDecimalScale
           thousandSeparator
           customInput={TextField}
+          error={!!errors.product_skus?.[index]?.price}
+          helperText={errors.product_skus?.[index]?.price?.message}
           onValueChange={(values) => {
             field.onChange(values.value || '')
           }}
@@ -43,12 +64,26 @@ function ProductSKUTable({ form }) {
       size="small"
       fullWidth
       placeholder="Stock"
-      {...register(`product_skus.${index}.stock`)}
+      {...register(`product_skus.${index}.stock`, {
+        required: FIELD_REQUIRED_MESSAGE,
+        min: {
+          value: PRODUCT_STOCK_MIN,
+          message: PRODUCT_STOCK_MESSAGE
+        },
+        max: {
+          value: PRODUCT_STOCK_MAX,
+          message: PRODUCT_STOCK_MESSAGE
+        },
+        validate: (value) =>
+          Number.isInteger(Number(value)) || 'Stock must be a whole number'
+      })}
+      error={!!errors.product_skus?.[index]?.stock}
+      helperText={errors.product_skus?.[index]?.stock?.message}
     />
   )
 
   const { productVariations, productSKUs } = useProductSKUsTable({ form })
-  const { register } = form
+  const { register, errors } = form
 
   return (
     <>
@@ -88,8 +123,24 @@ function ProductSKUTable({ form }) {
                     </TableCell>
                   )}
                   {option2 && <TableCell>{option2.value}</TableCell>}
-                  <TableCell>{renderPriceInput(index)}</TableCell>
-                  <TableCell>{renderStockInput(index)}</TableCell>
+                  <TableCell
+                    style={{
+                      verticalAlign: 'top',
+                      minWidth: '300px',
+                      width: '350px'
+                    }}
+                  >
+                    {renderPriceInput(index)}
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      verticalAlign: 'top',
+                      minWidth: '300px',
+                      width: '350px'
+                    }}
+                  >
+                    {renderStockInput(index)}
+                  </TableCell>
                 </TableRow>
               )
             })}
