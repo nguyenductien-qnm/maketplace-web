@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import {
-  createProductAPI,
+  createProductByOwnerAPI,
   getDetailProductByOwnerAPI,
   updateProductAPI
 } from '~/api/product.api'
@@ -19,6 +19,7 @@ import {
   PRODUCT_STOCK_MIN
 } from '~/utils/validators'
 import { pick } from 'lodash'
+import buildFormData from '~/helpers/buildFormData'
 const DEFAULT_VALUES = {
   enable_variations: false,
   product_name: '',
@@ -26,7 +27,7 @@ const DEFAULT_VALUES = {
   product_price: null,
   product_stock: null,
   product_category: '',
-  product_visibility: 'private',
+  product_visibility: '',
   product_tags: [],
   product_attributes: [
     { key: '', value: '' },
@@ -35,7 +36,7 @@ const DEFAULT_VALUES = {
   ],
   product_description: '',
   product_variations: [],
-  product_skus: [],
+  products_sku: [],
   product_dimensions: {
     length: null,
     width: null,
@@ -51,7 +52,9 @@ const BASE_PRODUCT_FIELDS = [
   'product_description',
   'product_tags',
   'product_attributes',
-  'product_demission'
+  'product_dimensions',
+  'product_visibility',
+  'enable_variations'
 ]
 
 const SIMPLE_PRODUCT_FIELDS = [
@@ -63,7 +66,7 @@ const SIMPLE_PRODUCT_FIELDS = [
 const VARIABLE_PRODUCT_FIELDS = [
   ...BASE_PRODUCT_FIELDS,
   'product_variations',
-  'product_skus'
+  'products_sku'
 ]
 
 export const useVendorProductForm = () => {
@@ -87,12 +90,12 @@ export const useVendorProductForm = () => {
   const [categoriesTree, setCategoriesTree] = useState([])
 
   const enableVariations = watch('enable_variations')
-  const productSKUs = watch('product_skus')
+  const productSKUs = watch('products_sku')
   const productVariations = watch('product_variations')
 
   useEffect(() => {
     fetchCategories()
-    if (pathname === '/vendor/create-product') setLoading(false)
+    if (pathname === '/vendor/product/create') setLoading(false)
   }, [pathname])
 
   const fetchCategories = async () => {
@@ -100,7 +103,7 @@ export const useVendorProductForm = () => {
     if (status === StatusCodes.OK) setCategoriesTree(resData.metadata || [])
   }
 
-  const isCreate = pathname === '/vendor/create-product'
+  const isCreate = pathname === '/vendor/product/create'
   const isUpdate = pathname.includes('/vendor/update-product')
   const pageTitle = isCreate
     ? 'Create Product'
@@ -133,9 +136,13 @@ export const useVendorProductForm = () => {
       toast.error(PRODUCT_PRICE_MESSAGE)
       return
     }
-    const updateProductSKUs = productSKUs.map((p) => ({ ...p, price, stock }))
-    clearErrors('product_skus')
-    setValue('product_skus', updateProductSKUs)
+    const updateProductSKUs = productSKUs.map((p) => ({
+      ...p,
+      product_price: price,
+      product_stock: stock
+    }))
+    clearErrors('products_sku')
+    setValue('products_sku', updateProductSKUs)
   }
 
   const handleAddVariation = () => {
@@ -193,22 +200,53 @@ export const useVendorProductForm = () => {
     }
   }
 
-  const handleFormSubmit = handleSubmit(async (data) => {
-    const productData = pick(
-      getValues(),
-      enableVariations ? VARIABLE_PRODUCT_FIELDS : SIMPLE_PRODUCT_FIELDS
-    )
-    const formattedData = formatProductData(productData)
-    console.log(formattedData)
+  const handleFormSubmit = handleSubmit(async () => {
+    try {
+      setIsSubmitting(true)
+      const productFields = enableVariations
+        ? VARIABLE_PRODUCT_FIELDS
+        : SIMPLE_PRODUCT_FIELDS
+
+      const productData = pick(getValues(), productFields)
+
+      const formattedData = formatProductData(productData, productFields)
+      await createProductByOwnerAPI({
+        payload: formattedData,
+        loadingClass: []
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   })
 
-  const formatProductData = (data) => {
-    return {
-      ...data,
-      product_images: data.product_images.map((img) => img.file),
-      product_price: parseFloat(data.product_price?.replace('$', '') || 0),
-      product_stock: parseInt(data.product_stock)
+  const formatProductData = (data, productFields) => {
+    let formattedData = {}
+    if (enableVariations) {
+      formattedData = {
+        ...data,
+        product_images: data.product_images?.map((img) => img.file),
+        product_variations: data.product_variations?.map((v) => {
+          const options = v?.options?.map((o) => o.value)
+          return { name: v.name, options }
+        }),
+        products_sku: data.products_sku?.map((sku) => {
+          return {
+            ...sku,
+            product_price: parseFloat(sku.product_price?.replace('$', '') || 0),
+            product_stock: parseInt(sku.product_stock)
+          }
+        })
+      }
+    } else {
+      formattedData = {
+        ...data,
+        product_images: data.product_images?.map((img) => img.file),
+        product_price: parseFloat(data.product_price?.replace('$', '') || 0),
+        product_stock: parseInt(data.product_stock)
+      }
     }
+
+    return buildFormData(formattedData, productFields)
   }
 
   // const handleFormSubmit = () => {

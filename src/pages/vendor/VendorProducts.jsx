@@ -7,6 +7,9 @@ import TabPanel from '@mui/lab/TabPanel'
 import ProductTable from '~/components/vendor/VendorProduct/ProductTable'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import TypographyTitle from '~/components/common/TypographyTitle'
+import FilterListIcon from '@mui/icons-material/FilterList'
+import AddIcon from '@mui/icons-material/Add'
 
 const TAB_LABELS = {
   ALL: 'All',
@@ -25,6 +28,21 @@ function VendorProducts() {
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <TypographyTitle>My Products</TypographyTitle>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined">
+            <FilterListIcon sx={{ pr: '5px' }} />
+            Filter
+          </Button>
+          <Link to="/vendor/product/create">
+            <Button variant="outlined">
+              <AddIcon sx={{ pr: '5px' }} />
+              Add New Product
+            </Button>
+          </Link>
+        </Box>
+      </Box>
       <TabContext value={status}>
         <Box
           sx={{
@@ -45,16 +63,10 @@ function VendorProducts() {
               />
             ))}
           </TabList>
-
-          <Link to="/vendor/create-product">
-            <Button variant="contained" color="primary">
-              Create product
-            </Button>
-          </Link>
         </Box>
 
         {TABS.map((tab) => (
-          <TabPanel key={tab} value={tab}>
+          <TabPanel key={tab} value={tab} sx={{ padding: '24px 0' }}>
             {status === tab && <ProductTable status={tab} />}
           </TabPanel>
         ))}

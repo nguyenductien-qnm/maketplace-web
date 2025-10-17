@@ -2,12 +2,20 @@ const buildFormData = (data, fields) => {
   const formData = new FormData()
 
   const appendField = (key, value) => {
-    if (value instanceof File) {
+    if (Array.isArray(value)) {
+      if (value.length > 0 && value[0] instanceof File) {
+        value.forEach((file) => {
+          formData.append(key, file)
+        })
+      } else {
+        formData.append(key, JSON.stringify(value))
+      }
+    } else if (value instanceof File) {
       formData.append(key, value)
-    } else if (typeof value === 'object') {
+    } else if (typeof value === 'object' && value !== null) {
       formData.append(key, JSON.stringify(value))
     } else {
-      formData.append(key, value || '')
+      formData.append(key, value)
     }
   }
 

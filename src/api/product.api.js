@@ -12,12 +12,12 @@ const getProductDetailForCustomerAPI = async (product_slug) => {
 }
 // ============================ VENDOR ============================
 const queryProductByOwnerAPI = async (payloads) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/product/query-product-by-owner`,
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/product`,
     payloads,
     { ...TOAST_MODE.ONLY_ERROR }
   )
-  return res
+  return { status, resData: data }
 }
 
 const getDetailProductByOwnerAPI = async (_id) => {
@@ -71,8 +71,8 @@ const restoreProductAPI = async (_id) => {
   return res
 }
 
-const createProductAPI = async (data, loadingClass) => {
-  await authorizedAxios.post(`${API_ROOT}/v1/api/product/create`, data, {
+const createProductByOwnerAPI = async ({ payload, loadingClass }) => {
+  await authorizedAxios.post(`${API_ROOT}/v1/api/shop/product`, payload, {
     loadingClass,
     ...TOAST_MODE.ALL
   })
@@ -144,7 +144,7 @@ export {
   softDeleteProductAPI,
   deletePermanentProductAPI,
   restoreProductAPI,
-  createProductAPI,
+  createProductByOwnerAPI,
   updateProductAPI,
   getDetailProductByOwnerAPI,
   queryProductByOwnerAPI,

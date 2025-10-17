@@ -7,21 +7,27 @@ import Box from '@mui/material/Box'
 import ProductRow from './ProductRow'
 import ProductEmpty from './ProductEmpty'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
-import ProductFilter from './ProductFilter'
 import ConfirmModal from '~/components/common/ConfirmModal'
 import { useVendorProductList } from '~/hooks/vendor/product.hook'
+import { grey } from '@mui/material/colors'
+import { TableFooter, TablePagination } from '@mui/material'
 
 function ProductTable({ status }) {
   const {
-    products,
-    loading,
+    ui,
+    data,
     fetchProducts,
-    openModal,
     openConfirmModal,
     closeModal,
     handleConfirmAction,
-    modalProps
-  } = useVendorProductList(status)
+    handleChangePage,
+    handleChangeRowsPerPage
+  } = useVendorProductList({ productStatus: status })
+
+  const { loading, page, rowsPerPage, openModal, modalProps } = ui
+  const { products, count } = data
+
+  console.log('pokoko:', products)
 
   const handleFilterProduct = async (filters) => {
     await fetchProducts(filters)
@@ -29,40 +35,62 @@ function ProductTable({ status }) {
 
   return (
     <>
-      <Box>
+      {/* <Box>
         <ProductFilter handleFilterProduct={handleFilterProduct} />
-      </Box>
+      </Box> */}
 
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: '50px' }}>
           <CircularIndeterminate />
         </Box>
-      ) : products.length === 0 ? (
+      ) : products?.length === 0 ? (
         <ProductEmpty />
       ) : (
-        <Table>
-          <TableHead>
+        <Table sx={{ width: '100%' }}>
+          <TableHead sx={{ backgroundColor: grey[100] }}>
             <TableRow>
               <TableCell>Image</TableCell>
               <TableCell>Name</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Visibility</TableCell>
-              <TableCell>SKU</TableCell>
+              <TableCell>SKUs</TableCell>
+              <TableCell>Sales</TableCell>
+              <TableCell>Price</TableCell>
               <TableCell>Stock</TableCell>
-              <TableCell sx={{ minWidth: '100px' }}>Min price</TableCell>
-              <TableCell sx={{ minWidth: '100px' }}>Max price</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => (
+            {products?.map((product) => (
               <ProductRow
                 key={product._id}
-                productItem={product}
+                product={product}
                 onOpenModal={openConfirmModal}
               />
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow
+              sx={{
+                position: 'sticky',
+                bottom: 0,
+                backgroundColor: 'background.paper',
+                zIndex: 1
+              }}
+            >
+              <TablePagination
+                rowsPerPageOptions={[10, 25, 50]}
+                colSpan={7}
+                count={count || 0}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                labelRowsPerPage="Rows per page"
+                labelDisplayedRows={({ from, to, count }) =>
+                  `${from}-${to} of ${count}`
+                }
+              />
+            </TableRow>
+          </TableFooter>
         </Table>
       )}
 

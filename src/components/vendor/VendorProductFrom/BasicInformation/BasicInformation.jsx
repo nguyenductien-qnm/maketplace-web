@@ -20,12 +20,14 @@ import {
   PRODUCT_NAME_RULE_MESSAGE
 } from '~/utils/validators'
 import 'react-quill/dist/quill.snow.css'
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 
 const LABELS = {
   TITLE: 'Basic Information',
   PRODUCT_NAME: 'Product Name',
   CATEGORY: 'Product Category',
-  DESCRIPTION: 'Product Description'
+  DESCRIPTION: 'Product Description',
+  VISIBILITY: 'Product Visibility'
 }
 
 const TOOLTIP = {
@@ -85,6 +87,29 @@ function BasicInformation({ form, categoriesTree }) {
                 )
               }
             }}
+          />
+        </Grid2>
+
+        <Grid2 size={12}>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <TypographyLabel>{LABELS.VISIBILITY}</TypographyLabel>
+            <Tooltip arrow placement="top" title={TOOLTIP.PRODUCT_NAME}>
+              <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
+            </Tooltip>
+          </Box>
+          <Controller
+            name="product_visibility"
+            control={control}
+            rules={{ required: FIELD_REQUIRED_MESSAGE }}
+            render={({ field, fieldState: { error } }) => (
+              <FormControl fullWidth error={!!error}>
+                <Select value={field.value || ''} onChange={field.onChange}>
+                  <MenuItem value="public">Public</MenuItem>
+                  <MenuItem value="private">Private</MenuItem>
+                </Select>
+                {error && <FormHelperText>{error.message}</FormHelperText>}
+              </FormControl>
+            )}
           />
         </Grid2>
 

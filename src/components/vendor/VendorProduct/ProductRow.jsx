@@ -9,18 +9,29 @@ import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined
 import formatCurrency from '~/utils/formatCurrency'
 import { green, red } from '@mui/material/colors'
 import { navigate } from '~/helpers/navigation'
+import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
+import { Chip } from '@mui/material'
 
-function ProductRow({ productItem, onOpenModal }) {
+function ProductRow({ product, onOpenModal }) {
+  const { product_price_min, product_price_max } = product
   return (
     <TableRow>
       <TableCell>
         <img
           style={{ height: '50px' }}
-          src={productItem.product_thumb}
+          src={product.product_images?.[0].url}
           alt="Product"
         />
       </TableCell>
-      <TableCell sx={{ minWidth: '100px', overflow: 'hidden' }}>
+      <TableCell
+        sx={{ minWidth: '100px', maxWidth: '200px', overflow: 'hidden' }}
+      >
+        {product?.product_visibility === 'private' && (
+          <Chip
+            label="Private"
+            sx={{ mb: 1, borderRadius: '5px', height: '25px' }}
+          />
+        )}
         <Typography
           variant="body2"
           sx={{
@@ -29,31 +40,30 @@ function ProductRow({ productItem, onOpenModal }) {
             WebkitLineClamp: 3,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            wordBreak: 'break-word'
+            wordBreak: 'break-word',
+            mb: 1
           }}
         >
-          {productItem.product_name}
+          {product?.product_name}
+        </Typography>
+        <Typography variant="caption" sx={{ color: 'grey' }}>
+          CODE: {product?.product_code}
         </Typography>
       </TableCell>
+      <TableCell>{product.product_sku_count}</TableCell>
+      <TableCell>1000</TableCell>
       <TableCell>
-        {productItem.product_status === 'pending' && 'Pending'}
-        {productItem.product_status === 'approved' && 'Approved'}
-        {productItem.product_status === 'reject' && 'Reject'}
+        {product_price_min === product_price_max
+          ? formatCurrency(product_price_min)
+          : `${formatCurrency(product_price_min)}-${formatCurrency(
+              product_price_max
+            )}`}
       </TableCell>
-      <TableCell>
-        {productItem.product_visibility === 'public' && 'Public'}
-        {productItem.product_visibility === 'private' && 'Private'}
-      </TableCell>
-      <TableCell>
-        {productItem.product_classifications.length > 0 ? 'YES' : 'NO'}
-      </TableCell>
-      <TableCell>{productItem.product_stock}</TableCell>
-      <TableCell>{formatCurrency(productItem.product_min_price)}</TableCell>
-      <TableCell>{formatCurrency(productItem.product_max_price)}</TableCell>
+      <TableCell>{product?.product_stock_total}</TableCell>
 
       <TableCell sx={{ height: '100%' }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          {productItem.deletedAt ? (
+          {product.deletedAt ? (
             <>
               <RestoreOutlinedIcon
                 sx={{
@@ -61,7 +71,7 @@ function ProductRow({ productItem, onOpenModal }) {
                   color: '#1976d2',
                   '&:hover': { cursor: 'pointer' }
                 }}
-                onClick={() => onOpenModal(productItem._id, 'restore')}
+                onClick={() => onOpenModal(product._id, 'restore')}
               />
 
               <DeleteForeverOutlinedIcon
@@ -70,14 +80,14 @@ function ProductRow({ productItem, onOpenModal }) {
                   color: red[600],
                   '&:hover': { cursor: 'pointer' }
                 }}
-                onClick={() => onOpenModal(productItem._id, 'permanentDelete')}
+                onClick={() => onOpenModal(product._id, 'permanentDelete')}
               />
             </>
           ) : (
             <>
               <ModeOutlinedIcon
                 onClick={() =>
-                  navigate(`/vendor/update-product/${productItem._id}`)
+                  navigate(`/vendor/update-product/${product._id}`)
                 }
                 sx={{
                   fontSize: 24,
@@ -92,7 +102,7 @@ function ProductRow({ productItem, onOpenModal }) {
                   color: red[600],
                   '&:hover': { cursor: 'pointer' }
                 }}
-                onClick={() => onOpenModal(productItem._id, 'softDelete')}
+                onClick={() => onOpenModal(product._id, 'softDelete')}
               />
             </>
           )}

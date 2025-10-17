@@ -41,10 +41,7 @@ function VendorSideBar() {
         Dashboard
       </CustomLink>
       <Divider />
-      <CustomLink
-        to="/vendor/products"
-        isActive={checkUrl('products', 'create-product', 'update-product')}
-      >
+      <CustomLink to="/vendor/product" isActive={checkUrl('product')}>
         <BusinessCenterOutlinedIcon />
         Products
       </CustomLink>
@@ -57,11 +54,7 @@ function VendorSideBar() {
         Orders
       </CustomLink>
       <Divider />
-      <CustomLink to="/vendor/profile" isActive={checkUrl('profile')}>
-        <AssignmentIndIcon />
-        Profile
-      </CustomLink>
-      <Divider />
+
       <CustomLink to="/vendor/vouchers" isActive={checkUrl('vouchers')}>
         <DiscountOutlinedIcon />
         Vouchers
@@ -75,6 +68,11 @@ function VendorSideBar() {
       <CustomLink to="/vendor/metrics" isActive={checkUrl('metric')}>
         <LegendToggleIcon />
         Metrics
+      </CustomLink>
+      <Divider />
+      <CustomLink to="/vendor/profile" isActive={checkUrl('profile')}>
+        <AssignmentIndIcon />
+        Profile
       </CustomLink>
       <Divider />
       <CustomLink to="/vendor/setting" isActive={checkUrl('setting')}>

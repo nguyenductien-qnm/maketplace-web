@@ -16,9 +16,9 @@ export const PRODUCT_NAME_RULE = /^[A-Za-zÀ-ỹ0-9\s\-_,.():]{10,120}$/
 export const PRODUCT_NAME_RULE_MESSAGE =
   'Product name: 10-120 characters, alphanumeric and basic punctuation only.'
 // ==================== product name ============================
-export const PRODUCT_TAG_RULE = /^[A-Za-zÀ-ỹ\s]{1,20}$/
+export const PRODUCT_TAG_RULE = /^[A-Za-zÀ-ỹ0-9\s-]{1,20}$/
 export const PRODUCT_TAG_RULE_MESSAGE =
-  'Each tag must be 1-20 characters and contain letters only.'
+  'Each tag must be 1-20 characters and contain letters, numbers, spaces, and hyphens only.'
 // ==================== product attribute key ============================
 export const PRODUCT_ATTRIBUTE_KEY_RULE = /^[A-Za-zÀ-ỹ0-9,\s]{1,20}$/
 export const PRODUCT_ATTRIBUTE_KEY_MESSAGE =
@@ -46,9 +46,9 @@ export const PRODUCT_VARIATION_NAME_MESSAGE =
   'Variation name: max 14 chars (letters, numbers, spaces)'
 
 // Option validation
-export const PRODUCT_VARIATION_OPTION_RULE = /^[A-Za-zÀ-ỹ0-9\s]{1,20}$/
+export const PRODUCT_VARIATION_OPTION_RULE = /^[A-Za-zÀ-ỹ0-9\s-]{1,20}$/
 export const PRODUCT_VARIATION_OPTION_MESSAGE =
-  'Option name: max 20 chars (letters, numbers, spaces)'
+  'Option name: max 20 chars (letters, numbers, spaces, hyphen "-")'
 
 // Variation constraints
 export const MAX_VARIATIONS = 2

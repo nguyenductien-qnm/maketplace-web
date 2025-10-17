@@ -21,7 +21,7 @@ import {
 function ProductSKUTable({ form }) {
   const renderPriceInput = (index) => (
     <Controller
-      name={`product_skus.${index}.price`}
+      name={`products_sku.${index}.product_price`}
       control={form.control}
       rules={{
         required: FIELD_REQUIRED_MESSAGE,
@@ -48,8 +48,8 @@ function ProductSKUTable({ form }) {
           fixedDecimalScale
           thousandSeparator
           customInput={TextField}
-          error={!!errors.product_skus?.[index]?.price}
-          helperText={errors.product_skus?.[index]?.price?.message}
+          error={!!errors.products_sku?.[index]?.product_price}
+          helperText={errors.products_sku?.[index]?.product_price?.message}
           onValueChange={(values) => {
             field.onChange(values.value || '')
           }}
@@ -64,7 +64,7 @@ function ProductSKUTable({ form }) {
       size="small"
       fullWidth
       placeholder="Stock"
-      {...register(`product_skus.${index}.stock`, {
+      {...register(`products_sku.${index}.product_stock`, {
         required: FIELD_REQUIRED_MESSAGE,
         min: {
           value: PRODUCT_STOCK_MIN,
@@ -77,8 +77,8 @@ function ProductSKUTable({ form }) {
         validate: (value) =>
           Number.isInteger(Number(value)) || 'Stock must be a whole number'
       })}
-      error={!!errors.product_skus?.[index]?.stock}
-      helperText={errors.product_skus?.[index]?.stock?.message}
+      error={!!errors.products_sku?.[index]?.product_stock}
+      helperText={errors.products_sku?.[index]?.product_stock?.message}
     />
   )
 
@@ -88,7 +88,7 @@ function ProductSKUTable({ form }) {
   return (
     <>
       <TableContainer>
-        <Table sx={{ borderCollapse: 'collapse !important' }}>
+        <Table>
           <TableHead sx={{ backgroundColor: grey[100] }}>
             <TableRow>
               {productVariations?.map((variation, index) => (

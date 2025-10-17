@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { queryProductByOwnerAPI } from '~/api/product.api'
 import {
-  createProductAPI,
   getDetailProductByOwnerAPI,
   updateProductAPI,
   deletePermanentProductAPI,
@@ -11,27 +10,67 @@ import {
 import { toast } from 'react-toastify'
 import { useForm } from 'react-hook-form'
 import { prepareImageForStorage } from '~/helpers/resizeImage'
+import { StatusCodes } from 'http-status-codes'
 
-export const useVendorProductList = (status) => {
+const MODAL_PROPS = {
+  softDelete: {
+    header: 'Confirm Temporary Deletion',
+    content:
+      'Are you sure you want to temporarily delete this product? You can restore it within 15 days.',
+    confirmText: 'Soft Delete',
+    confirmColor: 'warning'
+  },
+  permanentDelete: {
+    header: 'Confirm Permanent Deletion',
+    content:
+      'This action cannot be undone! Are you sure you want to permanently delete this product?',
+    confirmText: 'Delete Permanently',
+    confirmColor: 'error'
+  },
+  restore: {
+    header: 'Confirm Restore',
+    content: 'Are you sure you want to restore this product?',
+    confirmText: 'Restore',
+    confirmColor: 'primary'
+  }
+}
+
+export const useVendorProductList = ({ productStatus }) => {
+  // ============================== STATE ==============================
   const [products, setProducts] = useState([])
+  const [count, setCount] = useState(0)
   const [loading, setLoading] = useState(true)
+
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
+
   const [openModal, setOpenModal] = useState(false)
   const [selectedProductId, setSelectedProductId] = useState(null)
   const [actionType, setActionType] = useState('softDelete')
 
+  // ============================== EFFECT ==============================
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  // ============================== API ==============================
+
   const fetchProducts = async (filters = {}) => {
     setLoading(true)
     try {
-      const res = await queryProductByOwnerAPI({ status, ...filters })
-      setProducts(res?.data?.metadata || [])
+      const { status, resData } = await queryProductByOwnerAPI({
+        productStatus,
+        ...filters
+      })
+      if (status === StatusCodes.OK) {
+        const { products, count } = resData.metadata
+        setProducts(products || [])
+        setCount(count || 0)
+      }
     } finally {
       setLoading(false)
     }
   }
-
-  useEffect(() => {
-    fetchProducts()
-  }, [])
 
   const handleProductAction = useCallback((productId, actionType) => {
     switch (actionType) {
@@ -85,39 +124,22 @@ export const useVendorProductList = (status) => {
     }
   }, [selectedProductId, actionType, handleProductAction, closeModal])
 
-  const modalProps = {
-    softDelete: {
-      header: 'Confirm Temporary Deletion',
-      content:
-        'Are you sure you want to temporarily delete this product? You can restore it within 15 days.',
-      confirmText: 'Soft Delete',
-      confirmColor: 'warning'
-    },
-    permanentDelete: {
-      header: 'Confirm Permanent Deletion',
-      content:
-        'This action cannot be undone! Are you sure you want to permanently delete this product?',
-      confirmText: 'Delete Permanently',
-      confirmColor: 'error'
-    },
-    restore: {
-      header: 'Confirm Restore',
-      content: 'Are you sure you want to restore this product?',
-      confirmText: 'Restore',
-      confirmColor: 'primary'
-    }
-  }
-
   return {
-    products,
-    loading,
+    ui: {
+      loading,
+      page,
+
+      rowsPerPage,
+      openModal,
+      modalProps: MODAL_PROPS[actionType]
+    },
+    data: {
+      products,
+      count
+    },
     fetchProducts,
-    handleProductAction,
-    openModal,
     openConfirmModal,
     closeModal,
-    handleConfirmAction,
-    modalProps: modalProps[actionType]
+    handleConfirmAction
   }
 }
-

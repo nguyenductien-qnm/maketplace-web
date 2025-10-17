@@ -17,8 +17,8 @@ const VendorRoutes = ({ user }) => {
     <Route element={<RequireAuthRoute user={user} allowedRoles={['SHOP']} />}>
       <Route element={<VendorLayout />}>
         <Route path="dashboard" element={<VendorDashboard />} />
-        <Route path="products" element={<VendorProducts />} />
-        <Route path="create-product" element={<VendorProductForm />} />
+        <Route path="product" element={<VendorProducts />} />
+        <Route path="product/create" element={<VendorProductForm />} />
         <Route path="update-product/:_id" element={<VendorProductForm />} />
         <Route path="orders" element={<VendorOrders />} />
         <Route path="order-detail" element={<VendorOrderDetail />} />

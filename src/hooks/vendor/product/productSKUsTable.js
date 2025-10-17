@@ -7,11 +7,11 @@ export const useProductSKUsTable = ({ form }) => {
     name: 'product_variations'
   })
 
-  const productSKUs = form.watch('product_skus')
+  const productSKUs = form.watch('products_sku')
 
   useEffect(() => {
     if (watchedVariations && watchedVariations.length > 0) {
-      const currentSkus = form.getValues('product_skus') || []
+      const currentSkus = form.getValues('products_sku') || []
       const newSkus = generateSKUs(watchedVariations)
 
       const updatedSkus = newSkus.map((newSku) => {
@@ -21,10 +21,14 @@ export const useProductSKUsTable = ({ form }) => {
             JSON.stringify(newSku.sku_tier_indices)
         )
         return oldSku
-          ? { ...newSku, price: oldSku.price, stock: oldSku.stock }
+          ? {
+              ...newSku,
+              product_price: oldSku.product_price,
+              product_stock: oldSku.product_stock
+            }
           : newSku
       })
-      form.setValue('product_skus', updatedSkus)
+      form.setValue('products_sku', updatedSkus)
     }
   }, [
     watchedVariations?.length,
@@ -39,8 +43,8 @@ export const useProductSKUsTable = ({ form }) => {
         return [
           {
             sku_tier_indices: [...indices],
-            price: '',
-            stock: ''
+            product_price: '',
+            product_stock: ''
           }
         ]
       }
