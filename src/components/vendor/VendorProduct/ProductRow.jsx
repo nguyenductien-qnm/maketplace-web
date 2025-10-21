@@ -9,7 +9,6 @@ import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined
 import formatCurrency from '~/utils/formatCurrency'
 import { green, red } from '@mui/material/colors'
 import { navigate } from '~/helpers/navigation'
-import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
 import { Chip } from '@mui/material'
 
 function ProductRow({ product, onOpenModal }) {
@@ -19,7 +18,7 @@ function ProductRow({ product, onOpenModal }) {
       <TableCell>
         <img
           style={{ height: '50px' }}
-          src={product.product_images?.[0].url}
+          src={product.product_images}
           alt="Product"
         />
       </TableCell>
@@ -51,7 +50,7 @@ function ProductRow({ product, onOpenModal }) {
         </Typography>
       </TableCell>
       <TableCell>{product.product_sku_count}</TableCell>
-      <TableCell>1000</TableCell>
+      <TableCell>{product.product_revenue}</TableCell>
       <TableCell>
         {product_price_min === product_price_max
           ? formatCurrency(product_price_min)
@@ -87,7 +86,7 @@ function ProductRow({ product, onOpenModal }) {
             <>
               <ModeOutlinedIcon
                 onClick={() =>
-                  navigate(`/vendor/update-product/${product._id}`)
+                  navigate(`/vendor/product/update/${product._id}`)
                 }
                 sx={{
                   fontSize: 24,

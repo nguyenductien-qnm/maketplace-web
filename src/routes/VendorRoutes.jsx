@@ -19,7 +19,7 @@ const VendorRoutes = ({ user }) => {
         <Route path="dashboard" element={<VendorDashboard />} />
         <Route path="product" element={<VendorProducts />} />
         <Route path="product/create" element={<VendorProductForm />} />
-        <Route path="update-product/:_id" element={<VendorProductForm />} />
+        <Route path="product/update/:_id" element={<VendorProductForm />} />
         <Route path="orders" element={<VendorOrders />} />
         <Route path="order-detail" element={<VendorOrderDetail />} />
         <Route path="profile" element={<VendorProfile />} />

@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { queryProductByOwnerAPI } from '~/api/product.api'
 import {
-  getDetailProductByOwnerAPI,
-  updateProductAPI,
   deletePermanentProductAPI,
   restoreProductAPI,
   softDeleteProductAPI

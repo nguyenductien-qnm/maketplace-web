@@ -3,12 +3,14 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import noProductFound from '~/assets/user/svgIcon/no-product-found.svg'
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined'
+import AddIcon from '@mui/icons-material/Add'
 import { blue } from '@mui/material/colors'
 import { Link } from 'react-router-dom'
 function ProductEmpty() {
   return (
     <Box
       sx={{
+        mt: 10,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -24,10 +26,10 @@ function ProductEmpty() {
       <Typography sx={{ fontSize: '20px', fontWeight: '600' }}>
         Ready to start selling something awesome?
       </Typography>
-      <Link to="/vendor/create-product">
+      <Link to="/vendor/product/create">
         <Button
           sx={{
-            mt: '10px',
+            mt: '20px',
             fontSize: '14px',
             padding: '5px 20px',
             color: 'white',
@@ -38,7 +40,7 @@ function ProductEmpty() {
             gap: '10px'
           }}
         >
-          <BusinessCenterOutlinedIcon />
+          <AddIcon />
           Add new product
         </Button>
       </Link>

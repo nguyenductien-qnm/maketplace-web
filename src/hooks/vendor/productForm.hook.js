@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import {
   createProductByOwnerAPI,
-  getDetailProductByOwnerAPI,
-  updateProductAPI
+  getProductDetailByOwnerAPI,
+  updateProductByOwnerAPI
 } from '~/api/product.api'
 import { toast } from 'react-toastify'
 import { useForm } from 'react-hook-form'
@@ -18,8 +18,9 @@ import {
   PRODUCT_STOCK_MESSAGE,
   PRODUCT_STOCK_MIN
 } from '~/utils/validators'
-import { pick } from 'lodash'
+import { pick, update } from 'lodash'
 import buildFormData from '~/helpers/buildFormData'
+
 const DEFAULT_VALUES = {
   enable_variations: false,
   product_name: '',
@@ -70,9 +71,7 @@ const VARIABLE_PRODUCT_FIELDS = [
 ]
 
 export const useVendorProductForm = () => {
-  const { _id } = useParams()
-  const { pathname } = useLocation()
-
+  // ============================== DATA ==============================
   const {
     setValue,
     watch,
@@ -85,6 +84,9 @@ export const useVendorProductForm = () => {
     formState: { errors }
   } = useForm({ defaultValues: DEFAULT_VALUES })
 
+  const { _id } = useParams()
+  const { pathname } = useLocation()
+
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [categoriesTree, setCategoriesTree] = useState([])
@@ -93,34 +95,110 @@ export const useVendorProductForm = () => {
   const productSKUs = watch('products_sku')
   const productVariations = watch('product_variations')
 
-  useEffect(() => {
-    fetchCategories()
-    if (pathname === '/vendor/product/create') setLoading(false)
-  }, [pathname])
-
-  const fetchCategories = async () => {
-    const { status, resData } = await getCategoriesByOwnerAPI()
-    if (status === StatusCodes.OK) setCategoriesTree(resData.metadata || [])
-  }
-
   const isCreate = pathname === '/vendor/product/create'
-  const isUpdate = pathname.includes('/vendor/update-product')
+  const isUpdate = pathname.includes('/vendor/product/update')
   const pageTitle = isCreate
     ? 'Create Product'
     : isUpdate
     ? 'Update Product'
     : ''
 
+  // ============================== EFFECT ==============================
+
+  useEffect(() => {
+    fetchCategories()
+    if (isCreate) setLoading(false)
+    if (isUpdate) {
+      fetchProductDetail()
+    }
+  }, [pathname])
+
   useEffect(() => {
     if (productVariations?.length == 0) {
       setValue('enable_variations', false)
     }
   }, [productVariations])
+  // ============================== API ==============================
 
-  const isEditMode = useMemo(
-    () => pathname.includes('/vendor/update-product'),
-    [pathname]
-  )
+  const fetchCategories = async () => {
+    const { status, resData } = await getCategoriesByOwnerAPI()
+    if (status === StatusCodes.OK) setCategoriesTree(resData.metadata || [])
+  }
+
+  const fetchProductDetail = async () => {
+    try {
+      const { status, resData } = await getProductDetailByOwnerAPI({ _id })
+      if (status === StatusCodes.OK) setFormData(resData?.metadata)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleFormSubmit = handleSubmit(async () => {
+    try {
+      setIsSubmitting(true)
+      const productFields = enableVariations
+        ? VARIABLE_PRODUCT_FIELDS
+        : SIMPLE_PRODUCT_FIELDS
+
+      const productData = pick(getValues(), productFields)
+
+      const action = isCreate ? 'create' : 'update'
+
+      const formattedData = formatProductData({
+        data: productData,
+        productFields,
+        action
+      })
+
+      for (var pair of formattedData.entries()) {
+        console.log(pair[0] + ', ' + pair[1])
+      }
+
+      if (isCreate)
+        await createProductByOwnerAPI({
+          payload: formattedData,
+          loadingClass: []
+        })
+
+      if (isUpdate)
+        await updateProductByOwnerAPI({
+          _id,
+          payload: formattedData,
+          loadingClass: []
+        })
+    } catch {
+      setIsSubmitting(false)
+    } finally {
+      setIsSubmitting(false)
+    }
+  })
+
+  // ============================== HANDLER ==============================
+  const setFormData = (data) => {
+    const { product_type, products_sku, product_variations } = data
+    setValue('product_name', data?.product_name)
+    setValue('product_images', data?.product_images)
+    setValue('product_visibility', data?.product_visibility)
+    setValue('product_category', data?.product_category)
+    setValue('product_description', data?.product_description)
+    setValue('product_tags', data?.product_tags)
+    setValue('product_attributes', data?.product_attributes)
+    setValue('product_dimensions', data?.product_dimensions)
+    if (product_type == 'variable' && products_sku.length > 0) {
+      setValue('enable_variations', true)
+      setValue('products_sku', products_sku)
+      product_variations.map((variation) => {
+        return (variation.options = variation.options?.map((option) => {
+          return { value: option }
+        }))
+      })
+      setValue('product_variations', product_variations)
+    } else {
+      setValue('product_price', products_sku[0].product_price)
+      setValue('product_stock', products_sku[0].product_stock)
+    }
+  }
 
   const handleEnableVariation = () => {
     setValue('enable_variations', true)
@@ -200,274 +278,59 @@ export const useVendorProductForm = () => {
     }
   }
 
-  const handleFormSubmit = handleSubmit(async () => {
-    try {
-      setIsSubmitting(true)
-      const productFields = enableVariations
-        ? VARIABLE_PRODUCT_FIELDS
-        : SIMPLE_PRODUCT_FIELDS
-
-      const productData = pick(getValues(), productFields)
-
-      const formattedData = formatProductData(productData, productFields)
-      await createProductByOwnerAPI({
-        payload: formattedData,
-        loadingClass: []
-      })
-    } finally {
-      setIsSubmitting(false)
+  const normalizePrice = (value) => {
+    if (typeof value === 'string') {
+      const cleaned = value.replace(/[^\d.]/g, '')
+      return parseFloat(cleaned) || 0
     }
-  })
-
-  const formatProductData = (data, productFields) => {
-    let formattedData = {}
-    if (enableVariations) {
-      formattedData = {
-        ...data,
-        product_images: data.product_images?.map((img) => img.file),
-        product_variations: data.product_variations?.map((v) => {
-          const options = v?.options?.map((o) => o.value)
-          return { name: v.name, options }
-        }),
-        products_sku: data.products_sku?.map((sku) => {
-          return {
-            ...sku,
-            product_price: parseFloat(sku.product_price?.replace('$', '') || 0),
-            product_stock: parseInt(sku.product_stock)
-          }
-        })
-      }
-    } else {
-      formattedData = {
-        ...data,
-        product_images: data.product_images?.map((img) => img.file),
-        product_price: parseFloat(data.product_price?.replace('$', '') || 0),
-        product_stock: parseInt(data.product_stock)
-      }
-    }
-
-    return buildFormData(formattedData, productFields)
+    return value ?? 0
   }
 
-  // const handleFormSubmit = () => {
-  //   console.log(getValues())
-  // }
+  const formatProductData = ({ data, productFields, action }) => {
+    const formattedData = { ...data }
 
-  // useEffect(() => {
-  //   const fetchProduct = async () => {
-  //     if (!_id) {
-  //       setLoading(false)
-  //       return
-  //     }
+    if (action == 'create')
+      formattedData.product_images = data.product_images?.map((img) => img.file)
 
-  //     try {
-  //       const { data } = await getDetailProductByOwnerAPI(_id)
-  //       const product = data.metadata
-  //       if (!product) return
+    if (action == 'update') {
+      const imageFiles = []
+      const imageMetadata = []
 
-  //       Object.entries(product).forEach(([key, value]) => {
-  //         if (
-  //           ![
-  //             'product_sku',
-  //             'product_classifications',
-  //             'isMultiVariation'
-  //           ].includes(key)
-  //         ) {
-  //           const parsedValue =
-  //             ['product_min_price', 'product_max_price'].includes(key) &&
-  //             typeof value === 'number'
-  //               ? value.toString()
-  //               : value
-  //           setValue(key, parsedValue)
-  //         }
-  //       })
+      data.product_images?.forEach((img, index) => {
+        if (img.file instanceof File) {
+          imageFiles.push(img.file)
+          imageMetadata.push({ isNew: true, order: index })
+        } else {
+          imageMetadata.push({ ...img, order: index })
+        }
+      })
 
-  //       if (product.product_sku?.length) {
-  //         const updatedSKU = product.product_sku.map((skuItem) => {
-  //           const mapped = {}
-  //           product.product_classifications.forEach((cls, i) => {
-  //             const name = cls.name
-  //             mapped[name] =
-  //               skuItem[name] || cls.options[skuItem.sku_tier_indices?.[i]]
-  //           })
-  //           return {
-  //             ...mapped,
-  //             _id: skuItem._id.toString(),
-  //             price: skuItem.product_price.toString(),
-  //             stock: skuItem.product_stock.toString()
-  //           }
-  //         })
+      formattedData.product_images = imageMetadata
+      formattedData.new_product_images = imageFiles
+    }
 
-  //         setValue(
-  //           'product_classifications',
-  //           product.product_classifications.map((e) => e.name)
-  //         )
-  //         setValue('product_sku', updatedSKU)
-  //         setValue('isMultiVariation', true)
-  //       }
-  //     } finally {
-  //       setLoading(false)
-  //     }
-  //   }
+    if (enableVariations) {
+      formattedData.product_variations = data.product_variations?.map((v) => ({
+        name: v.name,
+        options: v.options?.map((o) => o.value)
+      }))
+      formattedData.products_sku = data.products_sku?.map((sku) => ({
+        ...sku,
+        product_price: normalizePrice(sku.product_price),
+        product_stock: parseInt(sku.product_stock)
+      }))
+    } else {
+      formattedData.product_price = normalizePrice(data.product_price)
+      formattedData.product_stock = parseInt(data.product_stock)
+    }
 
-  //   fetchProduct()
-  // }, [_id])
+    const fieldsFormData =
+      formattedData.new_product_images?.length > 0
+        ? [...productFields, 'new_product_images']
+        : productFields
 
-  // useEffect(() => {
-  //   if (!isMultiVariation) {
-  //     setValue('product_sku', [])
-  //     setValue('product_classifications', [])
-  //   }
-  // }, [isMultiVariation, setValue])
-
-  // useEffect(() => {
-  //   if (!isMultiVariation) {
-  //     setValue('product_sku', [])
-  //     setValue('product_classifications', [])
-  //   }
-  // }, [isMultiVariation])
-
-  // useEffect(() => {
-  //   if (classifications.length === 0) setValue('product_sku', [])
-  // }, [classifications, setValue])
-
-  // const formatData = useCallback((data) => {
-  //   const parsed = {
-  //     ...data,
-  //     product_min_price: parseFloat(
-  //       data.product_min_price.replace(/[$,]/g, '')
-  //     ),
-  //     product_max_price: parseFloat(
-  //       data.product_max_price.replace(/[$,]/g, '')
-  //     ),
-  //     product_stock: parseInt(data.product_stock, 10)
-  //   }
-
-  //   if (
-  //     data.isMultiVariation &&
-  //     data.product_sku.length > 0 &&
-  //     data.product_classifications.length > 0
-  //   ) {
-  //     const variations = data.product_classifications || []
-  //     const skuList = data.product_sku || []
-
-  //     const formattedSKU = skuList.map((sku) => {
-  //       const attrs = Object.fromEntries(
-  //         variations.filter((key) => key in sku).map((key) => [key, sku[key]])
-  //       )
-  //       return {
-  //         ...attrs,
-  //         _id: sku._id,
-  //         price: parseFloat(sku.price.replace(/[$,]/g, '')),
-  //         stock: parseInt(sku.stock, 10)
-  //       }
-  //     })
-
-  //     // Check for duplicates
-  //     const seen = new Set()
-  //     for (const { price, stock, _id, ...rest } of formattedSKU) {
-  //       const key = JSON.stringify(rest).toLowerCase()
-  //       if (seen.has(key)) {
-  //         toast.error(
-  //           'Duplicate SKU detected! Please ensure each variation is unique.'
-  //         )
-  //         return null
-  //       }
-  //       seen.add(key)
-  //     }
-
-  //     parsed.product_sku = formattedSKU
-  //   } else {
-  //     parsed.isMultiVariation = false
-  //     delete parsed.product_classifications
-  //     delete parsed.product_sku
-  //   }
-
-  //   Object.keys(parsed).forEach((k) => {
-  //     if (k != '_id' && !(k in DEFAULT_VALUES)) delete parsed[k]
-  //   })
-  //   return parsed
-  // }, [])
-
-  // const validateData = useCallback(
-  //   (data) => {
-  //     if (!data.product_sku?.length) {
-  //       if (data.product_min_price !== data.product_max_price) {
-  //         setError('product_min_price', {
-  //           type: 'manual',
-  //           message: 'Min and max price must be the same if no SKU.'
-  //         })
-  //         setError('product_max_price', {
-  //           type: 'manual',
-  //           message: 'Min and max price must be the same if no SKU.'
-  //         })
-  //         return false
-  //       }
-  //       return true
-  //     }
-
-  //     const prices = data.product_sku.map((s) => s.price)
-  //     const minPrice = Math.min(...prices)
-  //     const maxPrice = Math.max(...prices)
-  //     const totalStock = data.product_sku.reduce((sum, s) => sum + s.stock, 0)
-
-  //     const errors = [
-  //       {
-  //         field: 'product_min_price',
-  //         condition: data.product_min_price !== minPrice,
-  //         message: `Min price must be ${minPrice}.`
-  //       },
-  //       {
-  //         field: 'product_max_price',
-  //         condition: data.product_max_price !== maxPrice,
-  //         message: `Max price must be ${maxPrice}.`
-  //       },
-  //       {
-  //         field: 'product_stock',
-  //         condition: data.product_stock !== totalStock,
-  //         message: `Stock must be ${totalStock}.`
-  //       }
-  //     ]
-
-  //     let hasError = false
-  //     for (const { condition, field, message } of errors) {
-  //       if (condition) {
-  //         setError(field, { type: 'manual', message })
-  //         hasError = true
-  //       }
-  //     }
-  //     return !hasError
-  //   },
-  //   [setError]
-  // )
-
-  // const onSubmit = handleSubmit(async (formData) => {
-  //   let data = formatData(formData)
-  //   if (!data) return
-
-  //   if (!validateData(data)) return
-
-  //   if (!data.product_thumb.includes('w_180,h_180')) {
-  //     data.product_thumb = prepareImageForStorage(data.product_thumb, {
-  //       width: 180,
-  //       height: 180
-  //     })
-  //   }
-
-  //   data.product_gallery = data.product_gallery.map((img) => {
-  //     if (!img?.includes('w_2000')) {
-  //       return prepareImageForStorage(img, {
-  //         width: 2000,
-  //         crop: 'limit',
-  //         quality: 'auto:good'
-  //       })
-  //     }
-  //     return img
-  //   })
-
-  //   const api = isEditMode && _id ? updateProductAPI : createProductAPI
-  //   await api(data, '.btn-shop-create-product')
-  // })
+    return buildFormData(formattedData, fieldsFormData)
+  }
 
   return {
     ui: {

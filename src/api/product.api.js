@@ -20,13 +20,26 @@ const queryProductByOwnerAPI = async (payloads) => {
   return { status, resData: data }
 }
 
-const getDetailProductByOwnerAPI = async (_id) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/product/get-product-by-id`,
-    { _id },
+const getProductDetailByOwnerAPI = async ({ _id }) => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/product/${_id}`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
-  return res
+  return { status, resData: data }
+}
+
+const createProductByOwnerAPI = async ({ payload, loadingClass }) => {
+  await authorizedAxios.post(`${API_ROOT}/v1/api/shop/product`, payload, {
+    loadingClass,
+    ...TOAST_MODE.ALL
+  })
+}
+
+const updateProductByOwnerAPI = async ({ _id, payload, loadingClass }) => {
+  await authorizedAxios.put(`${API_ROOT}/v1/api/shop/product/${_id}`, payload, {
+    loadingClass,
+    ...TOAST_MODE.ALL
+  })
 }
 
 const searchProductByOwnerAPI = async (payload) => {
@@ -69,20 +82,6 @@ const restoreProductAPI = async (_id) => {
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return res
-}
-
-const createProductByOwnerAPI = async ({ payload, loadingClass }) => {
-  await authorizedAxios.post(`${API_ROOT}/v1/api/shop/product`, payload, {
-    loadingClass,
-    ...TOAST_MODE.ALL
-  })
-}
-
-const updateProductAPI = async (data, loadingClass) => {
-  await authorizedAxios.post(`${API_ROOT}/v1/api/product/update`, data, {
-    loadingClass,
-    ...TOAST_MODE.ALL
-  })
 }
 
 // ============================ ADMIN ============================
@@ -145,8 +144,8 @@ export {
   deletePermanentProductAPI,
   restoreProductAPI,
   createProductByOwnerAPI,
-  updateProductAPI,
-  getDetailProductByOwnerAPI,
+  updateProductByOwnerAPI,
+  getProductDetailByOwnerAPI,
   queryProductByOwnerAPI,
   queryProductByAdminAPI,
   getProductDetailByAdminAPI,

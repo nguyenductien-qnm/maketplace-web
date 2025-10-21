@@ -76,7 +76,6 @@ authorizeAxiosInstance.interceptors.response.use(
 
     if (shouldShowErrorToast) {
       const data = error.response?.data
-
       if (data instanceof Blob) {
         data.text().then((text) => {
           const json = JSON.parse(text)

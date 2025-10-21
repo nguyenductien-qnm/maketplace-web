@@ -27,8 +27,6 @@ function ProductTable({ status }) {
   const { loading, page, rowsPerPage, openModal, modalProps } = ui
   const { products, count } = data
 
-  console.log('pokoko:', products)
-
   const handleFilterProduct = async (filters) => {
     await fetchProducts(filters)
   }
@@ -52,7 +50,7 @@ function ProductTable({ status }) {
               <TableCell>Image</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>SKUs</TableCell>
-              <TableCell>Sales</TableCell>
+              <TableCell>Revenue</TableCell>
               <TableCell>Price</TableCell>
               <TableCell>Stock</TableCell>
               <TableCell>Action</TableCell>
