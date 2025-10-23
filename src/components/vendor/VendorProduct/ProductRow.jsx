@@ -3,15 +3,18 @@ import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined'
-import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
-import RestoreOutlinedIcon from '@mui/icons-material/RestoreOutlined'
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined'
+import PollOutlinedIcon from '@mui/icons-material/PollOutlined'
 import formatCurrency from '~/utils/formatCurrency'
 import { green, red } from '@mui/material/colors'
 import { navigate } from '~/helpers/navigation'
 import { Chip } from '@mui/material'
 
-function ProductRow({ product, onOpenModal }) {
+function ProductRow({
+  product,
+  handleOpenConfirmDialog,
+  handleOpenMetricsModal
+}) {
   const { product_price_min, product_price_max } = product
   return (
     <TableRow>
@@ -50,61 +53,43 @@ function ProductRow({ product, onOpenModal }) {
         </Typography>
       </TableCell>
       <TableCell>{product.product_sku_count}</TableCell>
-      <TableCell>{product.product_revenue}</TableCell>
       <TableCell>
         {product_price_min === product_price_max
           ? formatCurrency(product_price_min)
-          : `${formatCurrency(product_price_min)}-${formatCurrency(
+          : `${formatCurrency(product_price_min)} - ${formatCurrency(
               product_price_max
             )}`}
       </TableCell>
       <TableCell>{product?.product_stock_total}</TableCell>
+      <TableCell>
+        <PollOutlinedIcon
+          onClick={() => handleOpenMetricsModal(product._id)}
+          sx={{
+            fontSize: 24,
+            color: '#1976d2',
+            '&:hover': { cursor: 'pointer' }
+          }}
+        />
+      </TableCell>
 
       <TableCell sx={{ height: '100%' }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          {product.deletedAt ? (
-            <>
-              <RestoreOutlinedIcon
-                sx={{
-                  fontSize: 24,
-                  color: '#1976d2',
-                  '&:hover': { cursor: 'pointer' }
-                }}
-                onClick={() => onOpenModal(product._id, 'restore')}
-              />
-
-              <DeleteForeverOutlinedIcon
-                sx={{
-                  fontSize: 24,
-                  color: red[600],
-                  '&:hover': { cursor: 'pointer' }
-                }}
-                onClick={() => onOpenModal(product._id, 'permanentDelete')}
-              />
-            </>
-          ) : (
-            <>
-              <ModeOutlinedIcon
-                onClick={() =>
-                  navigate(`/vendor/product/update/${product._id}`)
-                }
-                sx={{
-                  fontSize: 24,
-                  color: green[600],
-                  '&:hover': { cursor: 'pointer' }
-                }}
-              />
-
-              <HighlightOffOutlinedIcon
-                sx={{
-                  fontSize: 24,
-                  color: red[600],
-                  '&:hover': { cursor: 'pointer' }
-                }}
-                onClick={() => onOpenModal(product._id, 'softDelete')}
-              />
-            </>
-          )}
+          <ModeOutlinedIcon
+            onClick={() => navigate(`/vendor/product/update/${product._id}`)}
+            sx={{
+              fontSize: 24,
+              color: green[600],
+              '&:hover': { cursor: 'pointer' }
+            }}
+          />
+          <DeleteForeverOutlinedIcon
+            sx={{
+              fontSize: 24,
+              color: red[600],
+              '&:hover': { cursor: 'pointer' }
+            }}
+            onClick={() => handleOpenConfirmDialog(product._id)}
+          />
         </Box>
       </TableCell>
     </TableRow>

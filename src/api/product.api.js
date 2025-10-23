@@ -28,6 +28,14 @@ const getProductDetailByOwnerAPI = async ({ _id }) => {
   return { status, resData: data }
 }
 
+const getProductMetricsByOwnerAPI = async ({ _id }) => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/product/metrics/${_id}`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
 const createProductByOwnerAPI = async ({ payload, loadingClass }) => {
   await authorizedAxios.post(`${API_ROOT}/v1/api/shop/product`, payload, {
     loadingClass,
@@ -139,6 +147,7 @@ const exportProductsByAdminAPI = async ({ payload, loadingClass }) => {
 
 export {
   getProductDetailForCustomerAPI,
+  getProductMetricsByOwnerAPI,
   searchProductByOwnerAPI,
   softDeleteProductAPI,
   deletePermanentProductAPI,

@@ -9,7 +9,7 @@ import { SortableContext } from '@dnd-kit/sortable'
 import { useProductOptions } from '~/hooks/vendor/product/productOption'
 
 function ProductOptionItem({ form, variationIndex }) {
-  const { control, errors, setError, clearErrors, watch } = form
+  const { errors } = form
 
   const {
     fieldsOptions,
@@ -18,14 +18,7 @@ function ProductOptionItem({ form, variationIndex }) {
     handleChangeOption,
     triggerUpdateOption,
     handleMoveOption
-  } = useProductOptions({
-    control,
-    watch,
-    errors,
-    setError,
-    clearErrors,
-    variationIndex
-  })
+  } = useProductOptions({ form, variationIndex })
 
   const [activeId, setActiveId] = useState(null)
   const [activeIndex, setActiveIndex] = useState(null)

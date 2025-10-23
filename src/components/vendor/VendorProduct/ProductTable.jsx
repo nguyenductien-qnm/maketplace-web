@@ -7,36 +7,20 @@ import Box from '@mui/material/Box'
 import ProductRow from './ProductRow'
 import ProductEmpty from './ProductEmpty'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
-import ConfirmModal from '~/components/common/ConfirmModal'
-import { useVendorProductList } from '~/hooks/vendor/product.hook'
 import { grey } from '@mui/material/colors'
 import { TableFooter, TablePagination } from '@mui/material'
 
-function ProductTable({ status }) {
-  const {
-    ui,
-    data,
-    fetchProducts,
-    openConfirmModal,
-    closeModal,
-    handleConfirmAction,
-    handleChangePage,
-    handleChangeRowsPerPage
-  } = useVendorProductList({ productStatus: status })
-
-  const { loading, page, rowsPerPage, openModal, modalProps } = ui
+function ProductTable({ ui, data, handler }) {
+  const { page, loading, rowsPerPage } = ui
   const { products, count } = data
-
-  const handleFilterProduct = async (filters) => {
-    await fetchProducts(filters)
-  }
-
+  const {
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleOpenConfirmDialog,
+    handleOpenMetricsModal
+  } = handler
   return (
     <>
-      {/* <Box>
-        <ProductFilter handleFilterProduct={handleFilterProduct} />
-      </Box> */}
-
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: '50px' }}>
           <CircularIndeterminate />
@@ -50,9 +34,9 @@ function ProductTable({ status }) {
               <TableCell>Image</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>SKUs</TableCell>
-              <TableCell>Revenue</TableCell>
               <TableCell>Price</TableCell>
               <TableCell>Stock</TableCell>
+              <TableCell>Metrics</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
@@ -61,7 +45,8 @@ function ProductTable({ status }) {
               <ProductRow
                 key={product._id}
                 product={product}
-                onOpenModal={openConfirmModal}
+                handleOpenConfirmDialog={handleOpenConfirmDialog}
+                handleOpenMetricsModal={handleOpenMetricsModal}
               />
             ))}
           </TableBody>
@@ -91,13 +76,6 @@ function ProductTable({ status }) {
           </TableFooter>
         </Table>
       )}
-
-      <ConfirmModal
-        open={openModal}
-        onClose={closeModal}
-        onConfirm={handleConfirmAction}
-        {...modalProps}
-      />
     </>
   )
 }

@@ -92,7 +92,7 @@ function SortableItem({
                     {optionLength ||
                       watch(
                         `product_variations.${variationIndex}.options.${index}.value`
-                      ).length}
+                      )?.length}
                     / 20
                   </Typography>
                 </InputAdornment>

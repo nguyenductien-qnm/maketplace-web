@@ -151,22 +151,19 @@ export const useVendorProductForm = () => {
         action
       })
 
-      for (var pair of formattedData.entries()) {
-        console.log(pair[0] + ', ' + pair[1])
-      }
-
       if (isCreate)
         await createProductByOwnerAPI({
           payload: formattedData,
           loadingClass: []
         })
 
-      if (isUpdate)
+      if (isUpdate) {
         await updateProductByOwnerAPI({
           _id,
           payload: formattedData,
           loadingClass: []
         })
+      }
     } catch {
       setIsSubmitting(false)
     } finally {
@@ -314,6 +311,7 @@ export const useVendorProductForm = () => {
         name: v.name,
         options: v.options?.map((o) => o.value)
       }))
+
       formattedData.products_sku = data.products_sku?.map((sku) => ({
         ...sku,
         product_price: normalizePrice(sku.product_price),
@@ -323,6 +321,8 @@ export const useVendorProductForm = () => {
       formattedData.product_price = normalizePrice(data.product_price)
       formattedData.product_stock = parseInt(data.product_stock)
     }
+
+    console.log('formattedData::::', formattedData.products_sku)
 
     const fieldsFormData =
       formattedData.new_product_images?.length > 0

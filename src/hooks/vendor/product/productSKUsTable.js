@@ -24,7 +24,8 @@ export const useProductSKUsTable = ({ form }) => {
           ? {
               ...newSku,
               product_price: oldSku.product_price,
-              product_stock: oldSku.product_stock
+              product_stock: oldSku.product_stock,
+              product_code: oldSku.product_code
             }
           : newSku
       })
@@ -43,6 +44,7 @@ export const useProductSKUsTable = ({ form }) => {
         return [
           {
             sku_tier_indices: [...indices],
+            product_code: null,
             product_price: '',
             product_stock: ''
           }

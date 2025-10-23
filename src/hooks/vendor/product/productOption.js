@@ -1,16 +1,11 @@
 import { useRef } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import { useFieldArray, useWatch } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { FIELD_REQUIRED_MESSAGE, MAX_TOTAL_VARIANTS } from '~/utils/validators'
 
-export const useProductOptions = ({
-  control,
-  watch,
-  errors,
-  setError,
-  clearErrors,
-  variationIndex
-}) => {
+export const useProductOptions = ({ form, variationIndex }) => {
+  const { control, watch, errors, setError, clearErrors, setValue, getValues } =
+    form
   const { fields, update, append, remove, move } = useFieldArray({
     control,
     name: `product_variations.${variationIndex}.options`
@@ -77,8 +72,45 @@ export const useProductOptions = ({
 
   const handleMoveOption = (oldIndex, newIndex) => {
     move(oldIndex, newIndex)
-  }
 
+    const currentSKU = getValues('products_sku')
+
+    const createIndexMap = (old, newIdx) => {
+      if (old < newIdx) {
+        return (idx) => {
+          if (idx === old) return newIdx
+          if (idx > old && idx <= newIdx) return idx - 1
+          return idx
+        }
+      } else {
+        return (idx) => {
+          if (idx === old) return newIdx
+          if (idx >= newIdx && idx < old) return idx + 1
+          return idx
+        }
+      }
+    }
+
+    const mapIndex = createIndexMap(oldIndex, newIndex)
+
+    const newProductsSKU = currentSKU
+      .map((sku) => ({
+        ...sku,
+        sku_tier_indices: sku.sku_tier_indices.map((idx, i) =>
+          i === variationIndex ? mapIndex(idx) : idx
+        )
+      }))
+      .sort((a, b) => {
+        for (let i = 0; i < a.sku_tier_indices.length; i++) {
+          const diff = a.sku_tier_indices[i] - b.sku_tier_indices[i]
+          if (diff !== 0) return diff
+        }
+        return 0
+      })
+
+    setValue('products_sku', newProductsSKU)
+  }
+  
   const handleChangeOption = (e, optionIndex) => {
     const value = e.target.value
     clearErrors(

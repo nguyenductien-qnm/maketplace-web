@@ -1,50 +1,46 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { queryProductByOwnerAPI } from '~/api/product.api'
+import {
+  getProductMetricsByOwnerAPI,
+  queryProductByOwnerAPI
+} from '~/api/product.api'
 import {
   deletePermanentProductAPI,
   restoreProductAPI,
   softDeleteProductAPI
 } from '~/api/product.api'
-import { toast } from 'react-toastify'
-import { useForm } from 'react-hook-form'
-import { prepareImageForStorage } from '~/helpers/resizeImage'
 import { StatusCodes } from 'http-status-codes'
 
-const MODAL_PROPS = {
-  softDelete: {
-    header: 'Confirm Temporary Deletion',
-    content:
-      'Are you sure you want to temporarily delete this product? You can restore it within 15 days.',
-    confirmText: 'Soft Delete',
-    confirmColor: 'warning'
-  },
-  permanentDelete: {
-    header: 'Confirm Permanent Deletion',
-    content:
-      'This action cannot be undone! Are you sure you want to permanently delete this product?',
-    confirmText: 'Delete Permanently',
-    confirmColor: 'error'
-  },
-  restore: {
-    header: 'Confirm Restore',
-    content: 'Are you sure you want to restore this product?',
-    confirmText: 'Restore',
-    confirmColor: 'primary'
-  }
+const TAB_LABELS = {
+  ALL: 'All',
+  PUBLIC: 'Published',
+  OUT_OF_STOCK: 'Out of Stock',
+  PENDING_REVIEW: 'Pending',
+  VIOLATE: 'Violate',
+  DRAFT: 'Draft'
 }
 
-export const useVendorProductList = ({ productStatus }) => {
+export const useVendorProductList = () => {
   // ============================== STATE ==============================
   const [products, setProducts] = useState([])
   const [count, setCount] = useState(0)
   const [loading, setLoading] = useState(true)
-
+  const [loadingModal, setLoadingModal] = useState(true)
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [productStatus, setProductStatus] = useState('ALL')
 
-  const [openModal, setOpenModal] = useState(false)
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+  const [openMetricsModal, setOpenMetricsModal] = useState(false)
+
+  const [metrics, setMetrics] = useState({
+    metrics_active: null,
+    metrics_deleted: null,
+    sku: null,
+    variations: null,
+    type: null
+  })
+
   const [selectedProductId, setSelectedProductId] = useState(null)
-  const [actionType, setActionType] = useState('softDelete')
 
   // ============================== EFFECT ==============================
   useEffect(() => {
@@ -70,6 +66,21 @@ export const useVendorProductList = ({ productStatus }) => {
     }
   }
 
+  const fetchMetrics = async ({ product_id }) => {
+    try {
+      setLoadingModal(true)
+      const { status, resData } = await getProductMetricsByOwnerAPI({
+        _id: product_id
+      })
+      if (status === StatusCodes.OK) {
+        const { metadata } = resData
+        setMetrics(metadata)
+      }
+    } finally {
+      setLoadingModal(false)
+    }
+  }
+
   const handleProductAction = useCallback((productId, actionType) => {
     switch (actionType) {
       case 'softDelete':
@@ -92,52 +103,44 @@ export const useVendorProductList = ({ productStatus }) => {
     }
   }, [])
 
-  const openConfirmModal = useCallback((productId, type) => {
+  const handleOpenConfirmDialog = (productId) => {
     setSelectedProductId(productId)
-    setActionType(type)
-    setOpenModal(true)
+    setOpenConfirmDialog(true)
+  }
+
+  const handleCloseConfirmDialog = useCallback(() => {
+    setOpenConfirmDialog(false)
   }, [])
 
-  const closeModal = useCallback(() => {
-    setOpenModal(false)
-  }, [])
-
-  const handleConfirmAction = useCallback(async () => {
-    if (!selectedProductId || !actionType) return
-    try {
-      switch (actionType) {
-        case 'softDelete':
-          await softDeleteProductAPI(selectedProductId)
-          break
-        case 'permanentDelete':
-          await deletePermanentProductAPI(selectedProductId)
-          break
-        case 'restore':
-          await restoreProductAPI(selectedProductId)
-          break
-      }
-      handleProductAction(selectedProductId, actionType)
-    } finally {
-      closeModal()
-    }
-  }, [selectedProductId, actionType, handleProductAction, closeModal])
+  const handleOpenMetricsModal = (productId) => {
+    setOpenMetricsModal(true)
+    fetchMetrics({ product_id: productId })
+  }
+  const handleCloseMetricsModal = () => {
+    setOpenMetricsModal(false)
+  }
 
   return {
     ui: {
       loading,
+      loadingModal,
       page,
-
       rowsPerPage,
-      openModal,
-      modalProps: MODAL_PROPS[actionType]
+      status: productStatus,
+      openConfirmDialog,
+      openMetricsModal,
+      TAB_LABELS
     },
     data: {
       products,
-      count
+      count,
+      metrics
     },
-    fetchProducts,
-    openConfirmModal,
-    closeModal,
-    handleConfirmAction
+    handler: {
+      handleOpenConfirmDialog,
+      handleCloseConfirmDialog,
+      handleOpenMetricsModal,
+      handleCloseMetricsModal
+    }
   }
 }

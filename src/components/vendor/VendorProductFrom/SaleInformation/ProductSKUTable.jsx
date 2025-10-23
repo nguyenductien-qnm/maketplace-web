@@ -125,18 +125,14 @@ function ProductSKUTable({ form }) {
                   {option2 && <TableCell>{option2.value}</TableCell>}
                   <TableCell
                     style={{
-                      verticalAlign: 'top',
-                      minWidth: '300px',
-                      width: '350px'
+                      verticalAlign: 'top'
                     }}
                   >
                     {renderPriceInput(index)}
                   </TableCell>
                   <TableCell
                     style={{
-                      verticalAlign: 'top',
-                      minWidth: '300px',
-                      width: '350px'
+                      verticalAlign: 'top'
                     }}
                   >
                     {renderStockInput(index)}

@@ -5,26 +5,31 @@ import TabContext from '@mui/lab/TabContext'
 import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
 import ProductTable from '~/components/vendor/VendorProduct/ProductTable'
-import { Link } from 'react-router-dom'
-import { useState } from 'react'
 import TypographyTitle from '~/components/common/TypographyTitle'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import AddIcon from '@mui/icons-material/Add'
-
-const TAB_LABELS = {
-  ALL: 'All',
-  PUBLIC: 'Published',
-  OUT_OF_STOCK: 'Out of Stock',
-  PENDING_REVIEW: 'Pending',
-  VIOLATE: 'Violate',
-  DRAFT: 'Draft',
-  RECYCLE_BIN: 'Recycle Bin'
-}
-
-const TABS = Object.keys(TAB_LABELS)
+import { Link } from 'react-router-dom'
+import ConfirmModal from '~/components/common/ConfirmModal'
+import { useVendorProductList } from '~/hooks/vendor/product.hook'
+import ProductMetricsModal from '~/components/vendor/VendorProduct/ProductMetricsModal'
 
 function VendorProducts() {
-  const [status, setStatus] = useState('ALL')
+  const { ui, data, handler } = useVendorProductList()
+  const {
+    loadingModal,
+    status,
+    TAB_LABELS,
+    openConfirmDialog,
+    openMetricsModal
+  } = ui
+  const { metrics } = data
+  const {
+    handleOpenConfirmDialog,
+    handleCloseConfirmDialog,
+    handleCloseMetricsModal,
+    handleDeleteProduct
+  } = handler
+  const TABS = Object.keys(TAB_LABELS)
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -67,10 +72,31 @@ function VendorProducts() {
 
         {TABS.map((tab) => (
           <TabPanel key={tab} value={tab} sx={{ padding: '24px 0' }}>
-            {status === tab && <ProductTable status={tab} />}
+            {status === tab && (
+              <ProductTable ui={ui} data={data} handler={handler} />
+            )}
           </TabPanel>
         ))}
       </TabContext>
+
+      <ConfirmModal
+        open={openConfirmDialog}
+        header="Confirm Permanent Deletion"
+        content="This action cannot be undone! Are you sure you want to permanently delete this product?"
+        confirmText="Delete Permanently"
+        confirmColor="error"
+        onClose={handleCloseConfirmDialog}
+        onConfirm={handleDeleteProduct}
+      />
+
+      {openMetricsModal && (
+        <ProductMetricsModal
+          loading={loadingModal}
+          open={openMetricsModal}
+          onClose={handleCloseMetricsModal}
+          data={metrics}
+        />
+      )}
     </Box>
   )
 }
