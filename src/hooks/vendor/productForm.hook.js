@@ -1,14 +1,18 @@
+import buildFormData from '~/helpers/buildFormData'
+import { pick } from 'lodash'
+import { navigate } from '~/helpers/navigation'
+import { toast } from 'react-toastify'
+import { useForm } from 'react-hook-form'
+import { StatusCodes } from 'http-status-codes'
 import { useState, useEffect } from 'react'
+import { useLocation, useParams } from 'react-router-dom'
+import { getCategoriesByOwnerAPI } from '~/api/category.api'
 import {
   createProductByOwnerAPI,
   getProductDetailByOwnerAPI,
   updateProductByOwnerAPI
 } from '~/api/product.api'
-import { toast } from 'react-toastify'
-import { useForm } from 'react-hook-form'
-import { useLocation, useParams } from 'react-router-dom'
-import { getCategoriesByOwnerAPI } from '~/api/category.api'
-import { StatusCodes } from 'http-status-codes'
+
 import {
   FIELD_REQUIRED_MESSAGE,
   PRODUCT_PRICE_MAX,
@@ -18,8 +22,6 @@ import {
   PRODUCT_STOCK_MESSAGE,
   PRODUCT_STOCK_MIN
 } from '~/utils/validators'
-import { pick, update } from 'lodash'
-import buildFormData from '~/helpers/buildFormData'
 
 const DEFAULT_VALUES = {
   enable_variations: false,
@@ -151,18 +153,25 @@ export const useVendorProductForm = () => {
         action
       })
 
-      if (isCreate)
-        await createProductByOwnerAPI({
+      if (isCreate) {
+        const { status } = await createProductByOwnerAPI({
           payload: formattedData,
-          loadingClass: []
+          loadingClass: ['.btn-vendor-submit-product-form']
         })
+        if (status === StatusCodes.CREATED) {
+          navigate('/vendor/product')
+        }
+      }
 
       if (isUpdate) {
-        await updateProductByOwnerAPI({
+        const { status } = await updateProductByOwnerAPI({
           _id,
           payload: formattedData,
-          loadingClass: []
+          loadingClass: ['.btn-vendor-submit-product-form']
         })
+        if (status === StatusCodes.OK) {
+          navigate('/vendor/product')
+        }
       }
     } catch {
       setIsSubmitting(false)
@@ -322,8 +331,6 @@ export const useVendorProductForm = () => {
       formattedData.product_stock = parseInt(data.product_stock)
     }
 
-    console.log('formattedData::::', formattedData.products_sku)
-
     const fieldsFormData =
       formattedData.new_product_images?.length > 0
         ? [...productFields, 'new_product_images']
@@ -336,7 +343,8 @@ export const useVendorProductForm = () => {
     ui: {
       loading,
       isSubmitting,
-      pageTitle
+      pageTitle,
+      isUpdate
     },
 
     form: {

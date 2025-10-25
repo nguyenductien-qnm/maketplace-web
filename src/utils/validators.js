@@ -24,16 +24,16 @@ export const PRODUCT_ATTRIBUTE_KEY_RULE = /^[A-Za-zÀ-ỹ0-9,\s]{1,20}$/
 export const PRODUCT_ATTRIBUTE_KEY_MESSAGE =
   'Max 20 chars: letters, numbers, commas'
 // ==================== product price ============================
-export const PRODUCT_PRICE_MIN = 0
+export const PRODUCT_PRICE_MIN = 0.001
 export const PRODUCT_PRICE_MAX = 2000
 export const PRODUCT_PRICE_MESSAGE =
   'Price must be greater than $0 and less than $2,000 USD'
 
 // ==================== product stock ============================
-export const PRODUCT_STOCK_MIN = 1
+export const PRODUCT_STOCK_MIN = 0
 export const PRODUCT_STOCK_MAX = 10000000
 export const PRODUCT_STOCK_MESSAGE =
-  'Stock must be between 1 and 10,000,000 units'
+  'Stock must be between 0 and 10,000,000 units'
 
 // ==================== product attribute value ============================
 export const PRODUCT_ATTRIBUTE_VALUE_RULE = /^[A-Za-zÀ-ỹ0-9,\s]{1,50}$/

@@ -1,4 +1,6 @@
 import Box from '@mui/material/Box'
+import Chip from '@mui/material/Chip'
+import Tooltip from '@mui/material/Tooltip'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
@@ -8,7 +10,6 @@ import PollOutlinedIcon from '@mui/icons-material/PollOutlined'
 import formatCurrency from '~/utils/formatCurrency'
 import { green, red } from '@mui/material/colors'
 import { navigate } from '~/helpers/navigation'
-import { Chip } from '@mui/material'
 
 function ProductRow({
   product,
@@ -18,7 +19,7 @@ function ProductRow({
   const { product_price_min, product_price_max } = product
   return (
     <TableRow>
-      <TableCell>
+      <TableCell sx={{ width: '100px' }}>
         <img
           style={{ height: '50px' }}
           src={product.product_images}
@@ -43,7 +44,9 @@ function ProductRow({
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             wordBreak: 'break-word',
-            mb: 1
+            mb: 1,
+            color: product?.product_stock_total <= 5 ? 'red' : 'inherit',
+            fontWeight: product?.product_stock_total <= 5 ? 'bold' : 'normal'
           }}
         >
           {product?.product_name}
@@ -61,35 +64,43 @@ function ProductRow({
             )}`}
       </TableCell>
       <TableCell>{product?.product_stock_total}</TableCell>
+
       <TableCell>
-        <PollOutlinedIcon
-          onClick={() => handleOpenMetricsModal(product._id)}
-          sx={{
-            fontSize: 24,
-            color: '#1976d2',
-            '&:hover': { cursor: 'pointer' }
-          }}
-        />
+        <Tooltip title="View product metrics">
+          <PollOutlinedIcon
+            onClick={() => handleOpenMetricsModal(product._id)}
+            sx={{
+              fontSize: 24,
+              color: '#1976d2',
+              '&:hover': { cursor: 'pointer' }
+            }}
+          />
+        </Tooltip>
       </TableCell>
 
       <TableCell sx={{ height: '100%' }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <ModeOutlinedIcon
-            onClick={() => navigate(`/vendor/product/update/${product._id}`)}
-            sx={{
-              fontSize: 24,
-              color: green[600],
-              '&:hover': { cursor: 'pointer' }
-            }}
-          />
-          <DeleteForeverOutlinedIcon
-            sx={{
-              fontSize: 24,
-              color: red[600],
-              '&:hover': { cursor: 'pointer' }
-            }}
-            onClick={() => handleOpenConfirmDialog(product._id)}
-          />
+          <Tooltip title="Edit this product">
+            <ModeOutlinedIcon
+              onClick={() => navigate(`/vendor/product/update/${product._id}`)}
+              sx={{
+                fontSize: 24,
+                color: green[600],
+                '&:hover': { cursor: 'pointer' }
+              }}
+            />
+          </Tooltip>
+
+          <Tooltip title="Permanently delete this product">
+            <DeleteForeverOutlinedIcon
+              sx={{
+                fontSize: 24,
+                color: red[600],
+                '&:hover': { cursor: 'pointer' }
+              }}
+              onClick={() => handleOpenConfirmDialog(product._id)}
+            />
+          </Tooltip>
         </Box>
       </TableCell>
     </TableRow>

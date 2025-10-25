@@ -41,7 +41,10 @@ function VendorSideBar() {
         Dashboard
       </CustomLink>
       <Divider />
-      <CustomLink to="/vendor/product" isActive={checkUrl('product')}>
+      <CustomLink
+        to="/vendor/product?status=ALL&sort_by=newest&page=1&limit=10"
+        isActive={checkUrl('product')}
+      >
         <BusinessCenterOutlinedIcon />
         Products
       </CustomLink>

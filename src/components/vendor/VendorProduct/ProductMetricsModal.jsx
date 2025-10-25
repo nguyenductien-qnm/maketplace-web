@@ -58,7 +58,7 @@ function ProductMetricsModal({ loading, open, onClose, data }) {
               <Divider sx={{ mt: 1 }} />
               <Box sx={{ mt: 3 }}>
                 <Typography sx={{ mb: 1 }}>Product SKU Active</Typography>
-                <TableContainer>
+                <TableContainer sx={{ maxHeight: 800, overflowY: 'auto' }}>
                   <Table>
                     <TableHead sx={{ backgroundColor: grey[100] }}>
                       <TableRow>
@@ -92,7 +92,7 @@ function ProductMetricsModal({ loading, open, onClose, data }) {
               {metrics_deleted && metrics_deleted.length > 0 && (
                 <Box sx={{ mt: 3 }}>
                   <Typography sx={{ mb: 1 }}>Product SKU Deleted</Typography>
-                  <TableContainer>
+                  <TableContainer sx={{ maxHeight: 800, overflowY: 'auto' }}>
                     <Table>
                       <TableHead sx={{ backgroundColor: grey[100] }}>
                         <TableRow>

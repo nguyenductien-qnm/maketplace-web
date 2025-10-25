@@ -21,10 +21,20 @@ function ConfirmModal({
         <Typography>{content}</Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant="outlined" color="secondary">
+        <Button
+          className="btn-confirm-modal"
+          onClick={onClose}
+          variant="outlined"
+          color="secondary"
+        >
           Cancel
         </Button>
-        <Button onClick={onConfirm} variant="contained" color={confirmColor}>
+        <Button
+          className="btn-confirm-modal"
+          onClick={onConfirm}
+          variant="contained"
+          color={confirmColor}
+        >
           {confirmText}
         </Button>
       </DialogActions>

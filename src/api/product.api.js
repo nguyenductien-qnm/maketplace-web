@@ -1,5 +1,6 @@
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT, TOAST_MODE } from '~/utils/constants'
+import cleanFilters from '~/utils/cleanFilters'
 
 // ============================ CUSTOMER ============================
 const getProductDetailForCustomerAPI = async (product_slug) => {
@@ -11,11 +12,13 @@ const getProductDetailForCustomerAPI = async (product_slug) => {
   return res
 }
 // ============================ VENDOR ============================
-const queryProductByOwnerAPI = async (payloads) => {
+const queryProductByOwnerAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/shop/product`,
-    payloads,
-    { ...TOAST_MODE.ONLY_ERROR }
+    {
+      params: cleanFilters(payload),
+      ...TOAST_MODE.ONLY_ERROR
+    }
   )
   return { status, resData: data }
 }
@@ -37,61 +40,33 @@ const getProductMetricsByOwnerAPI = async ({ _id }) => {
 }
 
 const createProductByOwnerAPI = async ({ payload, loadingClass }) => {
-  await authorizedAxios.post(`${API_ROOT}/v1/api/shop/product`, payload, {
-    loadingClass,
-    ...TOAST_MODE.ALL
-  })
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/shop/product`,
+    payload,
+    {
+      loadingClass,
+      ...TOAST_MODE.ALL
+    }
+  )
+  return { status, resData: data }
 }
 
 const updateProductByOwnerAPI = async ({ _id, payload, loadingClass }) => {
-  await authorizedAxios.put(`${API_ROOT}/v1/api/shop/product/${_id}`, payload, {
-    loadingClass,
-    ...TOAST_MODE.ALL
-  })
-}
-
-const searchProductByOwnerAPI = async (payload) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/product/get-product-for-customer`,
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/shop/product/${_id}`,
     payload,
-    { ...TOAST_MODE.ONLY_ERROR }
+    { loadingClass, ...TOAST_MODE.ALL }
   )
-  return res
+  return { status, resData: data }
 }
 
-const softDeleteProductAPI = async (_id) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/product/soft-delete`,
-    {
-      _id
-    },
-    { ...TOAST_MODE.ONLY_ERROR }
+const deleteProductByOwnerAPI = async ({ _id, loadingClass }) => {
+  const { status, data } = await authorizedAxios.delete(
+    `${API_ROOT}/v1/api/shop/product/${_id}`,
+    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
   )
-  return res
+  return { status, resData: data }
 }
-
-const deletePermanentProductAPI = async (_id) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/product/delete-permanent`,
-    {
-      _id
-    },
-    { ...TOAST_MODE.ONLY_ERROR }
-  )
-  return res
-}
-
-const restoreProductAPI = async (_id) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/product/restore`,
-    {
-      _id
-    },
-    { ...TOAST_MODE.ONLY_ERROR }
-  )
-  return res
-}
-
 // ============================ ADMIN ============================
 
 const queryProductByAdminAPI = async ({ payload }) => {
@@ -148,10 +123,7 @@ const exportProductsByAdminAPI = async ({ payload, loadingClass }) => {
 export {
   getProductDetailForCustomerAPI,
   getProductMetricsByOwnerAPI,
-  searchProductByOwnerAPI,
-  softDeleteProductAPI,
-  deletePermanentProductAPI,
-  restoreProductAPI,
+  deleteProductByOwnerAPI,
   createProductByOwnerAPI,
   updateProductByOwnerAPI,
   getProductDetailByOwnerAPI,

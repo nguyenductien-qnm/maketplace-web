@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { useEffect, useRef, useState } from 'react'
-import { apiGetProvinces } from '~/helpers/getAddress'
+// import { apiGetProvinces } from '~/helpers/getAddress'
 import { navigate } from '~/helpers/navigation'
 import {
   queryShopByAdminAPI,
@@ -76,14 +76,14 @@ export const useAdminShop = ({ status }) => {
   }, [status, page, rowsPerPage])
 
   useEffect(() => {
-    getProvinces()
+    // getProvinces()
   }, [])
 
   // ============================== API ==============================
-  const getProvinces = async () => {
-    const { status, resData } = await apiGetProvinces()
-    if (status === StatusCodes.OK) setProvinces(resData?.metadata || [])
-  }
+  // const getProvinces = async () => {
+  //   const { status, resData } = await apiGetProvinces()
+  //   if (status === StatusCodes.OK) setProvinces(resData?.metadata || [])
+  // }
 
   const queryShopByAdmin = async (data) => {
     setLoading(true)

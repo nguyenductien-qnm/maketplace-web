@@ -20,7 +20,7 @@ import {
   PRODUCT_NAME_RULE_MESSAGE
 } from '~/utils/validators'
 import 'react-quill/dist/quill.snow.css'
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { FormControl, MenuItem, Select } from '@mui/material'
 
 const LABELS = {
   TITLE: 'Basic Information',

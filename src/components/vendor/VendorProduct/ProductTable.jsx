@@ -8,11 +8,23 @@ import ProductRow from './ProductRow'
 import ProductEmpty from './ProductEmpty'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import { grey } from '@mui/material/colors'
-import { TableFooter, TablePagination } from '@mui/material'
+import { TableContainer, TablePagination } from '@mui/material'
+
+const TableCellCustom = ({ children, props }) => (
+  <TableCell
+    sx={{
+      backgroundColor: grey[100],
+      fontWeight: 600
+    }}
+    {...props}
+  >
+    {children}
+  </TableCell>
+)
 
 function ProductTable({ ui, data, handler }) {
-  const { page, loading, rowsPerPage } = ui
-  const { products, count } = data
+  const { loading } = ui
+  const { products, count, filters } = data
   const {
     handleChangePage,
     handleChangeRowsPerPage,
@@ -22,59 +34,55 @@ function ProductTable({ ui, data, handler }) {
   return (
     <>
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: '50px' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            mt: '50px',
+            height: '600px'
+          }}
+        >
           <CircularIndeterminate />
         </Box>
       ) : products?.length === 0 ? (
         <ProductEmpty />
       ) : (
-        <Table sx={{ width: '100%' }}>
-          <TableHead sx={{ backgroundColor: grey[100] }}>
-            <TableRow>
-              <TableCell>Image</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>SKUs</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Stock</TableCell>
-              <TableCell>Metrics</TableCell>
-              <TableCell>Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {products?.map((product) => (
-              <ProductRow
-                key={product._id}
-                product={product}
-                handleOpenConfirmDialog={handleOpenConfirmDialog}
-                handleOpenMetricsModal={handleOpenMetricsModal}
-              />
-            ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow
-              sx={{
-                position: 'sticky',
-                bottom: 0,
-                backgroundColor: 'background.paper',
-                zIndex: 1
-              }}
-            >
-              <TablePagination
-                rowsPerPageOptions={[10, 25, 50]}
-                colSpan={7}
-                count={count || 0}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                labelRowsPerPage="Rows per page"
-                labelDisplayedRows={({ from, to, count }) =>
-                  `${from}-${to} of ${count}`
-                }
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
+        <>
+          <TableContainer sx={{ maxHeight: 800, overflowY: 'auto' }}>
+            <Table stickyHeader sx={{ width: '100%' }}>
+              <TableHead>
+                <TableRow>
+                  <TableCellCustom>Image</TableCellCustom>
+                  <TableCellCustom>Name</TableCellCustom>
+                  <TableCellCustom>SKUs</TableCellCustom>
+                  <TableCellCustom>Price</TableCellCustom>
+                  <TableCellCustom>Stock</TableCellCustom>
+                  <TableCellCustom>Metrics</TableCellCustom>
+                  <TableCellCustom>Action</TableCellCustom>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {products?.map((product) => (
+                  <ProductRow
+                    key={product._id}
+                    product={product}
+                    handleOpenConfirmDialog={handleOpenConfirmDialog}
+                    handleOpenMetricsModal={handleOpenMetricsModal}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 50]}
+            component="div"
+            count={count}
+            rowsPerPage={Number(filters?.limit)}
+            page={filters?.page - 1}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </>
       )}
     </>
   )

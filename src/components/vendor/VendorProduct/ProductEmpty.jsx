@@ -13,10 +13,9 @@ function ProductEmpty() {
         mt: 10,
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
         gap: '10px',
-        minHeight: '100%'
+        height: '600px'
       }}
     >
       <img src={noProductFound} />

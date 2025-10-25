@@ -6,27 +6,23 @@ import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
 import ProductTable from '~/components/vendor/VendorProduct/ProductTable'
 import TypographyTitle from '~/components/common/TypographyTitle'
-import FilterListIcon from '@mui/icons-material/FilterList'
 import AddIcon from '@mui/icons-material/Add'
-import { Link } from 'react-router-dom'
 import ConfirmModal from '~/components/common/ConfirmModal'
-import { useVendorProductList } from '~/hooks/vendor/product.hook'
 import ProductMetricsModal from '~/components/vendor/VendorProduct/ProductMetricsModal'
+import ProductFilter from '~/components/vendor/VendorProduct/ProductFilter'
+import { Link } from 'react-router-dom'
+import { useVendorProductList } from '~/hooks/vendor/product.hook'
 
 function VendorProducts() {
   const { ui, data, handler } = useVendorProductList()
+  const { metrics, categories, filters, setFilters } = data
+  const { loadingModal, TAB_LABELS, openConfirmDialog, openMetricsModal } = ui
   const {
-    loadingModal,
-    status,
-    TAB_LABELS,
-    openConfirmDialog,
-    openMetricsModal
-  } = ui
-  const { metrics } = data
-  const {
-    handleOpenConfirmDialog,
     handleCloseConfirmDialog,
     handleCloseMetricsModal,
+    handleChangeTab,
+    handleClearFilter,
+    handleFilter,
     handleDeleteProduct
   } = handler
   const TABS = Object.keys(TAB_LABELS)
@@ -36,10 +32,13 @@ function VendorProducts() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <TypographyTitle>My Products</TypographyTitle>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button variant="outlined">
-            <FilterListIcon sx={{ pr: '5px' }} />
-            Filter
-          </Button>
+          <ProductFilter
+            filters={filters}
+            setFilters={setFilters}
+            categories={categories}
+            handleFilter={handleFilter}
+            handleClearFilter={handleClearFilter}
+          />
           <Link to="/vendor/product/create">
             <Button variant="outlined">
               <AddIcon sx={{ pr: '5px' }} />
@@ -48,7 +47,7 @@ function VendorProducts() {
           </Link>
         </Box>
       </Box>
-      <TabContext value={status}>
+      <TabContext value={filters.status}>
         <Box
           sx={{
             borderBottom: 1,
@@ -58,7 +57,7 @@ function VendorProducts() {
             alignItems: 'center'
           }}
         >
-          <TabList onChange={(e, newValue) => setStatus(newValue)}>
+          <TabList onChange={(e, newValue) => handleChangeTab(newValue)}>
             {TABS.map((tab) => (
               <Tab
                 sx={{ textTransform: 'none' }}
@@ -72,18 +71,16 @@ function VendorProducts() {
 
         {TABS.map((tab) => (
           <TabPanel key={tab} value={tab} sx={{ padding: '24px 0' }}>
-            {status === tab && (
-              <ProductTable ui={ui} data={data} handler={handler} />
-            )}
+            <ProductTable ui={ui} data={data} handler={handler} />
           </TabPanel>
         ))}
       </TabContext>
 
       <ConfirmModal
         open={openConfirmDialog}
-        header="Confirm Permanent Deletion"
+        header="Confirm Deletion"
         content="This action cannot be undone! Are you sure you want to permanently delete this product?"
-        confirmText="Delete Permanently"
+        confirmText="Confirm"
         confirmColor="error"
         onClose={handleCloseConfirmDialog}
         onConfirm={handleDeleteProduct}

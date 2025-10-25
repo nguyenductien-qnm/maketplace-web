@@ -8,7 +8,7 @@ import {
   updateOrderStatusToShippingAPI
 } from '~/api/order.api'
 import { getShopListForFilterAPI } from '~/api/shop.api'
-import { apiGetProvinces } from '~/helpers/getAddress'
+// import { apiGetProvinces } from '~/helpers/getAddress'
 import { navigate } from '~/helpers/navigation'
 
 // ================= CONSTANTS =================
@@ -62,7 +62,7 @@ export const useAdminOrder = ({ status }) => {
 
   // ================= EFFECT =================
   useEffect(() => {
-    getProvinceList()
+    // getProvinceList()
     getShopList()
   }, [])
 
@@ -102,10 +102,10 @@ export const useAdminOrder = ({ status }) => {
     if (status === StatusCodes.OK) setOrderDetail(resData?.metadata)
   }
 
-  const getProvinceList = async () => {
-    const { status, resData } = await apiGetProvinces()
-    if (status === StatusCodes.OK) setProvinces(resData?.metadata || [])
-  }
+  // const getProvinceList = async () => {
+  //   const { status, resData } = await apiGetProvinces()
+  //   if (status === StatusCodes.OK) setProvinces(resData?.metadata || [])
+  // }
 
   const getShopList = async () => {
     const { status, resData } = await getShopListForFilterAPI()

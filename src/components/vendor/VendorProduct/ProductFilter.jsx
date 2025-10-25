@@ -1,92 +1,118 @@
 import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton'
-import MenuItem from '@mui/material/MenuItem'
 import Popover from '@mui/material/Popover'
-import Select from '@mui/material/Select'
-import Slider from '@mui/material/Slider'
-import SearchInput from '~/components/common/SearchInput'
-import FilterListIcon from '@mui/icons-material/FilterList'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import TextField from '@mui/material/TextField'
+import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
 import { useState } from 'react'
-import { useSelector } from 'react-redux'
+import TypographyLabel from '~/components/common/TypographyLabel'
+import CategoryTreeView from '~/components/common/CategoryTreeView'
+import { MenuItem, Select } from '@mui/material'
 
-function ProductFilter({ handleFilterProduct }) {
-  const categories = useSelector((state) => state.categories.categories)
-  const [searchValue, setSearchValue] = useState('')
-  const [priceRange, setPriceRange] = useState([0, 10000])
-  const [selectedCategories, setSelectedCategories] = useState([])
-
+function ProductFilter({
+  filters,
+  setFilters,
+  handleFilter,
+  handleClearFilter,
+  categories
+}) {
   const [anchorEl, setAnchorEl] = useState(null)
-  const handleOpenFilter = (event) => setAnchorEl(event.currentTarget)
-  const handleCloseFilter = () => setAnchorEl(null)
   const open = Boolean(anchorEl)
 
-  const handleSearch = () => {
-    const payloads = {
-      search: searchValue,
-      categories: selectedCategories,
-      priceRange: priceRange
-    }
-    handleFilterProduct(payloads)
-  }
-
+  const handleOpenFilter = (event) => setAnchorEl(event.currentTarget)
+  const handleCloseFilter = () => setAnchorEl(null)
   return (
-    <Box sx={{ display: 'flex', gap: '10px' }}>
-      <Box sx={{ flexGrow: 1 }}>
-        <SearchInput
-          searchValue={searchValue}
-          setSearchValue={setSearchValue}
-          handleSearch={handleSearch}
-        />
-      </Box>
-      <Box>
-        <IconButton onClick={handleOpenFilter} color="primary">
-          <FilterListIcon />
-        </IconButton>
+    <Box>
+      <Button variant="outlined" onClick={handleOpenFilter}>
+        <FilterListOutlinedIcon />
+        Filters
+      </Button>
 
-        <Popover
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleCloseFilter}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-          sx={{ width: 500 }}
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleCloseFilter}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        sx={{ height: '600px' }}
+      >
+        <Box
+          sx={{
+            minWidth: '450px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px'
+          }}
         >
-          <Box p={2} width={300}>
-            <h4>Advanced filters</h4>
+          <h3 style={{ marginBottom: 0 }}>Advanced Filters</h3>
+          <Divider />
+          <Box sx={{ flex: 1 }}>
+            <TextField
+              fullWidth
+              placeholder="Enter product name or code"
+              size="small"
+              value={filters.search}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, search: e.target.value }))
+              }
+            />
+          </Box>
 
+          <Box sx={{ flex: 1 }}>
+            <TypographyLabel>Sort by</TypographyLabel>
             <Select
               size="small"
               fullWidth
-              multiple
-              value={selectedCategories}
-              onChange={(e) => setSelectedCategories(e.target.value)}
+              value={filters.sort_by || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  sort_by: e.target.value
+                }))
+              }
               displayEmpty
             >
-              {categories.map((category) => (
-                <MenuItem key={category._id} value={category.category_code}>
-                  {category.category_name}
-                </MenuItem>
-              ))}
+              <MenuItem value="newest">Created (newest)</MenuItem>
+              <MenuItem value="oldest">Created (oldest)</MenuItem>
+              <MenuItem value="name_asc">Name (A-Z)</MenuItem>
+              <MenuItem value="name_desc">Name (Z-A)</MenuItem>
             </Select>
-
-            <Box mt={2} width="100%">
-              <p>
-                Price range: {priceRange[0].toLocaleString()} -{' '}
-                {priceRange[1].toLocaleString()} $
-              </p>
-              <Slider
-                value={priceRange}
-                onChange={(e, newValue) => setPriceRange(newValue)}
-                valueLabelDisplay="auto"
-                min={0}
-                max={10000}
-                step={50}
-                sx={{ width: '100%' }}
-              />
-            </Box>
           </Box>
-        </Popover>
-      </Box>
+
+          <Box sx={{ flex: 1 }}>
+            <TypographyLabel>Category</TypographyLabel>
+
+            <CategoryTreeView
+              categories={categories}
+              value={filters.category || ''}
+              onChange={(newSelected) =>
+                setFilters((prev) => ({ ...prev, category: newSelected }))
+              }
+            />
+          </Box>
+
+          <Divider />
+          <Box sx={{ alignSelf: 'end' }}>
+            <Button
+              onClick={handleClearFilter}
+              variant="contained"
+              sx={{ backgroundColor: 'black', mr: '10px' }}
+            >
+              Clear
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                handleFilter()
+                handleCloseFilter()
+              }}
+            >
+              Search
+            </Button>
+          </Box>
+        </Box>
+      </Popover>
     </Box>
   )
 }
