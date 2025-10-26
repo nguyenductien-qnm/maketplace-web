@@ -6,7 +6,10 @@ import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
 import Button from '@mui/material/Button'
 import VoucherTable from '~/components/vendor/VendorVoucher/VoucherTable'
-import LoyaltyOutlinedIcon from '@mui/icons-material/LoyaltyOutlined'
+import TypographyTitle from '~/components/common/TypographyTitle'
+import AddIcon from '@mui/icons-material/Add'
+import { Link } from 'react-router-dom'
+import VoucherFilter from '~/components/vendor/VendorVoucher/VoucherFilter'
 
 const TAB_LABELS = {
   ALL: 'All',
@@ -23,6 +26,18 @@ function VendorVoucher() {
   const [action, setAction] = useState(null)
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <TypographyTitle>My Vouchers</TypographyTitle>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <VoucherFilter />
+          <Link to="/vendor/voucher/create">
+            <Button variant="outlined">
+              <AddIcon sx={{ pr: '5px' }} />
+              Add New Voucher
+            </Button>
+          </Link>
+        </Box>
+      </Box>
       <TabContext value={status}>
         <Box
           sx={{
@@ -43,18 +58,6 @@ function VendorVoucher() {
               />
             ))}
           </TabList>
-
-          <Button
-            onClick={() => {
-              setAction('CREATE'), setOpenModal(true)
-            }}
-            variant="contained"
-            color="primary"
-            sx={{ height: '30px' }}
-          >
-            <LoyaltyOutlinedIcon />
-            Add new voucher
-          </Button>
         </Box>
 
         {TABS.map((tab) => (

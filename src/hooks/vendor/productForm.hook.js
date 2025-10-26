@@ -89,14 +89,6 @@ export const useVendorProductForm = () => {
   const { _id } = useParams()
   const { pathname } = useLocation()
 
-  const [loading, setLoading] = useState(true)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [categoriesTree, setCategoriesTree] = useState([])
-
-  const enableVariations = watch('enable_variations')
-  const productSKUs = watch('products_sku')
-  const productVariations = watch('product_variations')
-
   const isCreate = pathname === '/vendor/product/create'
   const isUpdate = pathname.includes('/vendor/product/update')
   const pageTitle = isCreate
@@ -104,6 +96,14 @@ export const useVendorProductForm = () => {
     : isUpdate
     ? 'Update Product'
     : ''
+
+  const [loading, setLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [categoriesTree, setCategoriesTree] = useState([])
+
+  const enableVariations = watch('enable_variations')
+  const productSKUs = watch('products_sku')
+  const productVariations = watch('product_variations')
 
   // ============================== EFFECT ==============================
 

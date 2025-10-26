@@ -14,36 +14,27 @@ import { useVendorVoucher } from '~/hooks/vendor/voucher.hook'
 import { useState } from 'react'
 
 function VoucherTable({ status, openModal, setOpenModal, action, setAction }) {
-  const {
-    vouchers,
-    loading,
-    fetchVouchers,
-    createVoucher,
-    updateVoucher,
-    deleteVoucher
-  } = useVendorVoucher(status)
+  const { vouchers, loading, createVoucher, updateVoucher, deleteVoucher } =
+    useVendorVoucher(status)
 
   const [selectedVoucher, setSelectedVoucher] = useState(null)
   const [openDelModal, setOpenDelModal] = useState(false)
 
-  const handleFilter = async (filters) => {
-    await fetchVouchers(filters)
-  }
-
   return (
     <>
-      <Box>
-        <VoucherFilter handleFilterVoucher={handleFilter} />
-      </Box>
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: '50px' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            mt: '50px',
+            height: '600px'
+          }}
+        >
           <CircularIndeterminate />
         </Box>
       ) : vouchers.length === 0 ? (
-        <VoucherEmpty
-          setOpenModal={() => setOpenModal(true)}
-          setAction={() => setAction('CREATE')}
-        />
+        <VoucherEmpty />
       ) : (
         <Table>
           <TableHead>

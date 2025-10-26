@@ -58,7 +58,7 @@ function VendorSideBar() {
       </CustomLink>
       <Divider />
 
-      <CustomLink to="/vendor/vouchers" isActive={checkUrl('vouchers')}>
+      <CustomLink to="/vendor/voucher" isActive={checkUrl('voucher')}>
         <DiscountOutlinedIcon />
         Vouchers
       </CustomLink>
