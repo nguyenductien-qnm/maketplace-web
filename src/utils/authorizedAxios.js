@@ -2,7 +2,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import interceptorLoadingElements from './interceptorLoading'
 import { refreshTokenAPI } from '~/api/auth.api'
-import { logoutAPI } from '~/redux/user.slice'
+import { clearUserInfo, logoutAPI } from '~/redux/user.slice'
 import { TOAST_MODE } from './constants'
 let axiosReduxStore
 
@@ -46,7 +46,7 @@ authorizeAxiosInstance.interceptors.response.use(
 
     const status = error.response?.status
     if (status === 401) {
-      axiosReduxStore.dispatch(logoutAPI({ toastMode: { ...TOAST_MODE.ALL } }))
+      axiosReduxStore.dispatch(clearUserInfo())
     }
 
     if (status === 410 && !originalRequest._retry) {

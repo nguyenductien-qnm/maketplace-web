@@ -60,7 +60,7 @@ function AccountOverview({ user }) {
           shipping and billing addresses
         </CustomLink>
         , and{' '}
-        <CustomLink to="/my-account/account-details">
+        <CustomLink to="/my-account/profile">
           edit your password and account details
         </CustomLink>
         .

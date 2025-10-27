@@ -30,7 +30,7 @@ export const checkTokenResetPasswordAPI = async (data) => {
   const res = await authorizedAxios.get(
     `${API_ROOT}/v1/api/auth/check-token-reset-password/${data.token}`,
     {
-      ...TOAST_MODE.NONE
+      ...TOAST_MODE.ONLY_ERROR
     }
   )
   return res
@@ -49,7 +49,7 @@ export const resetPasswordAPI = async (data, loadingClass) => {
 export const refreshTokenAPI = async () => {
   const res = await authorizedAxios.get(
     `${API_ROOT}/v1/api/auth/refresh-token`,
-    { ...TOAST_MODE.NONE }
+    { ...TOAST_MODE.ONLY_ERROR }
   )
   return res
 }

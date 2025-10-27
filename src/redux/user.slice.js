@@ -61,7 +61,6 @@ export const logoutAPI = createAsyncThunk(
     const res = await authorizedAxios.get(`${API_ROOT}/v1/api/auth/logout`, {
       ...toastMode
     })
-    navigate('/auth/login')
     return res
   }
 )
@@ -69,6 +68,12 @@ export const logoutAPI = createAsyncThunk(
 export const userSlice = createSlice({
   name: 'user',
   initialState,
+  reducers: {
+    clearUserInfo: (state) => {
+      state.currentUser = null
+      navigate('/auth/login')
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loginAPI.fulfilled, (state, action) => {
@@ -92,8 +97,11 @@ export const userSlice = createSlice({
 
       .addCase(logoutAPI.fulfilled, (state) => {
         state.currentUser = null
+        navigate('/auth/login')
       })
   }
 })
+
+export const { clearUserInfo } = userSlice.actions
 
 export default userSlice.reducer

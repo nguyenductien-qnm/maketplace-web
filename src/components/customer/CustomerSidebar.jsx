@@ -59,11 +59,8 @@ function CostumerSideBar() {
         Addresses
       </CustomLink>
       <Divider />
-      <CustomLink
-        to="/my-account/account-details"
-        isActive={checkUrl('account-details')}
-      >
-        Account details
+      <CustomLink to="/my-account/profile" isActive={checkUrl('profile')}>
+        Profile
       </CustomLink>
       <Divider />
       <CustomLink
