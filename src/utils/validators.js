@@ -40,6 +40,9 @@ export const PRODUCT_ATTRIBUTE_VALUE_RULE = /^[A-Za-zÀ-ỹ0-9,\s]{1,50}$/
 export const PRODUCT_ATTRIBUTE_VALUE_MESSAGE =
   'Max 50 chars: letters, numbers, commas'
 
+// ==================== voucher code ============================
+export const VOUCHER_CODE_VALUE = /^[A-Z0-9]{1,10}$/
+
 // Variation validation
 export const PRODUCT_VARIATION_NAME_RULE = /^[A-Za-zÀ-ỹ0-9\s]{1,14}$/
 export const PRODUCT_VARIATION_NAME_MESSAGE =

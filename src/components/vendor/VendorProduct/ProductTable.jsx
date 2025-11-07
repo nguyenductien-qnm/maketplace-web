@@ -1,26 +1,13 @@
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Box from '@mui/material/Box'
 import ProductRow from './ProductRow'
 import ProductEmpty from './ProductEmpty'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
-import { grey } from '@mui/material/colors'
+import TableCellHeader from '~/components/common/TableCellHeader'
 import { TableContainer, TablePagination } from '@mui/material'
-
-const TableCellCustom = ({ children, props }) => (
-  <TableCell
-    sx={{
-      backgroundColor: grey[100],
-      fontWeight: 600
-    }}
-    {...props}
-  >
-    {children}
-  </TableCell>
-)
 
 function ProductTable({ ui, data, handler }) {
   const { loading } = ui
@@ -52,13 +39,13 @@ function ProductTable({ ui, data, handler }) {
             <Table stickyHeader sx={{ width: '100%' }}>
               <TableHead>
                 <TableRow>
-                  <TableCellCustom>Image</TableCellCustom>
-                  <TableCellCustom>Name</TableCellCustom>
-                  <TableCellCustom>SKUs</TableCellCustom>
-                  <TableCellCustom>Price</TableCellCustom>
-                  <TableCellCustom>Stock</TableCellCustom>
-                  <TableCellCustom>Metrics</TableCellCustom>
-                  <TableCellCustom>Action</TableCellCustom>
+                  <TableCellHeader>Image</TableCellHeader>
+                  <TableCellHeader>Name</TableCellHeader>
+                  <TableCellHeader>SKUs</TableCellHeader>
+                  <TableCellHeader>Price</TableCellHeader>
+                  <TableCellHeader>Stock</TableCellHeader>
+                  <TableCellHeader>Metrics</TableCellHeader>
+                  <TableCellHeader>Action</TableCellHeader>
                 </TableRow>
               </TableHead>
               <TableBody>

@@ -1,12 +1,17 @@
-import { Card, Grid2, MenuItem, Select, TextField } from '@mui/material'
-import { Controller } from 'react-hook-form'
+import Card from '@mui/material/Card'
+import Grid2 from '@mui/material/Grid2'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import TypographyTitle from '~/components/common/TypographyTitle'
+import { Controller } from 'react-hook-form'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 
 const LABELS = {
   TITLE: 'Discount Setting',
   VOUCHER_TYPE: 'Voucher Type',
+  VOUCHER_MAX_DISCOUNT: 'Max Discount Amount',
   VOUCHER_VALUE: 'Voucher Value',
   VOUCHER_QUANTITY: 'Voucher Quantity',
   VOUCHER_MAX_DISTRIBUTE: 'Max Distribution per Buyer',
@@ -14,7 +19,12 @@ const LABELS = {
 }
 
 function DiscountSetting({ form }) {
-  const { register, watch, control, errors } = form
+  const { register, watch, control, trigger, errors } = form
+
+  const voucherType = watch('voucher_type')
+  const voucherName = watch('voucher_name')
+  const voucherCode = watch('voucher_code')
+
   return (
     <Card sx={{ p: 5 }}>
       <TypographyTitle sx={{ mb: 3 }}>{LABELS.TITLE}</TypographyTitle>
@@ -24,13 +34,21 @@ function DiscountSetting({ form }) {
           <Controller
             name="voucher_type"
             control={control}
-            rules={{ required: FIELD_REQUIRED_MESSAGE }}
+            rules={{
+              required: FIELD_REQUIRED_MESSAGE
+            }}
             render={({ field }) => (
               <Select
                 fullWidth
                 {...field}
                 error={!!errors['voucher_type']}
                 value={field.value ?? 'percent'}
+                onChange={(e) => {
+                  field.onChange(e)
+                  setTimeout(() => {
+                    trigger('voucher_value')
+                  }, 0)
+                }}
               >
                 <MenuItem value="fixed_amount">Fixed Amount</MenuItem>
                 <MenuItem value="percent">Percent</MenuItem>
@@ -38,21 +56,156 @@ function DiscountSetting({ form }) {
             )}
           />
         </Grid2>
+
         <Grid2 size={6}>
           <TypographyLabel>{LABELS.VOUCHER_VALUE}</TypographyLabel>
-          <TextField fullWidth />
+          <TextField
+            {...register('voucher_value', {
+              required: FIELD_REQUIRED_MESSAGE,
+
+              validate: (value) => {
+                const numValue = parseFloat(value)
+                if (isNaN(numValue) || !Number.isInteger(numValue)) {
+                  return 'Value must be an integer'
+                }
+
+                if (voucherType === 'percent') {
+                  if (numValue < 1 || numValue > 99)
+                    return 'Value must be between 1 and 99 for percentage type'
+                } else if (voucherType === 'fixed_amount') {
+                  if (numValue < 1 || numValue > 2000)
+                    return 'Value must be between 1 and 2000 for fixed amount type'
+                }
+
+                return true
+              }
+            })}
+            type="number"
+            inputProps={{
+              step: 1,
+              min: 1,
+              max: voucherType === 'percent' ? 99 : 2000,
+              onKeyPress: (e) => {
+                if (e.key === '.' || e.key === ',') e.preventDefault()
+              }
+            }}
+            fullWidth
+            error={!!errors.voucher_value}
+            helperText={errors.voucher_value?.message}
+          />
         </Grid2>
+
+        {voucherType === 'percent' && (
+          <Grid2 size={6}>
+            <TypographyLabel>{LABELS.VOUCHER_MAX_DISCOUNT}</TypographyLabel>
+            <TextField
+              {...register('voucher_max_discount', {
+                required: FIELD_REQUIRED_MESSAGE
+              })}
+              type="number"
+              fullWidth
+            />
+          </Grid2>
+        )}
+
         <Grid2 size={6}>
           <TypographyLabel>{LABELS.VOUCHER_QUANTITY}</TypographyLabel>
-          <TextField fullWidth />
+          <TextField
+            {...register('voucher_quantity', {
+              required: FIELD_REQUIRED_MESSAGE,
+              validate: (value) => {
+                const numValue = parseFloat(value)
+                if (isNaN(numValue) || !Number.isInteger(numValue))
+                  return 'Value must be an integer'
+
+                if (numValue < 1 || numValue > 200000)
+                  return 'Value must be between 1 and 200000'
+
+                return true
+              }
+            })}
+            fullWidth
+            type="number"
+            inputProps={{
+              step: 1,
+              min: 1,
+              max: 200000,
+              onKeyPress: (e) => {
+                if (e.key === '.' || e.key === ',') e.preventDefault()
+              }
+            }}
+            error={!!errors.voucher_quantity}
+            helperText={errors.voucher_quantity?.message}
+          />
         </Grid2>
+
         <Grid2 size={6}>
           <TypographyLabel>{LABELS.VOUCHER_MAX_DISTRIBUTE}</TypographyLabel>
-          <TextField fullWidth />
+          <TextField
+            {...register('voucher_max_distribution_per_buyer', {
+              required: FIELD_REQUIRED_MESSAGE,
+              validate: (value) => {
+                const numValue = parseFloat(value)
+                if (isNaN(numValue) || !Number.isInteger(numValue))
+                  return 'Value must be an integer'
+
+                if (numValue < 1 || numValue > 5)
+                  return 'Value must be between 1 and 5'
+
+                return true
+              }
+            })}
+            fullWidth
+            type="number"
+            inputProps={{
+              step: 1,
+              min: 1,
+              max: 5,
+              onKeyPress: (e) => {
+                if (e.key === '.' || e.key === ',') e.preventDefault()
+              }
+            }}
+            error={!!errors.voucher_max_distribution_per_buyer}
+            helperText={errors.voucher_max_distribution_per_buyer?.message}
+          />
         </Grid2>
+
         <Grid2 size={6}>
           <TypographyLabel>{LABELS.VOUCHER_MIN_ORDER_VALUE}</TypographyLabel>
-          <TextField fullWidth />
+          <TextField
+            {...register('voucher_min_order_value', {
+              required: FIELD_REQUIRED_MESSAGE,
+
+              validate: (value) => {
+                const numValue = parseFloat(value)
+                if (isNaN(numValue) || !Number.isInteger(numValue)) {
+                  return 'Value must be an integer'
+                }
+
+                if (voucherType === 'percent') {
+                  if (numValue < 1 || numValue > 99)
+                    return 'Value must be between 1 and 99 for percentage type'
+                } else if (voucherType === 'fixed_amount') {
+                  if (numValue < 1 || numValue > 2000)
+                    return 'Value must be between 1 and 2000 for fixed amount type'
+                }
+
+                return true
+              }
+            })}
+            fullWidth
+            type="number"
+            inputProps={{
+              step: 1,
+              min: 1,
+              max: 2000,
+              onKeyPress: (e) => {
+                if (e.key === '.' || e.key === ',') e.preventDefault()
+              }
+            }}
+            error={!!errors.voucher_min_order_value}
+            helperText={errors.voucher_min_order_value?.message}
+          />
         </Grid2>
       </Grid2>
     </Card>

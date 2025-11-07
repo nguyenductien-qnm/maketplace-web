@@ -1,13 +1,18 @@
-import { Box, Button, Divider, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import Typography from '@mui/material/Typography'
 import BasicInformation from '~/components/vendor/VendorVoucherForm/BasicInformation'
 import DiscountSetting from '~/components/vendor/VendorVoucherForm/DiscountSetting'
 import VoucherApplicable from '~/components/vendor/VendorVoucherForm/VoucherApplicable'
 import SaveIcon from '@mui/icons-material/Save'
+import ProductSelectionModal from '~/components/vendor/VendorVoucherForm/ProductSelectionModal'
 import { useVendorVoucherForm } from '~/hooks/vendor/voucherForm.hook'
 
 function VendorVoucherForm() {
-  const { form, ui } = useVendorVoucherForm()
-  const { loading, isSubmitting, pageTitle } = ui
+  const { ui, data, handler, form } = useVendorVoucherForm()
+  const { openModal, loading, isSubmitting, pageTitle } = ui
+  const { selectedProducts } = data
 
   return (
     <form>
@@ -23,7 +28,15 @@ function VendorVoucherForm() {
 
         <DiscountSetting form={form} />
 
-        <VoucherApplicable form={form} />
+        <VoucherApplicable form={form} data={data} handler={handler} />
+
+        {openModal && (
+          <ProductSelectionModal
+            open={openModal}
+            selected={selectedProducts}
+            handle={handler}
+          />
+        )}
 
         <Button
           type="submit"
