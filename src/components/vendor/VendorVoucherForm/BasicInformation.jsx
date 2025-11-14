@@ -21,8 +21,9 @@ const HELP_TEXT = {
   VOUCHER_CODE: 'Please enter A-Z, 0-9; 10 characters maximum.'
 }
 
-function BasicInformation({ form }) {
+function BasicInformation({ form, ui }) {
   const { register, watch, errors, trigger } = form
+  const { isUpdate, voucherStatus } = ui
 
   return (
     <Card sx={{ p: 5 }}>
@@ -31,6 +32,7 @@ function BasicInformation({ form }) {
         <Grid2 size={12}>
           <TypographyLabel>{LABELS.VOUCHER_NAME}</TypographyLabel>
           <TextField
+            disabled={isUpdate && voucherStatus == 'EXPIRED'}
             {...register('voucher_name', { required: FIELD_REQUIRED_MESSAGE })}
             fullWidth
             helperText={errors?.voucher_name?.message || HELP_TEXT.VOUCHER_NAME}
@@ -52,6 +54,7 @@ function BasicInformation({ form }) {
         <Grid2 size={12}>
           <TypographyLabel>{LABELS.VOUCHER_CODE}</TypographyLabel>
           <TextField
+            disabled={isUpdate && voucherStatus == 'EXPIRED'}
             {...register('voucher_code', {
               required: FIELD_REQUIRED_MESSAGE,
               pattern: { value: VOUCHER_CODE_VALUE },
@@ -79,7 +82,12 @@ function BasicInformation({ form }) {
         </Grid2>
         <Grid2 size={6}>
           <TypographyLabel>{LABELS.VOUCHER_START_DATE}</TypographyLabel>
+
           <TextField
+            disabled={
+              (isUpdate && voucherStatus == 'EXPIRED') ||
+              (isUpdate && voucherStatus == 'ONGOING')
+            }
             type="datetime-local"
             fullWidth
             {...register('voucher_start_date', {
@@ -89,6 +97,8 @@ function BasicInformation({ form }) {
               },
               validate: {
                 futureDate: (value) => {
+                  if (voucherStatus === 'ONGOING') return true
+
                   if (!value) return true
                   const selectedDate = new Date(value)
                   const now = new Date()
@@ -99,7 +109,9 @@ function BasicInformation({ form }) {
               }
             })}
             inputProps={{
-              min: new Date(new Date().getTime()).toISOString().slice(0, 16)
+              ...(voucherStatus !== 'ONGOING' && {
+                min: new Date().toISOString().slice(0, 16)
+              })
             }}
             error={!!errors['voucher_start_date']}
             helperText={errors?.voucher_start_date?.message}
@@ -108,6 +120,7 @@ function BasicInformation({ form }) {
         <Grid2 size={6}>
           <TypographyLabel>{LABELS.VOUCHER_END_DATE}</TypographyLabel>
           <TextField
+            disabled={isUpdate && voucherStatus == 'EXPIRED'}
             type="datetime-local"
             fullWidth
             {...register('voucher_end_date', {

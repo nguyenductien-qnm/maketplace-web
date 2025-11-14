@@ -17,6 +17,7 @@ import TableCellHeader from '~/components/common/TableCellHeader'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import { Controller } from 'react-hook-form'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
+import FieldErrorAlert from '~/components/common/FieldErrorAlert'
 
 const LABELS = {
   TITLE: 'Applicable & Visibility',
@@ -24,10 +25,11 @@ const LABELS = {
   VOUCHER_VISIBILITY: 'Voucher Visibility'
 }
 
-function VoucherApplicable({ form, data, handler }) {
+function VoucherApplicable({ form, data, handler, ui }) {
   const { handleOpenModal, handleRemoveProduct } = handler
   const { register, watch, control, errors } = form
   const { selectedProducts } = data
+  const { isUpdate, voucherStatus } = ui
 
   const voucherApply = watch('voucher_apply')
 
@@ -43,6 +45,7 @@ function VoucherApplicable({ form, data, handler }) {
             rules={{ required: FIELD_REQUIRED_MESSAGE }}
             render={({ field }) => (
               <Select
+                disabled={isUpdate && voucherStatus == 'EXPIRED'}
                 fullWidth
                 {...field}
                 error={!!errors['voucher_visibility']}
@@ -62,6 +65,10 @@ function VoucherApplicable({ form, data, handler }) {
             rules={{ required: FIELD_REQUIRED_MESSAGE }}
             render={({ field }) => (
               <Select
+                disabled={
+                  isUpdate &&
+                  (voucherStatus == 'EXPIRED' || voucherStatus == 'ONGOING')
+                }
                 fullWidth
                 {...field}
                 error={!!errors['voucher_apply']}
@@ -73,8 +80,9 @@ function VoucherApplicable({ form, data, handler }) {
             )}
           />
         </Grid2>
+
         {voucherApply == 'specific' && (
-          <Grid2>
+          <Grid2 size={12}>
             <Button
               onClick={handleOpenModal}
               variant="outlined"
@@ -85,6 +93,10 @@ function VoucherApplicable({ form, data, handler }) {
             </Button>
           </Grid2>
         )}
+
+        <Grid2 size={12}>
+          <FieldErrorAlert errors={errors} fieldName="voucher_product_ids" />
+        </Grid2>
 
         {selectedProducts.length > 0 && (
           <Grid2 size={12} sx={{ mt: 2 }}>

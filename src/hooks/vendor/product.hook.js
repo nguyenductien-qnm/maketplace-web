@@ -59,7 +59,7 @@ export const useVendorProductList = () => {
     try {
       const [res] = await asyncHandlerShop(
         async () =>
-          await await queryProductByOwnerAPI({
+          await queryProductByOwnerAPI({
             payload: filters
           })
       )
@@ -74,7 +74,7 @@ export const useVendorProductList = () => {
     }
   }, [])
 
-  const fetchMetrics = useCallback(async (product_id) => {
+  const fetchMetrics = async (product_id) => {
     try {
       setLoadingModal(true)
       const { status, resData } = await getProductMetricsByOwnerAPI({
@@ -87,14 +87,14 @@ export const useVendorProductList = () => {
     } finally {
       setLoadingModal(false)
     }
-  }, [])
+  }
 
-  const fetchCategories = useCallback(async () => {
+  const fetchCategories = async () => {
     const { status, resData } = await getCategoriesByOwnerAPI()
     if (status === StatusCodes.OK) {
       setCategories(resData.metadata)
     }
-  }, [])
+  }
 
   const handleDeleteProduct = async () => {
     try {

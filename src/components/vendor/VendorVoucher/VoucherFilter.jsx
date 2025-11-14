@@ -1,16 +1,20 @@
 import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton'
-import MenuItem from '@mui/material/MenuItem'
-import Popover from '@mui/material/Popover'
 import Select from '@mui/material/Select'
-import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
-import FormControl from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
+import Divider from '@mui/material/Divider'
+import Popover from '@mui/material/Popover'
+import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField'
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
+import TypographyLabel from '~/components/common/TypographyLabel'
 import { useState } from 'react'
 
-function VoucherFilter({ handleFilterVoucher }) {
+function VoucherFilter({
+  filters,
+  setFilters,
+  handleFilter,
+  handleClearFilter
+}) {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
@@ -31,64 +35,122 @@ function VoucherFilter({ handleFilterVoucher }) {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Box p={2} width={300}>
-          <h4>Advanced filters</h4>
+        <Box
+          sx={{
+            minWidth: '450px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px'
+          }}
+        >
+          <h3 style={{ marginBottom: 0 }}>Advanced Filters</h3>
+          <Divider />
 
-          <FormControl size="small" fullWidth sx={{ mt: 2 }}>
-            <InputLabel id="voucher-type-label">Voucher type</InputLabel>
+          <Box sx={{ flex: 1 }}>
+            <TextField
+              fullWidth
+              placeholder="Enter voucher name or code"
+              size="small"
+              value={filters.search}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, search: e.target.value }))
+              }
+            />
+          </Box>
+
+          <Box sx={{ flex: 1 }}>
+            <TypographyLabel>Voucher Type</TypographyLabel>
             <Select
-              labelId="voucher-type-label"
-              // value={voucherType}
-              // onChange={(e) => setVoucherType(e.target.value)}
-              label="Voucher type"
+              size="small"
+              fullWidth
+              value={filters.voucher_type || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  voucher_type: e.target.value
+                }))
+              }
+              displayEmpty
             >
+              <MenuItem value="fixed_amount">Fixed Amount</MenuItem>
               <MenuItem value="percent">Percent</MenuItem>
-              <MenuItem value="fixed_amount">Fixed amount</MenuItem>
             </Select>
-          </FormControl>
+          </Box>
 
-          <FormControl size="small" fullWidth sx={{ mt: 2 }}>
-            <InputLabel id="voucher-applies-label">Voucher applies</InputLabel>
+          <Box sx={{ flex: 1 }}>
+            <TypographyLabel>Voucher Apply</TypographyLabel>
             <Select
-              labelId="voucher-applies-label"
-              // value={voucherApplies}
-              // onChange={(e) => setVoucherApplies(e.target.value)}
-              label="Voucher type"
+              size="small"
+              fullWidth
+              value={filters.voucher_apply || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  voucher_apply: e.target.value
+                }))
+              }
+              displayEmpty
             >
               <MenuItem value="all">All</MenuItem>
               <MenuItem value="specific">Specific</MenuItem>
             </Select>
-          </FormControl>
+          </Box>
 
-          <TextField
-            type="date"
-            size="small"
-            fullWidth
-            // value={startDate}
-            // onChange={(e) => setStartDate(e.target.value)}
-            sx={{ mt: 2 }}
-            label="Start date"
-            InputLabelProps={{ shrink: true }}
-          />
+          <Box sx={{ flex: 1 }}>
+            <TypographyLabel>Voucher Visibility</TypographyLabel>
+            <Select
+              size="small"
+              fullWidth
+              value={filters.voucher_visibility || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  voucher_visibility: e.target.value
+                }))
+              }
+              displayEmpty
+            >
+              <MenuItem value="public">Public</MenuItem>
+              <MenuItem value="private">Private</MenuItem>
+            </Select>
+          </Box>
 
-          <TextField
-            type="date"
-            size="small"
-            fullWidth
-            // value={endDate}
-            // onChange={(e) => setEndDate(e.target.value)}
-            sx={{ mt: 2 }}
-            label="End date"
-            InputLabelProps={{ shrink: true }}
-          />
+          <Box sx={{ flex: 1 }}>
+            <TypographyLabel>Sort by</TypographyLabel>
+            <Select
+              size="small"
+              fullWidth
+              value={filters.sort_by || ''}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  sort_by: e.target.value
+                }))
+              }
+              displayEmpty
+            >
+              <MenuItem value="newest">Created (newest)</MenuItem>
+              <MenuItem value="oldest">Created (oldest)</MenuItem>
+            </Select>
+          </Box>
 
-          <Box mt={2} display="flex" justifyContent="flex-end">
+          <Box sx={{ alignSelf: 'end' }}>
             <Button
-              // onClick={handleClearFilter}
+              onClick={handleClearFilter}
               variant="contained"
-              sx={{ ml: 2, backgroundColor: 'black' }}
+              sx={{ backgroundColor: 'black', mr: '10px' }}
             >
               Clear
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                handleFilter()
+                handleCloseFilter()
+              }}
+            >
+              Search
             </Button>
           </Box>
         </Box>

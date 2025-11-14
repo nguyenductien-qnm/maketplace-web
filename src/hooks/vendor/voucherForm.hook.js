@@ -1,6 +1,15 @@
 import { useForm } from 'react-hook-form'
+import { navigate } from '~/helpers/navigation'
 import { useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
+import { getVoucherStatus } from '~/utils/voucherStatus'
+import { asyncHandlerShop } from '~/helpers/asyncHandler'
+import { StatusCodes } from 'http-status-codes'
+import {
+  createVoucherByShopAPI,
+  getVoucherDetailByShopAPI,
+  updateVoucherByShopAPI
+} from '~/api/voucher.api'
 
 const DEFAULT_VALUES = {
   voucher_name: '',
@@ -13,8 +22,12 @@ const DEFAULT_VALUES = {
   voucher_value: '',
   voucher_quantity: '',
   voucher_min_order_value: '',
-  voucher_max_distribution_per_buyer: ''
+  voucher_max_distribution_per_buyer: '',
+  voucher_max_discount_amount: ''
 }
+
+const LOADING_CLASS = '.btn-vendor-submit-voucher-form'
+
 export const useVendorVoucherForm = () => {
   const {
     setValue,
@@ -35,14 +48,6 @@ export const useVendorVoucherForm = () => {
   const { _id } = useParams()
   const { pathname } = useLocation()
 
-  const [openModal, setOpenModal] = useState(false)
-  const [selectedProducts, setSelectedProducts] = useState([])
-  const voucherApply = watch('voucher_apply')
-
-  useEffect(() => {
-    if (voucherApply == 'all') setSelectedProducts([])
-  }, [voucherApply])
-
   const isCreate = pathname === '/vendor/voucher/create'
   const isUpdate = pathname.includes('/vendor/voucher/update')
   const pageTitle = isCreate
@@ -51,19 +56,71 @@ export const useVendorVoucherForm = () => {
     ? 'Update Voucher'
     : ''
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
+  const [voucherStatus, setVoucherStatus] = useState(null)
+  const [selectedProducts, setSelectedProducts] = useState([])
+
+  const voucherApply = watch('voucher_apply')
+
+  useEffect(() => {
+    if (voucherApply == 'all') {
+      clearErrors('voucher_product_ids')
+      setSelectedProducts([])
+    }
+  }, [voucherApply])
+
+  useEffect(() => {
+    if (_id && isUpdate) {
+      fetchVoucher()
+    }
+  }, [_id, isUpdate])
 
   useEffect(() => {
     if (isCreate) setLoading(false)
   }, [pathname])
+
+  const fetchVoucher = async () => {
+    try {
+      setLoading(true)
+
+      const [res] = await asyncHandlerShop(
+        async () => await getVoucherDetailByShopAPI({ _id })
+      )
+
+      if (res?.status === StatusCodes.OK) {
+        const data = res.resData.metadata
+        setFormData(data)
+        const { voucher_start_date: start, voucher_end_date: end } = data
+        const voucherStatus = getVoucherStatus({ start, end })
+        setVoucherStatus(voucherStatus)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const setFormData = (data) => {
+    const { voucher_apply } = data
+
+    Object.keys(DEFAULT_VALUES).forEach((key) => {
+      setValue(key, data[key])
+    })
+
+    if (voucher_apply == 'specific') setSelectedProducts(data.products)
+  }
 
   const handleOpenModal = () => setOpenModal(true)
 
   const handleCloseModal = () => setOpenModal(false)
 
   const handleConfirmProducts = (selectedProducts) => {
-    setSelectedProducts(selectedProducts)
+    if (selectedProducts.length > 0) {
+      clearErrors('voucher_product_ids')
+      setSelectedProducts(selectedProducts)
+    }
+
     handleCloseModal()
   }
 
@@ -73,14 +130,63 @@ export const useVendorVoucherForm = () => {
     )
   }
 
+  const handleSubmitForm = handleSubmit(async (data) => {
+    const payload = data
+
+    if (data.voucher_apply === 'specific') {
+      if (selectedProducts.length == 0) {
+        setError('voucher_product_ids', {
+          type: 'manual',
+          message: 'Please select product.'
+        })
+        return
+      }
+      payload.voucher_product_ids = selectedProducts.map(
+        (product) => product._id
+      )
+    }
+
+    try {
+      setIsSubmitting(true)
+      let statusAPI = null
+      if (isCreate) {
+        const { status } = await createVoucherByShopAPI({
+          payload,
+          loadingClass: LOADING_CLASS
+        })
+        statusAPI = status
+      } else if (isUpdate) {
+        const { status } = await updateVoucherByShopAPI({
+          _id,
+          payload,
+          loadingClass: LOADING_CLASS
+        })
+        statusAPI = status
+      }
+
+      if (statusAPI == StatusCodes.OK || statusAPI == StatusCodes.CREATED)
+        navigate('/vendor/voucher')
+    } finally {
+      setIsSubmitting(false)
+    }
+  })
+
   return {
-    ui: { loading, isSubmitting, pageTitle, openModal },
+    ui: {
+      loading,
+      isSubmitting,
+      pageTitle,
+      voucherStatus,
+      isUpdate,
+      openModal
+    },
     data: { selectedProducts },
     handler: {
       handleOpenModal,
       handleCloseModal,
       handleConfirmProducts,
-      handleRemoveProduct
+      handleRemoveProduct,
+      handleSubmitForm
     },
     form: {
       register,

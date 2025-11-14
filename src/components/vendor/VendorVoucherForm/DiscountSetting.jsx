@@ -18,12 +18,10 @@ const LABELS = {
   VOUCHER_MIN_ORDER_VALUE: 'Minimum Order Value'
 }
 
-function DiscountSetting({ form }) {
+function DiscountSetting({ form, ui }) {
   const { register, watch, control, trigger, errors } = form
-
+  const { isUpdate, voucherStatus } = ui
   const voucherType = watch('voucher_type')
-  const voucherName = watch('voucher_name')
-  const voucherCode = watch('voucher_code')
 
   return (
     <Card sx={{ p: 5 }}>
@@ -39,6 +37,7 @@ function DiscountSetting({ form }) {
             }}
             render={({ field }) => (
               <Select
+                disabled={isUpdate}
                 fullWidth
                 {...field}
                 error={!!errors['voucher_type']}
@@ -60,6 +59,10 @@ function DiscountSetting({ form }) {
         <Grid2 size={6}>
           <TypographyLabel>{LABELS.VOUCHER_VALUE}</TypographyLabel>
           <TextField
+            disabled={
+              (isUpdate && voucherStatus == 'EXPIRED') ||
+              (isUpdate && voucherStatus == 'ONGOING')
+            }
             {...register('voucher_value', {
               required: FIELD_REQUIRED_MESSAGE,
 
@@ -99,7 +102,11 @@ function DiscountSetting({ form }) {
           <Grid2 size={6}>
             <TypographyLabel>{LABELS.VOUCHER_MAX_DISCOUNT}</TypographyLabel>
             <TextField
-              {...register('voucher_max_discount', {
+              disabled={
+                (isUpdate && voucherStatus == 'EXPIRED') ||
+                (isUpdate && voucherStatus == 'ONGOING')
+              }
+              {...register('voucher_max_discount_amount', {
                 required: FIELD_REQUIRED_MESSAGE
               })}
               type="number"
@@ -111,6 +118,7 @@ function DiscountSetting({ form }) {
         <Grid2 size={6}>
           <TypographyLabel>{LABELS.VOUCHER_QUANTITY}</TypographyLabel>
           <TextField
+            disabled={isUpdate && voucherStatus == 'EXPIRED'}
             {...register('voucher_quantity', {
               required: FIELD_REQUIRED_MESSAGE,
               validate: (value) => {
@@ -142,6 +150,7 @@ function DiscountSetting({ form }) {
         <Grid2 size={6}>
           <TypographyLabel>{LABELS.VOUCHER_MAX_DISTRIBUTE}</TypographyLabel>
           <TextField
+            disabled={isUpdate}
             {...register('voucher_max_distribution_per_buyer', {
               required: FIELD_REQUIRED_MESSAGE,
               validate: (value) => {
@@ -173,6 +182,10 @@ function DiscountSetting({ form }) {
         <Grid2 size={6}>
           <TypographyLabel>{LABELS.VOUCHER_MIN_ORDER_VALUE}</TypographyLabel>
           <TextField
+            disabled={
+              (isUpdate && voucherStatus == 'EXPIRED') ||
+              (isUpdate && voucherStatus == 'ONGOING')
+            }
             {...register('voucher_min_order_value', {
               required: FIELD_REQUIRED_MESSAGE,
 
@@ -182,13 +195,8 @@ function DiscountSetting({ form }) {
                   return 'Value must be an integer'
                 }
 
-                if (voucherType === 'percent') {
-                  if (numValue < 1 || numValue > 99)
-                    return 'Value must be between 1 and 99 for percentage type'
-                } else if (voucherType === 'fixed_amount') {
-                  if (numValue < 1 || numValue > 2000)
-                    return 'Value must be between 1 and 2000 for fixed amount type'
-                }
+                if (numValue < 1 || numValue > 2000)
+                  return 'Value must be between 1 and 2000 for fixed amount type'
 
                 return true
               }

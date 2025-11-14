@@ -58,7 +58,10 @@ function VendorSideBar() {
       </CustomLink>
       <Divider />
 
-      <CustomLink to="/vendor/voucher" isActive={checkUrl('voucher')}>
+      <CustomLink
+        to="/vendor/voucher?status=ALL&sort_by=newest&page=1&limit=10"
+        isActive={checkUrl('voucher')}
+      >
         <DiscountOutlinedIcon />
         Vouchers
       </CustomLink>

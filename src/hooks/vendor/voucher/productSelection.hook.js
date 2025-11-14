@@ -72,7 +72,10 @@ export const useProductSelection = ({ selected }) => {
 
   const handleSelectAllCurrentPage = (e) => {
     if (e.target.checked) {
-      setSelectedProducts((prev) => [...prev, ...products])
+      const add = products.filter(
+        (p) => !selectedProducts.some((sp) => sp._id === p._id)
+      )
+      setSelectedProducts((prev) => [...prev, ...add])
     } else {
       setSelectedProducts((prev) =>
         prev.filter((p) => !products.some((cp) => cp._id === p._id))

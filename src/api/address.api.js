@@ -1,8 +1,9 @@
 import axios from 'axios'
+import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 
 const getProvincesAPI = async () => {
-  const { status, data } = await axios.get(
+  const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/address/province`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
@@ -10,7 +11,7 @@ const getProvincesAPI = async () => {
 }
 
 const getDistrictsAPI = async (provinceId) => {
-  const { status, data } = await axios.get(
+  const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/address/district/${provinceId}`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
@@ -18,7 +19,7 @@ const getDistrictsAPI = async (provinceId) => {
 }
 
 const getWardsAPI = async (districtId) => {
-  const { status, data } = await axios.get(
+  const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/address/ward/${districtId}`,
     { ...TOAST_MODE.ONLY_ERROR }
   )

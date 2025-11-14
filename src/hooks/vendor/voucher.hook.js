@@ -1,194 +1,217 @@
-import { useState, useEffect } from 'react'
+import { StatusCodes } from 'http-status-codes'
+import { useFilterCompare } from '../common/filterCompare'
+import { useSearchParams } from 'react-router-dom'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { asyncHandlerShop } from '~/helpers/asyncHandler'
 import {
-  queryVoucherByOwnerAPI,
-  shopCreateVoucherAPI,
-  shopDeleteVoucherAPI,
-  shopUpdateVoucherAPI
+  deleteVoucherByShopAPI,
+  queryVoucherByShopAPI
 } from '~/api/voucher.api'
-import { queryProductByOwnerAPI } from '~/api/product.api'
-import { useForm } from 'react-hook-form'
 
-export const useVendorVoucher = (status) => {
-  const [vouchers, setVouchers] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  const fetchVouchers = async (filter = {}) => {
-    setLoading(true)
-    try {
-      const res = await queryVoucherByOwnerAPI({ status, ...filter })
-      setVouchers(res?.data?.metadata || [])
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchVouchers()
-  }, [])
-
-  const createVoucher = async (data) => {
-    const res = await shopCreateVoucherAPI(data, [
-      '.btn-shop-cancel-submit-voucher',
-      '.btn-shop-submit-voucher'
-    ])
-    if (res.status === 200) {
-      setVouchers((prev) => [res?.data?.metadata, ...prev])
-    }
-    return res
-  }
-
-  const updateVoucher = async (data) => {
-    const res = await shopUpdateVoucherAPI(data, [
-      '.btn-shop-cancel-submit-voucher',
-      '.btn-shop-submit-voucher'
-    ])
-    if (res.status === 200) {
-      setVouchers((prev) =>
-        prev.map((v) =>
-          v._id === res?.data?.metadata?._id ? res?.data?.metadata : v
-        )
-      )
-    }
-    return res
-  }
-
-  const deleteVoucher = async (data) => {
-    const { _id } = data
-    const res = await shopDeleteVoucherAPI({ _id }, [
-      '.btn-shop-confirm-delete-voucher',
-      '.btn-shop-cancel-delete-order'
-    ])
-    if (res.status === 200) {
-      setVouchers((prev) => prev.filter((v) => v._id !== _id))
-    }
-    return res
-  }
-
-  return {
-    vouchers,
-    loading,
-    fetchVouchers,
-    createVoucher,
-    updateVoucher,
-    deleteVoucher
-  }
+const TAB_LABELS = {
+  ALL: 'All',
+  ONGOING: 'Ongoing',
+  COMING: 'Upcoming',
+  EXPIRED: 'Expired'
 }
 
-export const useVendorVoucherModal = ({
-  voucher,
-  action,
-  onClose,
-  handleCreateVoucher,
-  handleUpdateVoucher
-}) => {
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    watch,
-    reset,
-    control
-  } = useForm({
-    shouldUnregister: true,
-    defaultValues: {
-      voucher_type: 'percent',
-      voucher_status: 'public',
-      voucher_applies: 'all'
-    }
-  })
+const DEFAULT_FILTERS = {
+  status: 'ALL',
+  search: '',
+  voucher_apply: '',
+  voucher_type: '',
+  voucher_visibility: '',
+  sort_by: 'newest',
+  page: 1,
+  limit: 10
+}
 
-  const voucherApplies = watch('voucher_applies')
-  const voucherStatus = watch('voucher_status')
-  const voucherType = watch('voucher_type')
+export const useVendorVoucher = () => {
+  const [vouchers, setVouchers] = useState([])
+  const [count, setCount] = useState(0)
+  const [filters, setFilters] = useState(DEFAULT_FILTERS)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [selectedVoucherId, setSelectedVoucherId] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+  const [params, setParams] = useSearchParams()
 
-  const [searchValue, setSearchValue] = useState('')
-  const [selectProduct, setSelectProduct] = useState([])
-  const [product, setProduct] = useState([])
-  const [loading, setLoading] = useState(false)
+  const isInitialized = useRef(false)
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      if (voucherApplies === 'specific') {
-        try {
-          setLoading(true)
-          const res = await queryProductByOwnerAPI({ status: 'PUBLIC' })
-          setProduct(res?.data?.metadata)
-        } finally {
-          setLoading(false)
-        }
-      }
-    }
-    fetchProducts()
-  }, [voucherApplies])
-
-  useEffect(() => {
-    if (voucher) {
-      setSelectProduct(voucher?.voucher_product_ids || [])
-      reset({ ...voucher })
-    } else {
-      reset({})
-      setSelectProduct([])
-    }
-  }, [voucher])
-
-  const handleSearch = async () => {
+  // ============================== API ==============================
+  const fetchVouchers = useCallback(async ({ filters }) => {
+    setLoading(true)
+    setVouchers([])
     try {
-      setLoading(true)
-      const res = await queryProductByOwnerAPI({
-        status: 'PUBLIC',
-        search: searchValue
-      })
-      setProduct(res?.data?.metadata)
+      const [res] = await asyncHandlerShop(
+        async () =>
+          await queryVoucherByShopAPI({
+            payload: filters
+          })
+      )
+
+      if (res?.status === StatusCodes.OK) {
+        const { vouchers, count } = res.resData.metadata
+        setVouchers(vouchers || [])
+        setCount(count || 0)
+      }
     } finally {
       setLoading(false)
     }
+  }, [])
+
+  const handleDeleteVoucher = async () => {
+    try {
+      setIsDeleting(true)
+      const { status } = await deleteVoucherByShopAPI({
+        _id: selectedVoucherId,
+        loadingClass: '.btn-confirm-modal'
+      })
+      if (status === StatusCodes.OK) {
+        setVouchers((prev) => [
+          ...prev.filter((v) => v._id != selectedVoucherId)
+        ])
+        setSelectedVoucherId(null)
+        setOpenConfirmDialog(false)
+      }
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
-  const handleSelectProduct = (product) => {
-    setSelectProduct((prev) =>
-      prev.includes(product._id)
-        ? prev.filter((id) => id !== product._id)
-        : [...prev, product._id]
-    )
-  }
+  // ============================== FILTER COMPARE HOOK ==============================
+  const { checkAndFetch } = useFilterCompare(fetchVouchers)
 
-  const onSubmit = handleSubmit(async (data) => {
-    if (voucherApplies === 'specific') {
-      data.voucher_product_ids = selectProduct
+  // ============================== INIT EFFECT ==============================
+  useEffect(() => {
+    const urlParams = Object.fromEntries(params.entries())
+
+    if (!urlParams.status || !urlParams.page || !urlParams.limit) {
+      const defaultParams = {
+        status: 'ALL',
+        sort_by: 'newest',
+        page: 1,
+        limit: 10
+      }
+      setFilters((prev) => ({ ...prev, ...defaultParams }))
+      setParams(defaultParams)
+      fetchVouchers({ filters: defaultParams })
     } else {
-      delete data.voucher_product_ids
+      const merged = { ...DEFAULT_FILTERS, ...urlParams }
+      setFilters(merged)
+      fetchVouchers({ filters: merged })
     }
 
-    let res = null
-    if (action === 'CREATE') {
-      res = await handleCreateVoucher(data)
-    } else if (action === 'UPDATE') {
-      data._id = voucher._id
-      res = await handleUpdateVoucher(data)
+    isInitialized.current = true
+  }, [])
+
+  // ============================== HANDLER ==============================
+  const handleOpenConfirmDialog = (voucher) => {
+    setOpenConfirmDialog(true)
+    if (voucher) setSelectedVoucherId(voucher?._id)
+  }
+
+  const handleCloseConfirmDialog = () => {
+    if (isDeleting) return
+    setSelectedVoucherId(null)
+    setOpenConfirmDialog(false)
+  }
+
+  const handleFilter = () => {
+    const updatedFilters = { ...filters, page: 1 }
+
+    const params = {}
+    for (const [key, value] of Object.entries(updatedFilters)) {
+      if (value !== '' && value !== null && value !== undefined) {
+        params[key] = value
+      }
     }
 
-    if (res.status === 200) {
-      reset()
-      onClose()
+    setFilters(updatedFilters)
+    setParams(params)
+    checkAndFetch(updatedFilters)
+  }
+
+  const handleClearFilter = () => {
+    const resetFilters = {
+      ...filters,
+      search: '',
+      voucher_apply: '',
+      voucher_type: '',
+      voucher_visibility: '',
+      sort_by: 'newest',
+      page: 1
     }
-  })
+
+    const resetParams = {
+      status: filters.status,
+      sort_by: 'newest',
+      page: 1,
+      limit: filters.limit
+    }
+
+    setFilters(resetFilters)
+    setParams(resetParams)
+    checkAndFetch(resetFilters)
+  }
+
+  const handleChangeTab = (newValue) => {
+    const updatedFilters = { ...filters, status: newValue, page: 1 }
+
+    const params = {}
+    for (const [key, value] of Object.entries(updatedFilters)) {
+      if (value !== '' && value !== null && value !== undefined) {
+        params[key] = value
+      }
+    }
+
+    setFilters(updatedFilters)
+    setParams(params)
+    fetchVouchers({ filters: updatedFilters })
+  }
+
+  const handleChangePage = (e, newValue) => {
+    const pageValue = newValue + 1
+    const updatedFilters = { ...filters, page: pageValue }
+
+    setFilters(updatedFilters)
+    setParams((prevParams) => {
+      const updatedParams = new URLSearchParams(prevParams)
+      updatedParams.set('page', pageValue)
+      return updatedParams
+    })
+
+    fetchVouchers({ filters: updatedFilters })
+  }
+
+  const handleChangeRowsPerPage = (event) => {
+    const limitValue = parseInt(event.target.value, 10)
+    const updatedFilters = { ...filters, limit: limitValue, page: 1 }
+
+    setFilters(updatedFilters)
+    setParams((prevParams) => {
+      const updatedParams = new URLSearchParams(prevParams)
+      updatedParams.set('limit', limitValue)
+      updatedParams.set('page', 1)
+      return updatedParams
+    })
+
+    fetchVouchers({ filters: updatedFilters })
+  }
 
   return {
-    register,
-    errors,
-    handleSubmit,
-    onSubmit,
-    watch,
-    control,
-    voucherStatus,
-    voucherType,
-    voucherApplies,
-    product,
-    loading,
-    searchValue,
-    setSearchValue,
-    handleSearch,
-    handleSelectProduct,
-    selectProduct
+    ui: { loading, isDeleting, openConfirmDialog, TAB_LABELS },
+    data: { vouchers, count, filters },
+    handler: {
+      handleOpenConfirmDialog,
+      handleCloseConfirmDialog,
+      setFilters,
+      handleChangePage,
+      handleChangeRowsPerPage,
+      handleChangeTab,
+      handleFilter,
+      handleClearFilter,
+      handleDeleteVoucher
+    }
   }
 }

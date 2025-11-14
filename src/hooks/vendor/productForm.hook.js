@@ -120,6 +120,7 @@ export const useVendorProductForm = () => {
       setValue('enable_variations', false)
     }
   }, [productVariations])
+
   // ============================== API ==============================
 
   const fetchCategories = async () => {
