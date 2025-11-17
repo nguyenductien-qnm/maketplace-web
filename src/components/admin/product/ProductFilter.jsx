@@ -1,24 +1,20 @@
 import Box from '@mui/material/Box'
 import Popover from '@mui/material/Popover'
-import Slider from '@mui/material/Slider'
 import Autocomplete from '@mui/material/Autocomplete'
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
 import TypographyLabel from '../../common/TypographyLabel'
 import CategoryTreeView from '~/components/common/CategoryTreeView'
+import TypographyTitle from '~/components/common/TypographyTitle'
 import { useState } from 'react'
-import { MenuItem, Select } from '@mui/material'
 
-function ProductFilter({
-  shops,
-  categories,
-  filters,
-  setFilters,
-  handleFilter,
-  handleClearFilter
-}) {
+function ProductFilter({ data, handler }) {
+  const { shops, categories, filters } = data
+  const { setFilters, handleFilter, handleClearFilter } = handler
+
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
@@ -37,148 +33,152 @@ function ProductFilter({
         onClose={handleCloseFilter}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        sx={{ height: '750px' }}
       >
         <Box
           sx={{
             minWidth: '500px',
-            padding: '20px',
+            height: '750px',
             display: 'flex',
-            flexDirection: 'column',
-            gap: '20px'
+            flexDirection: 'column'
           }}
         >
-          <h3 style={{ marginBottom: 0 }}>Advanced filters</h3>
-          <Divider />
-          <Box sx={{ flex: 1 }}>
-            <TextField
-              fullWidth
-              placeholder="Enter product name"
-              size="small"
-              value={filters.search}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, search: e.target.value }))
-              }
-            />
+          <Box sx={{ padding: 3, paddingBottom: 2, flexShrink: 0 }}>
+            <TypographyTitle>Advanced Filters</TypographyTitle>
           </Box>
 
-          <Box sx={{ flex: 1 }}>
-            <TypographyLabel>Sort by</TypographyLabel>
-            <Select
-              size="small"
-              fullWidth
-              value={filters.sortBy || ''}
-              onChange={(e) =>
-                setFilters((prev) => ({
-                  ...prev,
-                  sortBy: e.target.value
-                }))
-              }
-              displayEmpty
-            >
-              <MenuItem value="newest">Created (newest)</MenuItem>
-              <MenuItem value="oldest">Created (oldest)</MenuItem>
-              <MenuItem value="updatedAt">Updated</MenuItem>
-              <MenuItem value="highestPrice">Highest (price)</MenuItem>
-              <MenuItem value="highestStock">Highest (stock)</MenuItem>
-              <MenuItem value="highestReview">Highest (review)</MenuItem>
-              <MenuItem value="highestRating">Highest (rating)</MenuItem>
-              <MenuItem value="lowestPrice">Lowest (price)</MenuItem>
-              <MenuItem value="lowestStock">Lowest (stock)</MenuItem>
-              <MenuItem value="lowestReview">Lowest (review)</MenuItem>
-              <MenuItem value="lowestRating">Lowest (rating)</MenuItem>
-            </Select>
-          </Box>
-
-          <Box sx={{ flex: 1 }}>
-            <TypographyLabel>Product of shop</TypographyLabel>
-            <Autocomplete
-              size="small"
-              fullWidth
-              options={shops || []}
-              getOptionLabel={(option) => option.shop_name || ''}
-              value={
-                shops?.find((shop) => shop._id === filters.productOfShop) ||
-                null
-              }
-              onChange={(_, newValue) => {
-                setFilters((prev) => ({
-                  ...prev,
-                  productOfShop: newValue?._id || ''
-                }))
-              }}
-              renderInput={(params) => <TextField {...params} />}
-              isOptionEqualToValue={(option, value) => option._id === value._id}
-            />
-          </Box>
-
-          <Box sx={{ flex: 1 }}>
-            <TypographyLabel>Category</TypographyLabel>
-
-            <CategoryTreeView
-              multi="true"
-              categories={categories}
-              value={filters.category || ''}
-              onChange={(newSelected) =>
-                setFilters((prev) => ({ ...prev, category: newSelected }))
-              }
-            />
-          </Box>
-
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Box sx={{ flex: 1 }}>
-              <TypographyLabel>Created from</TypographyLabel>
+          <Box
+            sx={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: '0 24px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px'
+            }}
+          >
+            <Box>
               <TextField
+                fullWidth
+                placeholder="Enter product name or code"
+                value={filters.search}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, search: e.target.value }))
+                }
+              />
+            </Box>
+
+            <Box>
+              <TypographyLabel>Sort by</TypographyLabel>
+              <Select
+                fullWidth
+                value={filters.sort_by || ''}
                 onChange={(e) =>
                   setFilters((prev) => ({
                     ...prev,
-                    createdFrom: e.target.value
+                    sort_by: e.target.value
                   }))
                 }
-                value={filters.createdFrom}
-                size="small"
-                type="date"
-                fullWidth
-              />
+                displayEmpty
+              >
+                <MenuItem value="newest">Created (newest)</MenuItem>
+                <MenuItem value="oldest">Created (oldest)</MenuItem>
+                <MenuItem value="updated_at">Updated (recently)</MenuItem>
+                <MenuItem value="most_reported">Most Reported</MenuItem>
+                <MenuItem value="lowest_rating">Lowest Rating</MenuItem>
+                <MenuItem value="best_selling">Best Selling (sold)</MenuItem>
+                <MenuItem value="worst_selling">Worst Selling (sold)</MenuItem>
+                <MenuItem value="highest_revenue">Highest Revenue</MenuItem>
+                <MenuItem value="most_viewed">Most Viewed</MenuItem>
+                <MenuItem value="most_reviewed">Most Reviewed</MenuItem>
+                <MenuItem value="price_low_high">Price (Low - High)</MenuItem>
+                <MenuItem value="price_high_low">Price (High - Low)</MenuItem>
+                <MenuItem value="name_asc">Name (A-Z)</MenuItem>
+                <MenuItem value="name_desc">Name (Z-A)</MenuItem>
+              </Select>
             </Box>
-            <Box sx={{ flex: 1 }}>
-              <TypographyLabel>Created to</TypographyLabel>
-              <TextField
-                onChange={(e) =>
+
+            <Box>
+              <TypographyLabel>Product of shop</TypographyLabel>
+              <Autocomplete
+                fullWidth
+                options={shops || []}
+                getOptionLabel={(option) => option.shop_name || ''}
+                value={
+                  shops?.find((shop) => shop._id === filters.product_of_shop) ||
+                  null
+                }
+                onChange={(_, newValue) => {
                   setFilters((prev) => ({
                     ...prev,
-                    createdTo: e.target.value
+                    product_of_shop: newValue?._id || ''
                   }))
+                }}
+                renderInput={(params) => <TextField {...params} />}
+                isOptionEqualToValue={(option, value) =>
+                  option._id === value._id
                 }
-                value={filters.createdTo}
-                size="small"
-                type="date"
-                fullWidth
+              />
+            </Box>
+
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Box sx={{ flex: 1 }}>
+                <TypographyLabel>Created from</TypographyLabel>
+                <TextField
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      created_from: e.target.value
+                    }))
+                  }
+                  value={filters.created_from}
+                  type="date"
+                  fullWidth
+                />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <TypographyLabel>Created to</TypographyLabel>
+                <TextField
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      created_to: e.target.value
+                    }))
+                  }
+                  value={filters.created_to}
+                  type="date"
+                  fullWidth
+                />
+              </Box>
+            </Box>
+
+            <Box>
+              <TypographyLabel>Category</TypographyLabel>
+              <CategoryTreeView
+                multi="true"
+                categories={categories}
+                value={filters.category || ''}
+                onChange={(newSelected) =>
+                  setFilters((prev) => ({ ...prev, category: newSelected }))
+                }
               />
             </Box>
           </Box>
 
-          <Box sx={{ flex: 1 }}>
-            <TypographyLabel>
-              Price range: {filters.priceRange[0].toLocaleString()} -{' '}
-              {filters.priceRange[1].toLocaleString()} $
-            </TypographyLabel>
-            <Slider
-              value={filters.priceRange}
-              onChange={(e, newValue) =>
-                setFilters((prev) => ({ ...prev, priceRange: newValue }))
-              }
-              valueLabelDisplay="auto"
-              min={0}
-              max={2000}
-              step={50}
-            />
-          </Box>
-
-          <Divider />
-          <Box sx={{ alignSelf: 'end' }}>
+          <Box
+            sx={{
+              padding: 3,
+              paddingTop: 2,
+              display: 'flex',
+              justifyContent: 'flex-end',
+              flexShrink: 0,
+              marginTop: 2
+            }}
+          >
             <Button
-              onClick={handleClearFilter}
+              onClick={() => {
+                handleClearFilter()
+                handleCloseFilter()
+              }}
               variant="contained"
               sx={{ backgroundColor: 'black', mr: '10px' }}
             >

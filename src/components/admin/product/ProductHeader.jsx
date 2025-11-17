@@ -1,20 +1,14 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
-import Tooltip from '@mui/material/Tooltip'
 import ProductFilter from './ProductFilter'
 
-function ProductHeader({
-  name,
-  shops,
-  categories,
-  filters,
-  setFilters,
-  handleFilter,
-  handleClearFilter,
-  handleExportProducts
-}) {
+function ProductHeader({ ui, data, handler }) {
+  const { pageTitle } = ui
+  const { handleExportProducts } = handler
+
   return (
     <Box
       sx={{
@@ -29,19 +23,12 @@ function ProductHeader({
         variant="body2"
         sx={{ fontSize: '1.5rem', fontWeight: 'bold' }}
       >
-        {name}
+        {pageTitle}
       </Typography>
       <Box sx={{ display: 'flex', gap: '10px' }}>
         <Tooltip title="Advantage filter">
           <Box>
-            <ProductFilter
-              shops={shops}
-              categories={categories}
-              filters={filters}
-              setFilters={setFilters}
-              handleFilter={handleFilter}
-              handleClearFilter={handleClearFilter}
-            />
+            <ProductFilter data={data} handler={handler} />
           </Box>
         </Tooltip>
         <Tooltip title="Export filtered products(.csv)">

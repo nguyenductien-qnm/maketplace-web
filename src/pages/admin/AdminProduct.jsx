@@ -6,35 +6,17 @@ import ReasonModal from '~/components/admin/ReasonModal'
 import { useAdminProduct } from '~/hooks/admin/product.hook'
 
 function AdminProduct({ status, name }) {
+  const { ui, data, handler } = useAdminProduct({ status })
   const {
-    products,
-    count,
-    loading,
-    productDetail,
-    shops,
-    categories,
-
-    filters,
-    setFilters,
-    page,
-    rowsPerPage,
-
     openDetailModal,
     openReasonModal,
     modalProps,
+    loadingProductDetail,
+    loadingAuditLog
+  } = ui
+  const { productDetail, categories } = data
+  const { handleCloseModal } = handler
 
-    handleFilter,
-    handleClearFilter,
-    handleChangePage,
-    handleChangeRowsPerPage,
-    handleApproveProduct,
-    handleExportProducts,
-
-    handleOpenModal,
-    handleCloseModal,
-
-    PRODUCT_TABLE_MAP
-  } = useAdminProduct({ status })
   return (
     <Paper
       sx={{
@@ -44,35 +26,18 @@ function AdminProduct({ status, name }) {
         flexDirection: 'column'
       }}
     >
-      <ProductHeader
-        name={name}
-        shops={shops}
-        categories={categories}
-        filters={filters}
-        setFilters={setFilters}
-        handleFilter={handleFilter}
-        handleClearFilter={handleClearFilter}
-        handleExportProducts={handleExportProducts}
-      />
+      <ProductHeader ui={ui} data={data} handler={handler} />
 
-      <ProductTable
-        loading={loading}
-        products={products}
-        count={count}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        handleApproveProduct={handleApproveProduct}
-        handleOpenModal={handleOpenModal}
-        handleChangePage={handleChangePage}
-        handleChangeRowsPerPage={handleChangeRowsPerPage}
-        PRODUCT_TABLE_MAP={PRODUCT_TABLE_MAP}
-      />
+      <ProductTable ui={ui} data={data} handler={handler} />
 
       <ProductDetailModal
+        loading={loadingProductDetail}
+        loadingAuditLog={loadingAuditLog}
         open={openDetailModal}
         onClose={handleCloseModal}
-        product={productDetail}
+        productDetail={productDetail}
         categories={categories}
+        handler={handler}
       />
 
       <ReasonModal

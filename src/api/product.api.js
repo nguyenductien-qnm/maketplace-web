@@ -70,10 +70,10 @@ const deleteProductByOwnerAPI = async ({ _id, loadingClass }) => {
 // ============================ ADMIN ============================
 
 const queryProductByAdminAPI = async ({ payload }) => {
-  const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/admin/product/query`,
-    payload,
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/admin/product`,
     {
+      params: cleanFilters(payload),
       ...TOAST_MODE.ONLY_ERROR
     }
   )

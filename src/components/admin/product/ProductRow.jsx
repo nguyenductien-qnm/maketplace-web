@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
 import Tooltip from '@mui/material/Tooltip'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import LockOpenIcon from '@mui/icons-material/LockOpen'
@@ -8,17 +7,15 @@ import BlockIcon from '@mui/icons-material/Block'
 import DoneIcon from '@mui/icons-material/Done'
 import DoDisturbOnOutlinedIcon from '@mui/icons-material/DoDisturbOnOutlined'
 import formatCurrency from '~/utils/formatCurrency'
-import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
-import { renderDefault } from '~/components/common/common'
+import {
+  renderCapitalizeFirstLetter,
+  renderDefault
+} from '~/components/common/common'
+import { Typography } from '@mui/material'
 
-const STATUS_COLOR_MAPPING = {
-  approved: 'success',
-  rejected: 'error',
-  banned: 'warning',
-  pending: 'info'
-}
+const formatFields = ['product_status', 'product_visibility', 'product_type']
 
 function ProductRow({
   product,
@@ -26,40 +23,15 @@ function ProductRow({
   handleApproveProduct,
   PRODUCT_TABLE_MAP
 }) {
-  const renderProductThumb = (key) => (
-    <img loading="lazy" src={product?.[key]} style={{ width: '50px' }} />
+  const renderProductImage = () => (
+    <img loading="lazy" src={product.product_image} style={{ width: '50px' }} />
   )
 
-  const renderProductStatus = (key) => {
-    const value = product?.[key]
-    return (
-      <Chip
-        label={capitalizeFirstLetter(value)}
-        color={STATUS_COLOR_MAPPING?.[value]}
-        variant="outlined"
-        size="small"
-      />
-    )
-  }
-
-  const renderProductVisibility = (key) => {
-    const value = product?.[key]
-    return (
-      <Chip
-        label={capitalizeFirstLetter(value)}
-        color={value === 'public' ? 'success' : 'default'}
-        variant="contained"
-        size="small"
-        sx={{ width: '60px' }}
-      />
-    )
-  }
-
   const renderPriceRange = () =>
-    product.product_min_price === product.product_max_price
-      ? formatCurrency(product.product_min_price)
-      : `${formatCurrency(product.product_min_price)} - ${formatCurrency(
-          product.product_max_price
+    product.product_price_min === product.product_price_max
+      ? formatCurrency(product.product_price_min)
+      : `${formatCurrency(product.product_price_min)} - ${formatCurrency(
+          product.product_price_max
         )}`
 
   const renderDetailButton = () => (
@@ -140,11 +112,34 @@ function ProductRow({
     return null
   }
 
+  const renderProductName = () => (
+    <>
+      <Typography
+        variant="body2"
+        sx={{
+          display: '-webkit-box',
+          WebkitBoxOrient: 'vertical',
+          WebkitLineClamp: 3,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          wordBreak: 'break-word',
+          mb: 1,
+          color: product?.product_stock_total <= 5 ? 'red' : 'inherit',
+          fontWeight: product?.product_stock_total <= 5 ? 'bold' : 'normal'
+        }}
+      >
+        {product?.product_name}
+      </Typography>
+      <Typography variant="caption" sx={{ color: 'grey' }}>
+        CODE: {product?.product_code}
+      </Typography>
+    </>
+  )
+
   const RENDER_MAP = {
-    product_thumb: renderProductThumb,
-    price_range: renderPriceRange,
-    product_status: renderProductStatus,
-    product_visibility: renderProductVisibility,
+    product_name: renderProductName,
+    product_image: renderProductImage,
+    product_price_range: renderPriceRange,
     detail: renderDetailButton,
     action: renderActionButton
   }
@@ -157,7 +152,9 @@ function ProductRow({
       {PRODUCT_TABLE_MAP?.map(({ key }) => (
         <TableCell align="left" sx={{ maxWidth: '400px' }} key={key}>
           {RENDER_MAP[key]
-            ? RENDER_MAP[key]?.(key)
+            ? RENDER_MAP[key](key)
+            : formatFields.includes(key)
+            ? renderCapitalizeFirstLetter(product, key)
             : renderDefault(product, key)}
         </TableCell>
       ))}

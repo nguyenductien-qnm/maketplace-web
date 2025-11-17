@@ -26,7 +26,7 @@ function ProductTable({ ui, data, handler }) {
             display: 'flex',
             justifyContent: 'center',
             mt: '50px',
-            height: '600px'
+            height: '750px'
           }}
         >
           <CircularIndeterminate />
@@ -34,8 +34,8 @@ function ProductTable({ ui, data, handler }) {
       ) : products?.length === 0 ? (
         <ProductEmpty />
       ) : (
-        <>
-          <TableContainer sx={{ maxHeight: 800, overflowY: 'auto' }}>
+        <Box sx={{ height: '750px' }}>
+          <TableContainer sx={{ maxHeight: 700, overflowY: 'auto' }}>
             <Table stickyHeader sx={{ width: '100%' }}>
               <TableHead>
                 <TableRow>
@@ -69,7 +69,7 @@ function ProductTable({ ui, data, handler }) {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
-        </>
+        </Box>
       )}
     </>
   )

@@ -1,7 +1,6 @@
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
@@ -10,22 +9,21 @@ import TablePagination from '@mui/material/TablePagination'
 import NoData from '../NoData'
 import TableSkeleton from '../TableSkeleton'
 import ProductRow from './ProductRow'
+import TableCellHeader from '~/components/common/TableCellHeader'
 
-function ProductTable({
-  loading,
-  products,
-  count,
-  page,
-  rowsPerPage,
-  handleApproveProduct,
-  handleOpenModal,
-  handleChangePage,
-  handleChangeRowsPerPage,
-  PRODUCT_TABLE_MAP
-}) {
+function ProductTable({ ui, data, handler }) {
+  const { loading, PRODUCT_TABLE_MAP } = ui
+  const { filters, count, products } = data
+  const {
+    handleApproveProduct,
+    handleOpenModal,
+    handleChangePage,
+    handleChangeRowsPerPage
+  } = handler
+
   return (
     <>
-      {loading && <TableSkeleton columns={10} rows={rowsPerPage} />}
+      {loading && <TableSkeleton columns={10} rows={filters?.limit} />}
       {!loading && products?.length === 0 && <NoData />}
       {!loading && products?.length > 0 && (
         <TableContainer
@@ -33,16 +31,17 @@ function ProductTable({
           sx={{
             flex: 1,
             overflowY: 'auto',
-            width: '100%'
+            width: '100%',
+            p: 2
           }}
         >
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
                 {PRODUCT_TABLE_MAP?.map(({ key, label }) => (
-                  <TableCell key={key} align="left">
+                  <TableCellHeader key={key} align="left">
                     {label}
-                  </TableCell>
+                  </TableCellHeader>
                 ))}
               </TableRow>
             </TableHead>
@@ -70,14 +69,10 @@ function ProductTable({
                   rowsPerPageOptions={[10, 25, 50]}
                   colSpan={10}
                   count={count || 0}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
+                  rowsPerPage={Number(filters?.limit)}
+                  page={filters?.page - 1}
                   onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}
-                  labelRowsPerPage="Rows per page"
-                  labelDisplayedRows={({ from, to, count }) =>
-                    `${from}-${to} of ${count}`
-                  }
                 />
               </TableRow>
             </TableFooter>

@@ -110,28 +110,7 @@ const AdminRoutes = ({ user }) => {
           />
         </Route>
 
-        <Route path="product">
-          <Route
-            path="pending"
-            element={<AdminProduct status="PENDING" name="Pending products" />}
-          />
-          <Route
-            path="approved"
-            element={
-              <AdminProduct status="APPROVED" name="Approved products" />
-            }
-          />
-          <Route
-            path="rejected"
-            element={
-              <AdminProduct status="REJECTED" name="Rejected products" />
-            }
-          />
-          <Route
-            path="banned"
-            element={<AdminProduct status="BANNED" name="Banned products" />}
-          />
-        </Route>
+        <Route path="products" element={<AdminProduct />} />
 
         <Route path="withdraw-request">
           <Route

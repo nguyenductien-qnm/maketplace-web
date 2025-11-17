@@ -21,10 +21,15 @@ const modalStyle = (width) => {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
-    maxHeight: '80vh',
+    maxHeight: '95vh',
     overflow: 'auto',
     scrollbarWidth: 'none',
-    borderRadius: '7px'
+    display: 'flex',
+    flexDirection: 'column',
+    borderRadius: '7px',
+    '&:focus-visible': {
+      outline: 'none'
+    }
   }
 }
 
