@@ -15,7 +15,7 @@ import { useVendorProductList } from '~/hooks/vendor/product.hook'
 
 function VendorProducts() {
   const { ui, data, handler } = useVendorProductList()
-  const { metrics, categories, filters, setFilters } = data
+  const { metrics, categories, filters, summary, setFilters } = data
   const { loadingModal, TAB_LABELS, openConfirmDialog, openMetricsModal } = ui
   const {
     handleCloseConfirmDialog,
@@ -62,7 +62,9 @@ function VendorProducts() {
               <Tab
                 sx={{ textTransform: 'none' }}
                 key={tab}
-                label={TAB_LABELS[tab]}
+                label={`${TAB_LABELS[tab]} ${
+                  summary != null ? `(${summary[tab]})` : ''
+                }`}
                 value={tab}
               />
             ))}

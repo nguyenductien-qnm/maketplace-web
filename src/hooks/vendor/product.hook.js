@@ -6,17 +6,18 @@ import { useFilterCompare } from '../common/filterCompare'
 import {
   getProductMetricsByOwnerAPI,
   queryProductByOwnerAPI,
-  deleteProductByOwnerAPI
+  deleteProductByOwnerAPI,
+  getProductSummaryByShopAPI
 } from '~/api/product.api'
 import { asyncHandlerShop } from '~/helpers/asyncHandler'
 
 const TAB_LABELS = {
   ALL: 'All',
-  PUBLIC: 'Published',
+  PUBLISHED: 'Published',
   PENDING: 'Pending',
   BANNED: 'Banned',
   REJECTED: 'Rejected',
-  DRAFT: 'Draft'
+  UNPUBLISHED: 'UnPublished'
 }
 
 const DEFAULT_FILTERS = {
@@ -32,6 +33,7 @@ export const useVendorProductList = () => {
   // ============================== STATE ==============================
   const [products, setProducts] = useState([])
   const [count, setCount] = useState(0)
+  const [summary, setSummary] = useState(null)
   const [loading, setLoading] = useState(true)
   const [loadingModal, setLoadingModal] = useState(true)
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
@@ -54,8 +56,15 @@ export const useVendorProductList = () => {
   const isInitialized = useRef(false)
 
   // ============================== API ==============================
+  const fetchProductSummary = async () => {
+    const { status, resData } = await getProductSummaryByShopAPI()
+    if (status === StatusCodes.OK) setSummary(resData.metadata)
+  }
+
   const fetchProducts = useCallback(async ({ filters }) => {
     setLoading(true)
+    setProducts([])
+    setCount(0)
     try {
       const [res] = await asyncHandlerShop(
         async () =>
@@ -137,6 +146,7 @@ export const useVendorProductList = () => {
     }
 
     fetchCategories()
+    fetchProductSummary()
     isInitialized.current = true
   }, [])
 
@@ -256,7 +266,8 @@ export const useVendorProductList = () => {
       metrics,
       filters,
       setFilters,
-      categories
+      categories,
+      summary
     },
     handler: {
       handleDeleteProduct,
