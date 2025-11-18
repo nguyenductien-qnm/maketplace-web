@@ -15,7 +15,7 @@ import { useVendorVoucher } from '~/hooks/vendor/voucher.hook'
 function VendorVoucher() {
   const { ui, data, handler } = useVendorVoucher()
   const { openConfirmDialog, TAB_LABELS } = ui
-  const { filters } = data
+  const { filters, summary } = data
 
   const {
     setFilters,
@@ -62,7 +62,9 @@ function VendorVoucher() {
               <Tab
                 sx={{ textTransform: 'none' }}
                 key={tab}
-                label={TAB_LABELS[tab]}
+                label={`${TAB_LABELS[tab]} ${
+                  summary != null ? `(${summary[tab]})` : ''
+                }`}
                 value={tab}
               />
             ))}

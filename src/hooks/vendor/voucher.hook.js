@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { asyncHandlerShop } from '~/helpers/asyncHandler'
 import {
   deleteVoucherByShopAPI,
+  getVoucherSummaryByShopAPI,
   queryVoucherByShopAPI
 } from '~/api/voucher.api'
 
@@ -28,6 +29,7 @@ const DEFAULT_FILTERS = {
 
 export const useVendorVoucher = () => {
   const [vouchers, setVouchers] = useState([])
+  const [summary, setSummary] = useState(null)
   const [count, setCount] = useState(0)
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -39,9 +41,15 @@ export const useVendorVoucher = () => {
   const isInitialized = useRef(false)
 
   // ============================== API ==============================
+  const fetchVoucherSummary = async () => {
+    const { status, resData } = await getVoucherSummaryByShopAPI()
+    if (status === StatusCodes.OK) setSummary(resData.metadata)
+  }
+
   const fetchVouchers = useCallback(async ({ filters }) => {
     setLoading(true)
     setVouchers([])
+    setCount(0)
     try {
       const [res] = await asyncHandlerShop(
         async () =>
@@ -101,7 +109,7 @@ export const useVendorVoucher = () => {
       setFilters(merged)
       fetchVouchers({ filters: merged })
     }
-
+    fetchVoucherSummary()
     isInitialized.current = true
   }, [])
 
@@ -201,7 +209,7 @@ export const useVendorVoucher = () => {
 
   return {
     ui: { loading, isDeleting, openConfirmDialog, TAB_LABELS },
-    data: { vouchers, count, filters },
+    data: { vouchers, count, filters, summary },
     handler: {
       handleOpenConfirmDialog,
       handleCloseConfirmDialog,

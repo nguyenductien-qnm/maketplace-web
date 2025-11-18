@@ -1,13 +1,14 @@
 import Box from '@mui/material/Box'
 import Popover from '@mui/material/Popover'
 import Button from '@mui/material/Button'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
-import { useState } from 'react'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import CategoryTreeView from '~/components/common/CategoryTreeView'
-import { MenuItem, Select } from '@mui/material'
 import TypographyTitle from '~/components/common/TypographyTitle'
+import { useState } from 'react'
 
 function ProductFilter({
   filters,

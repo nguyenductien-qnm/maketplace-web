@@ -19,6 +19,14 @@ const queryVoucherByShopAPI = async ({ payload }) => {
   return { status, resData: data }
 }
 
+const getVoucherSummaryByShopAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/voucher/summary`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
 const getVoucherDetailByShopAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/shop/voucher/${_id}`,
@@ -140,5 +148,6 @@ export {
   disableShopVoucherByAdminAPI,
   enableShopVoucherByAdminAPI,
   exportVoucherDataByAdminAPI,
-  getVoucherDetailByShopAPI
+  getVoucherDetailByShopAPI,
+  getVoucherSummaryByShopAPI
 }
