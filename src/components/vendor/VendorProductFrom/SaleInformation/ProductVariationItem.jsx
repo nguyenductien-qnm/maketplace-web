@@ -55,7 +55,6 @@ function ProductVariationItem({
                   message: PRODUCT_VARIATION_NAME_MESSAGE
                 }
               })}
-              size="small"
               onChange={(e) => handleChangeVariation(e, variationIndex)}
               error={!!errors?.product_variations?.[variationIndex]?.name}
               sx={{

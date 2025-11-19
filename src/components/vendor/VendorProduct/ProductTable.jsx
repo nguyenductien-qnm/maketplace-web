@@ -16,7 +16,8 @@ function ProductTable({ ui, data, handler }) {
     handleChangePage,
     handleChangeRowsPerPage,
     handleOpenConfirmDialog,
-    handleOpenMetricsModal
+    handleOpenMetricsModal,
+    handleOpenAuditLogModal
   } = handler
   return (
     <>
@@ -41,7 +42,7 @@ function ProductTable({ ui, data, handler }) {
                 <TableRow>
                   <TableCellHeader>Image</TableCellHeader>
                   <TableCellHeader>Name</TableCellHeader>
-                  <TableCellHeader>SKUs</TableCellHeader>
+                  <TableCellHeader>Revenue</TableCellHeader>
                   <TableCellHeader>Price</TableCellHeader>
                   <TableCellHeader>Stock</TableCellHeader>
                   <TableCellHeader>Metrics</TableCellHeader>
@@ -55,6 +56,7 @@ function ProductTable({ ui, data, handler }) {
                     product={product}
                     handleOpenConfirmDialog={handleOpenConfirmDialog}
                     handleOpenMetricsModal={handleOpenMetricsModal}
+                    handleOpenAuditLogModal={handleOpenAuditLogModal}
                   />
                 ))}
               </TableBody>

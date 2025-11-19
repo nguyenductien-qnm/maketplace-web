@@ -5,22 +5,54 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Markdown from 'react-markdown'
+import CircularIndeterminate from './CircularIndeterminate'
+import { Box } from '@mui/material'
 
-function NotificationDialog({ header, content, open, onClose }) {
+function NotificationDialog({
+  loading = false,
+  header,
+  content,
+  open,
+  onClose
+}) {
   return (
     <Dialog
       open={open}
       onClose={onClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
+      PaperProps={{
+        sx: {
+          width: 600,
+          maxWidth: '600px'
+        }
+      }}
     >
       <DialogTitle id="alert-dialog-title">{header}</DialogTitle>
 
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          <Markdown>{content}</Markdown>
-        </DialogContentText>
-      </DialogContent>
+      {loading && (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            mt: 2,
+            mb: 2
+          }}
+        >
+          <CircularIndeterminate />
+        </Box>
+      )}
+
+      {!loading && (
+        <>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              <Markdown>{content}</Markdown>
+            </DialogContentText>
+          </DialogContent>
+        </>
+      )}
 
       <DialogActions>
         <Button color="secondary" variant="outlined" onClick={onClose}>

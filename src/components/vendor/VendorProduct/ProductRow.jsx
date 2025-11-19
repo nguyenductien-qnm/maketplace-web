@@ -8,13 +8,15 @@ import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined'
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined'
 import PollOutlinedIcon from '@mui/icons-material/PollOutlined'
 import formatCurrency from '~/utils/formatCurrency'
-import { green, red } from '@mui/material/colors'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { navigate } from '~/helpers/navigation'
+import { green, orange, red } from '@mui/material/colors'
 
 function ProductRow({
   product,
   handleOpenConfirmDialog,
-  handleOpenMetricsModal
+  handleOpenMetricsModal,
+  handleOpenAuditLogModal
 }) {
   const { product_price_min, product_price_max } = product
   return (
@@ -22,7 +24,7 @@ function ProductRow({
       <TableCell sx={{ width: '100px' }}>
         <img
           style={{ height: '50px' }}
-          src={product.product_images}
+          src={product.product_image}
           alt="Product"
         />
       </TableCell>
@@ -55,7 +57,7 @@ function ProductRow({
           CODE: {product?.product_code}
         </Typography>
       </TableCell>
-      <TableCell>{product.product_sku_count}</TableCell>
+      <TableCell>{formatCurrency(product.product_revenue)}</TableCell>
       <TableCell>
         {product_price_min === product_price_max
           ? formatCurrency(product_price_min)
@@ -101,6 +103,20 @@ function ProductRow({
               onClick={() => handleOpenConfirmDialog(product._id)}
             />
           </Tooltip>
+
+          {(product.product_status == 'banned' ||
+            product.product_status == 'rejected') && (
+            <Tooltip title="View reason">
+              <InfoOutlinedIcon
+                sx={{
+                  fontSize: 24,
+                  color: orange[600],
+                  '&:hover': { cursor: 'pointer' }
+                }}
+                onClick={() => handleOpenAuditLogModal(product)}
+              />
+            </Tooltip>
+          )}
         </Box>
       </TableCell>
     </TableRow>

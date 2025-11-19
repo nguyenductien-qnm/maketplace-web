@@ -9,11 +9,11 @@ import DoDisturbOnOutlinedIcon from '@mui/icons-material/DoDisturbOnOutlined'
 import formatCurrency from '~/utils/formatCurrency'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
+import Typography from '@mui/material/Typography'
 import {
-  renderCapitalizeFirstLetter,
-  renderDefault
+  renderDefault,
+  renderCapitalizeFirstLetter
 } from '~/components/common/common'
-import { Typography } from '@mui/material'
 
 const formatFields = ['product_status', 'product_visibility', 'product_type']
 
@@ -48,8 +48,8 @@ function ProductRow({
   )
 
   const renderActionButton = () => {
-    const { product_status: status, product_visibility: visibility } = product
-    if (status === 'approved' && visibility === 'public') {
+    const { product_status: status } = product
+    if (status === 'approved') {
       return (
         <Tooltip title="Ban product">
           <Button
@@ -63,7 +63,7 @@ function ProductRow({
       )
     }
 
-    if (status === 'pending' && visibility === 'public') {
+    if (status === 'pending') {
       return (
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Tooltip title="Approve product">

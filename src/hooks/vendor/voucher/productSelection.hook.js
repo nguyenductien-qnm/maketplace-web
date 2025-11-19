@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import { useEffect, useState } from 'react'
 import { getCategoriesByOwnerAPI } from '~/api/category.api'
-import { queryProductByOwnerAPI } from '~/api/product.api'
+import { queryProductByShopAPI } from '~/api/product.api'
 
 const DEFAULT_FILTERS = {
   status: 'ALL',
@@ -48,7 +48,7 @@ export const useProductSelection = ({ selected }) => {
   const fetchProducts = async ({ filters }) => {
     try {
       setLoading(true)
-      const { status, resData } = await queryProductByOwnerAPI({
+      const { status, resData } = await queryProductByShopAPI({
         payload: filters
       })
       if (status === StatusCodes.OK) {

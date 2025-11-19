@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField'
 import { grey } from '@mui/material/colors'
 import { Controller } from 'react-hook-form'
 import { NumericFormat } from 'react-number-format'
+import TableCellHeader from '~/components/common/TableCellHeader'
 import { useProductSKUsTable } from '~/hooks/vendor/product/productSKUsTable'
 import {
   FIELD_REQUIRED_MESSAGE,
@@ -39,7 +40,6 @@ function ProductSKUTable({ form }) {
       render={({ field: { ref, ...field } }) => (
         <NumericFormat
           placeholder="Price"
-          size="small"
           fullWidth
           {...field}
           allowNegative={false}
@@ -61,7 +61,6 @@ function ProductSKUTable({ form }) {
   const renderStockInput = (index) => (
     <TextField
       type="number"
-      size="small"
       fullWidth
       placeholder="Stock"
       {...register(`products_sku.${index}.product_stock`, {
@@ -87,17 +86,17 @@ function ProductSKUTable({ form }) {
 
   return (
     <>
-      <TableContainer>
-        <Table>
+      <TableContainer sx={{ maxHeight: 1000, overflowY: 'auto' }}>
+        <Table stickyHeader>
           <TableHead sx={{ backgroundColor: grey[100] }}>
             <TableRow>
               {productVariations?.map((variation, index) => (
-                <TableCell key={index}>
+                <TableCellHeader key={index}>
                   {variation.name || `Variation ${index + 1}`}
-                </TableCell>
+                </TableCellHeader>
               ))}
-              <TableCell>Price</TableCell>
-              <TableCell>Stock</TableCell>
+              <TableCellHeader>Price</TableCellHeader>
+              <TableCellHeader>Stock</TableCellHeader>
             </TableRow>
           </TableHead>
 

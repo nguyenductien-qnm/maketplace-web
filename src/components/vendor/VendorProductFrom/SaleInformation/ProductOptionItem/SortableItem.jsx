@@ -59,7 +59,6 @@ function SortableItem({
         }}
       >
         <TextField
-          size="small"
           sx={{
             flex: 1,
             backgroundColor: grey[100],

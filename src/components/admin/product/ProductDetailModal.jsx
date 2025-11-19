@@ -341,123 +341,177 @@ function ProductDetailModal({
 
                   <Card sx={{ p: 3 }}>
                     <TypographyTitle>Sale Information</TypographyTitle>
-                    <Grid2 container rowSpacing={2} sx={{ mt: 2 }}>
-                      {product?.product_variations &&
-                        product.product_variations.map((variation, index) => (
-                          <Grid2
-                            size={12}
-                            sx={{
-                              backgroundColor: grey[100],
-                              p: 3,
-                              borderRadius: '5px'
-                            }}
-                          >
-                            <Grid2 container rowSpacing={2}>
-                              <Grid2 size={12}>
-                                <TypographyLabel>
-                                  Variation {index + 1}
-                                </TypographyLabel>
-                                <ReadOnlyTextField value={variation.name} />
-                              </Grid2>
+                    {product?.product_variations?.length == 0 && (
+                      <Grid2 container spacing={2} sx={{ mt: 2 }}>
+                        <Grid2 size={6}>
+                          <TypographyLabel>Product Price</TypographyLabel>
+                          <ReadOnlyTextField
+                            value={formatCurrency(
+                              product.products_sku[0].product_price
+                            )}
+                          />
+                        </Grid2>
+                        <Grid2 size={6}>
+                          <TypographyLabel>Product Stock</TypographyLabel>
+                          <ReadOnlyTextField
+                            value={product.products_sku[0].product_stock}
+                          />
+                        </Grid2>
 
-                              <Grid2 size={12}>
-                                <TypographyLabel>Options</TypographyLabel>
-                                <Grid2 container spacing={2}>
-                                  {variation.options.map((opt, index) => (
-                                    <Grid2 key={index} size={4}>
-                                      <ReadOnlyTextField value={opt} />
-                                    </Grid2>
-                                  ))}
-                                </Grid2>
-                              </Grid2>
-                            </Grid2>
-                          </Grid2>
-                        ))}
-                    </Grid2>
+                        <Grid2 size={6}>
+                          <TypographyLabel>Product Sold</TypographyLabel>
+                          <ReadOnlyTextField
+                            value={product.products_sku[0].product_sold}
+                          />
+                        </Grid2>
 
-                    <TableContainer sx={{ mt: 3 }}>
-                      <Table>
-                        <TableHead sx={{ backgroundColor: grey[100] }}>
-                          <TableRow>
-                            {product?.product_variations?.map(
+                        <Grid2 size={6}>
+                          <TypographyLabel>Product Revenue</TypographyLabel>
+                          <ReadOnlyTextField
+                            value={product.products_sku[0].product_revenue}
+                          />
+                        </Grid2>
+                      </Grid2>
+                    )}
+
+                    {product?.product_variations?.length > 0 && (
+                      <>
+                        <Grid2 container rowSpacing={2} sx={{ mt: 2 }}>
+                          {product?.product_variations &&
+                            product.product_variations.map(
                               (variation, index) => (
-                                <TableCellHeader key={index}>
-                                  {variation.name || `Variation ${index + 1}`}
-                                </TableCellHeader>
+                                <Grid2
+                                  size={12}
+                                  sx={{
+                                    backgroundColor: grey[100],
+                                    p: 3,
+                                    borderRadius: '5px'
+                                  }}
+                                >
+                                  <Grid2 container rowSpacing={2}>
+                                    <Grid2 size={12}>
+                                      <TypographyLabel>
+                                        Variation {index + 1}
+                                      </TypographyLabel>
+                                      <ReadOnlyTextField
+                                        value={variation.name}
+                                      />
+                                    </Grid2>
+
+                                    <Grid2 size={12}>
+                                      <TypographyLabel>Options</TypographyLabel>
+                                      <Grid2 container spacing={2}>
+                                        {variation.options.map((opt, index) => (
+                                          <Grid2 key={index} size={4}>
+                                            <ReadOnlyTextField value={opt} />
+                                          </Grid2>
+                                        ))}
+                                      </Grid2>
+                                    </Grid2>
+                                  </Grid2>
+                                </Grid2>
                               )
                             )}
-                            <TableCellHeader>Price</TableCellHeader>
-                            <TableCellHeader>Stock</TableCellHeader>
-                            <TableCellHeader>Sold</TableCellHeader>
-                            <TableCellHeader>Revenue</TableCellHeader>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {product?.products_sku
-                            .slice()
-                            .sort((a, b) => {
-                              const diff1 =
-                                a.sku_tier_indices[0] - b.sku_tier_indices[0]
-                              if (diff1 !== 0) return diff1
-                              return (
-                                (a.sku_tier_indices[1] || 0) -
-                                (b.sku_tier_indices[1] || 0)
-                              )
-                            })
-                            .map((sku, index, sortedArray) => {
-                              const [idx1, idx2] = sku.sku_tier_indices || []
+                        </Grid2>
 
-                              const option1 =
-                                product.product_variations?.[0]?.options?.[idx1]
-                              const option2 =
-                                product.product_variations?.[1]?.options?.[idx2]
+                        <TableContainer
+                          sx={{ maxHeight: 700, overflowY: 'auto', mt: 3 }}
+                        >
+                          <Table stickyHeader>
+                            <TableHead sx={{ backgroundColor: grey[100] }}>
+                              <TableRow>
+                                {product?.product_variations?.map(
+                                  (variation, index) => (
+                                    <TableCellHeader key={index}>
+                                      {variation.name ||
+                                        `Variation ${index + 1}`}
+                                    </TableCellHeader>
+                                  )
+                                )}
+                                <TableCellHeader>Price</TableCellHeader>
+                                <TableCellHeader>Stock</TableCellHeader>
+                                <TableCellHeader>Sold</TableCellHeader>
+                                <TableCellHeader>Revenue</TableCellHeader>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {product?.products_sku
+                                .slice()
+                                .sort((a, b) => {
+                                  const diff1 =
+                                    a.sku_tier_indices[0] -
+                                    b.sku_tier_indices[0]
+                                  if (diff1 !== 0) return diff1
+                                  return (
+                                    (a.sku_tier_indices[1] || 0) -
+                                    (b.sku_tier_indices[1] || 0)
+                                  )
+                                })
+                                .map((sku, index, sortedArray) => {
+                                  const [idx1, idx2] =
+                                    sku.sku_tier_indices || []
 
-                              const isFirstRowOfOption1 =
-                                index === 0 ||
-                                sortedArray[index - 1]
-                                  ?.sku_tier_indices?.[0] !== idx1
+                                  const option1 =
+                                    product.product_variations?.[0]?.options?.[
+                                      idx1
+                                    ]
+                                  const option2 =
+                                    product.product_variations?.[1]?.options?.[
+                                      idx2
+                                    ]
 
-                              const rowSpanCount = sortedArray.filter(
-                                (s) => s.sku_tier_indices?.[0] === idx1
-                              ).length
+                                  const isFirstRowOfOption1 =
+                                    index === 0 ||
+                                    sortedArray[index - 1]
+                                      ?.sku_tier_indices?.[0] !== idx1
 
-                              return (
-                                <TableRow key={sku._id || index}>
-                                  {isFirstRowOfOption1 && (
-                                    <TableCell rowSpan={rowSpanCount}>
-                                      {option1 || '-'}
-                                    </TableCell>
-                                  )}
+                                  const rowSpanCount = sortedArray.filter(
+                                    (s) => s.sku_tier_indices?.[0] === idx1
+                                  ).length
 
-                                  {option2 && (
-                                    <TableCell>{option2 || '-'}</TableCell>
-                                  )}
+                                  return (
+                                    <TableRow key={sku._id || index}>
+                                      {isFirstRowOfOption1 && (
+                                        <TableCell rowSpan={rowSpanCount}>
+                                          {option1 || '-'}
+                                        </TableCell>
+                                      )}
 
-                                  <TableCell>
-                                    <Typography>
-                                      {formatCurrency(sku.product_price)}
-                                    </Typography>
-                                  </TableCell>
+                                      {option2 && (
+                                        <TableCell>{option2 || '-'}</TableCell>
+                                      )}
 
-                                  <TableCell>
-                                    <Typography>{sku.product_stock}</Typography>
-                                  </TableCell>
+                                      <TableCell>
+                                        <Typography>
+                                          {formatCurrency(sku.product_price)}
+                                        </Typography>
+                                      </TableCell>
 
-                                  <TableCell>
-                                    <Typography>{sku.product_sold}</Typography>
-                                  </TableCell>
+                                      <TableCell>
+                                        <Typography>
+                                          {sku.product_stock}
+                                        </Typography>
+                                      </TableCell>
 
-                                  <TableCell>
-                                    <Typography>
-                                      {formatCurrency(sku.product_revenue)}
-                                    </Typography>
-                                  </TableCell>
-                                </TableRow>
-                              )
-                            })}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
+                                      <TableCell>
+                                        <Typography>
+                                          {sku.product_sold}
+                                        </Typography>
+                                      </TableCell>
+
+                                      <TableCell>
+                                        <Typography>
+                                          {formatCurrency(sku.product_revenue)}
+                                        </Typography>
+                                      </TableCell>
+                                    </TableRow>
+                                  )
+                                })}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </>
+                    )}
                   </Card>
 
                   <Card sx={{ p: 3 }}>

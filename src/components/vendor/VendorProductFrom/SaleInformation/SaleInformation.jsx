@@ -139,7 +139,6 @@ function SaleInformation({ form, variations, variationHandlers, onApplyAll }) {
               <PriceInput
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                size="small"
                 placeholder="Price"
               />
               <TextField
@@ -147,7 +146,6 @@ function SaleInformation({ form, variations, variationHandlers, onApplyAll }) {
                 onChange={(e) => setStock(e.target.value)}
                 value={stock}
                 fullWidth
-                size="small"
                 placeholder="Stock"
               />
               <Tooltip title={MESSAGES.APPLY_ALL_TOOLTIP}>

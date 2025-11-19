@@ -4,12 +4,15 @@ import { getCategoriesByOwnerAPI } from '~/api/category.api'
 import { useSearchParams } from 'react-router-dom'
 import { useFilterCompare } from '../common/filterCompare'
 import {
-  getProductMetricsByOwnerAPI,
-  queryProductByOwnerAPI,
-  deleteProductByOwnerAPI,
+  getProductMetricsByShopAPI,
+  queryProductByShopAPI,
+  deleteProductByShopAPI,
   getProductSummaryByShopAPI
 } from '~/api/product.api'
 import { asyncHandlerShop } from '~/helpers/asyncHandler'
+import { getAuditLogDetailByShopAPI } from '~/api/auditLog.api'
+import { stripHtml } from '~/utils/stripHtml'
+import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
 
 const TAB_LABELS = {
   ALL: 'All',
@@ -34,8 +37,10 @@ export const useVendorProductList = () => {
   const [products, setProducts] = useState([])
   const [count, setCount] = useState(0)
   const [summary, setSummary] = useState(null)
+  const [auditLog, setAuditLog] = useState(null)
   const [loading, setLoading] = useState(true)
   const [loadingModal, setLoadingModal] = useState(true)
+
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [categories, setCategories] = useState(null)
   const [selectedProductId, setSelectedProductId] = useState(null)
@@ -43,6 +48,7 @@ export const useVendorProductList = () => {
 
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [openMetricsModal, setOpenMetricsModal] = useState(false)
+  const [openAuditLogModal, setOpenAuditLogModal] = useState(false)
   const [params, setParams] = useSearchParams()
 
   const [metrics, setMetrics] = useState({
@@ -68,7 +74,7 @@ export const useVendorProductList = () => {
     try {
       const [res] = await asyncHandlerShop(
         async () =>
-          await queryProductByOwnerAPI({
+          await queryProductByShopAPI({
             payload: filters
           })
       )
@@ -86,7 +92,7 @@ export const useVendorProductList = () => {
   const fetchMetrics = async (product_id) => {
     try {
       setLoadingModal(true)
-      const { status, resData } = await getProductMetricsByOwnerAPI({
+      const { status, resData } = await getProductMetricsByShopAPI({
         _id: product_id
       })
       if (status === StatusCodes.OK) {
@@ -105,10 +111,38 @@ export const useVendorProductList = () => {
     }
   }
 
+  const handleGetAuditLogDetail = async ({ product }) => {
+    try {
+      setLoadingModal(true)
+      const { status, resData } = await getAuditLogDetailByShopAPI({
+        _id: product._id,
+        entity: 'product',
+        action: product.product_status
+      })
+      if (status === StatusCodes.OK) {
+        const log = resData.metadata
+
+        const markdown = `
+**ID:** ${log._id}
+
+**Action:** ${capitalizeFirstLetter(log.action)}
+
+**Action at:** ${log.createdAt}
+
+**Reason:** ${stripHtml(log.reason)}
+`
+
+        setAuditLog(markdown.trim())
+      }
+    } finally {
+      setLoadingModal(false)
+    }
+  }
+
   const handleDeleteProduct = async () => {
     try {
       setIsDeleting(true)
-      const { status } = await deleteProductByOwnerAPI({
+      const { status } = await deleteProductByShopAPI({
         _id: selectedProductId,
         loadingClass: '.btn-confirm-modal'
       })
@@ -168,7 +202,19 @@ export const useVendorProductList = () => {
   }
 
   const handleCloseMetricsModal = () => {
+    if (loadingModal) return
     setOpenMetricsModal(false)
+  }
+
+  const handleOpenAuditLogModal = (product) => {
+    setOpenAuditLogModal(true)
+    handleGetAuditLogDetail({ product })
+  }
+
+  const handleCloseAuditLogModal = () => {
+    if (loadingModal) return
+    setOpenAuditLogModal(false)
+    setAuditLog(null)
   }
 
   const handleFilter = () => {
@@ -257,6 +303,7 @@ export const useVendorProductList = () => {
       loading,
       loadingModal,
       openConfirmDialog,
+      openAuditLogModal,
       openMetricsModal,
       TAB_LABELS
     },
@@ -267,7 +314,8 @@ export const useVendorProductList = () => {
       filters,
       setFilters,
       categories,
-      summary
+      summary,
+      auditLog
     },
     handler: {
       handleDeleteProduct,
@@ -279,7 +327,9 @@ export const useVendorProductList = () => {
       handleChangePage,
       handleChangeTab,
       handleClearFilter,
-      handleFilter
+      handleFilter,
+      handleOpenAuditLogModal,
+      handleCloseAuditLogModal
     }
   }
 }

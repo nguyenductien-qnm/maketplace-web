@@ -12,18 +12,26 @@ import ProductMetricsModal from '~/components/vendor/VendorProduct/ProductMetric
 import ProductFilter from '~/components/vendor/VendorProduct/ProductFilter'
 import { Link } from 'react-router-dom'
 import { useVendorProductList } from '~/hooks/vendor/product.hook'
+import NotificationDialog from '~/components/common/NotificationDialog'
 
 function VendorProducts() {
   const { ui, data, handler } = useVendorProductList()
-  const { metrics, categories, filters, summary, setFilters } = data
-  const { loadingModal, TAB_LABELS, openConfirmDialog, openMetricsModal } = ui
+  const { metrics, categories, filters, summary, auditLog, setFilters } = data
+  const {
+    loadingModal,
+    TAB_LABELS,
+    openConfirmDialog,
+    openMetricsModal,
+    openAuditLogModal
+  } = ui
   const {
     handleCloseConfirmDialog,
     handleCloseMetricsModal,
     handleChangeTab,
     handleClearFilter,
     handleFilter,
-    handleDeleteProduct
+    handleDeleteProduct,
+    handleCloseAuditLogModal
   } = handler
   const TABS = Object.keys(TAB_LABELS)
 
@@ -86,6 +94,14 @@ function VendorProducts() {
         confirmColor="error"
         onClose={handleCloseConfirmDialog}
         onConfirm={handleDeleteProduct}
+      />
+
+      <NotificationDialog
+        loading={loadingModal}
+        header="Audit Log For This Action"
+        content={auditLog}
+        open={openAuditLogModal}
+        onClose={handleCloseAuditLogModal}
       />
 
       {openMetricsModal && (

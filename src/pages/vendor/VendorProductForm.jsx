@@ -14,6 +14,8 @@ import { useVendorProductForm } from '~/hooks/vendor/productForm.hook'
 function VendorProductForm() {
   const { ui, form, data, handlers } = useVendorProductForm()
 
+  const { productStatus } = ui
+
   return (
     <form onSubmit={handlers.onSubmit}>
       <Box sx={{ mb: 3 }}>
@@ -52,18 +54,20 @@ function VendorProductForm() {
 
           <DeliveryInformation form={form} />
 
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            loading={ui.isSubmitting}
-            loadingPosition="start"
-            startIcon={<SaveIcon />}
-            disabled={ui.isSubmitting}
-            className="btn-vendor-submit-product-form"
-          >
-            {ui.isSubmitting ? 'Submitting...' : 'Submit'}
-          </Button>
+          {productStatus != 'banned' && (
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              loading={ui.isSubmitting}
+              loadingPosition="start"
+              startIcon={<SaveIcon />}
+              disabled={ui.isSubmitting}
+              className="btn-vendor-submit-product-form"
+            >
+              {ui.isSubmitting ? 'Submitting...' : 'Submit'}
+            </Button>
+          )}
         </Box>
       )}
     </form>

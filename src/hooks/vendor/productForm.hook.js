@@ -8,9 +8,9 @@ import { useState, useEffect } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { getCategoriesByOwnerAPI } from '~/api/category.api'
 import {
-  createProductByOwnerAPI,
-  getProductDetailByOwnerAPI,
-  updateProductByOwnerAPI
+  createProductByShopAPI,
+  getProductDetailByShopAPI,
+  updateProductByShopAPI
 } from '~/api/product.api'
 
 import {
@@ -100,6 +100,7 @@ export const useVendorProductForm = () => {
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [categoriesTree, setCategoriesTree] = useState([])
+  const [productStatus, setProductStatus] = useState(null)
 
   const enableVariations = watch('enable_variations')
   const productSKUs = watch('products_sku')
@@ -130,7 +131,7 @@ export const useVendorProductForm = () => {
 
   const fetchProductDetail = async () => {
     try {
-      const { status, resData } = await getProductDetailByOwnerAPI({ _id })
+      const { status, resData } = await getProductDetailByShopAPI({ _id })
       if (status === StatusCodes.OK) setFormData(resData?.metadata)
     } finally {
       setLoading(false)
@@ -155,7 +156,7 @@ export const useVendorProductForm = () => {
       })
 
       if (isCreate) {
-        const { status } = await createProductByOwnerAPI({
+        const { status } = await createProductByShopAPI({
           payload: formattedData,
           loadingClass: ['.btn-vendor-submit-product-form']
         })
@@ -165,7 +166,7 @@ export const useVendorProductForm = () => {
       }
 
       if (isUpdate) {
-        const { status } = await updateProductByOwnerAPI({
+        const { status } = await updateProductByShopAPI({
           _id,
           payload: formattedData,
           loadingClass: ['.btn-vendor-submit-product-form']
@@ -183,7 +184,8 @@ export const useVendorProductForm = () => {
 
   // ============================== HANDLER ==============================
   const setFormData = (data) => {
-    const { product_type, products_sku, product_variations } = data
+    const { product_type, products_sku, product_variations, product_status } =
+      data
     setValue('product_name', data?.product_name)
     setValue('product_images', data?.product_images)
     setValue('product_visibility', data?.product_visibility)
@@ -205,6 +207,7 @@ export const useVendorProductForm = () => {
       setValue('product_price', products_sku[0].product_price)
       setValue('product_stock', products_sku[0].product_stock)
     }
+    setProductStatus(product_status)
   }
 
   const handleEnableVariation = () => {
@@ -345,7 +348,8 @@ export const useVendorProductForm = () => {
       loading,
       isSubmitting,
       pageTitle,
-      isUpdate
+      isUpdate,
+      productStatus
     },
 
     form: {

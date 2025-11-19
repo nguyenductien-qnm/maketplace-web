@@ -11,7 +11,7 @@ import {
   updateProductStatusByAdminAPI,
   exportProductsByAdminAPI
 } from '~/api/product.api'
-import { getAuditLogDetailAPI } from '~/api/auditLog.api'
+import { getAuditLogDetailByAdminAPI } from '~/api/auditLog.api'
 
 const LOADING_CLASS = [
   '.btn-reason-modal',
@@ -104,7 +104,7 @@ export const useAdminProduct = ({ status }) => {
   const handleGetAuditLogDetail = async (data) => {
     try {
       setLoadingAuditLog(true)
-      const { status, resData } = await getAuditLogDetailAPI({
+      const { status, resData } = await getAuditLogDetailByAdminAPI({
         _id: data._id,
         entity: 'product',
         action: data?.product_status

@@ -7,7 +7,7 @@ const ACTION_FROM_STATUS = {
   banned: 'ban'
 }
 
-const getAuditLogDetailAPI = async ({ _id, entity, action }) => {
+const getAuditLogDetailByAdminAPI = async ({ _id, entity, action }) => {
   const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/admin/audit-log?entity_id=${_id}&entity_type=${entity}&action=${ACTION_FROM_STATUS[action]}`,
     { ...TOAST_MODE.ONLY_ERROR }
@@ -15,4 +15,12 @@ const getAuditLogDetailAPI = async ({ _id, entity, action }) => {
   return { status, resData: data }
 }
 
-export { getAuditLogDetailAPI }
+const getAuditLogDetailByShopAPI = async ({ _id, entity, action }) => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/audit-log?entity_id=${_id}&entity_type=${entity}&action=${ACTION_FROM_STATUS[action]}`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
+export { getAuditLogDetailByAdminAPI, getAuditLogDetailByShopAPI }

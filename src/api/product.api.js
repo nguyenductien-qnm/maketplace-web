@@ -12,7 +12,7 @@ const getProductDetailForCustomerAPI = async (product_slug) => {
   return res
 }
 // ============================ VENDOR ============================
-const queryProductByOwnerAPI = async ({ payload }) => {
+const queryProductByShopAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/shop/product`,
     {
@@ -23,7 +23,7 @@ const queryProductByOwnerAPI = async ({ payload }) => {
   return { status, resData: data }
 }
 
-const getProductDetailByOwnerAPI = async ({ _id }) => {
+const getProductDetailByShopAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/shop/product/${_id}`,
     { ...TOAST_MODE.ONLY_ERROR }
@@ -31,7 +31,7 @@ const getProductDetailByOwnerAPI = async ({ _id }) => {
   return { status, resData: data }
 }
 
-const getProductMetricsByOwnerAPI = async ({ _id }) => {
+const getProductMetricsByShopAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/shop/product/metrics/${_id}`,
     { ...TOAST_MODE.ONLY_ERROR }
@@ -47,7 +47,7 @@ const getProductSummaryByShopAPI = async () => {
   return { status, resData: data }
 }
 
-const createProductByOwnerAPI = async ({ payload, loadingClass }) => {
+const createProductByShopAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.post(
     `${API_ROOT}/v1/api/shop/product`,
     payload,
@@ -59,7 +59,7 @@ const createProductByOwnerAPI = async ({ payload, loadingClass }) => {
   return { status, resData: data }
 }
 
-const updateProductByOwnerAPI = async ({ _id, payload, loadingClass }) => {
+const updateProductByShopAPI = async ({ _id, payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.put(
     `${API_ROOT}/v1/api/shop/product/${_id}`,
     payload,
@@ -68,7 +68,7 @@ const updateProductByOwnerAPI = async ({ _id, payload, loadingClass }) => {
   return { status, resData: data }
 }
 
-const deleteProductByOwnerAPI = async ({ _id, loadingClass }) => {
+const deleteProductByShopAPI = async ({ _id, loadingClass }) => {
   const { status, data } = await authorizedAxios.delete(
     `${API_ROOT}/v1/api/shop/product/${_id}`,
     { loadingClass, ...TOAST_MODE.ONLY_ERROR }
@@ -130,12 +130,12 @@ const exportProductsByAdminAPI = async ({ payload, loadingClass }) => {
 
 export {
   getProductDetailForCustomerAPI,
-  getProductMetricsByOwnerAPI,
-  deleteProductByOwnerAPI,
-  createProductByOwnerAPI,
-  updateProductByOwnerAPI,
-  getProductDetailByOwnerAPI,
-  queryProductByOwnerAPI,
+  getProductMetricsByShopAPI,
+  deleteProductByShopAPI,
+  createProductByShopAPI,
+  updateProductByShopAPI,
+  getProductDetailByShopAPI,
+  queryProductByShopAPI,
   queryProductByAdminAPI,
   getProductDetailByAdminAPI,
   updateProductStatusByAdminAPI,
