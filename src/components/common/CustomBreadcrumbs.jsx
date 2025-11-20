@@ -10,11 +10,11 @@ function CustomBreadcrumbs({ breakCrumbs }) {
       breakCrumbs?.map((i, index) => {
         const isLast = index === breakCrumbs.length - 1
         return isLast ? (
-          <Typography key={i._id} color="text.primary">
+          <Typography key={index} color="text.primary">
             {i.name}
           </Typography>
         ) : (
-          <Link key={i.url} underline="hover" color="inherit" to={i.url}>
+          <Link key={index} underline="hover" color="inherit" to={i.url}>
             {i.name}
           </Link>
         )

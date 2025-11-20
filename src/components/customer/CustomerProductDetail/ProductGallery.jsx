@@ -1,23 +1,9 @@
-import { Box, Skeleton } from '@mui/material'
-import { useEffect, useState } from 'react'
+import Box from '@mui/material/Box'
 import Slider from 'react-slick'
-import { convertThumbToSlide } from '~/helpers/resizeImage'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 
-function ProductGallery({ productGalleries, productThumb }) {
-  const [images, setImages] = useState([])
-
-  useEffect(() => {
-    if (!productGalleries || !productGalleries.length || !productThumb) return
-    const resizeThumb = convertThumbToSlide(productThumb)
-    setImages([resizeThumb, ...productGalleries])
-  }, [productGalleries])
-
-  useEffect(() => {
-    console.log('images:::', images)
-  }, [images])
-
+function ProductGallery({ images }) {
   const settings = {
     dots: true,
     infinite: true,
@@ -27,7 +13,7 @@ function ProductGallery({ productGalleries, productThumb }) {
     customPaging: (i) => (
       <Box sx={{ position: 'absolute', top: '10px' }}>
         <img
-          src={images?.[i]}
+          src={images?.[i].url}
           style={{
             height: '50px',
             objectFit: 'cover',
@@ -38,28 +24,24 @@ function ProductGallery({ productGalleries, productThumb }) {
     )
   }
 
-  console.log('productThumb:::', productThumb)
-
   return (
-    <Box>
-      {images && images[0] ? (
-        <Box sx={{ position: 'relative', textAlign: 'center' }}>
-          <Slider {...settings}>
-            {images?.map((productGallery) => (
-              <Box key={productGallery}>
-                <img
-                  src={productGallery}
-                  style={{ maxWidth: '100%', borderRadius: '5px' }}
-                />
-              </Box>
-            ))}
-          </Slider>
-        </Box>
-      ) : (
-        <Skeleton variant="rounded" width={565} height={565} />
-      )}
+    <Box sx={{ position: 'relative', textAlign: 'center' }}>
+      <Slider {...settings}>
+        {images?.map((img) => (
+          <Box key={img._id}>
+            <img
+              src={img.url}
+              style={{ maxWidth: '100%', borderRadius: '5px' }}
+            />
+          </Box>
+        ))}
+      </Slider>
     </Box>
   )
+}
+
+{
+  /* <Skeleton variant="rounded" width={565} height={565} /> */
 }
 
 export default ProductGallery

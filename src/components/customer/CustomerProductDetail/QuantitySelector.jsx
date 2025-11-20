@@ -1,4 +1,5 @@
-import { Box, TextField } from '@mui/material'
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
 import { toast } from 'react-toastify'
@@ -51,7 +52,8 @@ function QuantitySelector({
         justifyContent: 'space-around',
         padding: '0 5px',
         pointerEvents: disableAction ? 'none' : 'auto',
-        opacity: disableAction ? 0.5 : 1
+        opacity: disableAction ? 0.5 : 1,
+        height: '50px'
       }}
     >
       <RemoveIcon

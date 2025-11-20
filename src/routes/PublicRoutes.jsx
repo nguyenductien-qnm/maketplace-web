@@ -1,5 +1,5 @@
 import { Navigate, Route } from 'react-router-dom'
-import CustomerProductDetails from '~/pages/customer/CustomerProductDetails'
+import CustomerProductDetails from '~/pages/customer/CustomerProductDetail'
 import CustomerShop from '~/pages/customer/CustomerShop'
 import Home from '~/pages/customer/Home'
 

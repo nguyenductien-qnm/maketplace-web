@@ -3,14 +3,15 @@ import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 import cleanFilters from '~/utils/cleanFilters'
 
 // ============================ CUSTOMER ============================
-const getProductDetailForCustomerAPI = async (product_slug) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/product/get-product-for-customer`,
+const getProductDetailByCustomerAPI = async ({ product_slug }) => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/user/product/${product_slug}`,
     { product_slug },
     { ...TOAST_MODE.ONLY_ERROR }
   )
-  return res
+  return { status, resData: data }
 }
+
 // ============================ VENDOR ============================
 const queryProductByShopAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.get(
@@ -129,7 +130,7 @@ const exportProductsByAdminAPI = async ({ payload, loadingClass }) => {
 }
 
 export {
-  getProductDetailForCustomerAPI,
+  getProductDetailByCustomerAPI,
   getProductMetricsByShopAPI,
   deleteProductByShopAPI,
   createProductByShopAPI,
