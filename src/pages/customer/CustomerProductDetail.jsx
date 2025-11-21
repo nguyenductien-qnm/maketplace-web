@@ -4,11 +4,12 @@ import ProductDetailPanel from '~/components/customer/CustomerProductDetail/Prod
 import ProductGallery from '~/components/customer/CustomerProductDetail/ProductGallery'
 import ProductRelated from '~/components/customer/CustomerProductDetail/ProductRelated'
 import CustomBreadcrumbs from '~/components/common/CustomBreadcrumbs'
-import { useCustomerProduct } from '~/hooks/user/product.hook'
 import ShopCard from '~/components/user/Home/ShopCard'
 import ProductSpecifications from '~/components/customer/CustomerProductDetail/ProductSpecifications'
 import ProductDescriptionReviewTabs from '~/components/customer/CustomerProductDetail/ProductDescriptionReviewTabs'
 import ReportProductModal from '~/components/customer/CustomerProductDetail/ReportProductModal'
+import ProductDetailSkeleton from './ProductDetailSkeleton'
+import { useCustomerProduct } from '~/hooks/user/product.hook'
 
 function CustomerProductDetails() {
   const { ui, data, handler } = useCustomerProduct()
@@ -18,6 +19,7 @@ function CustomerProductDetails() {
 
   return (
     <UserLayout>
+      {loading && <ProductDetailSkeleton />}
       {!loading && (
         <>
           <CustomBreadcrumbs breakCrumbs={breakCrumbs} />
@@ -53,6 +55,7 @@ function CustomerProductDetails() {
               />
             </Grid>
           </Grid>
+
           <ProductRelated />
 
           <ReportProductModal

@@ -1,0 +1,68 @@
+.slick-dots {
+  position: absolute;
+  bottom: -70px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.slick-dots li {
+  width: auto;
+  height: auto;
+  margin: 0 0 !important;
+}
+
+.slick-dots li button {
+  padding: 0;
+}
+
+.slick-dots li button:before {
+  display: none;
+}
+
+/* Đặt thanh thumbnail ở dưới ảnh chính */
+.thumb-bar {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* danh sách thumbnail */
+.thumb-list {
+  display: flex !important;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+}
+
+/* thu nhỏ margin mặc định */
+.thumb-list li {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 2 nút trái phải */
+.thumb-arrow {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: white;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  font-size: 20px;
+}
+
+.thumb-arrow:active {
+  transform: scale(0.9);
+}
+
+/* Ẩn dot mặc định */
+.slick-dots li button:before {
+  display: none;
+}
+

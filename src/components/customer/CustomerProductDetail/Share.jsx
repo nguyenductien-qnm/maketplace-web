@@ -7,7 +7,7 @@ import WhatsappSVG from '~/assets/user/svgIcon/icons8-whatsapp.svg'
 
 function Share() {
   return (
-    <Box sx={{ marginTop: '20px' }}>
+    <Box>
       <Typography>Share this product:</Typography>
       <Box
         sx={{

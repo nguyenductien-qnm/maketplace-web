@@ -6,14 +6,12 @@ import Grid from '@mui/material/Grid2'
 import ProductPrice from './ProductPrice'
 import ProductShipping from './ProductShipping'
 import Share from './Share'
-import Store from './Store'
 import QuantitySelector from './QuantitySelector'
 import ProductVariation from './ProductVariation'
 import { useEffect, useState } from 'react'
 import { blue, green, grey } from '@mui/material/colors'
 import DividerVertical from '~/components/common/DividerVertical'
 import Grid2 from '@mui/material/Grid2'
-import { bold } from '@uiw/react-md-editor'
 
 function ProductDetailPanel({ product, ui, handler }) {
   const { productSelected, quantitySelected } = ui
@@ -164,7 +162,6 @@ function ProductDetailPanel({ product, ui, handler }) {
               quantitySelected={quantitySelected}
               setQuantitySelected={setQuantitySelected}
             />
-            {/* <Skeleton variant="rounded" width={87} height={40} /> */}
           </Grid>
 
           <Grid size={5}>
@@ -209,11 +206,11 @@ function ProductDetailPanel({ product, ui, handler }) {
         </Grid>
       </Grid2>
 
-      <Grid2 size={12}>
+      <Grid2 size={12} sx={{ marginTop: '30px' }}>
         <ProductShipping />
       </Grid2>
 
-      <Grid2 size={12}>
+      <Grid2 size={12} sx={{ marginTop: '20px' }}>
         <Share />
       </Grid2>
     </Grid2>

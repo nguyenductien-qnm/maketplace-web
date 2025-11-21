@@ -9,7 +9,6 @@ function ShippingInfo() {
     <Box
       sx={{
         color: grey[600],
-        marginTop: '30px',
         display: 'flex',
         flexDirection: 'column',
         gap: '7px'
