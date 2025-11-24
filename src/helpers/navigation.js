@@ -7,7 +7,5 @@ export const setNavigate = (nav) => {
 export const navigate = (path) => {
   if (navigateFunc) {
     navigateFunc(path)
-  } else {
-    console.warn('Navigate function chưa được thiết lập!')
   }
 }

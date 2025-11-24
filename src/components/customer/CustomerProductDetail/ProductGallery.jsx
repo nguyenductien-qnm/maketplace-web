@@ -10,7 +10,7 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import '~/css/product-gallery.css'
 
-function ProductGallery({ images }) {
+function ProductGallery({ images, visibility }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [openLightBox, setOpenLightBox] = useState(false)
   const sliderRef = useRef(null)
@@ -102,23 +102,46 @@ function ProductGallery({ images }) {
   return (
     <>
       <Box sx={{ position: 'relative', textAlign: 'center' }}>
-        <Slider ref={sliderRef} {...settings}>
-          {images?.map((img, index) => (
-            <Box key={index}>
-              <Box
-                component="img"
-                src={img.url}
-                sx={{
-                  maxWidth: '100%',
-                  borderRadius: '5px',
-                  '&:hover': { cursor: 'pointer' }
-                }}
-                onClick={() => setOpenLightBox(true)}
-              />
-            </Box>
-          ))}
-        </Slider>
+        <Box>
+          <Slider ref={sliderRef} {...settings}>
+            {images?.map((img, index) => (
+              <Box key={index}>
+                <Box
+                  component="img"
+                  src={img.url}
+                  sx={{
+                    maxWidth: '100%',
+                    borderRadius: '5px',
+                    '&:hover': { cursor: 'pointer' }
+                  }}
+                  onClick={() => setOpenLightBox(true)}
+                />
+              </Box>
+            ))}
+          </Slider>
+        </Box>
+        {visibility == 'private' && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '200px',
+              left: '200px',
+              backgroundColor: 'rgba(23, 23, 23, 0.5)',
+              width: '200px',
+              height: '200px',
+              borderRadius: '99999px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '25px',
+              color: 'white'
+            }}
+          >
+            Unlisted
+          </Box>
+        )}
       </Box>
+
       {openLightBox && (
         <LightboxGallery
           images={images?.map((img) => img.url)}

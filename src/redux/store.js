@@ -1,11 +1,11 @@
-import { configureStore } from '@reduxjs/toolkit'
 import userReducer from './user.slice'
 import categoriesReducer from './categories.slice'
 import notificationReducer from './notification.slice'
-
+import cartReducer from './cart.slice'
+import storage from 'redux-persist/lib/storage'
 import { combineReducers } from 'redux'
 import { persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+import { configureStore } from '@reduxjs/toolkit'
 
 const rootPersistConfig = {
   key: 'root',
@@ -16,7 +16,8 @@ const rootPersistConfig = {
 const reducers = combineReducers({
   user: userReducer,
   categories: categoriesReducer,
-  notification: notificationReducer
+  notification: notificationReducer,
+  cart: cartReducer
 })
 
 const persistedReducers = persistReducer(rootPersistConfig, reducers)

@@ -10,6 +10,7 @@ import ProductDescriptionReviewTabs from '~/components/customer/CustomerProductD
 import ReportProductModal from '~/components/customer/CustomerProductDetail/ReportProductModal'
 import ProductDetailSkeleton from './ProductDetailSkeleton'
 import { useCustomerProduct } from '~/hooks/user/product.hook'
+import { Alert } from '@mui/material'
 
 function CustomerProductDetails() {
   const { ui, data, handler } = useCustomerProduct()
@@ -24,14 +25,23 @@ function CustomerProductDetails() {
         <>
           <CustomBreadcrumbs breakCrumbs={breakCrumbs} />
 
+          {shop.shop_status == 'paused' && (
+            <Alert severity="warning" sx={{ mt: 1 }}>
+              This shop is currently paused and temporarily unavailable. Please
+              check back later.
+            </Alert>
+          )}
+
           <Grid container spacing={3} sx={{ marginTop: '15px' }}>
             <Grid size={6} sx={{ minHeight: '635px' }}>
-              <ProductGallery images={product.product_images} />
+              <ProductGallery
+                images={product.product_images}
+                visibility={product.product_visibility}
+              />
             </Grid>
             <Grid size={6} sx={{ minHeight: '635px' }}>
               <ProductDetailPanel
-                product={product}
-                shop={shop}
+                data={{ shop: { ...shop }, product: { ...product } }}
                 ui={ui}
                 handler={handler}
               />

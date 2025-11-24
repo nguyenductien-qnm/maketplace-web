@@ -13,10 +13,10 @@ import { blue, green, grey } from '@mui/material/colors'
 import DividerVertical from '~/components/common/DividerVertical'
 import Grid2 from '@mui/material/Grid2'
 
-function ProductDetailPanel({ product, ui, handler }) {
+function ProductDetailPanel({ data, ui, handler }) {
   const { productSelected, quantitySelected } = ui
-  const { setQuantitySelected, handleAddProductToCart, handleOpenReportModal } =
-    handler
+  const { handleAddProductToCart, handleOpenReportModal } = handler
+  const { product, shop } = data
 
   const [disableAction, setDisableAction] = useState(false)
 
@@ -150,6 +150,8 @@ function ProductDetailPanel({ product, ui, handler }) {
           productSKU={product?.products_sku}
           handler={handler}
           ui={ui}
+          productVisibility={product.product_visibility}
+          shopStatus={shop.shop_status}
         />
       </Grid2>
 
@@ -157,10 +159,9 @@ function ProductDetailPanel({ product, ui, handler }) {
         <Grid container spacing={1} sx={{ marginTop: '30px' }}>
           <Grid size={2}>
             <QuantitySelector
-              quantityAvailable={(productSelected ?? product)?.product_stock}
+              ui={ui}
+              handler={handler}
               disableAction={disableAction}
-              quantitySelected={quantitySelected}
-              setQuantitySelected={setQuantitySelected}
             />
           </Grid>
 
@@ -181,8 +182,6 @@ function ProductDetailPanel({ product, ui, handler }) {
             >
               Add To Cart
             </Button>
-
-            {/* <Skeleton variant="rounded" width={230} height={40} /> */}
           </Grid>
 
           <Grid size={5}>
@@ -201,7 +200,14 @@ function ProductDetailPanel({ product, ui, handler }) {
             >
               Buy Now
             </Button>
-            {/* <Skeleton variant="rounded" width={230} height={40} /> */}
+          </Grid>
+
+          <Grid size={12}>
+            {productSelected?.available_stock == quantitySelected && (
+              <Typography color="error">
+                You have reached the maximum quantity available for this item
+              </Typography>
+            )}
           </Grid>
         </Grid>
       </Grid2>

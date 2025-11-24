@@ -10,12 +10,14 @@ const addToCartAPI = async (data, loadingClass) => {
   return res
 }
 
-const getCartProductsAPI = async () => {
-  const res = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/cart/get-cart-products`,
-    { ...TOAST_MODE.ONLY_ERROR }
+const getCartByCustomerAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/user/cart`,
+    {
+      ...TOAST_MODE.ONLY_ERROR
+    }
   )
-  return res
+  return { status, resData: data }
 }
 
 const removeProductAPI = async (_id, loadingClass) => {
@@ -92,7 +94,7 @@ const clearCartAPI = async (selectedProducts, loadingClass) => {
 
 export {
   addToCartAPI,
-  getCartProductsAPI,
+  getCartByCustomerAPI,
   removeProductAPI,
   updateQuantityProductCartAPI,
   clearCartAPI,

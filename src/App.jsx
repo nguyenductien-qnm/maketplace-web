@@ -24,7 +24,7 @@ import CustomerRoutes from './routes/CustomerRoutes'
 import VendorRoutes from './routes/VendorRoutes'
 import AccessDeniedPage from './pages/common/AccessDeniedPage'
 import AdminRoutes from './routes/AdminRoutes'
-import CustomerShoppingCart from './pages/customer/CustomerShoppingCart'
+import CustomerCart from './pages/customer/CustomerCart'
 import CustomerCheckOut from './pages/customer/CustomerCheckout'
 import CustomerSetupAccount from './pages/customer/CustomerSetupAccount'
 import PublicRoutes from './routes/PublicRoutes'
@@ -131,7 +131,7 @@ function App() {
         </Route>
 
         <Route path="/access-denied" element={<AccessDeniedPage />} />
-        <Route path="/cart" element={<CustomerShoppingCart />} />
+        <Route path="/cart" element={<CustomerCart />} />
         <Route path="/checkout" element={<CustomerCheckOut />} />
       </Routes>
     </>

@@ -2,112 +2,131 @@ import { useEffect, useState } from 'react'
 import {
   checkoutAPI,
   clearCartAPI,
-  getCartProductsAPI,
+  getCartByCustomerAPI,
   removeProductAPI,
   updateQuantityProductCartAPI
 } from '~/api/cart.api'
 import { toast } from 'react-toastify'
 import { navigate } from '~/helpers/navigation'
+import { StatusCodes } from 'http-status-codes'
 
-export const useShoppingCart = () => {
+export const useCustomerCart = () => {
   const [loading, setLoading] = useState(true)
-  const [products, setProducts] = useState([])
+  const [cart, setCart] = useState([])
   const [selectedProducts, setSelectedProducts] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const [modalContent, setModalContent] = useState({ header: '', content: '' })
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const productsData = await getCartProductsAPI()
-        setProducts(productsData.data.metadata)
-      } finally {
-        setLoading(false)
-      }
+  const fetchCart = async () => {
+    setLoading(true)
+    try {
+      const { status, resData } = await getCartByCustomerAPI()
+      if (status === StatusCodes.OK) setCart(resData.metadata)
+    } finally {
+      setLoading(false)
     }
-    getData()
+  }
+
+  useEffect(() => {
+    fetchCart()
   }, [])
 
-  useEffect(() => {
-    if (selectedProducts.length > 0) {
-      const updatedProducts = selectedProducts.map((selectedItem) => {
-        const latestProduct = products.find(
-          (p) => p.product_id === selectedItem.product_id
-        )
-        return latestProduct &&
-          JSON.stringify(latestProduct) !== JSON.stringify(selectedItem)
-          ? latestProduct
-          : selectedItem
-      })
+  // useEffect(() => {
+  //   if (selectedProducts.length > 0) {
+  //     const updatedProducts = selectedProducts.map((selectedItem) => {
+  //       const latestProduct = products.find(
+  //         (p) => p.product_id === selectedItem.product_id
+  //       )
+  //       return latestProduct &&
+  //         JSON.stringify(latestProduct) !== JSON.stringify(selectedItem)
+  //         ? latestProduct
+  //         : selectedItem
+  //     })
 
-      if (
-        JSON.stringify(updatedProducts) !== JSON.stringify(selectedProducts)
-      ) {
-        setSelectedProducts(updatedProducts)
-      }
-    }
-  }, [products])
+  //     if (
+  //       JSON.stringify(updatedProducts) !== JSON.stringify(selectedProducts)
+  //     ) {
+  //       setSelectedProducts(updatedProducts)
+  //     }
+  //   }
+  // }, [products])
 
-  const handleSelectedProduct = (product) => {
+  const handleSelectProduct = (product) => {
+    const ids = selectedProducts.map((p) => p.product_id)
     setSelectedProducts((prev) => {
-      const ids = prev.map((p) => p.product_id)
       return ids.includes(product.product_id)
         ? prev.filter((p) => p.product_id !== product.product_id)
         : [...prev, product]
     })
   }
 
-  const handleClearCartAPI = async () => {
-    if (selectedProducts.length === 0) {
-      toast.warn('Please select product(s)!')
-      return
-    }
-    const res = await clearCartAPI(selectedProducts, [
-      '.btn-user-checkout',
-      '.btn-user-clear-cart',
-      '.btn-user-remove-product'
-    ])
-    if (res.status === 200) {
-      const selectedIds = selectedProducts.map((p) => p.product_id)
-      setProducts((prev) =>
-        prev.filter((p) => !selectedIds.includes(p.product_id))
-      )
-      setSelectedProducts([])
-    }
+  const handleSelectedShop = (shop) => {
+    console.log('shop::', shop)
   }
 
-  const removeProduct = async (product) => {
-    const res = await removeProductAPI({ _id: product.product_id }, [
-      '.btn-user-checkout',
-      '.btn-user-clear-cart',
-      '.btn-user-remove-product'
-    ])
-    if (res.status === 200)
-      setProducts((prev) =>
-        prev.filter((p) => p.product_id !== product.product_id)
-      )
+  const handleSelectAll = () => {}
+
+  const handleRemoveProduct = async (product) => {
+    console.log(product)
+    // const res = await removeProductAPI({ _id: product.product_id }, [
+    //   '.btn-user-checkout',
+    //   '.btn-user-clear-cart',
+    //   '.btn-user-remove-product'
+    // ])
+    // if (res.status === 200)
+    //   setProducts((prev) =>
+    //     prev.filter((p) => p.product_id !== product.product_id)
+    //   )
   }
 
-  const setQuantitySelected = async (product, newQuantity) => {
-    const oldQuantity = product.quantity
-    setProducts((prev) =>
-      prev.map((p) =>
-        p.product_id === product.product_id
-          ? { ...p, quantity: newQuantity }
-          : p
+  const handleRemoveManyProduct = async () => {
+    console.log(selectedProducts)
+    // if (selectedProducts.length === 0) {
+    //   toast.warn('Please select product(s)!')
+    //   return
+    // }
+    // const res = await clearCartAPI(selectedProducts, [
+    //   '.btn-user-checkout',
+    //   '.btn-user-clear-cart',
+    //   '.btn-user-remove-product'
+    // ])
+    // if (res.status === 200) {
+    //   const selectedIds = selectedProducts.map((p) => p.product_id)
+    //   setProducts((prev) =>
+    //     prev.filter((p) => !selectedIds.includes(p.product_id))
+    //   )
+    //   setSelectedProducts([])
+    // }
+  }
+
+  const handleAdjustQuantity = async ({ product, shop_id, new_quantity }) => {
+    const oldQuantity = product.product_quantity
+    setCart((prev) =>
+      prev.map((shop) =>
+        shop._id === shop_id
+          ? {
+              ...shop,
+              products: shop.products.map((p) =>
+                p.product_id === product.product_id
+                  ? { ...p, product_quantity: new_quantity }
+                  : p
+              )
+            }
+          : shop
       )
     )
-    const res = await updateQuantityProductCartAPI(product, newQuantity)
-    if (res.status !== 200) {
-      handleOpenModal('Notification', res.message)
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.product_id === product.product_id
-            ? { ...p, quantity: oldQuantity }
-            : p
-        )
-      )
-    }
+
+    //   const res = await updateQuantityProductCartAPI(product, newQuantity)
+    //   if (res.status !== 200) {
+    //     handleOpenModal('Notification', res.message)
+    //     setProducts((prev) =>
+    //       prev.map((p) =>
+    //         p.product_id === product.product_id
+    //           ? { ...p, quantity: oldQuantity }
+    //           : p
+    //       )
+    //     )
+    //   }
   }
 
   const handleCheckOut = async () => {
@@ -149,16 +168,17 @@ export const useShoppingCart = () => {
   const handleCloseModal = () => setOpenModal(false)
 
   return {
-    loading,
-    products,
-    selectedProducts,
-    modalContent,
-    openModal,
-    handleSelectedProduct,
-    handleClearCartAPI,
-    handleCheckOut,
-    removeProduct,
-    setQuantitySelected,
-    handleCloseModal
+    ui: { loading, openModal, selectedProducts, modalContent },
+    data: { cart },
+    handler: {
+      handleRemoveProduct,
+      handleRemoveManyProduct,
+      handleAdjustQuantity,
+      handleCloseModal,
+      handleSelectProduct,
+      handleSelectedShop,
+      handleSelectAll,
+      handleCheckOut
+    }
   }
 }

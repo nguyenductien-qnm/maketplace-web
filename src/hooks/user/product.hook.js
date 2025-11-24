@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { getProductDetailByCustomerAPI } from '~/api/product.api'
 import { navigate } from '~/helpers/navigation'
+import { addProductToCartAPI } from '~/redux/cart.slice'
 
 export const useCustomerProduct = () => {
+  const dispatch = useDispatch()
   const { product_slug } = useParams()
   const [product, setProduct] = useState(null)
   const [shop, setShop] = useState(null)
@@ -17,6 +21,8 @@ export const useCustomerProduct = () => {
   const [quantitySelected, setQuantitySelected] = useState(1)
 
   const [selectedTab, setSelectedTab] = useState('description')
+
+  const user = useSelector((state) => state.user.currentUser)
 
   const handleChangeTab = (tab) => {
     setSelectedTab(tab)
@@ -65,56 +71,99 @@ export const useCustomerProduct = () => {
     }
   }, [indexSelected])
 
+  const handleReduceQuantity = () => {
+    if (quantitySelected > 1) setQuantitySelected(quantitySelected - 1)
+  }
+
+  const handleAddQuantity = () => {
+    if (quantitySelected == productSelected.available_stock) return
+    setQuantitySelected(quantitySelected + 1)
+  }
+
+  const handleAdjustQuantity = (e) => {
+    if (productSelected) {
+      const quantityAvailable = productSelected.available_stock
+      const value = e.target.value
+      if (value === '') {
+        setQuantitySelected('')
+        return
+      }
+      if (Number(value) === 0) return
+      if (Number(value) > quantityAvailable) {
+        setQuantitySelected(quantityAvailable)
+        return
+      }
+      if (/^\d*$/.test(value)) {
+        setQuantitySelected(Number(value))
+      }
+    }
+  }
+
+  const handleBlurInputQuantity = () => {
+    if (quantitySelected === '') {
+      setQuantitySelected(1)
+    }
+  }
+
   const handleSelectProduct = (product) => {
+    setQuantitySelected(1)
     setProductSelected(product)
   }
 
   const handleSelectItem = (optionIndex, valueIndex) => {
-    setIndexSelected((prev) => {
-      let newSelected = [...prev]
+    if (
+      product.product_visibility == 'public' &&
+      shop.shop_status == 'approved'
+    ) {
+      setIndexSelected((prev) => {
+        let newSelected = [...prev]
 
-      if (newSelected[optionIndex] === valueIndex) {
-        delete newSelected[optionIndex]
-      } else {
-        newSelected[optionIndex] = valueIndex
+        if (newSelected[optionIndex] === valueIndex) {
+          delete newSelected[optionIndex]
+        } else {
+          newSelected[optionIndex] = valueIndex
 
-        for (
-          let i = optionIndex + 1;
-          i < product?.product_variations?.length;
-          i++
-        ) {
-          if (
-            !product?.products_sku?.some(
-              (sku) =>
-                sku.sku_tier_indices
-                  .slice(0, i)
-                  .every((val, idx) => val === newSelected[idx]) &&
-                sku.sku_tier_indices[i] === newSelected[i]
-            )
+          for (
+            let i = optionIndex + 1;
+            i < product?.product_variations?.length;
+            i++
           ) {
-            newSelected[i] = undefined
+            if (
+              !product?.products_sku?.some(
+                (sku) =>
+                  sku.sku_tier_indices
+                    .slice(0, i)
+                    .every((val, idx) => val === newSelected[idx]) &&
+                  sku.sku_tier_indices[i] === newSelected[i]
+              )
+            ) {
+              newSelected[i] = undefined
+            }
           }
         }
-      }
-      return newSelected
-    })
+        return newSelected
+      })
+    }
   }
 
   const handleAddProductToCart = () => {
-    let product1 = {}
-    if (product?.product_sku?.length > 0) {
-      product1.product_id = productSelected._id
-      product1.quantity = quantitySelected
-      product1.product_type = 'product_sku'
-    } else {
-      product1.product_id = product?._id
-      product1.quantity = quantitySelected
-      product1.product_type = 'product_spu'
+    if (!user) {
+      navigate('/auth/login')
+      return
     }
-
-    // if (product1)
-    //   addToCartAPI(product1, ['.btn-user-add-to-cart', '.btn-user-buy-now'])
-    console.log('product1:::', product1)
+    const { _id, available_stock } = productSelected
+    if (available_stock < quantitySelected) setQuantitySelected(available_stock)
+    if (quantitySelected <= 0) {
+      toast.error('Quantity must be greater than 0')
+      return
+    }
+    const payload = {
+      product_id: _id,
+      shop_id: shop._id,
+      product_quantity: quantitySelected,
+      product_parent_id: product._id
+    }
+    dispatch(addProductToCartAPI({ payload, loadingClass: [] }))
   }
 
   const handleOpenReportModal = () => {
@@ -151,7 +200,11 @@ export const useCustomerProduct = () => {
       handleAddProductToCart,
       handleSubmitReportProduct,
       handleOpenReportModal,
-      handleCloseReportModal
+      handleCloseReportModal,
+      handleReduceQuantity,
+      handleAddQuantity,
+      handleAdjustQuantity,
+      handleBlurInputQuantity
     }
   }
 }
