@@ -211,6 +211,7 @@ const useUserRegisterShop = () => {
     handleNext,
     handleBack,
     STEPS_ACCOUNT_MIGRATION,
+    setValue,
     register,
     errors,
     control,

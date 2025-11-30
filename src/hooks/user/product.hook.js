@@ -35,6 +35,11 @@ export const useCustomerProduct = () => {
       })
       if (status) {
         const { shop, ...rest } = resData.metadata
+        console.log(rest)
+        if (rest.product_variations.length == 0) {
+          console.log('rest.products_sku[0]::', rest.products_sku[0])
+          setProductSelected(rest.products_sku[0])
+        }
         setProduct(rest)
         setShop(shop)
       }
@@ -70,40 +75,6 @@ export const useCustomerProduct = () => {
       handleSelectProduct(null)
     }
   }, [indexSelected])
-
-  const handleReduceQuantity = () => {
-    if (quantitySelected > 1) setQuantitySelected(quantitySelected - 1)
-  }
-
-  const handleAddQuantity = () => {
-    if (quantitySelected == productSelected.available_stock) return
-    setQuantitySelected(quantitySelected + 1)
-  }
-
-  const handleAdjustQuantity = (e) => {
-    if (productSelected) {
-      const quantityAvailable = productSelected.available_stock
-      const value = e.target.value
-      if (value === '') {
-        setQuantitySelected('')
-        return
-      }
-      if (Number(value) === 0) return
-      if (Number(value) > quantityAvailable) {
-        setQuantitySelected(quantityAvailable)
-        return
-      }
-      if (/^\d*$/.test(value)) {
-        setQuantitySelected(Number(value))
-      }
-    }
-  }
-
-  const handleBlurInputQuantity = () => {
-    if (quantitySelected === '') {
-      setQuantitySelected(1)
-    }
-  }
 
   const handleSelectProduct = (product) => {
     setQuantitySelected(1)
@@ -200,11 +171,7 @@ export const useCustomerProduct = () => {
       handleAddProductToCart,
       handleSubmitReportProduct,
       handleOpenReportModal,
-      handleCloseReportModal,
-      handleReduceQuantity,
-      handleAddQuantity,
-      handleAdjustQuantity,
-      handleBlurInputQuantity
+      handleCloseReportModal
     }
   }
 }

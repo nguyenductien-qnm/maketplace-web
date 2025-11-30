@@ -12,8 +12,12 @@ import LaunchIcon from '@mui/icons-material/Launch'
 function CartItemRow({ ui, itemDetail, handler }) {
   const { selectedProducts } = ui
   const { shop, products } = itemDetail
-  const { handleAdjustQuantity, handleSelectProduct, handleSelectShop } =
-    handler
+  const {
+    handleAdjustQuantity,
+    handleSelectProduct,
+    handleSelectShop,
+    handleRemoveProduct
+  } = handler
 
   return (
     <>
@@ -138,7 +142,7 @@ function CartItemRow({ ui, itemDetail, handler }) {
                   opacity: 0.7
                 }
               }}
-              onClick={() => removeProduct(product)}
+              onClick={() => handleRemoveProduct(product)}
             />
           </TableCell>
         </TableRow>

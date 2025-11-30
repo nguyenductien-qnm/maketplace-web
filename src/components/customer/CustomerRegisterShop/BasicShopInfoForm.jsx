@@ -17,7 +17,7 @@ import {
 } from '~/utils/validators'
 import { useState } from 'react'
 
-function BasicShopInfoForm({ register, errors, control, getValues }) {
+function BasicShopInfoForm({ register, errors, control, getValues, setValue }) {
   const address = {
     province: getValues('province'),
     district: getValues('district'),
@@ -89,6 +89,7 @@ function BasicShopInfoForm({ register, errors, control, getValues }) {
         address={address}
         control={control}
         errors={errors}
+        setValue={setValue}
         isLarge={true}
       />
 

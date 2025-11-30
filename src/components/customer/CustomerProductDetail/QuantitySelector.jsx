@@ -14,7 +14,10 @@ function QuantitySelector({
   }
 
   const handleAddQuantity = () => {
-    setQuantitySelected(quantitySelected + 1)
+    if (!quantityAvailable) setQuantitySelected(quantitySelected + 1)
+
+    if (quantityAvailable && quantityAvailable > quantitySelected)
+      setQuantitySelected(quantitySelected + 1)
   }
 
   const handleAdjustQuantity = (e) => {
@@ -25,10 +28,12 @@ function QuantitySelector({
     }
 
     if (Number(value) === 0) return
+
     if (Number(value) > quantityAvailable) {
-      toast.error('Not enough quantity available')
+      setQuantitySelected(quantityAvailable)
       return
     }
+
     if (/^\d*$/.test(value)) {
       setQuantitySelected(Number(value))
     }

@@ -15,7 +15,8 @@ import Grid2 from '@mui/material/Grid2'
 
 function ProductDetailPanel({ data, ui, handler }) {
   const { productSelected, quantitySelected } = ui
-  const { handleAddProductToCart, handleOpenReportModal } = handler
+  const { handleAddProductToCart, handleOpenReportModal, setQuantitySelected } =
+    handler
   const { product, shop } = data
 
   const [disableAction, setDisableAction] = useState(false)
@@ -160,7 +161,9 @@ function ProductDetailPanel({ data, ui, handler }) {
           <Grid size={2}>
             <QuantitySelector
               ui={ui}
-              handler={handler}
+              quantitySelected={quantitySelected}
+              setQuantitySelected={setQuantitySelected}
+              quantityAvailable={selectedSKU?.available_stock}
               disableAction={disableAction}
             />
           </Grid>

@@ -18,6 +18,7 @@ function CustomerRegisterShop() {
   const {
     submitting,
     register,
+    setValue,
     errors,
     control,
     getValues,
@@ -102,6 +103,7 @@ function CustomerRegisterShop() {
                           register={register}
                           errors={errors}
                           control={control}
+                          setValue={setValue}
                           getValues={getValues}
                         />
                       )

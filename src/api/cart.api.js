@@ -1,15 +1,6 @@
 import { authorizedAxios } from '~/utils/authorizedAxios'
 import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 
-const addToCartAPI = async (data, loadingClass) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/cart/add-to-cart`,
-    data,
-    { loadingClass, ...TOAST_MODE.ALL }
-  )
-  return res
-}
-
 const getCartByCustomerAPI = async () => {
   const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/user/cart`,
@@ -20,25 +11,35 @@ const getCartByCustomerAPI = async () => {
   return { status, resData: data }
 }
 
-const removeProductAPI = async (_id, loadingClass) => {
+const addToCartAPI = async (data, loadingClass) => {
   const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/cart/remove-product`,
-    _id,
-    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
+    `${API_ROOT}/v1/api/cart/add-to-cart`,
+    data,
+    { loadingClass, ...TOAST_MODE.ALL }
   )
   return res
 }
 
-const updateQuantityProductCartAPI = async (product, newQuantity) => {
+const removeProductFromCartByCustomerAPI = async ({ _id, loadingClass }) => {
+  const { status, data } = await authorizedAxios.delete(
+    `${API_ROOT}/v1/api/user/cart/product/${_id}`,
+    _id,
+    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
+const updateCartProductQuantityByCustomerAPI = async ({
+  product_id,
+  payload
+}) => {
   try {
-    const res = await authorizedAxios.post(
-      `${API_ROOT}/v1/api/cart/update-quantity-product-cart`,
-      { product, newQuantity },
-      {
-        ...TOAST_MODE.NONE
-      }
+    const { status, data } = await authorizedAxios.put(
+      `${API_ROOT}/v1/api/user/cart/product/${product_id}`,
+      payload,
+      { ...TOAST_MODE.ONLY_ERROR }
     )
-    return res
+    return { status, resData: data }
   } catch (error) {
     return {
       status: error.response ? error.response.status : 500,
@@ -95,8 +96,8 @@ const clearCartAPI = async (selectedProducts, loadingClass) => {
 export {
   addToCartAPI,
   getCartByCustomerAPI,
-  removeProductAPI,
-  updateQuantityProductCartAPI,
+  removeProductFromCartByCustomerAPI,
+  updateCartProductQuantityByCustomerAPI,
   clearCartAPI,
   checkoutAPI,
   prepareCheckoutAPI

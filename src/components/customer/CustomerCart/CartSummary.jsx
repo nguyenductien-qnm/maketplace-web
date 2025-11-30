@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 
 function CartSummary({ selectedProducts, handleCheckOut }) {
   const [total, setTotal] = useState(0)
+
   useEffect(() => {
     let totalTmp = 0
     selectedProducts.forEach(
@@ -17,15 +18,23 @@ function CartSummary({ selectedProducts, handleCheckOut }) {
     )
     setTotal(totalTmp)
   }, [selectedProducts])
+
   return (
-    <Card sx={{ minWidth: '100%' }}>
+    <Card
+      sx={{
+        minWidth: '100%',
+        maxHeight: '1000px',
+        overflow: 'hidden',
+        overflowY: 'auto'
+      }}
+    >
       <CardContent>
         <Typography sx={{ fontSize: '16px', fontWeight: '600', mb: 2 }}>
           CART TOTALS
         </Typography>
 
         {selectedProducts?.map((p) => (
-          <Box>
+          <Box key={p.product_id}>
             <Typography
               sx={{ fontSize: '14px', overflow: 'hidden', color: 'gray' }}
             >
@@ -60,22 +69,6 @@ function CartSummary({ selectedProducts, handleCheckOut }) {
             {formatCurrency(total)}
           </span>
         </Typography>
-
-        <Button
-          className="btn-user-checkout"
-          onClick={() => handleCheckOut()}
-          sx={{
-            marginTop: '20px',
-            minWidth: '100%',
-            backgroundColor: blue[600],
-            fontSize: '14px',
-            textTransform: 'none',
-            fontWeight: '600',
-            color: 'white'
-          }}
-        >
-          Proceed to checkout
-        </Button>
       </CardContent>
     </Card>
   )
