@@ -1,8 +1,8 @@
+import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
 import LaunchIcon from '@mui/icons-material/Launch'
 
 function CartShopRow({ shop, handler }) {

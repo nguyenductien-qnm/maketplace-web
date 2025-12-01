@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
-import {
-  checkoutAPI,
-  clearCartAPI,
-  getCartByCustomerAPI,
-  removeProductFromCartByCustomerAPI,
-  updateCartProductQuantityByCustomerAPI
-} from '~/api/cart.api'
 import { navigate } from '~/helpers/navigation'
 import { StatusCodes } from 'http-status-codes'
 import { useDebounce } from '../common/useDebounce'
+import {
+  checkoutAPI,
+  getCartByCustomerAPI,
+  removeProductFromCartByCustomerAPI,
+  removeProductsFromCartByCustomerAPI,
+  updateCartProductQuantityByCustomerAPI
+} from '~/api/cart.api'
+
+const LIMIT = 10
 
 export const useCustomerCart = () => {
   const [loading, setLoading] = useState(true)
@@ -17,7 +19,61 @@ export const useCustomerCart = () => {
   const [selectedProducts, setSelectedProducts] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const [modalContent, setModalContent] = useState({ header: '', content: '' })
+  const [count, setCount] = useState(0)
+  const [page, setPage] = useState(1)
   const prevQuantityRef = useRef({})
+
+  useEffect(() => {
+    fetchCart({ currentPage: page })
+  }, [])
+
+  useEffect(() => {
+    const next = productActive.filter((s) => s.products.length > 0)
+    if (next.length !== productActive.length) {
+      setProductActive(next)
+    }
+  }, [productActive])
+
+  const debouncedAPICall = useDebounce(
+    async ({ product, shop_id, new_quantity }) => {
+      const payload = {
+        product_parent_id: product.product_parent_id,
+        shop_id: product.product_info.product_shop_id,
+        new_quantity
+      }
+
+      const { status, resData } = await updateCartProductQuantityByCustomerAPI({
+        product_id: product.product_id,
+        payload
+      })
+
+      if (status === StatusCodes.OK) {
+        const key = `${shop_id}-${product.product_id}`
+        delete prevQuantityRef.current[key]
+      }
+
+      if (status === StatusCodes.OK && resData?.metadata?.is_updated) {
+        const { product_quantity, warning } = resData?.metadata
+        handleSetQuantity({
+          shop_id,
+          product_id: product.product_id,
+          quantity: product_quantity
+        })
+        handleOpenModal('Notification', warning)
+      }
+
+      if (status !== StatusCodes.OK) {
+        const key = `${shop_id}-${product.product_id}`
+        const originalQuantity = prevQuantityRef.current[key] || 1
+        handleSetQuantity({
+          shop_id,
+          product_id: product.product_id,
+          quantity: originalQuantity
+        })
+      }
+    },
+    500
+  )
 
   const isSelectedAllProduct = () => {
     const products = productActive.flatMap((i) => i.products)
@@ -50,54 +106,66 @@ export const useCustomerCart = () => {
     )
   }
 
-  const fetchCart = async () => {
+  const fetchCart = async ({ currentPage }) => {
     setLoading(true)
     try {
-      const { status, resData } = await getCartByCustomerAPI()
+      const payload = { page: currentPage, limit: LIMIT }
+      const { status, resData } = await getCartByCustomerAPI({ payload })
 
       if (status === StatusCodes.OK) {
-        const data = resData.metadata
-        const active = data.map((s) => ({
-          ...s,
-          products: s.products.filter((p) => p.is_active)
-        }))
+        const { cart, count } = resData.metadata
 
-        const inactive = data.map((s) => ({
-          ...s,
-          products: s.products.filter((p) => !p.is_active)
-        }))
-
-        setProductActive(active)
-        setProductInactive(inactive)
+        mergeProducts(cart)
+        setCount(count)
       }
+    } catch (error) {
+      console.error('Fetch cart error:', error)
     } finally {
       setLoading(false)
     }
   }
 
-  useEffect(() => {
-    fetchCart()
-  }, [])
+  const mergeProducts = (newShops) => {
+    const activeMap = new Map(productActive.map((s) => [s._id, s]))
+    const inactiveMap = new Map(productInactive.map((s) => [s._id, s]))
 
-  // useEffect(() => {
-  //   if (selectedProducts.length > 0) {
-  //     const updatedProducts = selectedProducts.map((selectedItem) => {
-  //       const latestProduct = products.find(
-  //         (p) => p.product_id === selectedItem.product_id
-  //       )
-  //       return latestProduct &&
-  //         JSON.stringify(latestProduct) !== JSON.stringify(selectedItem)
-  //         ? latestProduct
-  //         : selectedItem
-  //     })
+    newShops.forEach((shop) => {
+      const activeProds = shop.products.filter((p) => p.is_active)
+      const inactiveProds = shop.products.filter((p) => !p.is_active)
 
-  //     if (
-  //       JSON.stringify(updatedProducts) !== JSON.stringify(selectedProducts)
-  //     ) {
-  //       setSelectedProducts(updatedProducts)
-  //     }
-  //   }
-  // }, [products])
+      if (activeProds.length > 0) {
+        const existing = activeMap.get(shop._id)
+        activeMap.set(
+          shop._id,
+          existing
+            ? { ...existing, products: [...existing.products, ...activeProds] }
+            : { ...shop, products: activeProds }
+        )
+      }
+
+      if (inactiveProds.length > 0) {
+        const existing = inactiveMap.get(shop._id)
+        inactiveMap.set(
+          shop._id,
+          existing
+            ? {
+                ...existing,
+                products: [...existing.products, ...inactiveProds]
+              }
+            : { ...shop, products: inactiveProds }
+        )
+      }
+    })
+
+    setProductActive(Array.from(activeMap.values()))
+    setProductInactive(Array.from(inactiveMap.values()))
+  }
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1
+    setPage(nextPage)
+    fetchCart({ currentPage: nextPage })
+  }
 
   const handleSelectProduct = (product) => {
     const ids = selectedProducts.map((p) => p.product_id)
@@ -151,6 +219,11 @@ export const useCustomerCart = () => {
             products: s.products.filter((p) => p.product_id != product_id)
           }))
         })
+        setCount((prev) => prev - 1)
+
+        setSelectedProducts((prev) =>
+          prev.filter((p) => p.product_id !== product_id)
+        )
       }
     } finally {
       //   '.btn-user-checkout',
@@ -159,24 +232,51 @@ export const useCustomerCart = () => {
     }
   }
 
-  const handleRemoveManyProduct = async () => {
-    console.log(selectedProducts)
-    // if (selectedProducts.length === 0) {
-    //   toast.warn('Please select product(s)!')
-    //   return
-    // }
-    // const res = await clearCartAPI(selectedProducts, [
+  const handleRemoveManyProduct = async (products) => {
+    const productIds = products?.map((p) => p.product_id)
+    if (!productIds?.length) return
+
+    const { status, resData } = await removeProductsFromCartByCustomerAPI({
+      payload: { productIds },
+      loadingClass: []
+    })
+
+    if (status === StatusCodes.OK) {
+      const { count } = resData.metadata
+
+      const idsToDelete = new Set(productIds)
+
+      setProductActive((prev) =>
+        prev.map((s) => ({
+          ...s,
+          products: s.products.filter((p) => !idsToDelete.has(p.product_id))
+        }))
+      )
+
+      setSelectedProducts([])
+
+      setCount((prev) => prev - count)
+    }
     //   '.btn-user-checkout',
     //   '.btn-user-clear-cart',
     //   '.btn-user-remove-product'
-    // ])
-    // if (res.status === 200) {
-    //   const selectedIds = selectedProducts.map((p) => p.product_id)
-    //   setProducts((prev) =>
-    //     prev.filter((p) => !selectedIds.includes(p.product_id))
-    //   )
-    //   setSelectedProducts([])
-    // }
+  }
+
+  const handelClearProductInactive = async () => {
+    const productIds = productInactive
+      .flatMap((i) => i.products)
+      .map((p) => p.product_id)
+
+    const { status, resData } = await removeProductsFromCartByCustomerAPI({
+      payload: { productIds },
+      loadingClass: []
+    })
+
+    if (status === StatusCodes.OK) {
+      const { count } = resData.metadata
+      setProductInactive([])
+      setCount((prev) => prev - count)
+    }
   }
 
   const handleAdjustQuantity = ({ product, shop_id, new_quantity }) => {
@@ -195,46 +295,29 @@ export const useCustomerCart = () => {
     debouncedAPICall({ product, shop_id, new_quantity })
   }
 
-  const debouncedAPICall = useDebounce(
-    async ({ product, shop_id, new_quantity }) => {
-      const payload = {
-        product_parent_id: product.product_parent_id,
-        shop_id: product.product_info.product_shop_id,
-        new_quantity
-      }
+  const handleSetQuantity = ({ shop_id, product_id, quantity }) => {
+    setProductActive((prev) =>
+      prev.map((shop) =>
+        shop._id === shop_id
+          ? {
+              ...shop,
+              products: shop.products.map((p) =>
+                p.product_id === product_id
+                  ? { ...p, product_quantity: quantity }
+                  : p
+              )
+            }
+          : shop
+      )
+    )
+  }
 
-      const { status, resData } = await updateCartProductQuantityByCustomerAPI({
-        product_id: product.product_id,
-        payload
-      })
+  const handleOpenModal = (header, content) => {
+    setModalContent({ header, content })
+    setOpenModal(true)
+  }
 
-      if (status === StatusCodes.OK) {
-        const key = `${shop_id}-${product.product_id}`
-        delete prevQuantityRef.current[key]
-      }
-
-      if (status === StatusCodes.OK && resData?.metadata?.is_updated) {
-        const { product_quantity, warning } = resData?.metadata
-        handleSetQuantity({
-          shop_id,
-          product_id: product.product_id,
-          quantity: product_quantity
-        })
-        handleOpenModal('Notification', warning)
-      }
-
-      if (status !== StatusCodes.OK) {
-        const key = `${shop_id}-${product.product_id}`
-        const originalQuantity = prevQuantityRef.current[key] || 1
-        handleSetQuantity({
-          shop_id,
-          product_id: product.product_id,
-          quantity: originalQuantity
-        })
-      }
-    },
-    500
-  )
+  const handleCloseModal = () => setOpenModal(false)
 
   const handleCheckOut = async () => {
     const res = await checkoutAPI({ products: selectedProducts }, [
@@ -267,32 +350,16 @@ export const useCustomerCart = () => {
     }
   }
 
-  const handleSetQuantity = ({ shop_id, product_id, quantity }) => {
-    setProductActive((prev) =>
-      prev.map((shop) =>
-        shop._id === shop_id
-          ? {
-              ...shop,
-              products: shop.products.map((p) =>
-                p.product_id === product_id
-                  ? { ...p, product_quantity: quantity }
-                  : p
-              )
-            }
-          : shop
-      )
-    )
-  }
-
-  const handleOpenModal = (header, content) => {
-    setModalContent({ header, content })
-    setOpenModal(true)
-  }
-
-  const handleCloseModal = () => setOpenModal(false)
-
   return {
-    ui: { loading, openModal, selectedProducts, modalContent },
+    ui: {
+      loading,
+      openModal,
+      selectedProducts,
+      modalContent,
+      page,
+      count,
+      LIMIT
+    },
     data: { productActive, productInactive },
     handler: {
       handleRemoveProduct,
@@ -303,9 +370,11 @@ export const useCustomerCart = () => {
       handleSelectAll,
       handleCheckOut,
       handleSelectShop,
+      handleLoadMore,
       isAllShopProductsSelected,
       isSomeShopProductSelected,
-      isSelectedAllProduct
+      isSelectedAllProduct,
+      handelClearProductInactive
     }
   }
 }

@@ -1,10 +1,12 @@
 import { authorizedAxios } from '~/utils/authorizedAxios'
+import cleanFilters from '~/utils/cleanFilters'
 import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 
-const getCartByCustomerAPI = async () => {
+const getCartByCustomerAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.get(
     `${API_ROOT}/v1/api/user/cart`,
     {
+      params: cleanFilters(payload),
       ...TOAST_MODE.ONLY_ERROR
     }
   )
@@ -23,7 +25,18 @@ const addToCartAPI = async (data, loadingClass) => {
 const removeProductFromCartByCustomerAPI = async ({ _id, loadingClass }) => {
   const { status, data } = await authorizedAxios.delete(
     `${API_ROOT}/v1/api/user/cart/product/${_id}`,
-    _id,
+    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
+const removeProductsFromCartByCustomerAPI = async ({
+  payload,
+  loadingClass
+}) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/user/cart/products/bulk-delete`,
+    payload,
     { loadingClass, ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
@@ -82,23 +95,12 @@ const prepareCheckoutAPI = async (data, loadingClass) => {
   }
 }
 
-const clearCartAPI = async (selectedProducts, loadingClass) => {
-  const res = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/cart/clear-cart`,
-    {
-      selectedProducts
-    },
-    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
-  )
-  return res
-}
-
 export {
   addToCartAPI,
   getCartByCustomerAPI,
   removeProductFromCartByCustomerAPI,
+  removeProductsFromCartByCustomerAPI,
   updateCartProductQuantityByCustomerAPI,
-  clearCartAPI,
   checkoutAPI,
   prepareCheckoutAPI
 }

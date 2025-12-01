@@ -1,3 +1,5 @@
+import Box from '@mui/material/Box'
+import Chip from '@mui/material/Chip'
 import Checkbox from '@mui/material/Checkbox'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
@@ -5,13 +7,12 @@ import Typography from '@mui/material/Typography'
 import CancelIcon from '@mui/icons-material/Cancel'
 import QuantitySelector from '~/components/customer/CustomerProductDetail/QuantitySelector'
 import formatCurrency from '~/utils/formatCurrency'
-import Box from '@mui/material/Box'
-import Chip from '@mui/material/Chip'
 
 function CartProductRow({ ui, data, handler }) {
   const { selectedProducts } = ui
   const { shop, product } = data
-  const { handleSelectProduct, handleAdjustQuantity } = handler
+  const { handleSelectProduct, handleAdjustQuantity, handleRemoveProduct } =
+    handler
   return (
     <TableRow
       key={product?.product_id}
@@ -37,8 +38,7 @@ function CartProductRow({ ui, data, handler }) {
 
       <TableCell
         sx={{
-          maxWidth: '550px',
-          width: selectedProducts?.length > 0 ? '350px' : '100%'
+          width: selectedProducts?.length > 0 ? '350px' : '550px'
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '20px' }}>

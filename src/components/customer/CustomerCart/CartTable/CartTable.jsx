@@ -5,10 +5,10 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 import Checkbox from '@mui/material/Checkbox'
+import TableCell from '@mui/material/TableCell'
 import TableCellHeader from '~/components/common/TableCellHeader'
 import CartShopRow from './CartShopRow'
 import CartProductRow from './CartProductRow'
-import { TableCell } from '@mui/material'
 import React from 'react'
 
 function CartTable({ ui, data, handler }) {

@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
@@ -6,7 +7,6 @@ import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Markdown from 'react-markdown'
 import CircularIndeterminate from './CircularIndeterminate'
-import { Box } from '@mui/material'
 
 function NotificationDialog({
   loading = false,

@@ -3,12 +3,11 @@ import Divider from '@mui/material/Divider'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
 import formatCurrency from '~/utils/formatCurrency'
-import { grey, blue } from '@mui/material/colors'
+import { grey } from '@mui/material/colors'
 import { useEffect, useState } from 'react'
 
-function CartSummary({ selectedProducts, handleCheckOut }) {
+function CartSummary({ selectedProducts }) {
   const [total, setTotal] = useState(0)
 
   useEffect(() => {
