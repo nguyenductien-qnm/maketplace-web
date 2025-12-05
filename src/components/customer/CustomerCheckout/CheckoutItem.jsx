@@ -1,13 +1,17 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Divider, Typography } from '@mui/material'
 import { Table, TableBody, TableCell, TableRow, Paper } from '@mui/material'
 import { blue, grey } from '@mui/material/colors'
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
 import formatCurrency from '~/utils/formatCurrency'
 import VoucherOverview from './VoucherOverview'
+import OrderSummary from './OrderSummary'
 
-function CheckoutItem({ products, vouchers, handleSelectedVouchers }) {
+function CheckoutItem({ shopProductGroup, vouchers, handleSelectedVouchers }) {
+  const { shop_name, shop_avatar, products, summary, shop_id } =
+    shopProductGroup
+
   return (
-    <Paper sx={{ padding: '25px 0' }}>
+    <Paper sx={{ padding: '25px 10px' }}>
       <Box
         sx={{
           display: 'flex',
@@ -17,30 +21,31 @@ function CheckoutItem({ products, vouchers, handleSelectedVouchers }) {
         }}
       >
         <StorefrontOutlinedIcon sx={{ color: blue[600] }} />
-        <Typography variant="h6">{products?.shop_name}</Typography>
+        <Typography variant="h6">{shop_name || 'Unknow Shop Name'}</Typography>
       </Box>
-      <Table>
+      <Table sx={{ marginTop: '30px' }}>
         <TableBody>
-          {products?.products &&
-            products?.products.map((product) => (
+          {products &&
+            products.map((product) => (
               <TableRow
                 key={product.product_id}
                 sx={{
                   '& td': {
                     borderBottom: '20px solid transparent'
-                  }
+                  },
+                  height: '100px'
                 }}
               >
                 <TableCell
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '10px'
+                    gap: '20px'
                   }}
                 >
                   <img
-                    src={product?.product_thumb}
-                    style={{ maxWidth: '50px' }}
+                    src={product?.product_image}
+                    style={{ maxWidth: '70px' }}
                   />
                   <Typography>{product?.product_name}</Typography>
                   {product?.product_variation && (
@@ -50,52 +55,39 @@ function CheckoutItem({ products, vouchers, handleSelectedVouchers }) {
                   )}
                 </TableCell>
                 <TableCell sx={{ width: '13.33%', textAlign: 'start' }}>
-                  {formatCurrency(product?.product_price)}
+                  <Typography>
+                    {formatCurrency(product?.product_price)}
+                  </Typography>
                 </TableCell>
                 <TableCell sx={{ width: '13.33%', textAlign: 'end' }}>
-                  {product?.quantity}
+                  <Typography>{product?.product_quantity}</Typography>
                 </TableCell>
                 <TableCell sx={{ width: '13.33%', textAlign: 'end' }}>
-                  {formatCurrency(product?.product_price * product?.quantity)}
+                  <Typography>
+                    <b>{formatCurrency(product?.total_price)}</b>
+                  </Typography>
                 </TableCell>
               </TableRow>
             ))}
         </TableBody>
       </Table>
-      <Box
-        sx={{
-          display: 'flex',
-          marginTop: '25px',
-          justifyContent: 'end',
-          alignItems: 'center',
-          padding: '10px 16px 30px 16px'
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            gap: '20px'
+
+      <OrderSummary summary={summary} />
+
+      <Divider sx={{ mt: '20px' }} />
+
+      {vouchers && (
+        <VoucherOverview
+          content="Shop Vouchers"
+          info={{
+            header: `${shop_name} Vouchers`,
+            logo: shop_avatar,
+            shop_id: shop_id
           }}
-        >
-          <Typography>
-            Order Total (
-            {products?.products.reduce((acc, curr) => {
-              return acc + curr.quantity
-            }, 0)}
-            &nbsp;Item):
-          </Typography>
-          <Typography sx={{ color: blue[600] }} fontWeight="bold">
-            {formatCurrency(
-              products?.total_price_product - products?.discount_value
-            )}
-          </Typography>
-        </Box>
-      </Box>
-      <VoucherOverview
-        content={'Voucher shop'}
-        vouchers={vouchers}
-        handleSelectedVouchers={handleSelectedVouchers}
-      />
+          vouchers={vouchers}
+          handleSelectedVouchers={handleSelectedVouchers}
+        />
+      )}
     </Paper>
   )
 }

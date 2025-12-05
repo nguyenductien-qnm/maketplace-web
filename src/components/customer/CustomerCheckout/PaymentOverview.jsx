@@ -2,7 +2,7 @@ import { Box, Button, Divider, Paper, Typography } from '@mui/material'
 import { blue, grey } from '@mui/material/colors'
 import formatCurrency from '~/utils/formatCurrency'
 
-function PaymentOverview({ price, handlePlaceOrder }) {
+function PaymentOverview({ summary, handlePlaceOrder }) {
   return (
     <Paper sx={{ padding: '30px 16px' }}>
       <Box sx={{ padding: '0 0 30px 0' }}>
@@ -30,7 +30,7 @@ function PaymentOverview({ price, handlePlaceOrder }) {
             Merchandise Subtotal
           </Typography>
           <Typography variant="body2">
-            {formatCurrency(price?.total_merchandise_price)}
+            {formatCurrency(summary?.totalMerchandisePrice)}
           </Typography>
         </Box>
         <Box
@@ -44,7 +44,7 @@ function PaymentOverview({ price, handlePlaceOrder }) {
             Shipping Subtotal
           </Typography>
           <Typography variant="body2">
-            {formatCurrency(price?.shipping_price)}
+            {formatCurrency(summary?.totalShippingFee)}
           </Typography>
         </Box>
         <Box
@@ -58,7 +58,7 @@ function PaymentOverview({ price, handlePlaceOrder }) {
             Voucher Discount
           </Typography>
           <Typography variant="body2">
-            {formatCurrency(price?.voucher_discount)}
+            {formatCurrency(summary?.discountValue)}
           </Typography>
         </Box>
         <Box
@@ -73,7 +73,7 @@ function PaymentOverview({ price, handlePlaceOrder }) {
             Total Payment
           </Typography>
           <Typography fontSize="25px" sx={{ color: blue[600] }}>
-            {formatCurrency(price?.total_price)}
+            {formatCurrency(summary?.totalPayment)}
           </Typography>
         </Box>
       </Box>

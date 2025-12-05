@@ -12,7 +12,8 @@ function AddressOptionModal({
   addresses,
   handleAddAddress,
   addressSelected,
-  setAddressSelected
+  setAddressSelected,
+  handleChangeAddress
 }) {
   const style = {
     position: 'absolute',
@@ -102,6 +103,7 @@ function AddressOptionModal({
         </Box>
 
         <Divider sx={{ mt: '10px' }} />
+
         <Box
           sx={{
             display: 'flex',
@@ -131,7 +133,8 @@ function AddressOptionModal({
             variant="contained"
             sx={{ width: '100px' }}
             onClick={() => {
-              setAddressSelected(tempAddressSelected)
+              // setAddressSelected(tempAddressSelected)
+              handleChangeAddress({ address: tempAddressSelected })
               onClose()
             }}
           >

@@ -10,7 +10,8 @@ function ShippingAddress({
   addresses,
   addressSelected,
   setAddressSelected,
-  handleAddAddress
+  handleAddAddress,
+  handleChangeAddress
 }) {
   const navigate = useNavigate()
   const [openModal, setOpenModal] = useState(false)
@@ -29,7 +30,12 @@ function ShippingAddress({
     <Box>
       <Paper sx={{ padding: '25px 30px' }}>
         <Box
-          sx={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '15px',
+            gap: '10px'
+          }}
         >
           <LocationOnIcon sx={{ color: blue[600] }} />
           <Typography variant="h6">Delivery Address</Typography>
@@ -90,6 +96,7 @@ function ShippingAddress({
         handleAddAddress={handleAddAddress}
         addressSelected={addressSelected}
         setAddressSelected={setAddressSelected}
+        handleChangeAddress={handleChangeAddress}
       />
     </Box>
   )

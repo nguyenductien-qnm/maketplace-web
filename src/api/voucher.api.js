@@ -2,14 +2,14 @@ import { authorizedAxios } from '~/utils/authorizedAxios'
 import cleanFilters from '~/utils/cleanFilters'
 import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 // ============================ CUSTOMER ============================
-const getVoucherForCustomerAPI = async (data) => {
-  return await authorizedAxios.post(
-    `${API_ROOT}/v1/api/voucher/get-voucher-for-customer`,
-    data,
+const getVouchersOfMultipleShopByCustomerAPI = async ({ payload }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/user/voucher/shop`,
+    payload,
     { ...TOAST_MODE.ONLY_ERROR }
   )
+  return { status, resData: data }
 }
-
 // ============================ VENDOR ============================
 const queryVoucherByShopAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.get(
@@ -140,7 +140,6 @@ export {
   updateVoucherByShopAPI,
   createVoucherByShopAPI,
   deleteVoucherByShopAPI,
-  getVoucherForCustomerAPI,
   queryVoucherByAdminAPI,
   getVoucherDetailForAdminAPI,
   createVoucherByAdminAPI,
@@ -149,5 +148,6 @@ export {
   enableShopVoucherByAdminAPI,
   exportVoucherDataByAdminAPI,
   getVoucherDetailByShopAPI,
-  getVoucherSummaryByShopAPI
+  getVoucherSummaryByShopAPI,
+  getVouchersOfMultipleShopByCustomerAPI
 }

@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { Box, Divider, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
-import VoucherDialog from './VoucherDialog'
+import VoucherSelectionModal from './VoucherSelectionModal'
 
-function VoucherOverview({ content, vouchers, handleSelectedVouchers }) {
+function VoucherOverview({ content, info, vouchers, handleSelectedVouchers }) {
   const [open, setOpen] = useState(false)
 
   const handleOpen = () => {
@@ -15,20 +15,20 @@ function VoucherOverview({ content, vouchers, handleSelectedVouchers }) {
   }
 
   return (
-    <Box sx={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
-      <Divider />
+    <Box>
       <Box
         sx={{
-          padding: '20px 16px',
+          padding: '40px 16px 20px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center'
         }}
       >
-        <Box sx={{ display: 'flex', gap: '10px' }}>
+        <Box sx={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
           <LocalOfferOutlinedIcon />
-          <Typography>{content}</Typography>
+          <Typography sx={{ fontSize: '18px' }}>{content}</Typography>
         </Box>
+
         <Box>
           <Typography
             color="primary"
@@ -40,9 +40,10 @@ function VoucherOverview({ content, vouchers, handleSelectedVouchers }) {
         </Box>
       </Box>
 
-      <VoucherDialog
+      <VoucherSelectionModal
         open={open}
         onClose={handleClose}
+        info={info}
         vouchers={vouchers}
         handleSelectedVouchers={handleSelectedVouchers}
       />

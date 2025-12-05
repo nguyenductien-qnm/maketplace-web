@@ -4,7 +4,7 @@ import { blue, grey } from '@mui/material/colors'
 function PaymentMethods({
   paymentMethods,
   paymentMethodSelected,
-  setPaymentMethodSelected
+  handleChangePaymentMethod
 }) {
   return (
     <Paper
@@ -23,21 +23,20 @@ function PaymentMethods({
             sx={{
               border: '2px solid',
               borderColor:
-                paymentMethodSelected?.id === i.id ? blue[600] : grey[300],
-              color: paymentMethodSelected?.id === i.id ? blue[600] : grey[300],
+                paymentMethodSelected === i.id ? blue[600] : grey[300],
+              color: paymentMethodSelected === i.id ? blue[600] : grey[300],
               padding: '0px 30px',
               borderRadius: '5px',
               '&:hover': {
                 cursor: 'pointer',
                 borderColor:
-                  paymentMethodSelected?.id === i.id ? blue[700] : grey[400],
-                color:
-                  paymentMethodSelected?.id === i.id ? blue[700] : grey[400]
+                  paymentMethodSelected === i.id ? blue[700] : grey[400],
+                color: paymentMethodSelected === i.id ? blue[700] : grey[400]
               },
               display: 'flex'
             }}
             onClick={() => {
-              setPaymentMethodSelected({ id: i?.id })
+              handleChangePaymentMethod({ method: i?.id })
             }}
           >
             <img style={{ maxWidth: '40px', minWidth: '40px' }} src={i.img} />

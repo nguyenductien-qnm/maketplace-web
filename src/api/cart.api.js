@@ -61,46 +61,10 @@ const updateCartProductQuantityByCustomerAPI = async ({
   }
 }
 
-const checkoutAPI = async (data, loadingClass) => {
-  try {
-    const res = await authorizedAxios.post(
-      `${API_ROOT}/v1/api/cart/checkout`,
-      data,
-      { loadingClass, ...TOAST_MODE.ONLY_ERROR }
-    )
-    return res
-  } catch (error) {
-    return {
-      status: error.response ? error.response.status : 500,
-      message: error.data.message,
-      metadata: error.data?.metadata
-    }
-  }
-}
-
-const prepareCheckoutAPI = async (data, loadingClass) => {
-  try {
-    const res = await authorizedAxios.post(
-      `${API_ROOT}/v1/api/cart/prepare-checkout`,
-      data,
-      { loadingClass, ...TOAST_MODE.ONLY_ERROR }
-    )
-    return res
-  } catch (error) {
-    return {
-      status: error.response ? error.response.status : 500,
-      message: error.data.message,
-      metadata: error.data?.metadata
-    }
-  }
-}
-
 export {
   addToCartAPI,
   getCartByCustomerAPI,
   removeProductFromCartByCustomerAPI,
   removeProductsFromCartByCustomerAPI,
-  updateCartProductQuantityByCustomerAPI,
-  checkoutAPI,
-  prepareCheckoutAPI
+  updateCartProductQuantityByCustomerAPI
 }

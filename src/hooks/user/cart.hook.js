@@ -3,12 +3,12 @@ import { navigate } from '~/helpers/navigation'
 import { StatusCodes } from 'http-status-codes'
 import { useDebounce } from '../common/useDebounce'
 import {
-  checkoutAPI,
   getCartByCustomerAPI,
   removeProductFromCartByCustomerAPI,
   removeProductsFromCartByCustomerAPI,
   updateCartProductQuantityByCustomerAPI
 } from '~/api/cart.api'
+import { checkoutByCustomerAPI } from '~/api/checkout.api'
 
 const LIMIT = 10
 
@@ -295,23 +295,6 @@ export const useCustomerCart = () => {
     debouncedAPICall({ product, shop_id, new_quantity })
   }
 
-  const handleSetQuantity = ({ shop_id, product_id, quantity }) => {
-    setProductActive((prev) =>
-      prev.map((shop) =>
-        shop._id === shop_id
-          ? {
-              ...shop,
-              products: shop.products.map((p) =>
-                p.product_id === product_id
-                  ? { ...p, product_quantity: quantity }
-                  : p
-              )
-            }
-          : shop
-      )
-    )
-  }
-
   const handleOpenModal = (header, content) => {
     setModalContent({ header, content })
     setOpenModal(true)
@@ -320,14 +303,17 @@ export const useCustomerCart = () => {
   const handleCloseModal = () => setOpenModal(false)
 
   const handleCheckOut = async () => {
-    const res = await checkoutAPI({ products: selectedProducts }, [
-      '.btn-user-checkout',
-      '.btn-user-clear-cart',
-      '.btn-user-remove-product'
-    ])
+    const { status, resData } = await checkoutByCustomerAPI({
+      payload: { products: selectedProducts },
+      loadingClass: [
+        '.btn-user-checkout',
+        '.btn-user-clear-cart',
+        '.btn-user-remove-product'
+      ]
+    })
 
-    if (res.status === 200) {
-      navigate(res.data?.metadata?.checkoutUrl)
+    if (status === 200) {
+      navigate(resData?.metadata?.checkoutUrl)
     } else {
       if (Array.isArray(res.message)) {
         handleOpenModal('Notification', res.message[0])
@@ -348,6 +334,23 @@ export const useCustomerCart = () => {
           .filter(Boolean)
       )
     }
+  }
+
+  const handleSetQuantity = ({ shop_id, product_id, quantity }) => {
+    setProductActive((prev) =>
+      prev.map((shop) =>
+        shop._id === shop_id
+          ? {
+              ...shop,
+              products: shop.products.map((p) =>
+                p.product_id === product_id
+                  ? { ...p, product_quantity: quantity }
+                  : p
+              )
+            }
+          : shop
+      )
+    )
   }
 
   return {

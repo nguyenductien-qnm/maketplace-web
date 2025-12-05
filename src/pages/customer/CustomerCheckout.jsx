@@ -13,26 +13,32 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { grey } from '@mui/material/colors'
 import { useCheckout } from '~/hooks/user/checkout.hook'
+import TypographyTitle from '~/components/common/TypographyTitle'
 
 function CustomerCheckOut() {
+  const { ui, data, handler } = useCheckout()
+
+  const { modalContent, openModal, paymentMethods } = ui
+
   const {
+    decodedToken,
+    products,
     addresses,
     addressSelected,
+    ableShopVouchers,
+    unableShopVouchers,
+    platformVouchers
+  } = data
+
+  const {
     handleAddAddress,
     setAddressSelected,
-    products,
-    shopVouchers,
-    bevesiVouchers,
     handleSelectedVouchers,
-    paymentMethods,
-    paymentMethodSelected,
-    setPaymentMethodSelected,
     handlePlaceOrder,
-    modalContent,
-    openModal,
     handleCloseModal,
-    decodedToken
-  } = useCheckout()
+    handleChangePaymentMethod,
+    handleChangeAddress
+  } = handler
 
   return (
     <UserLayout>
@@ -42,25 +48,41 @@ function CustomerCheckOut() {
           addressSelected={addressSelected}
           handleAddAddress={handleAddAddress}
           setAddressSelected={setAddressSelected}
+          handleChangeAddress={handleChangeAddress}
         />
         <Table sx={{ marginTop: '15px' }}>
           <TableHead>
             <TableRow>
               <TableCell sx={{ width: '60%', fontSize: '20px' }}>
-                Products Ordered
+                <TypographyTitle>Products Ordered</TypographyTitle>
               </TableCell>
               <TableCell
-                sx={{ width: '13.33%', textAlign: 'start', color: grey[600] }}
+                sx={{
+                  width: '13.33%',
+                  textAlign: 'start',
+                  color: grey[600],
+                  fontSize: '16px'
+                }}
               >
                 Unit Price
               </TableCell>
               <TableCell
-                sx={{ width: '13.33%', textAlign: 'end', color: grey[600] }}
+                sx={{
+                  width: '13.33%',
+                  textAlign: 'end',
+                  color: grey[600],
+                  fontSize: '16px'
+                }}
               >
                 Amount
               </TableCell>
               <TableCell
-                sx={{ width: '13.33%', textAlign: 'end', color: grey[600] }}
+                sx={{
+                  width: '13.33%',
+                  textAlign: 'end',
+                  color: grey[600],
+                  fontSize: '16px'
+                }}
               >
                 Item Subtotal
               </TableCell>
@@ -69,34 +91,52 @@ function CustomerCheckOut() {
         </Table>
 
         {products?.map((p) => {
-          const shopVoucher = shopVouchers?.find(
-            (v) => v.shopId === p.product_shop
-          )
+          let shopVouchers = {
+            ableVouchers: [],
+            unableVouchers: []
+          }
+
+          ableShopVouchers?.forEach((v) => {
+            if (v.voucher_creator_id.toString() === p.shop_id.toString()) {
+              shopVouchers.ableVouchers.push(v)
+            }
+          })
+
+          unableShopVouchers?.forEach((v) => {
+            if (v.voucher_creator_id.toString() === p.shop_id.toString()) {
+              shopVouchers.unableVouchers.push(v)
+            }
+          })
+
           return (
             <CheckoutItem
-              key={p.product_shop}
-              products={p}
-              vouchers={shopVoucher?.vouchers}
+              key={p.shop_id}
+              shopProductGroup={p}
+              vouchers={shopVouchers}
               handleSelectedVouchers={handleSelectedVouchers}
             />
           )
         })}
         <PaymentMethods
           paymentMethods={paymentMethods}
-          paymentMethodSelected={paymentMethodSelected}
-          setPaymentMethodSelected={setPaymentMethodSelected}
+          paymentMethodSelected={decodedToken?.paymentMethod}
+          handleChangePaymentMethod={handleChangePaymentMethod}
         />
         <Paper>
           <VoucherOverview
-            content={'Bevesi Voucher'}
-            vouchers={bevesiVouchers}
+            content={'Bevesi Vouchers'}
+            info={{
+              header: 'Bevesi Vouchers',
+              logo: 'nothing'
+            }}
+            vouchers={ableShopVouchers}
             handleSelectedVouchers={handleSelectedVouchers}
           />
         </Paper>
         <PaymentOverview
           handlePlaceOrder={handlePlaceOrder}
-          price={decodedToken?.price}
-          paymentMethodSelected={paymentMethodSelected}
+          summary={decodedToken?.summary}
+          paymentMethodSelected={decodedToken?.paymentMethod}
         />
       </Box>
       <NotificationDialog
