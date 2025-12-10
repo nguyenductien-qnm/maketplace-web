@@ -59,35 +59,6 @@ const AdminRoutes = ({ user }) => {
           />
         </Route>
 
-        <Route path="voucher">
-          <Route
-            path="active"
-            element={<AdminVoucher status="ACTIVE" name="Active Vouchers" />}
-          />
-
-          <Route
-            path="expired"
-            element={<AdminVoucher status="EXPIRED" name="Expired Vouchers" />}
-          />
-
-          <Route
-            path="out-of-stock"
-            element={
-              <AdminVoucher
-                status="OUT_OF_STOCK"
-                name="Out Of Stock Vouchers"
-              />
-            }
-          />
-
-          <Route
-            path="not-started"
-            element={
-              <AdminVoucher status="NOT_STARTED" name="Not Started Vouchers" />
-            }
-          />
-        </Route>
-
         <Route path="order">
           <Route
             path="pending"
@@ -111,6 +82,7 @@ const AdminRoutes = ({ user }) => {
         </Route>
 
         <Route path="products" element={<AdminProduct />} />
+        <Route path="vouchers" element={<AdminVoucher />} />
 
         <Route path="withdraw-request">
           <Route

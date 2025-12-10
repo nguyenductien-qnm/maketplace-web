@@ -8,7 +8,6 @@ import ProductFilter from './ProductFilter'
 function ProductHeader({ ui, data, handler }) {
   const { pageTitle } = ui
   const { handleExportProducts } = handler
-
   return (
     <Box
       sx={{
@@ -28,7 +27,11 @@ function ProductHeader({ ui, data, handler }) {
       <Box sx={{ display: 'flex', gap: '10px' }}>
         <Tooltip title="Advantage filter">
           <Box>
-            <ProductFilter data={data} handler={handler} />
+            <ProductFilter
+              ui={{ anchorEl: ui.anchorEl }}
+              data={{ ...data }}
+              handler={{ ...handler.filter }}
+            />
           </Box>
         </Tooltip>
         <Tooltip title="Export filtered products(.csv)">

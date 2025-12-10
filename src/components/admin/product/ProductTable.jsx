@@ -7,13 +7,14 @@ import TableRow from '@mui/material/TableRow'
 import TableFooter from '@mui/material/TableFooter'
 import TablePagination from '@mui/material/TablePagination'
 import NoData from '../NoData'
-import TableSkeleton from '../TableSkeleton'
 import ProductRow from './ProductRow'
 import TableCellHeader from '~/components/common/TableCellHeader'
+import CircularIndeterminate from '~/components/common/CircularIndeterminate'
+import { Box } from '@mui/material'
 
 function ProductTable({ ui, data, handler }) {
-  const { loading, PRODUCT_TABLE_MAP } = ui
-  const { filters, count, products } = data
+  const { loading, page, limit, PRODUCT_TABLE_MAP } = ui
+  const { products, count } = data
   const {
     handleApproveProduct,
     handleOpenModal,
@@ -23,7 +24,18 @@ function ProductTable({ ui, data, handler }) {
 
   return (
     <>
-      {loading && <TableSkeleton columns={10} rows={filters?.limit} />}
+      {loading && (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '50vh'
+          }}
+        >
+          <CircularIndeterminate />
+        </Box>
+      )}
       {!loading && products?.length === 0 && <NoData />}
       {!loading && products?.length > 0 && (
         <TableContainer
@@ -32,10 +44,12 @@ function ProductTable({ ui, data, handler }) {
             flex: 1,
             overflowY: 'auto',
             width: '100%',
-            p: 2
+            paddingLeft: '16px',
+            paddingRight: 0,
+            scrollbarGutter: 'stable'
           }}
         >
-          <Table aria-label="simple table">
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
                 {PRODUCT_TABLE_MAP?.map(({ key, label }) => (
@@ -69,8 +83,8 @@ function ProductTable({ ui, data, handler }) {
                   rowsPerPageOptions={[10, 25, 50]}
                   colSpan={10}
                   count={count || 0}
-                  rowsPerPage={Number(filters?.limit)}
-                  page={filters?.page - 1}
+                  rowsPerPage={Number(limit)}
+                  page={page - 1}
                   onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}
                 />

@@ -3,19 +3,11 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 import Tooltip from '@mui/material/Tooltip'
-import VoucherFilter from './VoucherFilter'
+import AddIcon from '@mui/icons-material/Add'
 
-function VoucherHeader({
-  shops,
-  staffs,
-  name,
-  filters,
-  setFilters,
-  handleFilter,
-  handleClearFilter,
-  handleOpenForm,
-  handleExportData
-}) {
+function VoucherHeader({ ui, handler }) {
+  const { pageTitle } = ui
+  const { handleOpenForm, handleExportVouchers } = handler
   return (
     <Box
       sx={{
@@ -26,40 +18,27 @@ function VoucherHeader({
         justifyContent: 'space-between'
       }}
     >
-      <Typography
-        variant="body2"
-        sx={{ fontSize: '1.5rem', fontWeight: 'bold' }}
-      >
-        {name}
+      <Typography variant="body2" sx={{ fontSize: '2rem', fontWeight: 'bold' }}>
+        {pageTitle}
       </Typography>
       <Box sx={{ display: 'flex', gap: '10px' }}>
         <Tooltip>
           <Button
-            color="success"
-            variant="outlined"
+            variant="contained"
             onClick={() => handleOpenForm({ action: 'create' })}
+            sx={{ p: 1, width: '170px' }}
           >
-            Add voucher
+            <AddIcon />
+            Create Voucher
           </Button>
-        </Tooltip>
-        <Tooltip title="Advantage filter">
-          <Box>
-            <VoucherFilter
-              shops={shops}
-              staffs={staffs}
-              filters={filters}
-              setFilters={setFilters}
-              handleFilter={handleFilter}
-              handleClearFilter={handleClearFilter}
-            />
-          </Box>
         </Tooltip>
         <Tooltip title="Export filtered voucher(.csv)">
           <Box>
             <Button
               className="btn-export-voucher"
-              variant="contained"
-              onClick={handleExportData}
+              variant="outlined"
+              onClick={handleExportVouchers}
+              sx={{ p: 1, width: '100px' }}
             >
               <FileDownloadOutlinedIcon />
               Export

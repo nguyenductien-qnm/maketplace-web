@@ -5,30 +5,31 @@ import Button from '@mui/material/Button'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
 import TypographyLabel from '../../common/TypographyLabel'
 import CategoryTreeView from '~/components/common/CategoryTreeView'
 import TypographyTitle from '~/components/common/TypographyTitle'
-import { useState } from 'react'
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
 
-function ProductFilter({ data, handler }) {
-  const { shops, categories, filters } = data
-  const { setFilters, handleFilter, handleClearFilter } = handler
+function ProductFilter({ ui, data, handler }) {
+  const { anchorEl } = ui
+  const { tempFilters, shops, categories } = data
+  const {
+    handleOpenFilter,
+    handleCloseFilter,
+    handleApplyFilter,
+    handleClearFilter,
+    setTempFilters
+  } = handler
 
-  const [anchorEl, setAnchorEl] = useState(null)
-  const open = Boolean(anchorEl)
-
-  const handleOpenFilter = (event) => setAnchorEl(event.currentTarget)
-  const handleCloseFilter = () => setAnchorEl(null)
   return (
     <Box>
       <Button variant="outlined" onClick={handleOpenFilter}>
-        <FilterListOutlinedIcon />
+        <FilterAltOutlinedIcon />
         Filters
       </Button>
 
       <Popover
-        open={open}
+        open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={handleCloseFilter}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -60,9 +61,12 @@ function ProductFilter({ data, handler }) {
               <TextField
                 fullWidth
                 placeholder="Enter product name or code"
-                value={filters.search}
+                value={tempFilters?.search || ''}
                 onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, search: e.target.value }))
+                  setTempFilters((prev) => ({
+                    ...prev,
+                    search: e.target.value
+                  }))
                 }
               />
             </Box>
@@ -71,9 +75,9 @@ function ProductFilter({ data, handler }) {
               <TypographyLabel>Sort by</TypographyLabel>
               <Select
                 fullWidth
-                value={filters.sort_by || ''}
+                value={tempFilters?.sort_by || ''}
                 onChange={(e) =>
-                  setFilters((prev) => ({
+                  setTempFilters((prev) => ({
                     ...prev,
                     sort_by: e.target.value
                   }))
@@ -104,11 +108,12 @@ function ProductFilter({ data, handler }) {
                 options={shops || []}
                 getOptionLabel={(option) => option.shop_name || ''}
                 value={
-                  shops?.find((shop) => shop._id === filters.product_of_shop) ||
-                  null
+                  shops?.find(
+                    (shop) => shop._id === tempFilters?.product_of_shop
+                  ) || null
                 }
                 onChange={(_, newValue) => {
-                  setFilters((prev) => ({
+                  setTempFilters((prev) => ({
                     ...prev,
                     product_of_shop: newValue?._id || ''
                   }))
@@ -125,12 +130,12 @@ function ProductFilter({ data, handler }) {
                 <TypographyLabel>Created from</TypographyLabel>
                 <TextField
                   onChange={(e) =>
-                    setFilters((prev) => ({
+                    setTempFilters((prev) => ({
                       ...prev,
                       created_from: e.target.value
                     }))
                   }
-                  value={filters.created_from}
+                  value={tempFilters?.created_from || ''}
                   type="date"
                   fullWidth
                 />
@@ -139,12 +144,12 @@ function ProductFilter({ data, handler }) {
                 <TypographyLabel>Created to</TypographyLabel>
                 <TextField
                   onChange={(e) =>
-                    setFilters((prev) => ({
+                    setTempFilters((prev) => ({
                       ...prev,
                       created_to: e.target.value
                     }))
                   }
-                  value={filters.created_to}
+                  value={tempFilters?.created_to || ''}
                   type="date"
                   fullWidth
                 />
@@ -154,11 +159,11 @@ function ProductFilter({ data, handler }) {
             <Box>
               <TypographyLabel>Category</TypographyLabel>
               <CategoryTreeView
-                multi="true"
+                multi={true}
                 categories={categories}
-                value={filters.category || ''}
+                value={tempFilters?.category || ''}
                 onChange={(newSelected) =>
-                  setFilters((prev) => ({ ...prev, category: newSelected }))
+                  setTempFilters((prev) => ({ ...prev, category: newSelected }))
                 }
               />
             </Box>
@@ -187,7 +192,7 @@ function ProductFilter({ data, handler }) {
             <Button
               variant="contained"
               onClick={() => {
-                handleFilter()
+                handleApplyFilter()
                 handleCloseFilter()
               }}
             >

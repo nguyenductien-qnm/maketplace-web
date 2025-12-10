@@ -1,78 +1,36 @@
+import { Box } from '@mui/material'
 import Paper from '@mui/material/Paper'
 import ReasonModal from '~/components/admin/ReasonModal'
 import VoucherDetailModal from '~/components/admin/voucher/VoucherDetailModal'
+import VoucherFilterExpand from '~/components/admin/voucher/VoucherFilter'
+// import VoucherForm from '~/components/admin/voucher/VoucherForm'
 import VoucherForm from '~/components/admin/voucher/VoucherForm'
 import VoucherHeader from '~/components/admin/voucher/VoucherHeader'
 import VoucherTable from '~/components/admin/voucher/VoucherTable'
+import VoucherSummary from '~/components/admin/voucher/VoucherSummary'
 import { useAdminVoucher } from '~/hooks/admin/voucher.hook'
 
-function AdminVoucher({ status, name }) {
-  const {
-    action,
-    vouchers,
-    shops,
-    staffs,
-    count,
-    loading,
-    voucherDetail,
-    selectedVoucher,
+function AdminVoucher() {
+  const { ui, data, handler } = useAdminVoucher()
+  const { selectedVoucher, action } = ui
+  const { openVoucherForm } = ui.form
+  const { handleCreateVoucher, handleUpdateVoucher } = handler
 
-    filters,
-    setFilters,
-    page,
-    rowsPerPage,
-
-    openDetailModal,
-    openReasonModal,
-    openVoucherForm,
-    modalProps,
-
-    handleFilter,
-    handleClearFilter,
-    handleChangePage,
-    handleChangeRowsPerPage,
-    handleOpenModal,
-    handleCloseModal,
-    handleOpenForm,
-    handleCloseForm,
-    handleCreateVoucher,
-    handleUpdateVoucher,
-    handleExportData,
-    VOUCHER_TABLE_MAP
-  } = useAdminVoucher({ status })
   return (
-    <Paper
-      sx={{
-        height: 'calc(90vh - 24px)',
-        width: 'calc(100% - 24px)',
-        display: 'flex',
-        flexDirection: 'column'
-      }}
-    >
-      <VoucherHeader
-        shops={shops}
-        staffs={staffs}
-        name={name}
-        filters={filters}
-        setFilters={setFilters}
-        handleFilter={handleFilter}
-        handleClearFilter={handleClearFilter}
-        handleOpenForm={handleOpenForm}
-        handleExportData={handleExportData}
+    <Box>
+      <VoucherHeader ui={{ ...ui.header }} handler={{ ...handler.header }} />
+
+      <VoucherSummary />
+
+      <VoucherFilterExpand
+        data={{ ...data.filter }}
+        handler={{ ...handler.filter }}
       />
 
       <VoucherTable
-        loading={loading}
-        status={status}
-        vouchers={vouchers}
-        count={count}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        handleOpenForm={handleOpenForm}
-        handleOpenModal={handleOpenModal}
-        handleChangePage={handleChangePage}
-        handleChangeRowsPerPage={handleChangeRowsPerPage}
-        VOUCHER_TABLE_MAP={VOUCHER_TABLE_MAP}
+        ui={{ ...ui.table }}
+        data={{ ...data.table }}
+        handler={{ ...handler.table }}
       />
 
       <VoucherForm
@@ -80,28 +38,28 @@ function AdminVoucher({ status, name }) {
         voucher={selectedVoucher}
         mode="admin"
         open={openVoucherForm}
-        onclose={handleCloseForm}
+        onclose={handler.form.handleCloseForm}
         action={action}
         onSubmit={
           action === 'create' ? handleCreateVoucher : handleUpdateVoucher
         }
       />
 
-      <VoucherDetailModal
+      {/* <VoucherDetailModal
         open={openDetailModal}
         onClose={handleCloseModal}
         voucher={voucherDetail}
-      />
+      /> */}
 
-      <ReasonModal
+      {/* <ReasonModal
         open={openReasonModal}
         onClose={handleCloseModal}
         header={modalProps?.header}
         submitText={modalProps?.submitText}
         submitColor={modalProps?.submitColor}
         onSubmit={modalProps?.onSubmit}
-      />
-    </Paper>
+      /> */}
+    </Box>
   )
 }
 export default AdminVoucher

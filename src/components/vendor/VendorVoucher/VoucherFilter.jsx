@@ -1,14 +1,13 @@
 import Box from '@mui/material/Box'
 import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
 import Popover from '@mui/material/Popover'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
 import TypographyLabel from '~/components/common/TypographyLabel'
-import { useState } from 'react'
 import TypographyTitle from '~/components/common/TypographyTitle'
+import { useState } from 'react'
 
 function VoucherFilter({
   filters,

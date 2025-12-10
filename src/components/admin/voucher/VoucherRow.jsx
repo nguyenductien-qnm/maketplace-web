@@ -10,6 +10,11 @@ import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
 import { renderDefault } from '~/components/common/common'
+import { Avatar, Typography } from '@mui/material'
+import { getVoucherStatus } from '~/utils/voucherStatus'
+import { VOUCHER_STATUS } from '~/constant/voucherStatus.const'
+import BlockIcon from '@mui/icons-material/Block'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
 const COLOR_ROLE_MAP = { shop: '#1976d2', admin: '#d32f2f' }
 
@@ -22,28 +27,28 @@ function VoucherRow({
 }) {
   const canUpdate = ['ACTIVE', 'NOT_STARTED'].includes(status)
 
-  const renderType = (key) => {
-    const value = voucher?.[key]
-    return (
-      <Chip
-        label={value === 'percent' ? 'Percent' : 'Fixed amount'}
-        variant="outlined"
-      />
-    )
-  }
+  const voucherStatus = getVoucherStatus({
+    start: voucher.voucher_start_date,
+    end: voucher.voucher_end_date
+  })
 
-  const renderCreatorRole = (key) => {
+  const renderChip = (key) => {
+    const containedValue = {
+      fixed_amount: 'Fixed',
+      private: 'Private'
+    }
+    const outlinedValue = {
+      percent: 'Percent',
+      public: 'Public'
+    }
+
     const value = voucher?.[key]
+
     return (
       <Chip
-        label={capitalizeFirstLetter(value)}
-        size="small"
-        variant="outlined"
-        sx={{
-          borderColor: COLOR_ROLE_MAP[value],
-          color: COLOR_ROLE_MAP[value],
-          width: '60px'
-        }}
+        variant={containedValue[value] ? 'contained' : 'outlined'}
+        label={containedValue[value] || outlinedValue[value] || value}
+        sx={{ width: '70px' }}
       />
     )
   }
@@ -108,9 +113,111 @@ function VoucherRow({
     </Tooltip>
   )
 
+  const renderVoucher = () => (
+    <>
+      <Chip
+        label={VOUCHER_STATUS[voucherStatus].label}
+        variant="outlined"
+        sx={{
+          width: '90px',
+          borderColor: VOUCHER_STATUS[voucherStatus].color,
+          color: VOUCHER_STATUS[voucherStatus].color,
+          backgroundColor: 'transparent',
+          height: 25,
+          borderRadius: '5px',
+          fontWeight: 500,
+          mb: 1
+        }}
+      />
+      <Typography
+        variant="body2"
+        sx={{
+          display: '-webkit-box',
+          WebkitBoxOrient: 'vertical',
+          WebkitLineClamp: 3,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          wordBreak: 'break-word',
+          fontWeight: 'bold'
+        }}
+      >
+        {voucher?.voucher_name}
+      </Typography>
+      <Typography variant="caption" sx={{ color: 'grey' }}>
+        CODE: {voucher?.voucher_code}
+      </Typography>
+    </>
+  )
+
+  const renderActivePeriod = () => (
+    <>
+      <Typography variant="body2" sx={{ mb: 1 }}>
+        {voucher?.voucher_start_date}
+      </Typography>
+      <Typography variant="body2">{voucher?.voucher_end_date}</Typography>
+    </>
+  )
+
+  const renderCreator = () => {
+    const creator =
+      voucher?.voucher_creator_role == 'admin'
+        ? voucher.admin_creator
+        : voucher.shop_creator
+
+    return (
+      <>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          <Avatar
+            sx={{ height: '50px', width: '50px' }}
+            src={creator.creator_avatar}
+          />
+          <Box>
+            <Chip
+              label={capitalizeFirstLetter(voucher.voucher_creator_role)}
+              size="small"
+              variant="outlined"
+              sx={{
+                borderColor: COLOR_ROLE_MAP[voucher.voucher_creator_role],
+                color: COLOR_ROLE_MAP[voucher.voucher_creator_role],
+                width: '60px',
+                mb: 1,
+                borderRadius: '5px',
+                fontSize: '12px'
+              }}
+            />
+            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+              {creator.creator_name}
+            </Typography>
+            <Typography variant="caption" sx={{ color: 'grey' }}>
+              {creator.creator_code}
+            </Typography>
+          </Box>
+        </Box>
+      </>
+    )
+  }
+
+  const renderDisable = () => (
+    <>
+      {voucher.voucher_disable ? (
+        <Tooltip title="Disabled due to violation">
+          <BlockIcon color="error" />
+        </Tooltip>
+      ) : (
+        <Tooltip title="Active">
+          <CheckCircleIcon color="success" />
+        </Tooltip>
+      )}
+    </>
+  )
+
   const RENDER_MAP = {
-    voucher_type: renderType,
-    voucher_creator_role: renderCreatorRole,
+    creator: renderCreator,
+    active_period: renderActivePeriod,
+    voucher_name: renderVoucher,
+    voucher_type: renderChip,
+    voucher_visibility: renderChip,
+    voucher_disable: renderDisable,
     detail: renderDetailButton,
     action: renderActionButton
   }

@@ -5,7 +5,7 @@ import Chip from '@mui/material/Chip'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import ReadOnlyTextField from '~/components/common/ReadOnlyTextField'
 import Typography from '@mui/material/Typography'
-import ReactQuill from 'react-quill'
+import ReactQuill from 'react-quill-new'
 import Card from '@mui/material/Card'
 import Divider from '@mui/material/Divider'
 import Fade from '@mui/material/Fade'
@@ -30,7 +30,7 @@ import { blue, grey } from '@mui/material/colors'
 import { modalConfig, modalStyle } from '~/config/modal'
 import { WEB_ROOT } from '~/utils/constants'
 import { useState } from 'react'
-import 'react-quill/dist/quill.snow.css'
+import 'react-quill-new/dist/quill.snow.css'
 
 const statusColor = (status) => {
   if (status == 'pending') return 'info'
@@ -46,25 +46,18 @@ function ProductDetailModal({
   onClose,
   productDetail,
   categories,
-  handler
+  handleGetAuditLogDetail
 }) {
   const [openLightbox, setOpenLightbox] = useState(false)
   const [src, setSrc] = useState(null)
   const { product, log } = productDetail || {}
-  const { handleGetAuditLogDetail } = handler
 
   return (
     <>
       <Modal open={open} onClose={onClose} {...modalConfig}>
         <Fade in={open}>
           <Box sx={modalStyle(1000)}>
-            <Box
-              sx={{
-                p: '0px 24px 8px 0px',
-                paddingTop: 0,
-                flexShrink: 0
-              }}
-            >
+            <Box sx={{ flexShrink: 0 }}>
               <Box
                 sx={{
                   display: 'flex',
@@ -611,7 +604,7 @@ function ProductDetailModal({
 
             <Box
               sx={{
-                p: '24px 24px 0px 24px',
+                pt: '24px',
                 borderTop: '1px solid #e0e0e0',
                 display: 'flex',
                 justifyContent: 'flex-end',

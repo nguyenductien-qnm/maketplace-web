@@ -20,7 +20,7 @@ const imgVoucher = {
 }
 
 const CONFIG_CHIP = {
-  COMING: { label: 'Upcoming', color: '#ff9800' },
+  UPCOMING: { label: 'Upcoming', color: '#ff9800' },
   ONGOING: { label: 'Ongoing', color: '#4caf50' },
   EXPIRED: { label: 'Expired', color: '#f44336' }
 }
@@ -96,7 +96,7 @@ function VoucherRow({ voucher, handleOpenConfirmDialog }) {
       </TableCell>
       <TableCell>{voucher?.voucher_quantity || 0}</TableCell>
       <TableCell>
-        {voucher?.voucher_uses_count + voucher.voucher_reserved || 0}
+        {voucher?.voucher_used_count + voucher.voucher_reserved_count || 0}
       </TableCell>
 
       <TableCell>

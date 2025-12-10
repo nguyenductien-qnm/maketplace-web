@@ -196,7 +196,7 @@ function DiscountSetting({ form, ui }) {
                 }
 
                 if (numValue < 1 || numValue > 2000)
-                  return 'Value must be between 1 and 2000 for fixed amount type'
+                  return 'Value must be between 1 and 2000'
 
                 return true
               }

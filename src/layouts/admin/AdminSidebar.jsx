@@ -75,20 +75,21 @@ export default function AdminSidebar() {
           <StoreMallDirectoryOutlinedIcon />,
           'shops',
           [
+            'All Shops',
             'Active Shops',
-            'Pending Shop Approves',
+            'Pending Shops',
             'Banned Shops',
             'Suspended Shops',
-            'Shop Info Update Requests'
+            'Rejected Shops'
           ]
         )}
 
         {renderSection('Products', <CategoryOutlinedIcon />, 'products', [
-          'Product List',
-          'Pending Product Approves',
-          'Reported Products',
-          'Hidden Products',
-          'Product Categories'
+          'All Products',
+          'Publish Products',
+          'Pending Products',
+          'Banned Products',
+          'Rejected Products'
         ])}
 
         {renderSection('Orders', <LocalShippingOutlinedIcon />, 'orders', [
@@ -110,12 +111,11 @@ export default function AdminSidebar() {
           ]
         )}
 
-        {renderSection(
-          'Coupons & Promotions',
-          <DiscountOutlinedIcon />,
-          'promotions',
-          ['Coupon List', 'Flash Sale Campaigns', 'Platform Deals']
-        )}
+        {renderSection('Coupons', <DiscountOutlinedIcon />, 'coupons', [
+          'Ongoing',
+          'Upcoming',
+          'Expired'
+        ])}
 
         {renderSection(
           'Analytics & Reports',

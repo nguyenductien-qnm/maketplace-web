@@ -40,9 +40,6 @@ export const PRODUCT_ATTRIBUTE_VALUE_RULE = /^[A-Za-zÀ-ỹ0-9,\s]{1,50}$/
 export const PRODUCT_ATTRIBUTE_VALUE_MESSAGE =
   'Max 50 chars: letters, numbers, commas'
 
-// ==================== voucher code ============================
-export const VOUCHER_CODE_VALUE = /^[A-Z0-9]{1,10}$/
-
 // Variation validation
 export const PRODUCT_VARIATION_NAME_RULE = /^[A-Za-zÀ-ỹ0-9\s]{1,14}$/
 export const PRODUCT_VARIATION_NAME_MESSAGE =
@@ -97,9 +94,13 @@ export const NUMBER_RULE_MESSAGE = 'Only numbers are allowed.'
 export const POSITIVE_NUMBER_RULE = /^(?!0+(?:\.0+)?$)\d+(\.\d+)?$/
 export const POSITIVE_NUMBER_RULE_MESSAGE = 'Positive number only.'
 // ==================== voucher code ============================
-export const VOUCHER_CODE_RULE = /^[A-Za-z0-9]{8}$/
+export const VOUCHER_CODE_RULE = /^[A-Z0-9]{1,10}$/
 export const VOUCHER_CODE_RULE_MESSAGE =
-  'Voucher code must contain only letters (A-Z, a-z) and hyphens (-), with exactly 8 characters.'
+  'Voucher code must contain A-Z, 0-9; 10 characters maximum.'
+
+// ==================== voucher name ============================
+export const VOUCHER_NAME_RULE = /^.{1,100}$/
+export const VOUCHER_NAME_RULE_MESSAGE = 'Voucher name 100 characters maximum.'
 
 // ==================== file ============================
 export const LIMIT_COMMON_FILE_SIZE = 10485760 // byte = 10 MB

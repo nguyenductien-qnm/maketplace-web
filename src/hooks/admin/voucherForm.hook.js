@@ -7,15 +7,18 @@ export const useAdminVoucherForm = ({ action, voucher, onSubmit }) => {
     control,
     handleSubmit,
     reset,
-    setValue
+    setValue,
+    watch,
+    trigger
   } = useForm({
     defaultValues: {
-      voucher_type: 'percent',
-      voucher_status: 'public'
+      voucher_type: 'fixed_amount',
+      voucher_visibility: 'public'
     }
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [voucherStatus, setVoucherStatus] = useState(null)
 
   useEffect(() => {
     if (action === 'update' && voucher) {
@@ -47,5 +50,13 @@ export const useAdminVoucherForm = ({ action, voucher, onSubmit }) => {
     }
   })
 
-  return { register, errors, control, handleFormSubmit, isSubmitting }
+  return {
+    register,
+    errors,
+    control,
+    trigger,
+    watch,
+    handleFormSubmit,
+    isSubmitting
+  }
 }

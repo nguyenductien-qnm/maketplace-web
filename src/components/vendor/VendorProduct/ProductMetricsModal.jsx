@@ -50,13 +50,7 @@ function ProductMetricsModal({ loading, open, onClose, data }) {
     <Modal open={open} onClose={onClose} {...modalConfig}>
       <Fade in={open}>
         <Box sx={modalStyle(700)}>
-          <Box
-            sx={{
-              p: '0px 24px 8px 0px',
-              paddingTop: 0,
-              flexShrink: 0
-            }}
-          >
+          <Box sx={{ flexShrink: 0 }}>
             <Box
               sx={{
                 display: 'flex',
@@ -73,6 +67,7 @@ function ProductMetricsModal({ loading, open, onClose, data }) {
             </Box>
             <Divider sx={{ mt: 1, mb: 2 }} />
           </Box>
+
           <Box
             sx={{
               flex: 1,
@@ -198,9 +193,10 @@ function ProductMetricsModal({ loading, open, onClose, data }) {
               </Box>
             )}
           </Box>
+
           <Box
             sx={{
-              p: '24px 24px 0px 24px',
+              pt: '24px',
               borderTop: '1px solid #e0e0e0',
               display: 'flex',
               justifyContent: 'flex-end',

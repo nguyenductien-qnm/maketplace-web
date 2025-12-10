@@ -13,7 +13,7 @@ import { navigate } from '~/helpers/navigation'
 
 const alertColor = {
   ONGOING: 'success',
-  COMING: 'warning',
+  UPCOMING: 'warning',
   EXPIRED: 'error'
 }
 

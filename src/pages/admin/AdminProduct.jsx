@@ -5,44 +5,45 @@ import ProductTable from '~/components/admin/product/ProductTable'
 import ReasonModal from '~/components/admin/ReasonModal'
 import { useAdminProduct } from '~/hooks/admin/product.hook'
 
-function AdminProduct({ status, name }) {
-  const { ui, data, handler } = useAdminProduct({ status })
-  const {
-    openDetailModal,
-    openReasonModal,
-    modalProps,
-    loadingProductDetail,
-    loadingAuditLog
-  } = ui
-  const { productDetail, categories } = data
-  const { handleCloseModal } = handler
+function AdminProduct() {
+  const { ui, data, handler } = useAdminProduct()
+  const { modalProps, loadingProductDetail, loadingAuditLog } = ui
+  const { productDetail } = data
 
   return (
     <Paper
       sx={{
-        height: 'calc(90vh - 24px)',
+        height: 'calc(90vh - 48px)',
         width: 'calc(100% - 24px)',
         display: 'flex',
         flexDirection: 'column'
       }}
     >
-      <ProductHeader ui={ui} data={data} handler={handler} />
+      <ProductHeader
+        ui={{ ...ui.header }}
+        data={{ ...data.filter }}
+        handler={{ ...handler.header }}
+      />
 
-      <ProductTable ui={ui} data={data} handler={handler} />
+      <ProductTable
+        ui={{ ...ui.table }}
+        data={{ ...data.table }}
+        handler={{ ...handler.table }}
+      />
 
       <ProductDetailModal
         loading={loadingProductDetail}
         loadingAuditLog={loadingAuditLog}
-        open={openDetailModal}
-        onClose={handleCloseModal}
+        open={ui.modal.openDetailModal}
+        onClose={handler.modal.handleCloseModal}
         productDetail={productDetail}
-        categories={categories}
-        handler={handler}
+        categories={data.filter.categories}
+        handleGetAuditLogDetail={handler.handleGetAuditLogDetail}
       />
 
       <ReasonModal
-        open={openReasonModal}
-        onClose={handleCloseModal}
+        open={ui.modal.openReasonModal}
+        onClose={handler.modal.handleCloseModal}
         header={modalProps?.header}
         submitColor={modalProps?.submitColor}
         onSubmit={modalProps?.onSubmit}

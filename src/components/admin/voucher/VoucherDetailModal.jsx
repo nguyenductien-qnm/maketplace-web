@@ -145,17 +145,17 @@ function VoucherDetailModal({ open, onClose, voucher }) {
                 <TypographyLabel>Reserved</TypographyLabel>
                 <TextField
                   size="small"
-                  value={voucher?.voucher_reserved}
+                  value={voucher?.voucher_reserved_count}
                   disabled
                   fullWidth
                 />
               </Box>
 
               <Box sx={{ flex: 1 }}>
-                <TypographyLabel>Uses count</TypographyLabel>
+                <TypographyLabel>Used count</TypographyLabel>
                 <TextField
                   size="small"
-                  value={voucher?.voucher_uses_count}
+                  value={voucher?.voucher_used_count}
                   disabled
                   fullWidth
                 />

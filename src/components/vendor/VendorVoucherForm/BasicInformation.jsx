@@ -6,7 +6,7 @@ import TypographyTitle from '~/components/common/TypographyTitle'
 import InputAdornment from '@mui/material/InputAdornment'
 import DividerVertical from '~/components/common/DividerVertical'
 import Typography from '@mui/material/Typography'
-import { FIELD_REQUIRED_MESSAGE, VOUCHER_CODE_VALUE } from '~/utils/validators'
+import { FIELD_REQUIRED_MESSAGE, VOUCHER_CODE_RULE } from '~/utils/validators'
 
 const LABELS = {
   TITLE: 'Basic Information',
@@ -57,7 +57,7 @@ function BasicInformation({ form, ui }) {
             disabled={isUpdate && voucherStatus == 'EXPIRED'}
             {...register('voucher_code', {
               required: FIELD_REQUIRED_MESSAGE,
-              pattern: { value: VOUCHER_CODE_VALUE },
+              pattern: { value: VOUCHER_CODE_RULE },
               onChange: (e) => {
                 e.target.value = e.target.value.toUpperCase()
               },

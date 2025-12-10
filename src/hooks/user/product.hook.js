@@ -37,7 +37,6 @@ export const useCustomerProduct = () => {
         const { shop, ...rest } = resData.metadata
         console.log(rest)
         if (rest.product_variations.length == 0) {
-          console.log('rest.products_sku[0]::', rest.products_sku[0])
           setProductSelected(rest.products_sku[0])
         }
         setProduct(rest)

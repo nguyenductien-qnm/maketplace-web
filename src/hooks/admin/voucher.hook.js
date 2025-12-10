@@ -1,5 +1,6 @@
+import { navigate } from '~/helpers/navigation'
 import { StatusCodes } from 'http-status-codes'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getShopListForFilterAPI } from '~/api/shop.api'
 import { getStaffListForFilterAPI } from '~/api/user.api'
 import {
@@ -11,7 +12,8 @@ import {
   queryVoucherByAdminAPI,
   updateVoucherByAdminAPI
 } from '~/api/voucher.api'
-import { navigate } from '~/helpers/navigation'
+import useCustomSearchParams from '../common/searchParam.hook'
+import { toast } from 'react-toastify'
 
 const LOADING_CLASS = [
   '.btn-admin-voucher-action',
@@ -20,47 +22,36 @@ const LOADING_CLASS = [
   '.btn-export-voucher'
 ]
 
-const DEFAULT_FILTERS = {
-  search: '',
-  type: 'all',
-  startDate: '',
-  endDate: '',
-  createdFrom: '',
-  createdTo: '',
-  createdBy: 'all',
-  creatorSelect: '',
-  discountValueRange: [0, 200],
-  applies: 'all',
-  reservedRange: [0, 500],
-  quantityRange: [0, 500],
-  sortBy: 'createdAt_desc'
-}
-
 const VOUCHER_TABLE_MAP = [
-  { key: 'voucher_code', label: 'CODE' },
-  { key: 'voucher_name', label: 'Name' },
-  { key: 'voucher_start_date', label: 'Start date' },
-  { key: 'voucher_end_date', label: 'End date' },
+  { key: 'creator', label: 'Creator By' },
+  { key: 'voucher_name', label: 'CODE' },
   { key: 'voucher_type', label: 'Type' },
-  { key: 'voucher_creator_role', label: 'Creator role' },
-  { key: 'detail', label: 'Detail' },
+  { key: 'voucher_visibility', label: 'Visibility' },
+  { key: 'voucher_disable', label: 'Active' },
+  { key: 'active_period', label: 'Active Period' },
+  { key: 'voucher_quantity', label: 'Quantity' },
+  { key: 'voucher_reserved_count', label: 'Used' },
+  { key: 'voucher_value', label: 'Value' },
   { key: 'action', label: 'Action' }
 ]
 
-export const useAdminVoucher = ({ status }) => {
-  // ============================== STATE ==============================
+const PAGE_TITLE = {
+  ONGOING: 'Ongoing Vouchers',
+  UPCOMING: 'Upcoming Vouchers',
+  EXPIRED: 'Expired Vouchers',
+  ALL: 'All Vouchers'
+}
 
+export const useAdminVoucher = () => {
+  // ============================== STATE ==============================
+  const [params, paramsReady, setParams] = useCustomSearchParams({
+    defaultParams: { status: 'ONGOING' }
+  })
+  const [tempFilters, setTempFilters] = useState({})
   const [vouchers, setVouchers] = useState([])
   const [count, setCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [isDenied, setDenied] = useState(false)
-
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(10)
-
-  const [filters, setFilters] = useState(DEFAULT_FILTERS)
-  const skipEffect = useRef(false)
-
   const [shops, setShops] = useState([])
   const [staffs, setStaffs] = useState([])
   const [openReasonModal, setOpenReasonModal] = useState(false)
@@ -76,70 +67,106 @@ export const useAdminVoucher = ({ status }) => {
   }, [isDenied])
 
   useEffect(() => {
-    if (!filters) return
-
-    let newMax
-
-    if (filters.type === 'percent') {
-      newMax = 100
-    } else if (filters.type === 'fixed_amount') {
-      newMax = filters.createdBy === 'shop' ? 100 : 200
-    } else {
-      return
-    }
-
-    if (filters.discountValueRange?.[1] !== newMax) {
-      setFilters((prev) => ({
-        ...prev,
-        discountValueRange: [prev.discountValueRange?.[0] ?? 0, newMax]
-      }))
-    }
-  }, [filters?.type, filters?.createdBy])
-
-  useEffect(() => {
-    if (skipEffect.current) {
-      skipEffect.current = false
-      return
-    }
-
-    queryVoucherByAdmin({ page, rowsPerPage, status, ...filters })
-  }, [status, page, rowsPerPage])
-
-  useEffect(() => {
-    getShopList()
-    getStaffList()
+    fetchShops()
+    fetchStaffs()
   }, [])
-  // ============================== API ==============================
-  const getShopList = async () => {
-    const { status, resData } = await getShopListForFilterAPI()
-    if (status === StatusCodes.OK) setShops(resData?.metadata || [])
-  }
 
-  const getStaffList = async () => {
-    const { status, resData } = await getStaffListForFilterAPI()
-    if (status === StatusCodes.OK) setStaffs(resData?.metadata || [])
-  }
+  useEffect(() => {
+    if (paramsReady) fetchVouchers({ filters: params })
+    setTempFilters({ ...params })
+  }, [params, paramsReady])
 
-  const queryVoucherByAdmin = async (data) => {
+  // ============================== FETCH DATA ==============================
+  const fetchVouchers = async ({ filters }) => {
     setLoading(true)
     try {
       const { status, resData } = await queryVoucherByAdminAPI({
-        payload: data
+        payload: filters
       })
       if (status === StatusCodes.OK) {
         const { vouchers, count } = resData?.metadata
-        setVouchers(vouchers)
-        setCount(count)
+        setVouchers(vouchers || [])
+        setCount(count || 0)
       }
     } catch (err) {
+      setVouchers([])
       if (err?.status !== StatusCodes.UNPROCESSABLE_ENTITY) setDenied(true)
     } finally {
       setLoading(false)
     }
   }
 
-  // ============================== HANDLER ==============================
+  const fetchShops = async () => {
+    const { status, resData } = await getShopListForFilterAPI()
+    if (status === StatusCodes.OK) setShops(resData?.metadata || [])
+  }
 
+  const fetchStaffs = async () => {
+    const { status, resData } = await getStaffListForFilterAPI()
+    if (status === StatusCodes.OK) setStaffs(resData?.metadata || [])
+  }
+
+  // ============================== HANDLER FILTER ==============================
+
+  const handleApplyFilter = () => {
+    const hasDateFilter =
+      tempFilters.created_from ||
+      tempFilters.created_to ||
+      tempFilters.active_from ||
+      tempFilters.active_to
+    if (hasDateFilter && tempFilters.status !== 'ALL') {
+      const clone = { ...tempFilters }
+      clone.status = 'ALL'
+      setParams(clone)
+      toast.info('Searching across all voucher statuses with date filter.')
+    } else setParams(tempFilters)
+  }
+
+  const handleRemoveParam = (key) => {
+    if (key === 'sort_by') return
+    const clone = { ...params }
+    delete clone[key]
+    if (key == 'creator_selected') delete clone.creator_id
+    setParams(clone)
+  }
+
+  const handleClearAllFilter = () => {
+    const cleared = {
+      status: params.status,
+      page: 1,
+      limit: params.limit ?? 10,
+      sort_by: 'newest'
+    }
+    setParams(cleared)
+  }
+
+  const handleClearTempFilters = () => {
+    setTempFilters({
+      sort_by: 'newest'
+    })
+  }
+
+  const handleFilterChange = (field, value) => {
+    setTempFilters((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleChangePage = (e, newValue) => {
+    setParams({ ...params, page: newValue + 1 })
+  }
+
+  const handleChangeRowsPerPage = (event) => {
+    setParams({ ...params, limit: event.target.value })
+  }
+
+  // ============================== HANDLER FETCH DETAIL ==============================
+  const handleGetVoucherDetail = async (data) => {
+    const { status, resData } = await getVoucherDetailForAdminAPI({
+      _id: data?._id
+    })
+    if (status === StatusCodes.OK) setVoucherDetail(resData?.metadata)
+  }
+
+  // ============================== HANDLER MODAL ==============================
   const handleOpenModal = ({ action, voucher }) => {
     setAction(action)
     setSelectedVoucher(voucher)
@@ -159,6 +186,7 @@ export const useAdminVoucher = ({ status }) => {
     setVoucherDetail(null)
   }
 
+  // ============================== HANDLER FORM ==============================
   const handleOpenForm = ({ action, voucher }) => {
     setAction(action)
     setOpenVoucherForm(true)
@@ -170,34 +198,7 @@ export const useAdminVoucher = ({ status }) => {
     setSelectedVoucher(null)
   }
 
-  const handleFilter = () => {
-    if (page === 0) {
-      queryVoucherByAdmin({ page, rowsPerPage, status, ...filters })
-    } else {
-      setPage(0)
-    }
-  }
-
-  const handleClearFilter = () => {
-    skipEffect.current = true
-    setFilters({ ...DEFAULT_FILTERS })
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
-
-  const handleGetVoucherDetail = async (data) => {
-    const { status, resData } = await getVoucherDetailForAdminAPI({
-      _id: data?._id
-    })
-    if (status === StatusCodes.OK) setVoucherDetail(resData?.metadata)
-  }
+  // ============================== HANDLER VOUCHER ==============================
 
   const handleCreateVoucher = async (data) => {
     const { status, resData } = await createVoucherByAdminAPI({
@@ -254,7 +255,8 @@ export const useAdminVoucher = ({ status }) => {
     }
   }
 
-  const handleExportData = async () => {
+  // ============================== HANDLER EXPORT ==============================
+  const handleExportVouchers = async () => {
     const { status: apiStatus, resData } = await exportVoucherDataByAdminAPI({
       payload: { status, ...filters },
       loadingClass: LOADING_CLASS
@@ -271,6 +273,7 @@ export const useAdminVoucher = ({ status }) => {
     }
   }
 
+  // ============================== MODAL CONTENT ==============================
   const modalProps = {
     disable: {
       type: 'reason',
@@ -303,37 +306,65 @@ export const useAdminVoucher = ({ status }) => {
   }
 
   return {
-    shops,
-    staffs,
-    action,
-    vouchers,
-    count,
-    loading,
-    voucherDetail,
-    selectedVoucher,
+    ui: {
+      modalProps: modalProps[action],
+      selectedVoucher,
+      action,
+      header: {
+        pageTitle: PAGE_TITLE[params?.status]
+      },
 
-    filters,
-    setFilters,
-    page,
-    rowsPerPage,
+      table: {
+        loading,
+        page: params.page,
+        limit: params.limit,
+        VOUCHER_TABLE_MAP
+      },
 
-    openDetailModal,
-    openReasonModal,
-    openVoucherForm,
-    modalProps: modalProps[action],
+      modal: {
+        openDetailModal,
+        openReasonModal
+      },
 
-    handleFilter,
-    handleClearFilter,
-    handleChangePage,
-    handleChangeRowsPerPage,
-    handleOpenModal,
-    handleCloseModal,
-    handleOpenForm,
-    handleCloseForm,
-    handleCreateVoucher,
-    handleUpdateVoucher,
-    handleExportData,
+      form: { openVoucherForm }
+    },
 
-    VOUCHER_TABLE_MAP
+    data: {
+      voucherDetail,
+      filter: { tempFilters, shops, staffs, params },
+      table: { vouchers, count }
+    },
+
+    handler: {
+      handleCreateVoucher,
+      handleUpdateVoucher,
+
+      header: {
+        handleOpenForm,
+        handleExportVouchers
+      },
+
+      filter: {
+        handleApplyFilter,
+        handleClearAllFilter,
+        handleRemoveParam,
+        handleFilterChange,
+        handleClearTempFilters
+      },
+
+      table: {
+        handleChangePage,
+        handleChangeRowsPerPage,
+        handleOpenModal
+      },
+      modal: {
+        handleOpenModal,
+        handleCloseModal
+      },
+      form: {
+        handleOpenForm,
+        handleCloseForm
+      }
+    }
   }
 }

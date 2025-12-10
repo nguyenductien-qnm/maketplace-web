@@ -1,17 +1,16 @@
 import { navigate } from '~/helpers/navigation'
 import { StatusCodes } from 'http-status-codes'
-import { useSearchParams } from 'react-router-dom'
 import { getCategoriesAPI } from '~/api/category.api'
 import { getShopListForFilterAPI } from '~/api/shop.api'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useFilterCompare } from '../common/filterCompare'
+import { useEffect, useState } from 'react'
+import { getAuditLogDetailByAdminAPI } from '~/api/auditLog.api'
 import {
   queryProductByAdminAPI,
   getProductDetailByAdminAPI,
   updateProductStatusByAdminAPI,
   exportProductsByAdminAPI
 } from '~/api/product.api'
-import { getAuditLogDetailByAdminAPI } from '~/api/auditLog.api'
+import useCustomSearchParams from '../common/searchParam.hook'
 
 const LOADING_CLASS = [
   '.btn-reason-modal',
@@ -31,18 +30,6 @@ const PRODUCT_TABLE_MAP = [
   { key: 'action', label: 'Action' }
 ]
 
-const DEFAULT_FILTERS = {
-  status: 'ALL',
-  search: '',
-  sort_by: 'newest',
-  product_of_shop: '',
-  category: '',
-  created_from: '',
-  created_to: '',
-  page: 1,
-  limit: 10
-}
-
 const PAGE_TITLE = {
   ALL: 'All Products',
   PENDING: 'Pending Products',
@@ -51,8 +38,13 @@ const PAGE_TITLE = {
   BANNED: 'Banned Products'
 }
 
-export const useAdminProduct = ({ status }) => {
+export const useAdminProduct = () => {
   // ============================== STATE ==============================
+  const [params, paramsReady, setParams] = useCustomSearchParams({
+    defaultParams: { status: 'ALL' }
+  })
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [tempFilters, setTempFilters] = useState({})
   const [products, setProducts] = useState([])
   const [count, setCount] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -61,19 +53,30 @@ export const useAdminProduct = ({ status }) => {
   const [isDenied, setDenied] = useState(false)
   const [categories, setCategories] = useState([])
   const [shops, setShops] = useState([])
-  const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [openReasonModal, setOpenReasonModal] = useState(false)
   const [openDetailModal, setOpenDetailModal] = useState(false)
   const [action, setAction] = useState(null)
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [productDetail, setProductDetail] = useState(null)
-  const [params, setParams] = useSearchParams()
 
-  const isInitialized = useRef(false)
+  // ============================== EFFECT ==============================
+  useEffect(() => {
+    if (isDenied) navigate('/access-denied')
+  }, [isDenied])
 
-  // ============================== API ==============================
-  const fetchProducts = useCallback(async ({ filters }) => {
+  useEffect(() => {
+    fetchCategories()
+    fetchShops()
+  }, [])
+
+  useEffect(() => {
+    if (paramsReady) fetchProducts({ filters: params })
+  }, [params, paramsReady])
+
+  // ============================== FETCH DATA ==============================
+  const fetchProducts = async ({ filters }) => {
     setLoading(true)
+    setProducts([])
     try {
       const { status, resData } = await queryProductByAdminAPI({
         payload: filters
@@ -89,7 +92,7 @@ export const useAdminProduct = ({ status }) => {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }
 
   const fetchShops = async () => {
     const { status, resData } = await getShopListForFilterAPI()
@@ -101,36 +104,40 @@ export const useAdminProduct = ({ status }) => {
     if (status === StatusCodes.OK) setCategories(resData?.metadata || [])
   }
 
-  const handleGetAuditLogDetail = async (data) => {
-    try {
-      setLoadingAuditLog(true)
-      const { status, resData } = await getAuditLogDetailByAdminAPI({
-        _id: data._id,
-        entity: 'product',
-        action: data?.product_status
-      })
-      if (status === StatusCodes.OK)
-        setProductDetail((prev) => ({
-          ...prev,
-          log: resData?.metadata
-        }))
-    } finally {
-      setLoadingAuditLog(false)
-    }
+  // ============================== HANDLER FILTER ==============================
+  const handleOpenFilter = (e) => {
+    setTempFilters({ ...params })
+    setAnchorEl(e.currentTarget)
   }
 
-  const handleGetProductDetail = async (data) => {
-    try {
-      setLoadingProductDetail(true)
-      const { status, resData } = await getProductDetailByAdminAPI({
-        _id: data._id
-      })
-      if (status === StatusCodes.OK) setProductDetail(resData?.metadata)
-    } finally {
-      setLoadingProductDetail(false)
-    }
+  const handleCloseFilter = () => {
+    setAnchorEl(null)
   }
 
+  const handleApplyFilter = () => {
+    setParams(tempFilters)
+  }
+
+  const handleClearFilter = () => {
+    const cleared = {
+      status: params.status,
+      page: 1,
+      limit: params.limit ?? 10,
+      sort_by: 'newest'
+    }
+
+    setParams(cleared)
+  }
+
+  const handleChangePage = (e, newValue) => {
+    setParams({ ...params, page: newValue + 1 })
+  }
+
+  const handleChangeRowsPerPage = (event) => {
+    setParams({ ...params, limit: event.target.value })
+  }
+
+  // ============================== HANDLER PRODUCT STATUS ==============================
   const handleApproveProduct = async ({ product }) => {
     const payload = {
       _id: product?._id,
@@ -231,9 +238,41 @@ export const useAdminProduct = ({ status }) => {
     }
   }
 
+  // ============================== HANDLER FETCH DETAIL ==============================
+  const handleGetAuditLogDetail = async (data) => {
+    try {
+      setLoadingAuditLog(true)
+      const { status, resData } = await getAuditLogDetailByAdminAPI({
+        _id: data._id,
+        entity: 'product',
+        action: data?.product_status
+      })
+      if (status === StatusCodes.OK)
+        setProductDetail((prev) => ({
+          ...prev,
+          log: resData?.metadata
+        }))
+    } finally {
+      setLoadingAuditLog(false)
+    }
+  }
+
+  const handleGetProductDetail = async (data) => {
+    try {
+      setLoadingProductDetail(true)
+      const { status, resData } = await getProductDetailByAdminAPI({
+        _id: data._id
+      })
+      if (status === StatusCodes.OK) setProductDetail(resData?.metadata)
+    } finally {
+      setLoadingProductDetail(false)
+    }
+  }
+
+  // ============================== HANDLER EXPORT ==============================
   const handleExportProducts = async () => {
     const { status: apiStatus, resData } = await exportProductsByAdminAPI({
-      payload: { status, ...filters },
+      payload: { ...params },
       loadingClass: LOADING_CLASS
     })
 
@@ -248,109 +287,7 @@ export const useAdminProduct = ({ status }) => {
     }
   }
 
-  // ============================== FILTER COMPARE HOOK ==============================
-  const { checkAndFetch } = useFilterCompare(fetchProducts)
-
-  // ============================== EFFECT ==============================
-  useEffect(() => {
-    if (isDenied) navigate('/access-denied')
-  }, [isDenied])
-
-  useEffect(() => {
-    const urlParams = Object.fromEntries(params.entries())
-
-    if (!urlParams.status || !urlParams.page || !urlParams.limit) {
-      const defaultParams = {
-        status: 'ALL',
-        sort_by: 'newest',
-        page: 1,
-        limit: 10
-      }
-      setFilters((prev) => ({ ...prev, ...defaultParams }))
-      setParams(defaultParams)
-      fetchProducts({ filters: defaultParams })
-    } else {
-      const merged = { ...DEFAULT_FILTERS, ...urlParams }
-      setFilters(merged)
-      fetchProducts({ filters: merged })
-    }
-
-    fetchCategories()
-    fetchShops()
-    isInitialized.current = true
-  }, [])
-
-  // ============================== HANDLER ==============================
-
-  const handleFilter = () => {
-    const updatedFilters = { ...filters, page: 1 }
-
-    const params = {}
-    for (const [key, value] of Object.entries(updatedFilters)) {
-      if (value !== '' && value !== null && value !== undefined) {
-        params[key] = value
-      }
-    }
-
-    setFilters(updatedFilters)
-    setParams(params)
-    checkAndFetch(updatedFilters)
-  }
-
-  const handleClearFilter = () => {
-    const resetFilters = {
-      ...filters,
-      search: '',
-      category: '',
-      sort_by: 'newest',
-      product_of_shop: '',
-      category: '',
-      created_from: '',
-      created_to: '',
-      page: 1
-    }
-
-    const resetParams = {
-      status: filters.status,
-      sort_by: 'newest',
-      page: 1,
-      limit: filters.limit
-    }
-
-    setFilters(resetFilters)
-    setParams(resetParams)
-    checkAndFetch(resetFilters)
-  }
-
-  const handleChangePage = (e, newValue) => {
-    const pageValue = newValue + 1
-    const updatedFilters = { ...filters, page: pageValue }
-
-    setFilters(updatedFilters)
-    setParams((prevParams) => {
-      const updatedParams = new URLSearchParams(prevParams)
-      updatedParams.set('page', pageValue)
-      return updatedParams
-    })
-
-    fetchProducts({ filters: updatedFilters })
-  }
-
-  const handleChangeRowsPerPage = (event) => {
-    const limitValue = parseInt(event.target.value, 10)
-    const updatedFilters = { ...filters, limit: limitValue, page: 1 }
-
-    setFilters(updatedFilters)
-    setParams((prevParams) => {
-      const updatedParams = new URLSearchParams(prevParams)
-      updatedParams.set('limit', limitValue)
-      updatedParams.set('page', 1)
-      return updatedParams
-    })
-
-    fetchProducts({ filters: updatedFilters })
-  }
-
+  // ============================== HANDLER MODAL ==============================
   const handleOpenModal = ({ action, product }) => {
     setSelectedProduct(product)
     if (action === 'detail') {
@@ -399,28 +336,57 @@ export const useAdminProduct = ({ status }) => {
 
   return {
     ui: {
-      loading,
       loadingProductDetail,
       loadingAuditLog,
-      openDetailModal,
-      openReasonModal,
       modalProps: modalProps[action],
-      PRODUCT_TABLE_MAP,
-      pageTitle: PAGE_TITLE[filters?.status]
+      header: {
+        pageTitle: PAGE_TITLE[params?.status],
+        anchorEl
+      },
+
+      table: {
+        loading,
+        page: params.page,
+        limit: params.limit,
+        PRODUCT_TABLE_MAP
+      },
+
+      modal: {
+        openDetailModal,
+        openReasonModal
+      }
     },
 
-    data: { products, count, productDetail, filters, categories, shops },
+    data: {
+      productDetail,
+      filter: { shops, categories, tempFilters },
+      table: { products, count }
+    },
 
     handler: {
-      setFilters,
-      handleFilter,
-      handleClearFilter,
-      handleChangePage,
-      handleChangeRowsPerPage,
-      handleApproveProduct,
-      handleExportProducts,
-      handleOpenModal,
-      handleCloseModal,
+      header: {
+        filter: {
+          handleOpenFilter,
+          handleCloseFilter,
+          handleApplyFilter,
+          handleClearFilter,
+          setTempFilters
+        },
+        handleExportProducts
+      },
+
+      table: {
+        handleChangePage,
+        handleChangeRowsPerPage,
+        handleOpenModal,
+        handleApproveProduct
+      },
+
+      modal: {
+        handleOpenModal,
+        handleCloseModal
+      },
+
       handleGetAuditLogDetail
     }
   }

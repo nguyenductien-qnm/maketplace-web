@@ -12,7 +12,7 @@ import {
 const TAB_LABELS = {
   ALL: 'All',
   ONGOING: 'Ongoing',
-  COMING: 'Upcoming',
+  UPCOMING: 'Upcoming',
   EXPIRED: 'Expired'
 }
 
