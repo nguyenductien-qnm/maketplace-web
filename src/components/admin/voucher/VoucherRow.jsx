@@ -15,22 +15,25 @@ import { getVoucherStatus } from '~/utils/voucherStatus'
 import { VOUCHER_STATUS } from '~/constant/voucherStatus.const'
 import BlockIcon from '@mui/icons-material/Block'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-
+import { blue, green, grey, orange, red } from '@mui/material/colors'
+import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
+import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined'
 const COLOR_ROLE_MAP = { shop: '#1976d2', admin: '#d32f2f' }
+import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined'
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined'
 
 function VoucherRow({
-  status,
   voucher,
   handleOpenModal,
   handleOpenForm,
   VOUCHER_TABLE_MAP
 }) {
-  const canUpdate = ['ACTIVE', 'NOT_STARTED'].includes(status)
-
   const voucherStatus = getVoucherStatus({
     start: voucher.voucher_start_date,
     end: voucher.voucher_end_date
   })
+
+  const creatorRole = voucher.voucher_creator_role
 
   const renderChip = (key) => {
     const containedValue = {
@@ -52,65 +55,127 @@ function VoucherRow({
       />
     )
   }
+  // if (voucher.voucher_creator_role === 'shop') {
+  //   return (
+  //     <Box>
+  //       {voucher?.voucher_disable == false && (
+  //         <Tooltip title="Disable">
+  //           <Button
+  //             className="btn-admin-voucher-action"
+  //             variant="outlined"
+  //             color="error"
+  //             onClick={() => handleOpenModal({ action: 'disable', voucher })}
+  //           >
+  //             <NotInterestedOutlinedIcon />
+  //           </Button>
+  //         </Tooltip>
+  //       )}
+  //       {voucher?.voucher_disable == true && (
+  //         <Tooltip title="Enable">
+  //           <Button
+  //             className="btn-admin-voucher-action"
+  //             variant="outlined"
+  //             color="success"
+  //             onClick={() => handleOpenModal({ action: 'enable', voucher })}
+  //           >
+  //             <ReplayOutlinedIcon />
+  //           </Button>
+  //         </Tooltip>
+  //       )}
+  //     </Box>
+  //   )
+  // }
+  const renderActionButton = () => (
+    <Box
+      sx={{
+        display: 'flex',
+        gap: 1
+      }}
+    >
+      {/* view  */}
+      <Tooltip title="View detail this voucher">
+        <RemoveRedEyeOutlinedIcon
+          onClick={() => {
+            handleOpenModal({ action: 'detail', voucher })
+          }}
+          sx={{
+            color: grey[500],
+            fontSize: 24,
+            '&:hover': {
+              cursor: 'pointer',
+              color: grey[800]
+            }
+          }}
+        />
+      </Tooltip>
 
-  const renderActionButton = () => {
-    if (canUpdate && voucher.voucher_creator_role === 'admin') {
-      return (
-        <Tooltip title="Update">
-          <Button
-            className="btn-admin-voucher-action"
-            variant="outlined"
+      {/* update  */}
+      {voucherStatus != 'EXPIRED' && creatorRole == 'admin' && (
+        <Tooltip title="Edit this voucher">
+          <ModeOutlinedIcon
             onClick={() => handleOpenForm({ action: 'update', voucher })}
-          >
-            <EditOutlinedIcon />
-          </Button>
+            sx={{
+              fontSize: 24,
+              color: blue[300],
+              '&:hover': {
+                cursor: 'pointer',
+                color: blue[700]
+              }
+            }}
+          />
         </Tooltip>
-      )
-    }
+      )}
 
-    if (voucher.voucher_creator_role === 'shop') {
-      return (
-        <Box>
-          {voucher?.voucher_disable == false && (
-            <Tooltip title="Disable">
-              <Button
-                className="btn-admin-voucher-action"
-                variant="outlined"
-                color="error"
-                onClick={() => handleOpenModal({ action: 'disable', voucher })}
-              >
-                <NotInterestedOutlinedIcon />
-              </Button>
-            </Tooltip>
-          )}
-          {voucher?.voucher_disable == true && (
-            <Tooltip title="Enable">
-              <Button
-                className="btn-admin-voucher-action"
-                variant="outlined"
-                color="success"
-                onClick={() => handleOpenModal({ action: 'enable', voucher })}
-              >
-                <ReplayOutlinedIcon />
-              </Button>
-            </Tooltip>
-          )}
-        </Box>
-      )
-    }
-  }
+      {/* delete  */}
+      {voucherStatus == 'UPCOMING' && creatorRole == 'admin' && (
+        <Tooltip title="Permanently delete this voucher">
+          <HighlightOffOutlinedIcon
+            onClick={() => {
+              handleOpenConfirmDialog(voucher)
+            }}
+            sx={{
+              fontSize: 24,
+              color: red[300],
+              '&:hover': {
+                cursor: 'pointer',
+                color: red[700]
+              }
+            }}
+          />
+        </Tooltip>
+      )}
 
-  const renderDetailButton = () => (
-    <Tooltip title="View detail info">
-      <Box
-        sx={{ '&:hover': { cursor: 'pointer' } }}
-        onClick={() => {
-          handleOpenModal({ action: 'detail', voucher })
-        }}
-      >
-        <InfoOutlinedIcon />
-      </Box>
-    </Tooltip>
+      {/* ban  */}
+      {voucherStatus != 'EXPIRED' &&
+        creatorRole == 'shop' &&
+        !voucher.voucher_disable && (
+          <Tooltip title="Ban this voucher">
+            <BlockOutlinedIcon
+              onClick={() => handleOpenModal({ action: 'disable', voucher })}
+              sx={{
+                fontSize: 24,
+                color: orange[500],
+                '&:hover': {
+                  cursor: 'pointer',
+                  color: orange[900]
+                }
+              }}
+            />
+          </Tooltip>
+        )}
+
+      {/* unban  */}
+
+      {voucherStatus != 'EXPIRED' && voucher.voucher_disable && (
+        <Tooltip title="Unban this voucher">
+          <ReplayOutlinedIcon
+            sx={{ '&:hover': { cursor: 'pointer' } }}
+            color="success"
+            onClick={() => handleOpenModal({ action: 'enable', voucher })}
+          />
+        </Tooltip>
+      )}
+    </Box>
   )
 
   const renderVoucher = () => (
@@ -119,7 +184,7 @@ function VoucherRow({
         label={VOUCHER_STATUS[voucherStatus].label}
         variant="outlined"
         sx={{
-          width: '90px',
+          width: '82px',
           borderColor: VOUCHER_STATUS[voucherStatus].color,
           color: VOUCHER_STATUS[voucherStatus].color,
           backgroundColor: 'transparent',
@@ -173,12 +238,12 @@ function VoucherRow({
           />
           <Box>
             <Chip
-              label={capitalizeFirstLetter(voucher.voucher_creator_role)}
+              label={capitalizeFirstLetter(creatorRole)}
               size="small"
               variant="outlined"
               sx={{
-                borderColor: COLOR_ROLE_MAP[voucher.voucher_creator_role],
-                color: COLOR_ROLE_MAP[voucher.voucher_creator_role],
+                borderColor: COLOR_ROLE_MAP[creatorRole],
+                color: COLOR_ROLE_MAP[creatorRole],
                 width: '60px',
                 mb: 1,
                 borderRadius: '5px',
@@ -218,7 +283,6 @@ function VoucherRow({
     voucher_type: renderChip,
     voucher_visibility: renderChip,
     voucher_disable: renderDisable,
-    detail: renderDetailButton,
     action: renderActionButton
   }
 

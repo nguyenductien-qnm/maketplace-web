@@ -8,16 +8,19 @@ import {
   disableShopVoucherByAdminAPI,
   enableShopVoucherByAdminAPI,
   exportVoucherDataByAdminAPI,
-  getVoucherDetailForAdminAPI,
+  getVoucherApplicableProductsAPI,
+  getVoucherDetailByAdminAPI,
+  getVoucherSummaryByAdminAPI,
   queryVoucherByAdminAPI,
   updateVoucherByAdminAPI
 } from '~/api/voucher.api'
 import useCustomSearchParams from '../common/searchParam.hook'
 import { toast } from 'react-toastify'
+import { getAuditLogDetailByAdminAPI } from '~/api/auditLog.api'
 
 const LOADING_CLASS = [
   '.btn-admin-voucher-action',
-  '.btn-voucher-form',
+  '.btn-admin-voucher-form',
   '.btn-reason-modal',
   '.btn-export-voucher'
 ]
@@ -39,6 +42,7 @@ const PAGE_TITLE = {
   ONGOING: 'Ongoing Vouchers',
   UPCOMING: 'Upcoming Vouchers',
   EXPIRED: 'Expired Vouchers',
+  BANNED: 'Banned Vouchers',
   ALL: 'All Vouchers'
 }
 
@@ -50,7 +54,7 @@ export const useAdminVoucher = () => {
   const [tempFilters, setTempFilters] = useState({})
   const [vouchers, setVouchers] = useState([])
   const [count, setCount] = useState(0)
-  const [loading, setLoading] = useState(true)
+
   const [isDenied, setDenied] = useState(false)
   const [shops, setShops] = useState([])
   const [staffs, setStaffs] = useState([])
@@ -60,6 +64,11 @@ export const useAdminVoucher = () => {
   const [action, setAction] = useState(null)
   const [selectedVoucher, setSelectedVoucher] = useState(null)
   const [voucherDetail, setVoucherDetail] = useState(null)
+  const [summary, setSummary] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [loadingDetail, setLoadingDetail] = useState(true)
+  const [loadingAuditLog, setLoadingAuditLog] = useState(null)
+  const [loadingProducts, setLoadingProducts] = useState(null)
 
   // ============================== EFFECT ==============================
   useEffect(() => {
@@ -69,6 +78,7 @@ export const useAdminVoucher = () => {
   useEffect(() => {
     fetchShops()
     fetchStaffs()
+    fetchVoucherSummary()
   }, [])
 
   useEffect(() => {
@@ -77,6 +87,11 @@ export const useAdminVoucher = () => {
   }, [params, paramsReady])
 
   // ============================== FETCH DATA ==============================
+  const fetchVoucherSummary = async () => {
+    const { status, resData } = await getVoucherSummaryByAdminAPI()
+    if (status === StatusCodes.OK) setSummary(resData?.metadata || {})
+  }
+
   const fetchVouchers = async ({ filters }) => {
     setLoading(true)
     try {
@@ -160,10 +175,44 @@ export const useAdminVoucher = () => {
 
   // ============================== HANDLER FETCH DETAIL ==============================
   const handleGetVoucherDetail = async (data) => {
-    const { status, resData } = await getVoucherDetailForAdminAPI({
-      _id: data?._id
-    })
-    if (status === StatusCodes.OK) setVoucherDetail(resData?.metadata)
+    try {
+      setLoadingDetail(true)
+      const { status, resData } = await getVoucherDetailByAdminAPI({
+        _id: data?._id
+      })
+      if (status === StatusCodes.OK)
+        setVoucherDetail({ voucher: resData?.metadata })
+    } finally {
+      setLoadingDetail(false)
+    }
+  }
+
+  const handleGetApplicableProducts = async () => {
+    try {
+      setLoadingProducts(true)
+      const { status, resData } = await getVoucherApplicableProductsAPI({
+        _id: voucherDetail?.voucher?._id
+      })
+      if (status === StatusCodes.OK)
+        setVoucherDetail((prev) => ({ ...prev, products: resData?.metadata }))
+    } finally {
+      setLoadingProducts(false)
+    }
+  }
+
+  const handleGetAuditLogDetail = async () => {
+    try {
+      setLoadingAuditLog(true)
+      const { status, resData } = await getAuditLogDetailByAdminAPI({
+        _id: voucherDetail?.voucher?._id,
+        entity: 'voucher',
+        action: 'banned'
+      })
+      if (status === StatusCodes.OK)
+        setVoucherDetail((prev) => ({ ...prev, log: resData?.metadata }))
+    } finally {
+      setLoadingAuditLog(false)
+    }
   }
 
   // ============================== HANDLER MODAL ==============================
@@ -190,12 +239,17 @@ export const useAdminVoucher = () => {
   const handleOpenForm = ({ action, voucher }) => {
     setAction(action)
     setOpenVoucherForm(true)
-    if (voucher) setSelectedVoucher(voucher)
+    if (voucher) {
+      handleGetVoucherDetail(voucher)
+    } else {
+      setLoadingDetail(false)
+    }
   }
 
   const handleCloseForm = () => {
     setOpenVoucherForm(false)
-    setSelectedVoucher(null)
+    setVoucherDetail(null)
+    setAction(null)
   }
 
   // ============================== HANDLER VOUCHER ==============================
@@ -215,6 +269,7 @@ export const useAdminVoucher = () => {
   const handleUpdateVoucher = async (data) => {
     const { voucher_applies, ...payload } = data
     const { status, resData } = await updateVoucherByAdminAPI({
+      _id: voucherDetail.voucher._id,
       payload,
       loadingClass: LOADING_CLASS
     })
@@ -228,8 +283,10 @@ export const useAdminVoucher = () => {
   }
 
   const handleDisableShopVoucher = async (data) => {
+    const { _id, ...payload } = data
     const { status, resData } = await disableShopVoucherByAdminAPI({
-      payload: data,
+      _id,
+      payload,
       loadingClass: LOADING_CLASS
     })
     if (status === StatusCodes.OK) {
@@ -238,12 +295,15 @@ export const useAdminVoucher = () => {
         prev.map((v) => (v._id === updated._id ? updated : v))
       )
       handleCloseModal()
+      fetchVoucherSummary()
     }
   }
 
   const handleEnableShopVoucher = async (data) => {
+    const { _id, ...payload } = data
     const { status, resData } = await enableShopVoucherByAdminAPI({
-      payload: data,
+      _id,
+      payload,
       loadingClass: LOADING_CLASS
     })
     if (status === StatusCodes.OK) {
@@ -252,6 +312,7 @@ export const useAdminVoucher = () => {
         prev.map((v) => (v._id === updated._id ? updated : v))
       )
       handleCloseModal()
+      fetchVoucherSummary()
     }
   }
 
@@ -323,16 +384,21 @@ export const useAdminVoucher = () => {
 
       modal: {
         openDetailModal,
-        openReasonModal
+        openReasonModal,
+        loadingDetail,
+        loadingAuditLog,
+        loadingProducts
       },
 
-      form: { openVoucherForm }
+      form: { openVoucherForm, loadingDetail }
     },
 
     data: {
       voucherDetail,
+      summary,
       filter: { tempFilters, shops, staffs, params },
-      table: { vouchers, count }
+      table: { vouchers, count },
+      modal: { voucherDetail }
     },
 
     handler: {
@@ -355,11 +421,14 @@ export const useAdminVoucher = () => {
       table: {
         handleChangePage,
         handleChangeRowsPerPage,
-        handleOpenModal
+        handleOpenModal,
+        handleOpenForm
       },
       modal: {
         handleOpenModal,
-        handleCloseModal
+        handleCloseModal,
+        handleGetApplicableProducts,
+        handleGetAuditLogDetail
       },
       form: {
         handleOpenForm,

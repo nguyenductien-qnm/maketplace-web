@@ -140,7 +140,7 @@ function VoucherRow({ voucher, handleOpenConfirmDialog }) {
             </Tooltip>
           )}
 
-          {voucherStatus == 'COMING' && (
+          {voucherStatus == 'UPCOMING' && (
             <Tooltip title="Permanently delete this voucher">
               <HighlightOffOutlinedIcon
                 onClick={() => {

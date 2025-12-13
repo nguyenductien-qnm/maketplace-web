@@ -3,8 +3,11 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import BlockIcon from '@mui/icons-material/Block'
 import DashboardIcon from '@mui/icons-material/Dashboard'
+import EventBusyIcon from '@mui/icons-material/EventBusy'
+import { navigate } from '~/helpers/navigation'
+import { blue } from '@mui/material/colors'
 
-function VoucherSummary({ stats }) {
+function VoucherSummary({ summary }) {
   const IconWrapper = ({ icon: Icon, bg, color, size = 60 }) => (
     <Box
       sx={{
@@ -24,26 +27,32 @@ function VoucherSummary({ stats }) {
   const items = [
     {
       label: 'ALL',
-      value: stats?.all ?? 289,
+      value: summary?.ALL,
       icon: <IconWrapper icon={DashboardIcon} bg="#ECEFF1" color="#607D8B" />,
       color: '#ECEFF1'
     },
     {
       label: 'ONGOING',
-      value: stats?.ongoing ?? 234,
+      value: summary?.ONGOING,
       icon: <IconWrapper icon={TrendingUpIcon} bg="#C8E6C9" color="#4CAF50" />,
       color: '#C8E6C9'
     },
     {
       label: 'UPCOMING',
-      value: stats?.upcoming ?? 50,
+      value: summary?.UPCOMING,
       icon: <IconWrapper icon={AccessTimeIcon} bg="#BBDEFB" color="#2196F3" />,
       color: '#BBDEFB'
     },
     {
       label: 'EXPIRED',
-      value: stats?.expired ?? 5,
-      icon: <IconWrapper icon={BlockIcon} bg="#FFCDD2" color="#F44336" />,
+      value: summary?.EXPIRED,
+      icon: <IconWrapper icon={EventBusyIcon} bg="#FFF9C4" color="#F57F17" />,
+      color: '#FFF9C4'
+    },
+    {
+      label: 'BANNED',
+      value: summary?.BANNED,
+      icon: <IconWrapper icon={BlockIcon} bg="#FFCDD2" color="#D32F2F" />,
       color: '#FFCDD2'
     }
   ]
@@ -51,7 +60,15 @@ function VoucherSummary({ stats }) {
   return (
     <Grid2 container spacing={2} sx={{ mb: 2 }}>
       {items.map((item) => (
-        <Grid2 size={3} key={item.label}>
+        <Grid2
+          size={2.4}
+          key={item.label}
+          onClick={() =>
+            navigate(
+              `/admin/vouchers?status=${item.label}&page=1&limit=10&sort_by=newest`
+            )
+          }
+        >
           <Paper
             elevation={1}
             sx={{

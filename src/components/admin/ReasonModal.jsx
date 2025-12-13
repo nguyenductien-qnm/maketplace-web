@@ -4,10 +4,10 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
 import TypographyLabel from '../common/TypographyLabel'
-import ReactQuill from 'react-quill'
+import ReactQuill from 'react-quill-new'
 import { Controller, useForm } from 'react-hook-form'
 import { REASON_RULE, REASON_RULE_MESSAGE } from '~/utils/validators'
-import 'react-quill/dist/quill.snow.css'
+import 'react-quill-new/dist/quill.snow.css'
 
 function ReasonModal({
   header,

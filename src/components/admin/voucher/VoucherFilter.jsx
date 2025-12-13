@@ -1,19 +1,16 @@
-import { useState } from 'react'
-import {
-  Box,
-  Card,
-  TextField,
-  Button,
-  IconButton,
-  Collapse,
-  Grid2,
-  MenuItem,
-  Chip,
-  Typography,
-  InputAdornment,
-  Paper,
-  Autocomplete
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import Collapse from '@mui/material/Collapse'
+import Grid2 from '@mui/material/Grid2'
+import MenuItem from '@mui/material/MenuItem'
+import Chip from '@mui/material/Chip'
+import Typography from '@mui/material/Typography'
+import InputAdornment from '@mui/material/InputAdornment'
+import Paper from '@mui/material/Paper'
+import Autocomplete from '@mui/material/Autocomplete'
 import SearchIcon from '@mui/icons-material/Search'
 import TuneIcon from '@mui/icons-material/Tune'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -21,6 +18,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import CloseIcon from '@mui/icons-material/Close'
 import IGNORE_KEY from '~/constant/ignoreKey.const'
 import getActiveFilters from '~/utils/getActiveFilters'
+import { useState } from 'react'
 
 function VoucherFilter({ data, handler }) {
   const [advancedOpen, setAdvancedOpen] = useState(false)
@@ -121,7 +119,7 @@ function VoucherFilter({ data, handler }) {
           </Box>
 
           <Grid2 container spacing={2} rowSpacing={4} sx={{ mb: 3 }}>
-            <Grid2 size={2.4}>
+            <Grid2 size={3}>
               <TextField
                 select
                 fullWidth
@@ -151,7 +149,7 @@ function VoucherFilter({ data, handler }) {
               </TextField>
             </Grid2>
 
-            <Grid2 size={2.4}>
+            <Grid2 size={3}>
               <TextField
                 select
                 fullWidth
@@ -160,12 +158,12 @@ function VoucherFilter({ data, handler }) {
                 onChange={(e) => handleFilterChange('apply_to', e.target.value)}
               >
                 <MenuItem value="">All</MenuItem>
-                <MenuItem value="all-products">All Products</MenuItem>
+                <MenuItem value="all">All Products</MenuItem>
                 <MenuItem value="specific">Specific Products</MenuItem>
               </TextField>
             </Grid2>
 
-            <Grid2 size={2.4}>
+            <Grid2 size={3}>
               <TextField
                 select
                 fullWidth
@@ -181,7 +179,7 @@ function VoucherFilter({ data, handler }) {
               </TextField>
             </Grid2>
 
-            <Grid2 size={2.4}>
+            <Grid2 size={3}>
               <TextField
                 select
                 fullWidth
@@ -190,24 +188,8 @@ function VoucherFilter({ data, handler }) {
                 onChange={(e) => handleFilterChange('type', e.target.value)}
               >
                 <MenuItem value="">All</MenuItem>
-                <MenuItem value="fixed">Fixed</MenuItem>
+                <MenuItem value="fixed_amount">Fixed</MenuItem>
                 <MenuItem value="percent">Percent</MenuItem>
-              </TextField>
-            </Grid2>
-
-            <Grid2 size={2.4}>
-              <TextField
-                select
-                fullWidth
-                label="Is Disable"
-                value={tempFilters.is_disable || ''}
-                onChange={(e) =>
-                  handleFilterChange('is_disable', e.target.value)
-                }
-              >
-                <MenuItem value="">All</MenuItem>
-                <MenuItem value="false">Active</MenuItem>
-                <MenuItem value="true">Disabled</MenuItem>
               </TextField>
             </Grid2>
 

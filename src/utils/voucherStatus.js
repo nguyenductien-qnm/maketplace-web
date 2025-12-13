@@ -3,7 +3,7 @@ export const getVoucherStatus = ({ start, end }) => {
   const startDate = new Date(start)
   const endDate = new Date(end)
 
-  if (startDate > now) return 'COMING'
+  if (startDate > now) return 'UPCOMING'
 
   if (startDate <= now && endDate >= now) return 'ONGOING'
 
