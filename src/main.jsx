@@ -2,6 +2,7 @@ import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { GlobalStyles } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { store } from './redux/store'
@@ -13,6 +14,7 @@ const persistor = persistStore(store)
 import { injectStore } from './utils/authorizedAxios'
 import { ThemeProvider } from '@mui/material/styles'
 import theme from './theme'
+import { queryClient } from './lib/queryClient'
 injectStore(store)
 
 createRoot(document.getElementById('root')).render(
@@ -45,7 +47,9 @@ createRoot(document.getElementById('root')).render(
             }}
           />
           <CssBaseline />
-          <App />
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
           <ToastContainer
             position="top-center"
             autoClose={5000}

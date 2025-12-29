@@ -49,7 +49,11 @@ function VoucherSelectionModal({
 
           <Box sx={{ mt: 2, width: '100%' }}>
             {ableVouchers?.length === 0 ? (
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ height: '50px' }}
+              >
                 No available vouchers for this shop.
               </Typography>
             ) : (
@@ -87,8 +91,8 @@ function VoucherSelectionModal({
                           component="img"
                           src={info.logo}
                           sx={{
-                            height: '60px',
-                            width: '60px',
+                            height: '70px',
+                            width: '70px',
                             borderRadius: '9999px',
                             flexShrink: 0
                           }}

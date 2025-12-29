@@ -8,9 +8,15 @@ import Grid2 from '@mui/material/Grid2'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import Fade from '@mui/material/Fade'
 import Modal from '@mui/material/Modal'
+import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText'
 import TypographyTitle from '~/components/common/TypographyTitle'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
+import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import { modalConfig, modalStyle } from '~/config/modal'
+import { Controller } from 'react-hook-form'
+import { useAdminVoucherForm } from '~/hooks/admin/voucherForm.hook'
+import { getVoucherStatus } from '~/utils/voucherStatus'
 import {
   FIELD_REQUIRED_MESSAGE,
   VOUCHER_CODE_RULE,
@@ -18,29 +24,18 @@ import {
   VOUCHER_NAME_RULE,
   VOUCHER_NAME_RULE_MESSAGE
 } from '~/utils/validators'
-import { Controller } from 'react-hook-form'
-import { useAdminVoucherForm } from '~/hooks/admin/voucherForm.hook'
-import { FormControl, FormHelperText } from '@mui/material'
-import CircularIndeterminate from '~/components/common/CircularIndeterminate'
-import { getVoucherStatus } from '~/utils/voucherStatus'
 
-function VoucherForm({ voucher, action, open, onClose, onSubmit, ui }) {
-  const {
-    isSubmitting,
-    register,
-    watch,
-    trigger,
-    errors,
-    control,
-    handleFormSubmit,
-    customHandleClose
-  } = useAdminVoucherForm({
-    action,
-    voucher,
-    onSubmit,
-    onClose
-  })
-  const { loadingDetail } = ui
+function VoucherForm({ ui, data, handler }) {
+  const { isOpen, isLoading, title, isUpdate, action, isSubmitting } = ui
+  const { voucher } = data
+  const { handleSubmitForm, handleClose } = handler
+
+  const { register, errors, control, trigger, watch, handleSubmit } =
+    useAdminVoucherForm({
+      action,
+      voucher
+    })
+
   const voucherType = watch('voucher_type')
 
   const voucherStatus = getVoucherStatus({
@@ -48,11 +43,9 @@ function VoucherForm({ voucher, action, open, onClose, onSubmit, ui }) {
     end: voucher?.voucher_end_date
   })
 
-  const isUpdate = action == 'update' ? true : false
-
   return (
-    <Modal open={open} onClose={customHandleClose} {...modalConfig}>
-      <Fade in={open}>
+    <Modal open={isOpen} onClose={handleClose} {...modalConfig}>
+      <Fade in={isOpen}>
         <Box sx={modalStyle(800)}>
           <Box sx={{ flexShrink: 0 }}>
             <Box
@@ -62,23 +55,20 @@ function VoucherForm({ voucher, action, open, onClose, onSubmit, ui }) {
                 alignItems: 'center'
               }}
             >
-              <TypographyTitle>
-                {action === 'create' && 'Create Voucher'}
-                {action === 'update' && 'Update Voucher'}
-              </TypographyTitle>
+              <TypographyTitle>{title}</TypographyTitle>
               <HighlightOffIcon
                 color="error"
-                onClick={customHandleClose}
+                onClick={handleClose}
                 sx={{ cursor: 'pointer' }}
               />
             </Box>
             <Divider sx={{ mt: 1, mb: 2 }} />
           </Box>
 
-          {loadingDetail && <CircularIndeterminate height={731} />}
+          {isLoading && <CircularIndeterminate height={731} />}
 
-          {!loadingDetail && (
-            <form onSubmit={handleFormSubmit}>
+          {!isLoading && (
+            <form onSubmit={handleSubmit(handleSubmitForm)}>
               <Grid2 container columnSpacing={2} rowSpacing={2}>
                 {/* Voucher Name */}
                 <Grid2 size={12}>
@@ -449,13 +439,14 @@ function VoucherForm({ voucher, action, open, onClose, onSubmit, ui }) {
                   className="btn-admin-voucher-form"
                   color="secondary"
                   variant="outlined"
-                  onClick={customHandleClose}
+                  onClick={handleClose}
+                  disabled={isSubmitting}
                 >
                   Cancel
                 </Button>
                 <Button
                   loading={isSubmitting}
-                  loadingPosition="start"
+                  loadingPosition="end"
                   className="btn-admin-voucher-form"
                   variant="contained"
                   color="primary"

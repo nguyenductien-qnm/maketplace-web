@@ -73,11 +73,11 @@ function VoucherFilter({
               <TypographyLabel>Voucher Type</TypographyLabel>
               <Select
                 fullWidth
-                value={filters.voucher_type || ''}
+                value={filters.type || ''}
                 onChange={(e) =>
                   setFilters((prev) => ({
                     ...prev,
-                    voucher_type: e.target.value
+                    type: e.target.value
                   }))
                 }
                 displayEmpty
@@ -91,11 +91,11 @@ function VoucherFilter({
               <TypographyLabel>Voucher Apply</TypographyLabel>
               <Select
                 fullWidth
-                value={filters.voucher_apply || ''}
+                value={filters.apply_to || ''}
                 onChange={(e) =>
                   setFilters((prev) => ({
                     ...prev,
-                    voucher_apply: e.target.value
+                    apply_to: e.target.value
                   }))
                 }
                 displayEmpty
@@ -109,11 +109,11 @@ function VoucherFilter({
               <TypographyLabel>Voucher Visibility</TypographyLabel>
               <Select
                 fullWidth
-                value={filters.voucher_visibility || ''}
+                value={filters.visibility || ''}
                 onChange={(e) =>
                   setFilters((prev) => ({
                     ...prev,
-                    voucher_visibility: e.target.value
+                    visibility: e.target.value
                   }))
                 }
                 displayEmpty

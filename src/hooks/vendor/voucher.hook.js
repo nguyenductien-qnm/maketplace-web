@@ -11,9 +11,12 @@ import {
 
 const TAB_LABELS = {
   ALL: 'All',
+  ACTIVE: 'Active',
   ONGOING: 'Ongoing',
   UPCOMING: 'Upcoming',
-  EXPIRED: 'Expired'
+  EXPIRED: 'Expired',
+  DISABLED: 'Disabled',
+  BANNED: 'Banned'
 }
 
 const DEFAULT_FILTERS = {

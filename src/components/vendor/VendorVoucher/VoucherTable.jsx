@@ -39,12 +39,12 @@ function VoucherTable({ ui, data, handler }) {
               <TableHead>
                 <TableRow>
                   <TableCellHeader>Name</TableCellHeader>
-                  <TableCellHeader>Type</TableCellHeader>
-                  <TableCellHeader>Value</TableCellHeader>
                   <TableCellHeader>Apply</TableCellHeader>
+                  <TableCellHeader>Value</TableCellHeader>
                   <TableCellHeader>Quantity</TableCellHeader>
                   <TableCellHeader>Used</TableCellHeader>
                   <TableCellHeader>Time</TableCellHeader>
+                  <TableCellHeader>Enabled</TableCellHeader>
                   <TableCellHeader>Action</TableCellHeader>
                 </TableRow>
               </TableHead>

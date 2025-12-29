@@ -3,7 +3,6 @@ import { RequireAuthRoute } from './RouteGuards'
 import AdminLayout from '~/layouts/admin/AdminLayout'
 import AdminShop from '~/pages/admin/AdminShop'
 import AdminUser from '~/pages/admin/AdminUser'
-import AdminVoucher from '~/pages/admin/AdminVoucher'
 import AdminOrder from '~/pages/admin/AdminOrder'
 import AdminProduct from '~/pages/admin/AdminProduct'
 import AdminCategory from '~/pages/admin/AdminCategory'
@@ -11,6 +10,7 @@ import AdminWithdrawRequest from '~/pages/admin/AdminWithdrawRequest'
 import AdminCommissionRate from '~/pages/admin/AdminCommissionRate'
 import AdminWallet from '~/pages/admin/AdminWallet'
 import AdminTransaction from '~/pages/admin/AdminTransaction'
+import VoucherList from '~/modules/voucher/admin/pages/VoucherList.page'
 
 const AdminRoutes = ({ user }) => {
   return (
@@ -82,7 +82,8 @@ const AdminRoutes = ({ user }) => {
         </Route>
 
         <Route path="products" element={<AdminProduct />} />
-        <Route path="vouchers" element={<AdminVoucher />} />
+
+        <Route path="vouchers" element={<VoucherList />} />
 
         <Route path="withdraw-request">
           <Route

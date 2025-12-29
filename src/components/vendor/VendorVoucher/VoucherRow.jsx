@@ -6,9 +6,12 @@ import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
+import IOSSwitch from '~/components/common/IOSSwitch'
+import DataUsageIcon from '@mui/icons-material/DataUsage'
+import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined'
+import formatCurrency from '~/utils/formatCurrency'
 import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
-import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined'
-import { blue, green, red } from '@mui/material/colors'
+import { blue, green, grey, red } from '@mui/material/colors'
 import { navigate } from '~/helpers/navigation'
 import { getVoucherStatus } from '~/utils/voucherStatus'
 
@@ -86,15 +89,19 @@ function VoucherRow({ voucher, handleOpenConfirmDialog }) {
           </Box>
         </Box>
       </TableCell>
+
+      <TableCell>{capitalizeFirstLetter(voucher?.voucher_apply)}</TableCell>
+
       <TableCell>
-        {voucher?.voucher_type === 'fixed_amount' && 'Fixed'}
-        {voucher?.voucher_type === 'percent' && 'Percent'}
+        <b>
+          {voucher?.voucher_type == 'percent'
+            ? `${voucher?.voucher_value}%`
+            : formatCurrency(voucher?.voucher_value)}
+        </b>
       </TableCell>
-      <TableCell>{voucher?.voucher_value || 'N/A'}</TableCell>
-      <TableCell>
-        {capitalizeFirstLetter(voucher?.voucher_apply) || 'N/A'}
-      </TableCell>
+
       <TableCell>{voucher?.voucher_quantity || 0}</TableCell>
+
       <TableCell>
         {voucher?.voucher_used_count + voucher.voucher_reserved_count || 0}
       </TableCell>
@@ -105,8 +112,28 @@ function VoucherRow({ voucher, handleOpenConfirmDialog }) {
         {voucher.voucher_end_date}
       </TableCell>
 
+      <TableCell>
+        <IOSSwitch
+          checked={voucher.is_enabled}
+          disabled={voucherStatus === 'EXPIRED'}
+        />
+      </TableCell>
+
       <TableCell sx={{ height: '100%' }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <Tooltip title="View detail this voucher">
+            <RemoveRedEyeOutlinedIcon
+              sx={{
+                color: grey[500],
+                fontSize: 24,
+                '&:hover': {
+                  cursor: 'pointer',
+                  color: grey[800]
+                }
+              }}
+            />
+          </Tooltip>
+
           {voucherStatus != 'EXPIRED' && (
             <Tooltip title="Edit this voucher">
               <ModeOutlinedIcon
@@ -115,10 +142,10 @@ function VoucherRow({ voucher, handleOpenConfirmDialog }) {
                 }
                 sx={{
                   fontSize: 24,
-                  color: green[400],
+                  color: blue[300],
                   '&:hover': {
                     cursor: 'pointer',
-                    color: green[800]
+                    color: blue[700]
                   }
                 }}
               />
@@ -127,13 +154,13 @@ function VoucherRow({ voucher, handleOpenConfirmDialog }) {
 
           {voucherStatus == 'EXPIRED' && (
             <Tooltip title="View applied voucher orders">
-              <LocalShippingOutlinedIcon
+              <DataUsageIcon
                 sx={{
                   fontSize: 24,
-                  color: blue[400],
+                  color: green[400],
                   '&:hover': {
                     cursor: 'pointer',
-                    color: blue[600]
+                    color: green[600]
                   }
                 }}
               />
@@ -151,7 +178,7 @@ function VoucherRow({ voucher, handleOpenConfirmDialog }) {
                   color: red[400],
                   '&:hover': {
                     cursor: 'pointer',
-                    color: red[600]
+                    color: red[700]
                   }
                 }}
               />

@@ -9,7 +9,10 @@ import {
   updateCheckoutAddressAPI
 } from '~/api/checkout.api'
 import { placeOrderAPI } from '~/api/order.api'
-import { getVouchersOfMultipleShopByCustomerAPI } from '~/api/voucher.api'
+import {
+  getSystemVouchersByCustomerAPI,
+  getVouchersOfMultipleShopByCustomerAPI
+} from '~/api/voucher.api'
 import sortAddressByDefault from '~/helpers/sortAddressByDefault'
 import PayPalSvg from '~/assets/user/svgIcon/paypal.svg'
 import CodSvg from '~/assets/user/svgIcon/cod.svg'
@@ -52,90 +55,53 @@ export const useCheckout = () => {
   }, [token])
 
   useEffect(() => {
-    const getAddress = async () => {
-      const { status, resData } = await getAddressesByUserAPI()
-      if (status === StatusCodes.OK) {
-        const { metadata } = resData
-        setAddresses(sortAddressByDefault(metadata))
-      }
-    }
-    getAddress()
-  }, [])
-
-  useEffect(() => {
     if (decodedToken) {
       setPaymentMethodSelected(decodedToken.payment_method)
       setAddressSelected(decodedToken.address)
       setProducts(decodedToken.orders)
-      console.log('decodedToken::', JSON.stringify(decodedToken, null, 2))
     }
   }, [decodedToken])
 
   useEffect(() => {
-    const getVoucher = async () => {
-      if (products) {
-        const { status, resData } =
-          await getVouchersOfMultipleShopByCustomerAPI({ payload: { token } })
-        if (status === StatusCodes.OK) {
-          const { ableVouchers, unableVouchers } = resData.metadata
-          setAbleShopVouchers(ableVouchers)
-          setUnableShopVouchers(unableVouchers)
-        }
-      }
-    }
+    fetchAddresses()
+  }, [])
+
+  useEffect(() => {
     if (
+      products &&
       ableShopVouchers == null &&
       unableShopVouchers == null &&
       platformVouchers == null
-    )
-      getVoucher()
+    ) {
+      fetchSystemVoucher()
+      fetchShopsVoucher()
+    }
   }, [products])
 
-  // useEffect(() => {
-  //   const handleChangeShippingAddress = async () => {
-  //     const data = buildOrderData()
-  //     const res = await checkoutByCustomerAPI(data, '.btn-user-place-order')
-  //     if (res.status === 200) {
-  //       navigate(res.data?.metadata?.checkoutUrl)
-  //     } else {
-  //       handleOpenModal('Notification', res.message)
-  //       if (res?.message[0]?.includes('Shipping is not supported')) {
-  //         setAddressSelected(addresses.find((a) => a.default === true))
-  //       }
-  //       if (res.metadata?.updatedProduct) {
-  //         navigate('/cart')
-  //       }
-  //     }
-  //   }
-  //   if (firstRender.current && addressSelected) {
-  //     firstRender.current = false
-  //   } else if (addressSelected) {
-  //     handleChangeShippingAddress()
-  //   }
-  // }, [addressSelected, paymentMethodSelected])
+  const fetchSystemVoucher = async () => {
+    const { status, resData } = await getSystemVouchersByCustomerAPI({
+      payload: { token }
+    })
+    if (status === StatusCodes.OK)
+      setPlatformVouchers({ ableVouchers: resData.metadata })
+  }
 
-  // useEffect(() => {
-  //   const applyVoucher = async () => {
-  //     const data = buildOrderData()
-  //     const res = await checkoutByCustomerAPI(data, '.btn-user-place-order')
-  //     if (res.status === 200) {
-  //       navigate(res.data?.metadata?.checkoutUrl)
-  //     } else {
-  //       handleOpenModal('Notification', res.message)
-  //     }
-  //   }
-  //   if (selectedVouchers.length > 0) applyVoucher()
-  // }, [selectedVouchers])
+  const fetchShopsVoucher = async () => {
+    const { status, resData } = await getVouchersOfMultipleShopByCustomerAPI({
+      payload: { token }
+    })
+    if (status === StatusCodes.OK) {
+      const { ableVouchers, unableVouchers } = resData.metadata
+      setAbleShopVouchers(ableVouchers)
+      setUnableShopVouchers(unableVouchers)
+    }
+  }
 
-  // const findShopIdByVoucherId = (voucherId) => {
-  //   for (const shop of shopVouchers || []) {
-  //     const found = shop.vouchers.find((v) => v._id === voucherId)
-  //     if (found) {
-  //       return shop.shopId
-  //     }
-  //   }
-  //   return null
-  // }
+  const fetchAddresses = async () => {
+    const { status, resData } = await getAddressesByUserAPI()
+    if (status === StatusCodes.OK)
+      setAddresses(sortAddressByDefault(resData.metadata))
+  }
 
   const handleSelectedVouchers = async (data) => {
     const payload = {

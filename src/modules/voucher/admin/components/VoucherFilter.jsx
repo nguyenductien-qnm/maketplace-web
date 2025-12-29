@@ -19,9 +19,14 @@ import CloseIcon from '@mui/icons-material/Close'
 import IGNORE_KEY from '~/constant/ignoreKey.const'
 import getActiveFilters from '~/utils/getActiveFilters'
 import { useState } from 'react'
+import {
+  FILTER_VALUE_MAP,
+  FILTER_LABEL_MAP
+} from '../constants/voucher.filter.constant'
 
-function VoucherFilter({ data, handler }) {
+function VoucherFilter({ ui, data, handler }) {
   const [advancedOpen, setAdvancedOpen] = useState(false)
+  const { isFetching } = ui
   const { tempFilters, shops, staffs, params } = data
   const {
     handleApplyFilter,
@@ -34,6 +39,20 @@ function VoucherFilter({ data, handler }) {
   const activeFiltersCount = getActiveFilters(params)
 
   const creatorRole = tempFilters?.creator_role
+
+  const resolveCreatorDisplay = ({ key, value }) => {
+    if (key !== 'creator_selected') return null
+
+    if (params?.creator_role === 'shop') {
+      return shops.find((s) => s._id === value)?.shop_name ?? value
+    }
+
+    if (params?.creator_role === 'admin') {
+      return staffs.find((u) => u._id === value)?.user_name ?? value
+    }
+
+    return value
+  }
 
   return (
     <Box>
@@ -87,6 +106,7 @@ function VoucherFilter({ data, handler }) {
           </Button>
 
           <Button
+            disabled={isFetching}
             onClick={handleApplyFilter}
             variant="contained"
             sx={{ minWidth: 120, height: 56 }}
@@ -251,9 +271,10 @@ function VoucherFilter({ data, handler }) {
                 fullWidth
                 label="Creator Role"
                 value={tempFilters.creator_role || ''}
-                onChange={(e) =>
+                onChange={(e) => {
                   handleFilterChange('creator_role', e.target.value)
-                }
+                  handleFilterChange('creator_selected', null)
+                }}
               >
                 <MenuItem value="">All</MenuItem>
                 <MenuItem value="admin">Admin</MenuItem>
@@ -327,7 +348,11 @@ function VoucherFilter({ data, handler }) {
               <Button variant="outlined" onClick={() => setAdvancedOpen(false)}>
                 Cancel
               </Button>
-              <Button variant="contained" onClick={handleApplyFilter}>
+              <Button
+                variant="contained"
+                onClick={handleApplyFilter}
+                disabled={isFetching}
+              >
                 Apply Filters
               </Button>
             </Box>
@@ -349,22 +374,27 @@ function VoucherFilter({ data, handler }) {
               Active filters:
             </Typography>
 
-            {Object.entries(params).map(
-              ([key, value]) =>
-                value &&
-                !IGNORE_KEY.includes(key) && (
-                  <Chip
-                    key={key}
-                    label={`${key}: ${value}`}
-                    onDelete={
-                      key === 'sort_by'
-                        ? undefined
-                        : () => handleRemoveParam(key)
-                    }
-                    size="small"
-                  />
-                )
-            )}
+            {Object.entries(params).map(([key, value]) => {
+              if (!value || IGNORE_KEY.includes(key)) return null
+
+              const label = FILTER_LABEL_MAP[key] ?? key
+
+              const displayValue =
+                key === 'creator_selected'
+                  ? resolveCreatorDisplay({ key, value, params, shops, staffs })
+                  : FILTER_VALUE_MAP[key]?.[value] ?? value
+
+              return (
+                <Chip
+                  key={key}
+                  label={`${label}: ${displayValue}`}
+                  onDelete={
+                    key === 'sort_by' ? undefined : () => handleRemoveParam(key)
+                  }
+                  size="small"
+                />
+              )
+            })}
 
             <Button
               size="small"

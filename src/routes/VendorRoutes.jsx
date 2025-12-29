@@ -12,6 +12,7 @@ import { RequireAuthRoute } from './RouteGuards'
 import { Route } from 'react-router-dom'
 import VendorMetrics from '~/pages/vendor/VendorMetrics'
 import VendorVoucherForm from '~/pages/vendor/VendorVoucherForm'
+import VoucherFormPage from '~/modules/voucher/shop/pages/VoucherForm.page'
 
 const VendorRoutes = ({ user }) => {
   return (
@@ -25,8 +26,8 @@ const VendorRoutes = ({ user }) => {
         <Route path="order-detail" element={<VendorOrderDetail />} />
         <Route path="profile" element={<VendorProfile />} />
         <Route path="voucher" element={<VendorVoucher />} />
-        <Route path="voucher/create" element={<VendorVoucherForm />} />
-        <Route path="voucher/update/:_id" element={<VendorVoucherForm />} />
+        <Route path="voucher/create" element={<VoucherFormPage />} />
+        <Route path="voucher/update/:_id" element={<VoucherFormPage />} />
         <Route path="wallet" element={<VendorWallet />} />
         <Route path="setting" element={<VendorSetting />} />
         <Route path="metrics" element={<VendorMetrics />} />

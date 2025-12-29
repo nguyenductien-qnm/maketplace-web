@@ -4,7 +4,16 @@ import { API_ROOT, TOAST_MODE } from '~/utils/constants'
 // ============================ CUSTOMER ============================
 const getVouchersOfMultipleShopByCustomerAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/user/voucher/shop`,
+    `${API_ROOT}/v1/api/user/vouchers/shop`,
+    payload,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
+const getSystemVouchersByCustomerAPI = async ({ payload }) => {
+  const { status, data } = await authorizedAxios.post(
+    `${API_ROOT}/v1/api/user/vouchers/system`,
     payload,
     { ...TOAST_MODE.ONLY_ERROR }
   )
@@ -13,7 +22,7 @@ const getVouchersOfMultipleShopByCustomerAPI = async ({ payload }) => {
 // ============================ VENDOR ============================
 const queryVoucherByShopAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/shop/voucher`,
+    `${API_ROOT}/v1/api/shop/vouchers`,
     { params: cleanFilters(payload), ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
@@ -21,7 +30,7 @@ const queryVoucherByShopAPI = async ({ payload }) => {
 
 const getVoucherSummaryByShopAPI = async () => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/shop/voucher/summary`,
+    `${API_ROOT}/v1/api/shop/vouchers/summary`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
@@ -29,7 +38,7 @@ const getVoucherSummaryByShopAPI = async () => {
 
 const getVoucherDetailByShopAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/shop/voucher/${_id}`,
+    `${API_ROOT}/v1/api/shop/vouchers/${_id}`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
@@ -37,7 +46,7 @@ const getVoucherDetailByShopAPI = async ({ _id }) => {
 
 const createVoucherByShopAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/shop/voucher`,
+    `${API_ROOT}/v1/api/shop/vouchers`,
     payload,
     { loadingClass, ...TOAST_MODE.ALL }
   )
@@ -46,7 +55,7 @@ const createVoucherByShopAPI = async ({ payload, loadingClass }) => {
 
 const updateVoucherByShopAPI = async ({ _id, payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/shop/voucher/${_id}`,
+    `${API_ROOT}/v1/api/shop/vouchers/${_id}`,
     payload,
     { loadingClass, ...TOAST_MODE.ALL }
   )
@@ -55,7 +64,7 @@ const updateVoucherByShopAPI = async ({ _id, payload, loadingClass }) => {
 
 const deleteVoucherByShopAPI = async ({ _id, loadingClass }) => {
   const { status, data } = await authorizedAxios.delete(
-    `${API_ROOT}/v1/api/shop/voucher/${_id}`,
+    `${API_ROOT}/v1/api/shop/vouchers/${_id}`,
     {
       loadingClass,
       ...TOAST_MODE.ALL
@@ -68,7 +77,7 @@ const deleteVoucherByShopAPI = async ({ _id, loadingClass }) => {
 
 const queryVoucherByAdminAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/admin/voucher`,
+    `${API_ROOT}/v1/api/admin/vouchers`,
     {
       params: cleanFilters(payload),
       ...TOAST_MODE.ONLY_ERROR
@@ -79,15 +88,25 @@ const queryVoucherByAdminAPI = async ({ payload }) => {
 
 const getVoucherSummaryByAdminAPI = async () => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/admin/voucher/summary`,
+    `${API_ROOT}/v1/api/admin/vouchers/summary`,
     { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
+const getVoucherFormSnapshotAPI = async ({ _id }) => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/admin/vouchers/edit/${_id}`,
+    {
+      ...TOAST_MODE.ONLY_ERROR
+    }
   )
   return { status, resData: data }
 }
 
 const getVoucherDetailByAdminAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/admin/voucher/${_id}`,
+    `${API_ROOT}/v1/api/admin/vouchers/${_id}`,
     {
       ...TOAST_MODE.ONLY_ERROR
     }
@@ -97,7 +116,7 @@ const getVoucherDetailByAdminAPI = async ({ _id }) => {
 
 const getVoucherApplicableProductsAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/admin/voucher/product/${_id}`,
+    `${API_ROOT}/v1/api/admin/vouchers/applicable-products/${_id}`,
     {
       ...TOAST_MODE.ONLY_ERROR
     }
@@ -107,7 +126,7 @@ const getVoucherApplicableProductsAPI = async ({ _id }) => {
 
 const createVoucherByAdminAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/admin/voucher`,
+    `${API_ROOT}/v1/api/admin/vouchers`,
     payload,
     { loadingClass, ...TOAST_MODE.ALL }
   )
@@ -116,25 +135,43 @@ const createVoucherByAdminAPI = async ({ payload, loadingClass }) => {
 
 const updateVoucherByAdminAPI = async ({ _id, payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/admin/voucher/${_id}`,
+    `${API_ROOT}/v1/api/admin/vouchers/${_id}`,
     payload,
     { loadingClass, ...TOAST_MODE.ALL }
   )
   return { status, resData: data }
 }
 
-const disableShopVoucherByAdminAPI = async ({ _id, payload, loadingClass }) => {
+const disableVoucherByAdminAPI = async ({ _id, payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/admin/voucher/disable/${_id}`,
+    `${API_ROOT}/v1/api/admin/vouchers/disable/${_id}`,
+    payload,
+    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
+const enableVoucherByAdminAPI = async ({ _id, payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/vouchers/enable/${_id}`,
+    payload,
+    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
+const banShopVoucherByAdminAPI = async ({ _id, payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/vouchers/ban/${_id}`,
     payload,
     { loadingClass, ...TOAST_MODE.ALL }
   )
   return { status, resData: data }
 }
 
-const enableShopVoucherByAdminAPI = async ({ _id, payload, loadingClass }) => {
+const unbanShopVoucherByAdminAPI = async ({ _id, payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/admin/voucher/enable/${_id}`,
+    `${API_ROOT}/v1/api/admin/vouchers/unban/${_id}`,
     payload,
     { loadingClass, ...TOAST_MODE.ALL }
   )
@@ -143,7 +180,7 @@ const enableShopVoucherByAdminAPI = async ({ _id, payload, loadingClass }) => {
 
 const exportVoucherDataByAdminAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/admin/voucher/export`,
+    `${API_ROOT}/v1/api/admin/vouchers/export`,
     payload,
     {
       ...TOAST_MODE.ALL,
@@ -164,12 +201,16 @@ export {
   getVoucherDetailByAdminAPI,
   createVoucherByAdminAPI,
   updateVoucherByAdminAPI,
-  disableShopVoucherByAdminAPI,
-  enableShopVoucherByAdminAPI,
+  disableVoucherByAdminAPI,
+  enableVoucherByAdminAPI,
   exportVoucherDataByAdminAPI,
   getVoucherDetailByShopAPI,
   getVoucherSummaryByShopAPI,
   getVoucherSummaryByAdminAPI,
   getVouchersOfMultipleShopByCustomerAPI,
-  getVoucherApplicableProductsAPI
+  getVoucherApplicableProductsAPI,
+  getSystemVouchersByCustomerAPI,
+  banShopVoucherByAdminAPI,
+  unbanShopVoucherByAdminAPI,
+  getVoucherFormSnapshotAPI
 }

@@ -4,10 +4,11 @@ import Typography from '@mui/material/Typography'
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 import Tooltip from '@mui/material/Tooltip'
 import AddIcon from '@mui/icons-material/Add'
+import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined'
 
 function VoucherHeader({ ui, handler }) {
-  const { pageTitle } = ui
-  const { handleOpenForm, handleExportVouchers } = handler
+  const { pageTitle, isRefreshing } = ui
+  const { handleOpenForm, handleRefresh } = handler
   return (
     <Box
       sx={{
@@ -22,10 +23,21 @@ function VoucherHeader({ ui, handler }) {
         {pageTitle}
       </Typography>
       <Box sx={{ display: 'flex', gap: '10px' }}>
+        <Tooltip title="Fetch the latest data">
+          <Button
+            disabled={isRefreshing}
+            variant="outlined"
+            onClick={handleRefresh}
+            sx={{ p: 1 }}
+          >
+            <RefreshOutlinedIcon sx={{ mr: 1 }} />
+            Refresh
+          </Button>
+        </Tooltip>
         <Tooltip>
           <Button
             variant="contained"
-            onClick={() => handleOpenForm({ action: 'create' })}
+            onClick={handleOpenForm}
             sx={{ p: 1, width: '170px' }}
           >
             <AddIcon />
@@ -34,12 +46,7 @@ function VoucherHeader({ ui, handler }) {
         </Tooltip>
         <Tooltip title="Export filtered voucher(.csv)">
           <Box>
-            <Button
-              className="btn-export-voucher"
-              variant="outlined"
-              onClick={handleExportVouchers}
-              sx={{ p: 1, width: '100px' }}
-            >
+            <Button variant="outlined" sx={{ p: 1, width: '100px' }}>
               <FileDownloadOutlinedIcon />
               Export
             </Button>

@@ -3,33 +3,24 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
-import TypographyLabel from '../common/TypographyLabel'
+import TypographyLabel from '~/components/common/TypographyLabel'
 import ReactQuill from 'react-quill-new'
 import { Controller, useForm } from 'react-hook-form'
 import { REASON_RULE, REASON_RULE_MESSAGE } from '~/utils/validators'
 import 'react-quill-new/dist/quill.snow.css'
 
-function ReasonModal({
-  header,
-  open,
-  onClose,
-  onSubmit,
-  submitText = 'Confirm',
-  submitColor,
-  isSubmitting
-}) {
+function ReasonModal({ ui, handler }) {
+  const { header, isOpen, submitColor, submitText, isSubmitting } = ui
+  const { onsubmit, handleClose } = handler
+
   const {
     handleSubmit,
     formState: { errors },
     control
   } = useForm()
 
-  const submitHandler = (data) => {
-    onSubmit(data.reason)
-  }
-
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={isOpen} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>{header}</DialogTitle>
       <DialogContent sx={{ height: '310px' }}>
         <TypographyLabel>Reason for this action</TypographyLabel>
@@ -70,7 +61,7 @@ function ReasonModal({
       <DialogActions>
         <Button
           className="btn-reason-modal"
-          onClick={onClose}
+          onClick={handleClose}
           variant="outlined"
           color="secondary"
           disabled={isSubmitting}
@@ -79,7 +70,7 @@ function ReasonModal({
         </Button>
         <Button
           className="btn-reason-modal"
-          onClick={handleSubmit(submitHandler)}
+          onClick={handleSubmit(onsubmit)}
           variant="contained"
           color={submitColor}
           loading={isSubmitting}

@@ -127,9 +127,9 @@ function CustomerCheckOut() {
             content={'Bevesi Vouchers'}
             info={{
               header: 'Bevesi Vouchers',
-              logo: 'nothing'
+              logo: 'https://eg-wp.com/wp-content/uploads/2024/11/product-logo-512-12.png.webp'
             }}
-            vouchers={ableShopVouchers}
+            vouchers={platformVouchers}
             handleSelectedVouchers={handleSelectedVouchers}
           />
         </Paper>

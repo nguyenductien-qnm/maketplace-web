@@ -26,15 +26,10 @@ import { getVoucherStatus } from '~/utils/voucherStatus'
 import 'react-quill-new/dist/quill.snow.css'
 
 function VoucherDetailModal({ ui, data, handler }) {
-  const { voucherDetail } = data
-  const { loadingDetail, loadingAuditLog, loadingProducts, openDetailModal } =
-    ui
-  const { voucher, log, products } = voucherDetail || {}
-  const {
-    handleCloseModal,
-    handleGetApplicableProducts,
-    handleGetAuditLogDetail
-  } = handler
+  const { isLoadingDetail, isLoadingAuditLog, isLoadingProducts, isOpen } = ui
+  const { voucher, log, products } = data || {}
+  const { handleClose, handleFetchProducts, handleFetchAuditLog } = handler
+
   const voucherStatus = getVoucherStatus({
     start: voucher?.voucher_start_date,
     end: voucher?.voucher_end_date
@@ -46,16 +41,18 @@ function VoucherDetailModal({ ui, data, handler }) {
       : voucher?.shop_creator
 
   const statusColor = () => {
-    if (voucher.voucher_disable) return 'error'
     if (voucherStatus == 'UPCOMING') return 'info'
     if (voucherStatus == 'ONGOING') return 'success'
-    if (voucherStatus == 'EXPIRED') return 'warning'
+    if (voucherStatus == 'EXPIRED') return 'error'
   }
 
+  const availabilityColor = () => (voucher.is_enabled ? 'success' : 'error')
+  const restrictionColor = () => (voucher.is_banned ? 'error' : 'success')
+
   return (
-    <Modal open={openDetailModal} onClose={handleCloseModal} {...modalConfig}>
-      <Fade in={openDetailModal}>
-        <Box sx={modalStyle(900)}>
+    <Modal open={isOpen} onClose={handleClose} {...modalConfig}>
+      <Fade in={isOpen}>
+        <Box sx={modalStyle(900, '90vh')}>
           <Box sx={{ flexShrink: 0 }}>
             <Box
               sx={{
@@ -67,7 +64,7 @@ function VoucherDetailModal({ ui, data, handler }) {
               <TypographyTitle>Voucher Detail Information</TypographyTitle>
               <HighlightOffIcon
                 color="error"
-                onClick={handleCloseModal}
+                onClick={handleClose}
                 sx={{ cursor: 'pointer' }}
               />
             </Box>
@@ -80,20 +77,45 @@ function VoucherDetailModal({ ui, data, handler }) {
               overflowY: 'auto'
             }}
           >
-            {loadingDetail && <CircularIndeterminate height={700} />}
+            {isLoadingDetail && <CircularIndeterminate height={700} />}
 
-            {!loadingDetail && voucher && (
+            {!isLoadingDetail && voucher && (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <Card sx={{ p: 3 }}>
-                  <TypographyTitle sx={{ mb: 1 }}>Status</TypographyTitle>
+                  <Box
+                    sx={{ display: 'flex', gap: 3, flexDirection: 'column' }}
+                  >
+                    <Box>
+                      <TypographyTitle sx={{ mb: 1 }}>
+                        Voucher Status
+                      </TypographyTitle>
+                      <Alert severity={statusColor()}>{voucherStatus}</Alert>
+                    </Box>
 
-                  <Alert severity={statusColor()}>
-                    {voucher.voucher_disable == true ? 'BANNED' : voucherStatus}
-                  </Alert>
+                    <Box>
+                      <TypographyTitle sx={{ mb: 1 }}>
+                        Availability
+                      </TypographyTitle>
+                      <Alert severity={availabilityColor()}>
+                        {voucher.is_enabled ? 'Enabled' : 'Disabled'}
+                      </Alert>
+                    </Box>
 
-                  {voucher.voucher_disable && !loadingAuditLog && !log && (
+                    <Box>
+                      <TypographyTitle sx={{ mb: 1 }}>
+                        Restriction
+                      </TypographyTitle>
+                      <Alert severity={restrictionColor()}>
+                        {voucher.is_banned
+                          ? 'Banned by system'
+                          : 'No restriction'}
+                      </Alert>
+                    </Box>
+                  </Box>
+
+                  {voucher.is_banned && !isLoadingAuditLog && !log && (
                     <Button
-                      onClick={handleGetAuditLogDetail}
+                      onClick={handleFetchAuditLog}
                       sx={{ mt: 2 }}
                       variant="contained"
                     >
@@ -101,9 +123,9 @@ function VoucherDetailModal({ ui, data, handler }) {
                     </Button>
                   )}
 
-                  {loadingAuditLog && <CircularIndeterminate height={350} />}
+                  {isLoadingAuditLog && <CircularIndeterminate height={350} />}
 
-                  {!loadingAuditLog && log && (
+                  {!isLoadingAuditLog && log && (
                     <Grid2 container spacing={3} sx={{ mt: 2 }}>
                       <Grid2 size={6}>
                         <TypographyLabel>Admin Name</TypographyLabel>
@@ -205,12 +227,14 @@ function VoucherDetailModal({ ui, data, handler }) {
                       <ReadOnlyTextField value={voucher.voucher_value} />
                     </Grid2>
 
-                    <Grid2 size={6}>
-                      <TypographyLabel>Max Discount Amount</TypographyLabel>
-                      <ReadOnlyTextField
-                        value={voucher.voucher_max_discount_amount}
-                      />
-                    </Grid2>
+                    {voucher.voucher_type === 'percent' && (
+                      <Grid2 size={6}>
+                        <TypographyLabel>Max Discount Amount</TypographyLabel>
+                        <ReadOnlyTextField
+                          value={voucher.voucher_max_discount_amount}
+                        />
+                      </Grid2>
+                    )}
 
                     <Grid2 size={6}>
                       <TypographyLabel>Voucher Quantity</TypographyLabel>
@@ -254,10 +278,10 @@ function VoucherDetailModal({ ui, data, handler }) {
                         value={capitalizeFirstLetter(voucher.voucher_apply)}
                       />
                       {voucher.voucher_apply == 'specific' &&
-                        !loadingProducts &&
+                        !isLoadingProducts &&
                         !products && (
                           <Button
-                            onClick={handleGetApplicableProducts}
+                            onClick={handleFetchProducts}
                             sx={{ mt: 2 }}
                             variant="contained"
                           >
@@ -265,7 +289,7 @@ function VoucherDetailModal({ ui, data, handler }) {
                           </Button>
                         )}
 
-                      {loadingProducts && (
+                      {isLoadingProducts && (
                         <CircularIndeterminate height={200} />
                       )}
                     </Grid2>
@@ -374,11 +398,7 @@ function VoucherDetailModal({ ui, data, handler }) {
               flexShrink: 0
             }}
           >
-            <Button
-              color="secondary"
-              variant="outlined"
-              onClick={handleCloseModal}
-            >
+            <Button color="secondary" variant="outlined" onClick={handleClose}>
               Close
             </Button>
           </Box>

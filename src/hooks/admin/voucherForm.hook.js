@@ -1,24 +1,22 @@
 import { useForm } from 'react-hook-form'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 
-export const useAdminVoucherForm = ({ action, voucher, onSubmit, onClose }) => {
+export const useAdminVoucherForm = ({ action, voucher }) => {
   const {
     register,
     formState: { errors },
     control,
-    handleSubmit,
     reset,
     setValue,
     watch,
-    trigger
+    trigger,
+    handleSubmit
   } = useForm({
     defaultValues: {
       voucher_type: 'fixed_amount',
       voucher_visibility: 'public'
     }
   })
-
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     if (action === 'update' && voucher) {
@@ -49,28 +47,12 @@ export const useAdminVoucherForm = ({ action, voucher, onSubmit, onClose }) => {
     }
   }, [action, voucher])
 
-  const handleFormSubmit = handleSubmit(async (data) => {
-    setIsSubmitting(true)
-    try {
-      await onSubmit(data)
-    } finally {
-      setIsSubmitting(false)
-    }
-  })
-
-  const customHandleClose = () => {
-    if (isSubmitting) return
-    onClose()
-  }
-
   return {
     register,
     errors,
     control,
     trigger,
     watch,
-    handleFormSubmit,
-    isSubmitting,
-    customHandleClose
+    handleSubmit
   }
 }

@@ -1,18 +1,20 @@
 import { navigate } from '~/helpers/navigation'
 import { StatusCodes } from 'http-status-codes'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { getShopListForFilterAPI } from '~/api/shop.api'
 import { getStaffListForFilterAPI } from '~/api/user.api'
 import {
   createVoucherByAdminAPI,
-  disableShopVoucherByAdminAPI,
-  enableShopVoucherByAdminAPI,
+  disableVoucherByAdminAPI,
+  enableVoucherByAdminAPI,
   exportVoucherDataByAdminAPI,
   getVoucherApplicableProductsAPI,
   getVoucherDetailByAdminAPI,
   getVoucherSummaryByAdminAPI,
   queryVoucherByAdminAPI,
-  updateVoucherByAdminAPI
+  updateVoucherByAdminAPI,
+  banShopVoucherByAdminAPI,
+  unbanShopVoucherByAdminAPI
 } from '~/api/voucher.api'
 import useCustomSearchParams from '../common/searchParam.hook'
 import { toast } from 'react-toastify'
@@ -43,7 +45,16 @@ const PAGE_TITLE = {
   UPCOMING: 'Upcoming Vouchers',
   EXPIRED: 'Expired Vouchers',
   BANNED: 'Banned Vouchers',
-  ALL: 'All Vouchers'
+  ALL: 'All Vouchers',
+  ACTIVE: 'Active Vouchers',
+  DISABLED: 'Disable Vouchers'
+}
+
+const VOUCHER_ACTION_API = {
+  enable: enableVoucherByAdminAPI,
+  disable: disableVoucherByAdminAPI,
+  ban: banShopVoucherByAdminAPI,
+  unban: unbanShopVoucherByAdminAPI
 }
 
 export const useAdminVoucher = () => {
@@ -276,40 +287,51 @@ export const useAdminVoucher = () => {
     if (status === StatusCodes.OK) {
       const updated = resData?.metadata
       setVouchers((prev) =>
-        prev.map((v) => (v._id === updated._id ? updated : v))
+        prev.map((v) => {
+          if (v._id !== updated._id) return v
+          return { ...v, ...updated }
+        })
       )
       handleCloseForm()
     }
   }
 
-  const handleDisableShopVoucher = async (data) => {
-    const { _id, ...payload } = data
-    const { status, resData } = await disableShopVoucherByAdminAPI({
+  const handleToggleVoucher = async ({ _id, is_enabled }) => {
+    const action = is_enabled ? 'disable' : 'enable'
+    const api = VOUCHER_ACTION_API[action]
+    if (!action) return
+
+    const { status, resData } = await api({
       _id,
-      payload,
+      payload: { action },
       loadingClass: LOADING_CLASS
     })
+
     if (status === StatusCodes.OK) {
       const updated = resData?.metadata
       setVouchers((prev) =>
-        prev.map((v) => (v._id === updated._id ? updated : v))
+        prev.map((v) => (v._id === updated._id ? { ...v, ...updated } : v))
       )
-      handleCloseModal()
+
       fetchVoucherSummary()
     }
   }
 
-  const handleEnableShopVoucher = async (data) => {
-    const { _id, ...payload } = data
-    const { status, resData } = await enableShopVoucherByAdminAPI({
+  const handleChangeShopVoucherStatus = async (data) => {
+    const { _id, action, reason } = data
+    const api = VOUCHER_ACTION_API[action]
+    if (!api) return
+
+    const { status, resData } = await api({
       _id,
-      payload,
+      payload: { action, reason },
       loadingClass: LOADING_CLASS
     })
+
     if (status === StatusCodes.OK) {
       const updated = resData?.metadata
       setVouchers((prev) =>
-        prev.map((v) => (v._id === updated._id ? updated : v))
+        prev.map((v) => (v._id === updated._id ? { ...v, ...updated } : v))
       )
       handleCloseModal()
       fetchVoucherSummary()
@@ -317,6 +339,7 @@ export const useAdminVoucher = () => {
   }
 
   // ============================== HANDLER EXPORT ==============================
+
   const handleExportVouchers = async () => {
     const { status: apiStatus, resData } = await exportVoucherDataByAdminAPI({
       payload: { status, ...filters },
@@ -336,32 +359,32 @@ export const useAdminVoucher = () => {
 
   // ============================== MODAL CONTENT ==============================
   const modalProps = {
-    disable: {
+    ban: {
       type: 'reason',
-      header: '	Disable Shop Voucher',
+      header: '	Ban Shop Voucher',
       open: openReasonModal,
       onSubmit: (value) => {
-        handleDisableShopVoucher({
+        handleChangeShopVoucherStatus({
           _id: selectedVoucher?._id,
           reason: value,
           action
         })
       },
-      submitText: 'Disable',
+      submitText: 'Confirm',
       submitColor: 'error'
     },
-    enable: {
+    unban: {
       type: 'reason',
-      header: '	Enable Shop Voucher',
+      header: '	Unban Shop Voucher',
       open: openReasonModal,
       onSubmit: (value) => {
-        handleEnableShopVoucher({
+        handleChangeShopVoucherStatus({
           _id: selectedVoucher?._id,
           reason: value,
           action
         })
       },
-      submitText: 'Enable',
+      submitText: 'Confirm',
       submitColor: 'success'
     }
   }
@@ -421,8 +444,11 @@ export const useAdminVoucher = () => {
       table: {
         handleChangePage,
         handleChangeRowsPerPage,
-        handleOpenModal,
-        handleOpenForm
+        row: {
+          handleToggleVoucher,
+          handleOpenModal,
+          handleOpenForm
+        }
       },
       modal: {
         handleOpenModal,
