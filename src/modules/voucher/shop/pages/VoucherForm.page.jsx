@@ -15,33 +15,31 @@ function VoucherFormPage() {
   const { ui, data, handler, form } = useShopVoucherForm()
 
   const {
-    openModal,
-    loading,
+    isOpenProductModal,
+    isLoading,
     isSubmitting,
-    pageTitle,
+    title,
     isUpdate,
     voucherStatus
   } = ui
 
+  const { handleSubmitForm } = handler
+
   const { selectedProducts } = data
 
   return (
-    <form onSubmit={handler.handleSubmitForm}>
-      {/* Header */}
+    <form onSubmit={handleSubmitForm}>
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
-          {pageTitle}
+          {title}
         </Typography>
         <Divider />
       </Box>
 
-      {/* Loading */}
-      {loading && <VoucherFormSkeleton />}
+      {isLoading && <VoucherFormSkeleton />}
 
-      {/* Content */}
-      {!loading && (
+      {!isLoading && (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          {/* Status */}
           {isUpdate && voucherStatus && (
             <Alert color={VOUCHER_STATUS_ALERT_COLOR[voucherStatus]}>
               Status: {voucherStatus}
@@ -59,25 +57,24 @@ function VoucherFormPage() {
             ui={ui}
           />
 
-          {openModal && (
+          {isOpenProductModal && (
             <ProductSelectionModal
-              open={openModal}
+              open={isOpenProductModal}
               selected={selectedProducts}
               handle={handler}
             />
           )}
 
-          {/* Submit / Back */}
           {voucherStatus !== 'EXPIRED' ? (
             <Button
               type="submit"
               variant="contained"
               fullWidth
               loading={isSubmitting}
-              disabled={isSubmitting}
+              loadingPosition="end"
               className="btn-vendor-submit-voucher-form"
             >
-              {isSubmitting ? 'Submitting...' : 'Submit'}
+              Submit
             </Button>
           ) : (
             <Button

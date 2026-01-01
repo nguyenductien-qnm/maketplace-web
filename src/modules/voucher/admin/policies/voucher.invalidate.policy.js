@@ -6,7 +6,6 @@ const invalidateAfterCreateVoucher = (
   createdVoucher,
   pageLimit
 ) => {
-  console.log('run invalid')
   queryClient.setQueriesData(
     { queryKey: VoucherQueryKeys.listRoot() },
     (oldData) => addVoucherInList(oldData, createdVoucher, pageLimit)

@@ -1,18 +1,15 @@
 import { create } from 'zustand'
 
 export const useVoucherFormStore = create((set) => ({
-  /* -------------------------- UI STATE -------------------------- */
-
-  openModal: false,
+  isOpenProductModal: false,
   selectedProducts: [],
 
-  /* -------------------------- ACTIONS --------------------------- */
+  openProductModal: () => set({ isOpenProductModal: true }),
 
-  openProductModal: () => set({ openModal: true }),
+  closeProductModal: () => set({ isOpenProductModal: false }),
 
-  closeProductModal: () => set({ openModal: false }),
-
-  setSelectedProducts: (products) => set({ selectedProducts: products }),
+  setSelectedProducts: (products) =>
+    set({ selectedProducts: products, isOpenProductModal: false }),
 
   removeProduct: (productId) =>
     set((state) => ({
@@ -23,7 +20,7 @@ export const useVoucherFormStore = create((set) => ({
 
   resetFormState: () =>
     set({
-      openModal: false,
+      isOpenProductModal: false,
       selectedProducts: []
     })
 }))

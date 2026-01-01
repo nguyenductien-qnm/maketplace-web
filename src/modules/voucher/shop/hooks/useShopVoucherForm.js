@@ -1,98 +1,89 @@
 import { useForm } from 'react-hook-form'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { navigate } from '~/helpers/navigation'
-import { StatusCodes } from 'http-status-codes'
 import { getVoucherStatus } from '~/utils/voucherStatus'
-import { useShopVoucherFormServer } from '../server/voucher.form.server'
 import { useVoucherFormStore } from '../state/voucher.form.store'
+import { VOUCHER_FORM_DEFAULT_VALUES } from '../constants/voucherForm.constants'
 import {
-  VOUCHER_FORM_DEFAULT_VALUES,
-  VOUCHER_FORM_PAGE_TITLE
-} from '../constants/voucherForm.constants'
+  useShopCreateVoucherMutation,
+  useShopUpdateVoucherMutation,
+  useShopVoucherFormSnapshotQuery
+} from '../server/voucher.form.server'
+import { VOUCHER_FORM_TITLE } from '../../admin/constants/voucher.constant'
 
 export const useShopVoucherForm = () => {
-  /* --------------------------- page mode ---------------------------------- */
-
   const { _id } = useParams()
   const { pathname } = useLocation()
-
-  const isCreate = pathname === '/vendor/voucher/create'
-  const isUpdate = pathname.includes('/vendor/voucher/update')
-
-  const pageTitle = isCreate
-    ? VOUCHER_FORM_PAGE_TITLE.CREATE
-    : isUpdate
-    ? VOUCHER_FORM_PAGE_TITLE.UPDATE
-    : ''
 
   const form = useForm({
     defaultValues: VOUCHER_FORM_DEFAULT_VALUES,
     mode: 'onChange'
   })
 
+  const isHydratingRef = useRef(false)
+
   const { watch, setValue, setError, clearErrors, handleSubmit } = form
 
-  /* --------------------------- UI state ----------------------------------- */
-
   const {
-    openModal,
     selectedProducts,
+    isOpenProductModal,
     openProductModal,
     closeProductModal,
     setSelectedProducts,
-    removeProduct,
-    resetFormState
+    removeProduct
   } = useVoucherFormStore()
-
-  /* ------------------------- server state --------------------------------- */
-
-  const { detailQuery, createMutation, updateMutation } =
-    useShopVoucherFormServer({
-      _id,
-      isUpdate
-    })
-
-  const loading = detailQuery.isLoading
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
-
-  /* ------------------------ derived state --------------------------------- */
 
   const voucherApply = watch('voucher_apply')
 
-  const voucherStatus = detailQuery.data
+  const isCreate = pathname === '/vendor/voucher/create'
+  const isUpdate = pathname.includes('/vendor/voucher/update')
+
+  const snapshotQuery = useShopVoucherFormSnapshotQuery({
+    _id,
+    isUpdate
+  })
+
+  const createMutation = useShopCreateVoucherMutation()
+
+  const updateMutation = useShopUpdateVoucherMutation()
+
+  const voucherStatus = snapshotQuery.data
     ? getVoucherStatus({
-        start: detailQuery.data.resData.metadata.voucher_start_date,
-        end: detailQuery.data.resData.metadata.voucher_end_date
+        start: snapshotQuery.data.voucher_start_date,
+        end: snapshotQuery.data.voucher_end_date
       })
     : null
 
-  /* ----------------------------- effects ---------------------------------- */
-
-  // map server data -> form
   useEffect(() => {
-    if (!detailQuery.data) return
+    if (!snapshotQuery.data) return
+    isHydratingRef.current = true
 
-    const data = detailQuery.data.resData.metadata
-
+    const data = snapshotQuery.data
     Object.keys(VOUCHER_FORM_DEFAULT_VALUES).forEach((key) => {
       setValue(key, data[key])
     })
 
     if (data.voucher_apply === 'specific') {
-      setSelectedProducts(data.products ?? [])
+      setSelectedProducts(data.products)
+      setValue('voucher_product_ids', data.voucher_product_ids)
     }
-  }, [detailQuery.data])
 
-  // clear products when apply = all
+    if (data.voucher_type == 'percent')
+      setValue('voucher_max_discount_amount', data.voucher_max_discount_amount)
+
+    setTimeout(() => {
+      isHydratingRef.current = false
+    }, 0)
+  }, [snapshotQuery.data])
+
   useEffect(() => {
+    if (isHydratingRef.current) return
     if (voucherApply === 'all') {
       clearErrors('voucher_product_ids')
       setSelectedProducts([])
     }
   }, [voucherApply])
-
-  /* ----------------------------- guard ------------------------------------ */
 
   const validateSpecificProducts = () => {
     if (selectedProducts.length === 0) {
@@ -105,54 +96,69 @@ export const useShopVoucherForm = () => {
     return true
   }
 
-  /* ----------------------------- submit ----------------------------------- */
+  const handleConfirmProducts = (data) => {
+    if (data?.length == 0) return
+    setSelectedProducts(data)
+    clearErrors('voucher_product_ids')
+  }
 
-  const handleSubmitForm = handleSubmit(async (formData) => {
-    if (formData.voucher_apply === 'specific' && !validateSpecificProducts()) {
-      return
+  const handleRemoveProduct = (productId) => {
+    if (!productId) return
+    removeProduct(productId)
+  }
+
+  const handleCreateVoucher = handleSubmit(async (data) => {
+    if (data.voucher_apply === 'specific') {
+      if (!validateSpecificProducts()) {
+        return
+      } else {
+        data.voucher_product_ids = selectedProducts.map((p) => p._id)
+      }
     }
 
-    const payload = {
-      ...formData,
-      voucher_product_ids:
-        formData.voucher_apply === 'specific'
-          ? selectedProducts.map((p) => p._id)
-          : []
-    }
-
-    const mutation = isCreate ? createMutation : updateMutation
-
-    const res = await mutation.mutateAsync({
-      _id,
-      payload
-    })
-
-    if (res.status === StatusCodes.CREATED) {
-      resetFormState()
-      navigate('/vendor/voucher')
-    }
+    createMutation.mutate(
+      { payload: data },
+      { onSuccess: () => navigate('/vendor/voucher') }
+    )
   })
 
-  /* ----------------------------- return ----------------------------------- */
+  const handleUpdateVoucher = handleSubmit(async (data) => {
+    if (data.voucher_apply === 'specific') {
+      if (!validateSpecificProducts()) {
+        return
+      } else {
+        data.voucher_product_ids = selectedProducts.map((p) => p._id)
+      }
+    }
+
+    if (data.voucher_apply === 'specific' && !validateSpecificProducts()) return
+
+    updateMutation.mutate(
+      { _id, payload: data },
+      { onSuccess: () => navigate('/vendor/voucher') }
+    )
+  })
 
   return {
     ui: {
-      loading,
-      isSubmitting,
-      pageTitle,
-      isUpdate,
+      isLoading: snapshotQuery.isLoading,
+      title: _id ? VOUCHER_FORM_TITLE['update'] : VOUCHER_FORM_TITLE['create'],
+      isSubmitting: createMutation.isPending || updateMutation.isPending,
       voucherStatus,
-      openModal
+      isOpenProductModal,
+      isUpdate
     },
+
     data: {
       selectedProducts
     },
+
     handler: {
-      handleSubmitForm,
+      handleSubmitForm: _id ? handleUpdateVoucher : handleCreateVoucher,
       handleOpenModal: openProductModal,
       handleCloseModal: closeProductModal,
-      handleConfirmProducts: setSelectedProducts,
-      handleRemoveProduct: removeProduct
+      handleRemoveProduct,
+      handleConfirmProducts
     },
     form
   }

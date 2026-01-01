@@ -9,19 +9,13 @@ const VOUCHER_FORM_DEFAULT_VALUES = {
   voucher_value: '',
   voucher_quantity: '',
   voucher_min_order_value: '',
-  voucher_max_distribution_per_buyer: '',
-  voucher_max_discount_amount: ''
+  voucher_max_distribution_per_buyer: ''
 }
 
 const VOUCHER_STATUS_ALERT_COLOR = {
   ONGOING: 'success',
   UPCOMING: 'warning',
   EXPIRED: 'error'
-}
-
-const VOUCHER_FORM_PAGE_TITLE = {
-  CREATE: 'Create Voucher',
-  UPDATE: 'Update Voucher'
 }
 
 const VOUCHER_BASIC_INFORMATION = {
@@ -61,7 +55,6 @@ const VOUCHER_APPLICABLE = {
 export {
   VOUCHER_FORM_DEFAULT_VALUES,
   VOUCHER_STATUS_ALERT_COLOR,
-  VOUCHER_FORM_PAGE_TITLE,
   VOUCHER_BASIC_INFORMATION,
   VOUCHER_DISCOUNT_SETTING,
   VOUCHER_APPLICABLE

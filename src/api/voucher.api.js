@@ -44,6 +44,16 @@ const getVoucherDetailByShopAPI = async ({ _id }) => {
   return { status, resData: data }
 }
 
+const getVoucherFormSnapshotByShopAPI = async ({ _id }) => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/vouchers/edit/${_id}`,
+    {
+      ...TOAST_MODE.ONLY_ERROR
+    }
+  )
+  return { status, resData: data }
+}
+
 const createVoucherByShopAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.post(
     `${API_ROOT}/v1/api/shop/vouchers`,
@@ -212,5 +222,6 @@ export {
   getSystemVouchersByCustomerAPI,
   banShopVoucherByAdminAPI,
   unbanShopVoucherByAdminAPI,
-  getVoucherFormSnapshotAPI
+  getVoucherFormSnapshotAPI,
+  getVoucherFormSnapshotByShopAPI
 }

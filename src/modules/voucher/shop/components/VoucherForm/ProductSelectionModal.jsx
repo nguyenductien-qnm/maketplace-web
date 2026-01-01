@@ -17,6 +17,7 @@ import TypographyTitle from '~/components/common/TypographyTitle'
 import formatCurrency from '~/utils/formatCurrency'
 import ProductEmpty from '~/components/vendor/VendorProduct/ProductEmpty'
 import ProductFilter from '~/components/vendor/VendorProduct/ProductFilter'
+import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import { modalConfig, modalStyle } from '~/config/modal'
 import { useProductSelection } from '~/hooks/vendor/voucher/productSelection.hook'
 
@@ -49,9 +50,22 @@ function ProductSelectionModal({ open, handle, selected }) {
     <Modal open={open} onClose={handleCloseModal} {...modalConfig}>
       <Fade in={open}>
         <Box sx={modalStyle(950)}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <TypographyTitle>Select Products</TypographyTitle>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <TypographyTitle>Select Product(s)</TypographyTitle>
+            <HighlightOffIcon
+              color="error"
+              onClick={handleCloseModal}
+              sx={{ cursor: 'pointer' }}
+            />
+          </Box>
 
+          <Box sx={{ display: 'flex', justifyContent: 'end', mt: 1 }}>
             <ProductFilter
               filters={filters}
               setFilters={setFilters}
@@ -69,7 +83,7 @@ function ProductSelectionModal({ open, handle, selected }) {
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  height: 570
+                  height: 700
                 }}
               >
                 <CircularIndeterminate />
@@ -80,7 +94,7 @@ function ProductSelectionModal({ open, handle, selected }) {
             {!loading && products.length > 0 && (
               <>
                 <TableContainer
-                  sx={{ maxHeight: 516, height: 516, overflowY: 'auto' }}
+                  sx={{ maxHeight: 700, height: 700, overflowY: 'auto' }}
                 >
                   <Table stickyHeader sx={{ width: '100%' }}>
                     <TableHead>
