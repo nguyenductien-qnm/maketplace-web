@@ -6,45 +6,45 @@ import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
+import ReportOutlinedIcon from '@mui/icons-material/ReportOutlined'
 import IOSSwitch from '~/components/common/IOSSwitch'
 import DataUsageIcon from '@mui/icons-material/DataUsage'
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined'
 import formatCurrency from '~/utils/formatCurrency'
 import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
+import FormControlLabel from '@mui/material/FormControlLabel'
 import { blue, green, grey, red } from '@mui/material/colors'
 import { navigate } from '~/helpers/navigation'
 import { getVoucherStatus } from '~/utils/voucherStatus'
+import {
+  VOUCHER_STATUS_CHIP_CONFIG,
+  VOUCHER_TYPE_IMAGE_MAP
+} from '../../constants/voucher.constant'
 
-const imgVoucher = {
-  percent:
-    'https://deo.shopeemobile.com/shopee/shopee-seller-live-sg/mmf_portal_seller_root_dir/static/modules/vouchers-v2/image/percent-colorful.0e15568.png',
-  fixed_amount:
-    'https://deo.shopeemobile.com/shopee/shopee-seller-live-sg/mmf_portal_seller_root_dir/static/modules/vouchers-v2/image/dollar-colorful.5e618d0.png'
-}
+function VoucherRow({ voucher, ui, handler }) {
+  const { isPending } = ui
 
-const CONFIG_CHIP = {
-  UPCOMING: { label: 'Upcoming', color: '#ff9800' },
-  ONGOING: { label: 'Ongoing', color: '#4caf50' },
-  EXPIRED: { label: 'Expired', color: '#f44336' }
-}
-
-function VoucherRow({ voucher, handleOpenConfirmDialog }) {
-  const { voucher_start_date, voucher_end_date } = voucher
+  const {
+    handleOpenDetailModal,
+    handleToggleVoucher,
+    handleOpenConfirmDialog,
+    handleOpenReasonDialog
+  } = handler
 
   const voucherStatus = getVoucherStatus({
-    start: voucher_start_date,
-    end: voucher_end_date
+    start: voucher.voucher_start_date,
+    end: voucher.voucher_end_date
   })
 
   const renderStatusChip = () => {
     return (
       <Chip
-        label={CONFIG_CHIP[voucherStatus].label}
+        label={VOUCHER_STATUS_CHIP_CONFIG[voucherStatus].label}
         variant="outlined"
         sx={{
           width: '90px',
-          borderColor: CONFIG_CHIP[voucherStatus].color,
-          color: CONFIG_CHIP[voucherStatus].color,
+          borderColor: VOUCHER_STATUS_CHIP_CONFIG[voucherStatus].color,
+          color: VOUCHER_STATUS_CHIP_CONFIG[voucherStatus].color,
           backgroundColor: 'transparent',
           height: 25,
           borderRadius: '5px',
@@ -63,7 +63,7 @@ function VoucherRow({ voucher, handleOpenConfirmDialog }) {
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <img
             style={{ width: '70px', height: '70px' }}
-            src={imgVoucher[voucher.voucher_type]}
+            src={VOUCHER_TYPE_IMAGE_MAP[voucher.voucher_type]}
           />
 
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -113,9 +113,24 @@ function VoucherRow({ voucher, handleOpenConfirmDialog }) {
       </TableCell>
 
       <TableCell>
-        <IOSSwitch
-          checked={voucher.is_enabled}
-          disabled={voucherStatus === 'EXPIRED'}
+        <FormControlLabel
+          disabled={
+            voucherStatus === 'EXPIRED' ||
+            isPending(voucher) ||
+            voucher.is_banned
+          }
+          control={
+            <IOSSwitch
+              sx={{ m: 1 }}
+              checked={voucher.is_enabled}
+              onChange={() =>
+                handleToggleVoucher({
+                  voucher,
+                  action: voucher.is_enabled ? 'disable' : 'enable'
+                })
+              }
+            />
+          }
         />
       </TableCell>
 
@@ -123,6 +138,7 @@ function VoucherRow({ voucher, handleOpenConfirmDialog }) {
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           <Tooltip title="View detail this voucher">
             <RemoveRedEyeOutlinedIcon
+              onClick={() => handleOpenDetailModal({ voucher })}
               sx={{
                 color: grey[500],
                 fontSize: 24,
@@ -134,7 +150,7 @@ function VoucherRow({ voucher, handleOpenConfirmDialog }) {
             />
           </Tooltip>
 
-          {voucherStatus != 'EXPIRED' && (
+          {voucherStatus != 'EXPIRED' && !voucher.is_banned && (
             <Tooltip title="Edit this voucher">
               <ModeOutlinedIcon
                 onClick={() =>
@@ -179,6 +195,22 @@ function VoucherRow({ voucher, handleOpenConfirmDialog }) {
                   '&:hover': {
                     cursor: 'pointer',
                     color: red[700]
+                  }
+                }}
+              />
+            </Tooltip>
+          )}
+
+          {voucher.is_banned && (
+            <Tooltip title="View ban reason">
+              <ReportOutlinedIcon
+                onClick={() => handleOpenReasonDialog({ voucher })}
+                color="warning"
+                sx={{
+                  fontSize: 24,
+                  '&:hover': {
+                    cursor: 'pointer',
+                    color: '#d84315'
                   }
                 }}
               />

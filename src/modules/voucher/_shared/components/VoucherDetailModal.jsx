@@ -25,7 +25,7 @@ import { modalConfig, modalStyle } from '~/config/modal'
 import { getVoucherStatus } from '~/utils/voucherStatus'
 import 'react-quill-new/dist/quill.snow.css'
 
-function VoucherDetailModal({ ui, data, handler }) {
+function VoucherDetailModal({ ui, data, handler, mode }) {
   const { isLoadingDetail, isLoadingAuditLog, isLoadingProducts, isOpen } = ui
   const { voucher, log, products } = data || {}
   const { handleClose, handleFetchProducts, handleFetchAuditLog } = handler
@@ -113,15 +113,18 @@ function VoucherDetailModal({ ui, data, handler }) {
                     </Box>
                   </Box>
 
-                  {voucher.is_banned && !isLoadingAuditLog && !log && (
-                    <Button
-                      onClick={handleFetchAuditLog}
-                      sx={{ mt: 2 }}
-                      variant="contained"
-                    >
-                      View Audit Log
-                    </Button>
-                  )}
+                  {mode === 'admin' &&
+                    voucher.is_banned &&
+                    !isLoadingAuditLog &&
+                    !log && (
+                      <Button
+                        onClick={handleFetchAuditLog}
+                        sx={{ mt: 2 }}
+                        variant="contained"
+                      >
+                        View Audit Log
+                      </Button>
+                    )}
 
                   {isLoadingAuditLog && <CircularIndeterminate height={350} />}
 
@@ -160,28 +163,29 @@ function VoucherDetailModal({ ui, data, handler }) {
                     </Grid2>
                   )}
                 </Card>
-
-                <Card sx={{ p: 3 }}>
-                  <TypographyTitle sx={{ mb: 3 }}>Creator</TypographyTitle>
-                  <Grid2 container spacing={3} sx={{ mt: 2 }}>
-                    <Grid2 size={6}>
-                      <TypographyLabel>Creator Role</TypographyLabel>
-                      <ReadOnlyTextField
-                        value={capitalizeFirstLetter(
-                          voucher.voucher_creator_role
-                        )}
-                      />
+                {mode === 'admin' && (
+                  <Card sx={{ p: 3 }}>
+                    <TypographyTitle sx={{ mb: 3 }}>Creator</TypographyTitle>
+                    <Grid2 container spacing={3} sx={{ mt: 2 }}>
+                      <Grid2 size={6}>
+                        <TypographyLabel>Creator Role</TypographyLabel>
+                        <ReadOnlyTextField
+                          value={capitalizeFirstLetter(
+                            voucher.voucher_creator_role
+                          )}
+                        />
+                      </Grid2>
+                      <Grid2 size={6}>
+                        <TypographyLabel>Creator Name</TypographyLabel>
+                        <ReadOnlyTextField value={creator.creator_name} />
+                      </Grid2>
+                      <Grid2 size={6}>
+                        <TypographyLabel>Creator CODE</TypographyLabel>
+                        <ReadOnlyTextField value={creator.creator_code} />
+                      </Grid2>
                     </Grid2>
-                    <Grid2 size={6}>
-                      <TypographyLabel>Creator Name</TypographyLabel>
-                      <ReadOnlyTextField value={creator.creator_name} />
-                    </Grid2>
-                    <Grid2 size={6}>
-                      <TypographyLabel>Creator CODE</TypographyLabel>
-                      <ReadOnlyTextField value={creator.creator_code} />
-                    </Grid2>
-                  </Grid2>
-                </Card>
+                  </Card>
+                )}
 
                 <Card sx={{ p: 3 }}>
                   <TypographyTitle sx={{ mb: 3 }}>

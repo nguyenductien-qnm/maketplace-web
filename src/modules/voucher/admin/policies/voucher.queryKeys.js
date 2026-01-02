@@ -1,7 +1,7 @@
 const VOUCHER_ROOT = ['admin', 'voucher']
 
 const VoucherQueryKeys = {
-  voucherRoot: () => VOUCHER_ROOT,
+  root: () => VOUCHER_ROOT,
 
   listRoot: () => [...VOUCHER_ROOT, 'list'],
 

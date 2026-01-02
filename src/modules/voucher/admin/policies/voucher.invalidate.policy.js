@@ -1,5 +1,6 @@
 import VoucherQueryKeys from './voucher.queryKeys'
-import { addVoucherInList, patchVoucherInList } from './voucher.cache.updater'
+import { addVoucherInList } from './voucher.cache.updater'
+import { patchVoucherInList } from '../../_shared/cache/voucher.cache.updater'
 
 const invalidateAfterCreateVoucher = (
   queryClient,
@@ -75,17 +76,10 @@ const invalidateAfterDeleteVoucher = (queryClient) => {
   })
 }
 
-const resetAdminVoucherCache = (queryClient) => {
-  queryClient.invalidateQueries({
-    queryKey: VoucherQueryKeys.voucherRoot(),
-    refetchType: 'active'
-  })
-}
-
 export {
   invalidateAfterCreateVoucher,
   invalidateAfterUpdateVoucher,
   invalidateAfterVoucherStatusChange,
   invalidateAfterUnbanVoucher,
-  resetAdminVoucherCache
+  invalidateAfterDeleteVoucher
 }

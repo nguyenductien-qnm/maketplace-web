@@ -5,14 +5,13 @@ import VendorOrderDetail from '~/pages/vendor/VendorOrderDetail'
 import VendorProductForm from '~/pages/vendor/VendorProductForm'
 import VendorProducts from '~/pages/vendor/VendorProducts'
 import VendorProfile from '~/pages/vendor/VendorProfile'
-import VendorVoucher from '~/pages/vendor/VendorVouchers'
 import VendorWallet from '~/pages/vendor/VendorWallet'
 import VendorSetting from '~/pages/vendor/VendorSetting'
 import { RequireAuthRoute } from './RouteGuards'
 import { Route } from 'react-router-dom'
 import VendorMetrics from '~/pages/vendor/VendorMetrics'
-import VendorVoucherForm from '~/pages/vendor/VendorVoucherForm'
 import VoucherFormPage from '~/modules/voucher/shop/pages/VoucherForm.page'
+import VoucherListPage from '~/modules/voucher/shop/pages/VoucherList.page'
 
 const VendorRoutes = ({ user }) => {
   return (
@@ -25,7 +24,7 @@ const VendorRoutes = ({ user }) => {
         <Route path="orders" element={<VendorOrders />} />
         <Route path="order-detail" element={<VendorOrderDetail />} />
         <Route path="profile" element={<VendorProfile />} />
-        <Route path="voucher" element={<VendorVoucher />} />
+        <Route path="voucher" element={<VoucherListPage />} />
         <Route path="voucher/create" element={<VoucherFormPage />} />
         <Route path="voucher/update/:_id" element={<VoucherFormPage />} />
         <Route path="wallet" element={<VendorWallet />} />

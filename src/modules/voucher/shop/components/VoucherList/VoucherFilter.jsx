@@ -9,12 +9,7 @@ import TypographyLabel from '~/components/common/TypographyLabel'
 import TypographyTitle from '~/components/common/TypographyTitle'
 import { useState } from 'react'
 
-function VoucherFilter({
-  filters,
-  setFilters,
-  handleFilter,
-  handleClearFilter
-}) {
+function VoucherFilter({ ui, data, handler }) {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
@@ -23,12 +18,12 @@ function VoucherFilter({
 
   return (
     <Box>
-      <Button variant="outlined" onClick={handleOpenFilter}>
+      <Button sx={{ p: 1 }} variant="outlined" onClick={handleOpenFilter}>
         <FilterListOutlinedIcon />
         Filters
       </Button>
 
-      <Popover
+      {/* <Popover
         open={open}
         anchorEl={anchorEl}
         onClose={handleCloseFilter}
@@ -173,7 +168,7 @@ function VoucherFilter({
             </Button>
           </Box>
         </Box>
-      </Popover>
+      </Popover> */}
     </Box>
   )
 }

@@ -54,11 +54,39 @@ const getVoucherFormSnapshotByShopAPI = async ({ _id }) => {
   return { status, resData: data }
 }
 
+const getVoucherApplicableProductsByShopAPI = async ({ _id }) => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/vouchers/applicable-products/${_id}`,
+    {
+      ...TOAST_MODE.ONLY_ERROR
+    }
+  )
+  return { status, resData: data }
+}
+
 const createVoucherByShopAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.post(
     `${API_ROOT}/v1/api/shop/vouchers`,
     payload,
     { loadingClass, ...TOAST_MODE.ALL }
+  )
+  return { status, resData: data }
+}
+
+const enableVoucherByShopAPI = async ({ _id, payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/shop/vouchers/enable/${_id}`,
+    payload,
+    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
+const disableVoucherByShopAPI = async ({ _id, payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/shop/vouchers/disable/${_id}`,
+    payload,
+    { loadingClass, ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
 }
@@ -223,5 +251,8 @@ export {
   banShopVoucherByAdminAPI,
   unbanShopVoucherByAdminAPI,
   getVoucherFormSnapshotAPI,
-  getVoucherFormSnapshotByShopAPI
+  getVoucherFormSnapshotByShopAPI,
+  enableVoucherByShopAPI,
+  disableVoucherByShopAPI,
+  getVoucherApplicableProductsByShopAPI
 }

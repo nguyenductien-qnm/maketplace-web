@@ -30,7 +30,7 @@ import {
 import { StatusCodes } from 'http-status-codes'
 import { getShopListForFilterAPI } from '~/api/shop.api'
 import { getStaffListForFilterAPI } from '~/api/user.api'
-import { optimisticToggleVoucherInList } from '../policies/voucher.cache.updater'
+import { optimisticToggleVoucherInList } from '../../_shared/cache/voucher.cache.updater'
 import { getAuditLogDetailByAdminAPI } from '~/api/auditLog.api'
 
 // ============================== QUERY ==============================

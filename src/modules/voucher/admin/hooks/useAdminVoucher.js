@@ -22,7 +22,7 @@ import {
   useAdminUpdateVoucherMutation
 } from '../server/voucher.list.server'
 import useCustomSearchParams from '~/hooks/common/searchParam.hook'
-import { useVoucherCacheActions } from '../server/voucher.list.adapter'
+import { useAdminVoucherCacheActions } from '../server/voucher.list.adapter'
 
 export const useAdminVoucher = () => {
   const [params, paramsReady, setParams] = useCustomSearchParams({
@@ -47,7 +47,7 @@ export const useAdminVoucher = () => {
     closeForm
   } = useAdminVoucherStore()
 
-  const { resetAll, trimList } = useVoucherCacheActions()
+  const { resetAll, trimList } = useAdminVoucherCacheActions()
 
   useEffect(() => {
     setTempFilters(params)
@@ -319,8 +319,6 @@ export const useAdminVoucher = () => {
         products: productsQuery.data,
         log: auditLogQuery.data
       },
-
-      products: productsQuery.data,
 
       filters: {
         params,

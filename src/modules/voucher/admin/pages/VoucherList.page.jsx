@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 import ReasonModal from '../components/ReasonModal'
-import VoucherDetailModal from '../components/VoucherDetailModal'
+import VoucherDetailModal from '../../_shared/components/VoucherDetailModal'
 import VoucherFilter from '../components/VoucherFilter'
 import VoucherForm from '../components/VoucherForm'
 import VoucherHeader from '../components/VoucherHeader'
@@ -28,6 +28,7 @@ function VoucherList() {
       <VoucherForm ui={ui.form} data={data.form} handler={handler.form} />
 
       <VoucherDetailModal
+        mode="admin"
         ui={ui.detailModal}
         data={data.detailModal}
         handler={handler.detailModal}
