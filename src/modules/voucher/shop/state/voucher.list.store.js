@@ -46,5 +46,8 @@ export const useShopVoucherStore = create((set) => ({
       return { tempFilters: next }
     }),
 
-  clearTempFilters: () => set({ tempFilters: { sort_by: 'newest' } })
+  clearTempFilters: ({ currentStatus, limit }) =>
+    set({
+      tempFilters: { status: currentStatus, sort_by: 'newest', page: 1, limit }
+    })
 }))

@@ -1,4 +1,9 @@
 import useCustomSearchParams from '~/hooks/common/searchParam.hook'
+import { useShopVoucherStore } from '../state/voucher.list.store'
+import { buildBanReasonMarkdown } from '~/helpers/buildBanReasonMarkdown'
+import { useShopVoucherCacheActions } from '../server/voucher.cache.adapter'
+import { useEffect } from 'react'
+import { VOUCHER_DELETE_CONFIRM_DIALOG } from '../constants/voucher.constant'
 import {
   useShopVoucherListQuery,
   useShopVoucherSummaryQuery,
@@ -9,14 +14,10 @@ import {
   useShopDeleteVoucherMutation,
   useShopVoucherProductsQuery
 } from '../server/voucher.list.server'
-import { useShopVoucherStore } from '../state/voucher.list.store'
-import { useEffect } from 'react'
-import { buildBanReasonMarkdown } from '~/helpers/buildBanReasonMarkdown'
-import { useShopVoucherCacheActions } from '../server/voucher.cache.adapter'
 
 export const useShopVoucher = () => {
   const [params, paramsReady, setParams] = useCustomSearchParams({
-    defaultParams: { status: 'ACTIVE' }
+    defaultParams: { status: 'ALL' }
   })
 
   const {
@@ -40,8 +41,9 @@ export const useShopVoucher = () => {
 
   useEffect(() => {
     setTempFilters(params)
-  }, [params])
+  }, [params, setTempFilters])
 
+  // ============================== API ==============================
   const listQuery = useShopVoucherListQuery({ filters: params, paramsReady })
 
   const summaryQuery = useShopVoucherSummaryQuery()
@@ -66,14 +68,14 @@ export const useShopVoucher = () => {
 
   const deleteMutation = useShopDeleteVoucherMutation()
 
-  // ============================== HANDLER FILTER ==============================
+  // ============================== FILTER HANDLERS ==============================
   const handleApplyFilter = () => {
     trimList()
     setParams(tempFilters)
   }
 
   const handleClearTempFilters = () => {
-    clearTempFilters()
+    clearTempFilters({ currentStatus: params.status, limit: params.limit })
   }
 
   const handleFilterChange = (field, value) => {
@@ -89,20 +91,13 @@ export const useShopVoucher = () => {
     trimList()
     setParams({ ...params, limit: Number(event.target.value), page: 1 })
   }
+  // ============================== API HANDLERS ==============================
+  const handleFetchProducts = () => {
+    if (!selectedVoucherId) return
+    productsQuery.refetch()
+  }
 
-  // ============================== HANDLER FILTER ==============================
-  const handleOpenDetailModal = ({ voucher }) => openDetailModal(voucher._id)
-
-  const handleCloseDetailModal = () => closeDetailModal()
-
-  const handleOpenConfirmDialog = ({ voucher }) =>
-    openConfirmDialog(voucher._id)
-
-  const handleCloseConfirmDialog = () => closeConfirmDialog()
-
-  const handleFetchProducts = () => productsQuery.refetch()
-
-  const handleToggleVoucher = async ({ action, voucher }) => {
+  const handleToggleVoucher = ({ action, voucher }) => {
     const api = {
       enable: enableMutation,
       disable: disableMutation
@@ -112,6 +107,40 @@ export const useShopVoucher = () => {
 
     api[action].mutate({ _id: voucher._id })
   }
+
+  const handleDeleteVoucher = () => {
+    if (!selectedVoucherId) return
+
+    deleteMutation.mutate(
+      { _id: selectedVoucherId },
+      { onSuccess: () => closeConfirmDialog() }
+    )
+  }
+  // ============================== UI HANDLERS ==============================
+  const handleOpenDetailModal = ({ voucher }) => openDetailModal(voucher._id)
+
+  const handleCloseDetailModal = () => closeDetailModal()
+
+  const handleOpenConfirmDialog = ({ voucher }) => {
+    openConfirmDialog(voucher._id)
+  }
+
+  const handleCloseConfirmDialog = () => {
+    if (deleteMutation.isPending) return
+    closeConfirmDialog()
+  }
+
+  const handleOpenReasonDialog = ({ voucher }) => {
+    openReasonDialog(voucher._id)
+  }
+
+  const handleChangeTab = (newValue) => {
+    trimList()
+    const updatedParams = { ...params, status: newValue, page: 1 }
+    setParams(updatedParams)
+  }
+
+  const handleRefresh = () => resetAll()
 
   const isVoucherToggleInProgress = (voucher) => {
     const isEnabling =
@@ -124,25 +153,10 @@ export const useShopVoucher = () => {
     return isEnabling || isDisabling
   }
 
-  const handleChangeTab = (newValue) => {
-    trimList()
-    const updatedParams = { ...params, status: newValue, page: 1 }
-    setParams(updatedParams)
-  }
-
-  const handleOpenReasonDialog = ({ voucher }) => {
-    openReasonDialog(voucher._id)
-  }
-
-  const handleRefresh = () => resetAll()
-
   return {
     ui: {
       header: {
-        isRefreshing: listQuery.isFetching || summaryQuery.isFetching,
-        filter: {
-          isFetching: listQuery.isFetching
-        }
+        isRefreshing: listQuery.isFetching || summaryQuery.isFetching
       },
 
       tab: {
@@ -165,7 +179,9 @@ export const useShopVoucher = () => {
       },
 
       confirmDialog: {
-        isOpen: isOpenConfirmDialog
+        isOpen: isOpenConfirmDialog,
+        isSubmitting: deleteMutation.isPending,
+        ...VOUCHER_DELETE_CONFIRM_DIALOG
       },
 
       reasonDialog: {
@@ -189,8 +205,7 @@ export const useShopVoucher = () => {
         products: productsQuery.data
       },
 
-      filters: {
-        params,
+      filter: {
         tempFilters
       },
 
@@ -229,7 +244,8 @@ export const useShopVoucher = () => {
       },
 
       confirmDialog: {
-        handleCloseConfirmDialog
+        handleClose: handleCloseConfirmDialog,
+        handleConfirm: handleDeleteVoucher
       },
 
       reasonDialog: {

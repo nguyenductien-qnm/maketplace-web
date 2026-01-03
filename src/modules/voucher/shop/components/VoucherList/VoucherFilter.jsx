@@ -1,15 +1,21 @@
 import Box from '@mui/material/Box'
-import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 import Popover from '@mui/material/Popover'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
-import TypographyLabel from '~/components/common/TypographyLabel'
 import TypographyTitle from '~/components/common/TypographyTitle'
+import SimpleDateRangeInput from '~/components/common/SimpleDateRangeInput'
 import { useState } from 'react'
+import 'react-date-range/dist/styles.css'
+import 'react-date-range/dist/theme/default.css'
+import toDateOnly from '~/utils/toDateOnly'
 
-function VoucherFilter({ ui, data, handler }) {
+function VoucherFilter({ data, handler }) {
+  const { tempFilters } = data
+  const { handleFilterChange, handleApplyFilter, handleClearTempFilters } =
+    handler
+
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
@@ -23,7 +29,7 @@ function VoucherFilter({ ui, data, handler }) {
         Filters
       </Button>
 
-      {/* <Popover
+      <Popover
         open={open}
         anchorEl={anchorEl}
         onClose={handleCloseFilter}
@@ -32,9 +38,8 @@ function VoucherFilter({ ui, data, handler }) {
       >
         <Box
           sx={{
-            minWidth: '450px',
-            minHeight: '500px',
-            maxHeight: '700px',
+            width: '450px',
+            height: '630px',
             display: 'flex',
             flexDirection: 'column'
           }}
@@ -50,125 +55,117 @@ function VoucherFilter({ ui, data, handler }) {
               padding: '0 24px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '20px'
+              gap: '25px'
             }}
           >
-            <Box>
-              <TextField
-                fullWidth
-                placeholder="Enter voucher name or code"
-                value={filters.search}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, search: e.target.value }))
-                }
-              />
-            </Box>
+            <TextField
+              sx={{ mt: 2 }}
+              select
+              fullWidth
+              label="Sort By"
+              value={tempFilters.sort_by || ''}
+              onChange={(e) => handleFilterChange('sort_by', e.target.value)}
+            >
+              <MenuItem value="newest">Created (newest)</MenuItem>
+              <MenuItem value="oldest">Created (oldest)</MenuItem>
+            </TextField>
 
-            <Box>
-              <TypographyLabel>Voucher Type</TypographyLabel>
-              <Select
-                fullWidth
-                value={filters.type || ''}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    type: e.target.value
-                  }))
-                }
-                displayEmpty
-              >
-                <MenuItem value="fixed_amount">Fixed Amount</MenuItem>
-                <MenuItem value="percent">Percent</MenuItem>
-              </Select>
-            </Box>
+            <TextField
+              fullWidth
+              label="Search"
+              placeholder="Enter voucher name or code"
+              value={tempFilters.search}
+              onChange={(e) => handleFilterChange('search', e.target.value)}
+            />
 
-            <Box>
-              <TypographyLabel>Voucher Apply</TypographyLabel>
-              <Select
-                fullWidth
-                value={filters.apply_to || ''}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    apply_to: e.target.value
-                  }))
-                }
-                displayEmpty
-              >
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value="specific">Specific</MenuItem>
-              </Select>
-            </Box>
+            <TextField
+              select
+              fullWidth
+              label="Type"
+              value={tempFilters.type || ''}
+              onChange={(e) => handleFilterChange('type', e.target.value)}
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="fixed_amount">Fixed</MenuItem>
+              <MenuItem value="percent">Percent</MenuItem>
+            </TextField>
 
-            <Box>
-              <TypographyLabel>Voucher Visibility</TypographyLabel>
-              <Select
-                fullWidth
-                value={filters.visibility || ''}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    visibility: e.target.value
-                  }))
-                }
-                displayEmpty
-              >
-                <MenuItem value="public">Public</MenuItem>
-                <MenuItem value="private">Private</MenuItem>
-              </Select>
-            </Box>
+            <TextField
+              select
+              fullWidth
+              label="Apply To"
+              value={tempFilters.apply_to || ''}
+              onChange={(e) => handleFilterChange('apply_to', e.target.value)}
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="all">All Products</MenuItem>
+              <MenuItem value="specific">Specific Products</MenuItem>
+            </TextField>
 
-            <Box>
-              <TypographyLabel>Sort by</TypographyLabel>
-              <Select
-                fullWidth
-                value={filters.sort_by || ''}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    sort_by: e.target.value
-                  }))
-                }
-                displayEmpty
-              >
-                <MenuItem value="newest">Created (newest)</MenuItem>
-                <MenuItem value="oldest">Created (oldest)</MenuItem>
-              </Select>
-            </Box>
+            <TextField
+              select
+              fullWidth
+              label="Visibility"
+              value={tempFilters.visibility || ''}
+              onChange={(e) => handleFilterChange('visibility', e.target.value)}
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="public">Public</MenuItem>
+              <MenuItem value="private">Private</MenuItem>
+            </TextField>
+
+            <SimpleDateRangeInput
+              label="Active Range"
+              config={{ minDate: new Date() }}
+              value={{
+                startDate: tempFilters?.active_from
+                  ? new Date(tempFilters.active_from)
+                  : undefined,
+                endDate: tempFilters?.active_to
+                  ? new Date(tempFilters.active_to)
+                  : undefined
+              }}
+              onChange={(range) => {
+                handleFilterChange(
+                  'active_from',
+                  range?.startDate ? toDateOnly(range.startDate) : undefined
+                )
+                handleFilterChange(
+                  'active_to',
+                  range?.endDate ? toDateOnly(range.endDate) : undefined
+                )
+              }}
+            />
           </Box>
 
           <Box
             sx={{
               padding: 3,
-              paddingTop: 2,
+              paddingTop: 0,
               display: 'flex',
               justifyContent: 'flex-end',
-              flexShrink: 0,
-              marginTop: 2
+              flexShrink: 0
             }}
           >
             <Button
-              onClick={() => {
-                handleClearFilter()
-                handleCloseFilter()
-              }}
+              onClick={() => handleClearTempFilters()}
               variant="contained"
-              sx={{ backgroundColor: 'black', mr: '10px' }}
+              sx={{ backgroundColor: 'black', mr: 1 }}
             >
               Clear
             </Button>
             <Button
               variant="contained"
               onClick={() => {
-                handleFilter()
+                handleApplyFilter()
                 handleCloseFilter()
               }}
             >
-              Search
+              Apply
             </Button>
           </Box>
         </Box>
-      </Popover> */}
+      </Popover>
     </Box>
   )
 }

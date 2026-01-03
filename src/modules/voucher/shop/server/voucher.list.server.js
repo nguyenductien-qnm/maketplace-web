@@ -4,7 +4,8 @@ import {
   queryVoucherByShopAPI,
   enableVoucherByShopAPI,
   disableVoucherByShopAPI,
-  getVoucherApplicableProductsByShopAPI
+  getVoucherApplicableProductsByShopAPI,
+  deleteVoucherByShopAPI
 } from '~/api/voucher.api'
 import VoucherCachePolicy from '../policies/voucher.cache.policy'
 import VoucherQueryKeys from '../policies/voucher.queryKeys'
@@ -17,7 +18,10 @@ import {
 } from '@tanstack/react-query'
 import { getAuditLogDetailByShopAPI } from '~/api/auditLog.api'
 import { optimisticToggleVoucherInList } from '../../_shared/cache/voucher.cache.updater'
-import { invalidateAfterVoucherStatusChange } from '../policies/voucher.invalidate.policy'
+import {
+  invalidateAfterDeleteVoucher,
+  invalidateAfterVoucherStatusChange
+} from '../policies/voucher.invalidate.policy'
 
 // ============================== QUERY ==============================
 const useShopVoucherListQuery = ({ filters, paramsReady }) => {
@@ -168,8 +172,16 @@ const useShopDisableVoucherMutation = () => {
 
 const useShopDeleteVoucherMutation = () => {
   const queryClient = useQueryClient()
-  return useMutation({})
+  return useMutation({
+    mutationFn: async ({ _id }) => {
+      const { status } = await deleteVoucherByShopAPI({ _id })
+      if (status !== StatusCodes.OK) throw new Error()
+      return
+    },
+    onSuccess: () => invalidateAfterDeleteVoucher(queryClient)
+  })
 }
+
 export {
   //===== QUERY =====
   useShopVoucherListQuery,

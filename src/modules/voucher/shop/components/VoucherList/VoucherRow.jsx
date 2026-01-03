@@ -187,7 +187,7 @@ function VoucherRow({ voucher, ui, handler }) {
             <Tooltip title="Permanently delete this voucher">
               <HighlightOffOutlinedIcon
                 onClick={() => {
-                  handleOpenConfirmDialog(voucher)
+                  handleOpenConfirmDialog({ voucher })
                 }}
                 sx={{
                   fontSize: 24,

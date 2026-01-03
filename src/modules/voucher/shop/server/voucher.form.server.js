@@ -7,7 +7,10 @@ import {
 import VoucherQueryKeys from '../policies/voucher.queryKeys'
 import VoucherCachePolicy from '../policies/voucher.cache.policy'
 import { StatusCodes } from 'http-status-codes'
-import { invalidateAfterUpdateVoucher } from '../policies/voucher.invalidate.policy'
+import {
+  invalidateAfterCreateVoucher,
+  invalidateAfterUpdateVoucher
+} from '../policies/voucher.invalidate.policy'
 
 // ============================== QUERY ==============================
 const useShopVoucherFormSnapshotQuery = ({ _id, isUpdate }) => {
@@ -25,13 +28,14 @@ const useShopVoucherFormSnapshotQuery = ({ _id, isUpdate }) => {
 
 // ============================== MUTATION ==============================
 const useShopCreateVoucherMutation = () => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ payload }) => {
       const { status } = await createVoucherByShopAPI({ payload })
       if (status !== StatusCodes.CREATED) throw new Error()
       return
     },
-    onSuccess: () => {}
+    onSuccess: () => invalidateAfterCreateVoucher(queryClient)
   })
 }
 
@@ -41,12 +45,10 @@ const useShopUpdateVoucherMutation = () => {
     mutationFn: async ({ _id, payload }) => {
       const { status } = await updateVoucherByShopAPI({ _id, payload })
       if (status !== StatusCodes.OK) throw new Error()
-      console.log('success')
       return { _id }
     },
-    onSuccess: (voucher) => {
+    onSuccess: (voucher) =>
       invalidateAfterUpdateVoucher(queryClient, voucher._id)
-    }
   })
 }
 

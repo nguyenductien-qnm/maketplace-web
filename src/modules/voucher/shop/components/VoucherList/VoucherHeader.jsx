@@ -28,7 +28,7 @@ function VoucherHeader({ ui, data, handler }) {
           </Button>
         </Tooltip>
 
-        <VoucherFilter ui={ui} data={data} handler={handler} />
+        <VoucherFilter data={data} handler={handler.filter} />
 
         <Link to="/vendor/voucher/create">
           <Button variant="outlined" sx={{ p: 1 }}>

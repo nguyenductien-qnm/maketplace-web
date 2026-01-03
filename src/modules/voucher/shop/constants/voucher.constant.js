@@ -34,10 +34,19 @@ const VOUCHER_TYPE_IMAGE_MAP = {
 
 const VOUCHER_TAB_KEYS = Object.keys(VOUCHER_TAB_LABELS)
 
+const VOUCHER_DELETE_CONFIRM_DIALOG = {
+  header: 'Confirm Deletion',
+  content:
+    'This action cannot be undone! Are you sure you want to permanently delete this voucher?',
+  confirmText: 'Confirm',
+  confirmColor: 'error'
+}
+
 export {
   VOUCHER_TAB_LABELS,
   VOUCHER_TAB_KEYS,
   VOUCHER_TABLE_COLUMNS,
   VOUCHER_STATUS_CHIP_CONFIG,
-  VOUCHER_TYPE_IMAGE_MAP
+  VOUCHER_TYPE_IMAGE_MAP,
+  VOUCHER_DELETE_CONFIRM_DIALOG
 }
