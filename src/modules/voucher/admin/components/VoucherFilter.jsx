@@ -18,11 +18,15 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import CloseIcon from '@mui/icons-material/Close'
 import IGNORE_KEY from '~/constant/ignoreKey.const'
 import getActiveFilters from '~/utils/getActiveFilters'
+import SimpleDateRangeInput from '~/components/common/SimpleDateRangeInput'
 import { useState } from 'react'
 import {
   FILTER_VALUE_MAP,
   FILTER_LABEL_MAP
 } from '../constants/voucher.filter.constant'
+import 'react-date-range/dist/styles.css'
+import 'react-date-range/dist/theme/default.css'
+import toDateOnly from '~/utils/toDateOnly'
 
 function VoucherFilter({ ui, data, handler }) {
   const [advancedOpen, setAdvancedOpen] = useState(false)
@@ -214,54 +218,51 @@ function VoucherFilter({ ui, data, handler }) {
             </Grid2>
 
             <Grid2 size={3}>
-              <TextField
-                fullWidth
-                label="Created From"
-                type="date"
-                value={tempFilters.created_from || ''}
-                onChange={(e) =>
-                  handleFilterChange('created_from', e.target.value)
-                }
-                InputLabelProps={{ shrink: true }}
+              <SimpleDateRangeInput
+                label="Created Range"
+                config={{ maxDate: new Date() }}
+                value={{
+                  startDate: tempFilters?.created_from
+                    ? new Date(tempFilters.created_from)
+                    : undefined,
+                  endDate: tempFilters?.created_to
+                    ? new Date(tempFilters.created_to)
+                    : undefined
+                }}
+                onChange={(range) => {
+                  handleFilterChange(
+                    'created_from',
+                    range?.startDate ? toDateOnly(range.startDate) : undefined
+                  )
+                  handleFilterChange(
+                    'created_to',
+                    range?.endDate ? toDateOnly(range.endDate) : undefined
+                  )
+                }}
               />
             </Grid2>
 
             <Grid2 size={3}>
-              <TextField
-                fullWidth
-                label="Created To"
-                type="date"
-                value={tempFilters.created_to || ''}
-                onChange={(e) =>
-                  handleFilterChange('created_to', e.target.value)
-                }
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid2>
-
-            <Grid2 size={3}>
-              <TextField
-                fullWidth
-                label="Active From"
-                type="date"
-                value={tempFilters.active_from || ''}
-                onChange={(e) =>
-                  handleFilterChange('active_from', e.target.value)
-                }
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid2>
-
-            <Grid2 size={3}>
-              <TextField
-                fullWidth
-                label="Active To"
-                type="date"
-                value={tempFilters.active_to || ''}
-                onChange={(e) =>
-                  handleFilterChange('active_to', e.target.value)
-                }
-                InputLabelProps={{ shrink: true }}
+              <SimpleDateRangeInput
+                label="Active Range"
+                value={{
+                  startDate: tempFilters?.active_from
+                    ? new Date(tempFilters.active_from)
+                    : undefined,
+                  endDate: tempFilters?.active_to
+                    ? new Date(tempFilters.active_to)
+                    : undefined
+                }}
+                onChange={(range) => {
+                  handleFilterChange(
+                    'active_from',
+                    range?.startDate ? toDateOnly(range.startDate) : undefined
+                  )
+                  handleFilterChange(
+                    'active_to',
+                    range?.endDate ? toDateOnly(range.endDate) : undefined
+                  )
+                }}
               />
             </Grid2>
 
@@ -283,7 +284,7 @@ function VoucherFilter({ ui, data, handler }) {
             </Grid2>
 
             {creatorRole && creatorRole != '' && (
-              <Grid2 size={6}>
+              <Grid2 size={3}>
                 <Box>
                   <Autocomplete
                     fullWidth

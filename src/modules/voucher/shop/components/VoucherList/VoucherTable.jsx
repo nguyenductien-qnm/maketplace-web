@@ -24,7 +24,7 @@ function VoucherTable({ ui, data, handler }) {
       <TableContainer
         variant="outlined"
         sx={{
-          maxHeight: '85vh',
+          height: '85vh',
           overflowY: 'auto',
           opacity: isFetching ? 0.2 : 1,
           transition: 'opacity 0.2s'

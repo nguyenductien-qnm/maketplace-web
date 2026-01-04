@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField'
 import Popover from '@mui/material/Popover'
 import { useState } from 'react'
 import { DateRange } from 'react-date-range'
-import { format } from 'date-fns'
+import toDateOnly from '~/utils/toDateOnly'
 
 const isValidDate = (d) => d instanceof Date && !Number.isNaN(d.getTime())
 
@@ -19,13 +19,18 @@ function SimpleDateRangeInput({ label, value, config, onChange }) {
     }
   ])
 
-  const displayValue =
-    isValidDate(value?.startDate) && isValidDate(value?.endDate)
-      ? `${format(value.startDate, 'dd/MM/yyyy')} – ${format(
-          value.endDate,
-          'dd/MM/yyyy'
-        )}`
-      : ''
+  const displayValue = () => {
+    const start = isValidDate(value?.startDate)
+      ? toDateOnly(value.startDate)
+      : null
+
+    const end = isValidDate(value?.endDate) ? toDateOnly(value.endDate) : null
+
+    if (start && end) return `${start} – ${end}`
+    if (start) return `From ${start}`
+    if (end) return `Until ${end}`
+    return ''
+  }
 
   const handleOpen = (e) => {
     setTempRange([
@@ -62,7 +67,7 @@ function SimpleDateRangeInput({ label, value, config, onChange }) {
       <TextField
         fullWidth
         label={label}
-        value={displayValue}
+        value={displayValue()}
         placeholder="Select date range"
         InputProps={{ readOnly: true }}
         onClick={handleOpen}
@@ -82,7 +87,6 @@ function SimpleDateRangeInput({ label, value, config, onChange }) {
             rangeColors={['#1976d2']}
             editableDateInputs={true}
             onChange={(item) => {
-              console.log(item)
               setTempRange([item.selection])
             }}
             moveRangeOnFirstSelection={false}

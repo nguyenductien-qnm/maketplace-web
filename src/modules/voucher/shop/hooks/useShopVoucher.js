@@ -71,7 +71,7 @@ export const useShopVoucher = () => {
   // ============================== FILTER HANDLERS ==============================
   const handleApplyFilter = () => {
     trimList()
-    setParams(tempFilters)
+    setParams({ ...tempFilters, page: 1 })
   }
 
   const handleClearTempFilters = () => {

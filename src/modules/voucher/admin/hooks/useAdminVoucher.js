@@ -44,7 +44,8 @@ export const useAdminVoucher = () => {
     openReasonModal,
     closeReasonModal,
     openForm,
-    closeForm
+    closeForm,
+    clearTempFilters
   } = useAdminVoucherStore()
 
   const { resetAll, trimList } = useAdminVoucherCacheActions()
@@ -125,7 +126,7 @@ export const useAdminVoucher = () => {
       setParams({ ...tempFilters, status: 'ALL' })
       toast.info('Searching across all voucher statuses with date filter.')
     } else {
-      setParams(tempFilters)
+      setParams({ ...tempFilters, page: 1 })
     }
   }
 
@@ -133,7 +134,7 @@ export const useAdminVoucher = () => {
     if (key === 'sort_by') return
     trimList()
 
-    const clone = { ...params }
+    const clone = { ...params, page: 1 }
 
     delete clone[key]
 
@@ -155,7 +156,7 @@ export const useAdminVoucher = () => {
   }
 
   const handleClearTempFilters = () => {
-    clearTempFilters()
+    clearTempFilters({ currentStatus: params.status, limit: params.limit })
   }
 
   const handleFilterChange = (field, value) => {
