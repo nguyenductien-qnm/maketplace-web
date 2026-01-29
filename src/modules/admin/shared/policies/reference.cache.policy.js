@@ -1,5 +1,6 @@
 const ReferenceCachePolicy = {
   shop: Infinity,
-  staff: Infinity
+  staff: Infinity,
+  category: Infinity
 }
 export default ReferenceCachePolicy

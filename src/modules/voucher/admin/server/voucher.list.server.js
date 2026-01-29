@@ -18,9 +18,7 @@ import {
   updateVoucherByAdminAPI
 } from '~/api/voucher.api'
 import VoucherCachePolicy from '../policies/voucher.cache.policy'
-import ReferenceCachePolicy from '~/modules/admin/policies/reference.cache.policy'
 import VoucherQueryKeys from '../policies/voucher.queryKeys'
-import ReferenceQueryKeys from '~/modules/admin/policies/reference.queryKeys'
 import {
   invalidateAfterUnbanVoucher,
   invalidateAfterCreateVoucher,
@@ -28,8 +26,6 @@ import {
   invalidateAfterVoucherStatusChange
 } from '../policies/voucher.invalidate.policy'
 import { StatusCodes } from 'http-status-codes'
-import { getShopListForFilterAPI } from '~/api/shop.api'
-import { getStaffListForFilterAPI } from '~/api/user.api'
 import { optimisticToggleVoucherInList } from '../../_shared/cache/voucher.cache.updater'
 import { getAuditLogDetailByAdminAPI } from '~/api/auditLog.api'
 
@@ -112,30 +108,6 @@ const useAdminVoucherAuditLogQuery = ({ _id }) => {
         entity: 'voucher',
         action: 'banned'
       })
-      if (status !== StatusCodes.OK) throw Error()
-      return resData.metadata
-    }
-  })
-}
-
-const useAdminShopFilterQuery = () => {
-  return useQuery({
-    staleTime: ReferenceCachePolicy.shop,
-    queryKey: ReferenceQueryKeys.shop(),
-    queryFn: async () => {
-      const { status, resData } = await getShopListForFilterAPI()
-      if (status !== StatusCodes.OK) throw Error()
-      return resData.metadata
-    }
-  })
-}
-
-const useAdminStaffFilterQuery = () => {
-  return useQuery({
-    staleTime: ReferenceCachePolicy.staff,
-    queryKey: ReferenceQueryKeys.staff(),
-    queryFn: async () => {
-      const { status, resData } = await getStaffListForFilterAPI()
       if (status !== StatusCodes.OK) throw Error()
       return resData.metadata
     }
@@ -300,8 +272,6 @@ export {
   useAdminVoucherProductsQuery,
   useAdminVoucherAuditLogQuery,
   useVoucherFormSnapshotQuery,
-  useAdminShopFilterQuery,
-  useAdminStaffFilterQuery,
   //MUTATION
   useAdminCreateVoucherMutation,
   useAdminUpdateVoucherMutation,

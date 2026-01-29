@@ -56,8 +56,8 @@ function OrderRow({
     return (
       <Chip
         variant="outlined"
-        label={capitalizeFirstLetter(value) || '—'}
         size="small"
+        label={capitalizeFirstLetter(value) || '—'}
         sx={{
           width: '80px',
           color: PAYMENT_STATUS_COLORS[value] || 'gray',

@@ -15,7 +15,7 @@ const getProductDetailByCustomerAPI = async ({ product_slug }) => {
 // ============================ VENDOR ============================
 const queryProductByShopAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/shop/product`,
+    `${API_ROOT}/v1/api/shop/products`,
     {
       params: cleanFilters(payload),
       ...TOAST_MODE.ONLY_ERROR
@@ -34,7 +34,7 @@ const getProductDetailByShopAPI = async ({ _id }) => {
 
 const getProductMetricsByShopAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/shop/product/metrics/${_id}`,
+    `${API_ROOT}/v1/api/shop/products/metrics/${_id}`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
@@ -42,7 +42,7 @@ const getProductMetricsByShopAPI = async ({ _id }) => {
 
 const getProductSummaryByShopAPI = async () => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/shop/product/summary`,
+    `${API_ROOT}/v1/api/shop/products/summary`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
@@ -80,7 +80,7 @@ const deleteProductByShopAPI = async ({ _id, loadingClass }) => {
 
 const queryProductByAdminAPI = async ({ payload }) => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/admin/product`,
+    `${API_ROOT}/v1/api/admin/products`,
     {
       params: cleanFilters(payload),
       ...TOAST_MODE.ONLY_ERROR
@@ -89,9 +89,17 @@ const queryProductByAdminAPI = async ({ payload }) => {
   return { status, resData: data }
 }
 
+const getProductSummaryByAdminAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/admin/products/summary`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
 const getProductDetailByAdminAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/admin/product/${_id}`,
+    `${API_ROOT}/v1/api/admin/products/${_id}`,
     {
       ...TOAST_MODE.ONLY_ERROR
     }
@@ -99,13 +107,49 @@ const getProductDetailByAdminAPI = async ({ _id }) => {
   return { status, resData: data }
 }
 
-const updateProductStatusByAdminAPI = async ({
-  payload,
-  loadingClass,
-  action
-}) => {
+const banProductByAdmin = async ({ _id, payload }) => {
   const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/admin/product/update-status/${action}`,
+    `${API_ROOT}/v1/api/admin/products/ban/${_id}`,
+    payload,
+    { ...TOAST_MODE.ALL }
+  )
+
+  return { status, resData: data }
+}
+
+const unbanProductByAdmin = async ({ _id, payload }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/products/unban/${_id}`,
+    payload,
+    { ...TOAST_MODE.ALL }
+  )
+
+  return { status, resData: data }
+}
+
+const approveProductByAdmin = async ({ _id, payload }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/products/approve/${_id}`,
+    payload,
+    { ...TOAST_MODE.ALL }
+  )
+
+  return { status, resData: data }
+}
+
+const rejectProductByAdmin = async ({ _id, payload }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/products/reject/${_id}`,
+    payload,
+    { ...TOAST_MODE.ALL }
+  )
+
+  return { status, resData: data }
+}
+
+const updateProductStatusByAdminAPI = async ({ payload, action }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/product/${action}`,
     payload,
     {
       ...TOAST_MODE.ALL,
@@ -141,5 +185,10 @@ export {
   getProductDetailByAdminAPI,
   updateProductStatusByAdminAPI,
   exportProductsByAdminAPI,
-  getProductSummaryByShopAPI
+  getProductSummaryByShopAPI,
+  getProductSummaryByAdminAPI,
+  banProductByAdmin,
+  unbanProductByAdmin,
+  approveProductByAdmin,
+  rejectProductByAdmin
 }

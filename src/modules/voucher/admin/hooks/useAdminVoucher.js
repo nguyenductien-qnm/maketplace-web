@@ -6,8 +6,6 @@ import {
   VOUCHER_REASON_CONTENT
 } from '../constants/voucher.constant'
 import {
-  useAdminShopFilterQuery,
-  useAdminStaffFilterQuery,
   useAdminVoucherAuditLogQuery,
   useAdminVoucherDetailQuery,
   useAdminVoucherListQuery,
@@ -21,8 +19,13 @@ import {
   useAdminCreateVoucherMutation,
   useAdminUpdateVoucherMutation
 } from '../server/voucher.list.server'
-import useCustomSearchParams from '~/hooks/common/searchParam.hook'
 import { useAdminVoucherCacheActions } from '../server/voucher.list.adapter'
+import useCustomSearchParams from '~/hooks/common/searchParam.hook'
+
+import {
+  useAdminShopFilterQuery,
+  useAdminStaffFilterQuery
+} from '~/modules/admin/shared/server/reference.server'
 
 export const useAdminVoucher = () => {
   const [params, paramsReady, setParams] = useCustomSearchParams({
@@ -259,7 +262,7 @@ export const useAdminVoucher = () => {
     ui: {
       header: {
         pageTitle: VOUCHER_PAGE_TITLE[params.status],
-        isRefreshing: listQuery.isFetching || summaryQuery.isFetching
+        isRefreshing: listQuery.isFetching
       },
 
       summary: {

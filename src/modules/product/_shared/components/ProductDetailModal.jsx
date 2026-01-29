@@ -24,8 +24,8 @@ import ShopCard from '~/components/user/Home/ShopCard'
 import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
 import findCategoryName from '~/utils/findCategoryName'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
-import LightboxImage from '~/components/common/LightboxImage'
 import formatCurrency from '~/utils/formatCurrency'
+import LightboxGallery from '~/components/common/LightboxGallery'
 import { blue, grey } from '@mui/material/colors'
 import { modalConfig, modalStyle } from '~/config/modal'
 import { WEB_ROOT } from '~/utils/constants'
@@ -39,24 +39,19 @@ const statusColor = (status) => {
   if (status == 'banned') return 'error'
 }
 
-function ProductDetailModal({
-  loading,
-  loadingAuditLog,
-  open,
-  onClose,
-  productDetail,
-  categories,
-  handleGetAuditLogDetail
-}) {
+function ProductDetailModal({ ui, data, handler, mode }) {
+  const { isLoadingDetail, isLoadingAuditLog, isOpen } = ui
+  const { product, log } = data || {}
+  const { handleClose, handleFetchAuditLog } = handler
+
   const [openLightbox, setOpenLightbox] = useState(false)
-  const [src, setSrc] = useState(null)
-  const { product, log } = productDetail || {}
+  const [activeIndex, setActiveIndex] = useState(0)
 
   return (
     <>
-      <Modal open={open} onClose={onClose} {...modalConfig}>
-        <Fade in={open}>
-          <Box sx={modalStyle(1000)}>
+      <Modal open={isOpen} onClose={handleClose} {...modalConfig}>
+        <Fade in={isOpen}>
+          <Box sx={modalStyle(1000, '95vh')}>
             <Box sx={{ flexShrink: 0 }}>
               <Box
                 sx={{
@@ -68,7 +63,7 @@ function ProductDetailModal({
                 <TypographyTitle>Product Detail Information</TypographyTitle>
                 <HighlightOffIcon
                   color="error"
-                  onClick={onClose}
+                  onClick={handleClose}
                   sx={{ cursor: 'pointer' }}
                 />
               </Box>
@@ -81,21 +76,9 @@ function ProductDetailModal({
                 overflowY: 'auto'
               }}
             >
-              {loading && (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    mt: 5,
-                    mb: 8
-                  }}
-                >
-                  <CircularIndeterminate />
-                </Box>
-              )}
+              {isLoadingDetail && <CircularIndeterminate height={700} />}
 
-              {!loading && product && (
+              {!isLoadingDetail && product && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                   <Card sx={{ p: 3 }}>
                     <TypographyTitle sx={{ mb: 1 }}>Status</TypographyTitle>
@@ -104,35 +87,21 @@ function ProductDetailModal({
                       {capitalizeFirstLetter(product.product_status)}
                     </Alert>
 
-                    {loadingAuditLog && (
-                      <Box>
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            mt: 5,
-                            mb: 8
-                          }}
-                        >
-                          <CircularIndeterminate />
-                        </Box>
-                      </Box>
+                    {mode === 'admin' && !isLoadingAuditLog && !log && (
+                      <Button
+                        onClick={handleFetchAuditLog}
+                        sx={{ mt: 2 }}
+                        variant="contained"
+                      >
+                        View Audit Log
+                      </Button>
                     )}
 
-                    {!loadingAuditLog &&
-                      !log &&
-                      product.product_status != 'pending' && (
-                        <Button
-                          onClick={() => handleGetAuditLogDetail(product)}
-                          sx={{ mt: 3 }}
-                          variant="outlined"
-                        >
-                          View Audit Log
-                        </Button>
-                      )}
+                    {isLoadingAuditLog && (
+                      <CircularIndeterminate height={350} />
+                    )}
 
-                    {!loadingAuditLog && log && (
+                    {!isLoadingAuditLog && log && (
                       <Grid2 container spacing={3} sx={{ mt: 2 }}>
                         <Grid2 size={6}>
                           <TypographyLabel>Admin Name</TypographyLabel>
@@ -168,15 +137,17 @@ function ProductDetailModal({
                     )}
                   </Card>
 
-                  <Card sx={{ p: 3 }}>
-                    <TypographyTitle sx={{ mb: 3 }}>
-                      Shop Information
-                    </TypographyTitle>
+                  {mode === 'admin' && (
+                    <Card sx={{ p: 3 }}>
+                      <TypographyTitle sx={{ mb: 3 }}>
+                        Shop Information
+                      </TypographyTitle>
 
-                    <Grid2 container spacing={2} sx={{ mt: 2 }}>
-                      <ShopCard shop={product?.shop_creator} />
-                    </Grid2>
-                  </Card>
+                      <Grid2 container spacing={2} sx={{ mt: 2 }}>
+                        <ShopCard shop={product?.shop_creator} />
+                      </Grid2>
+                    </Card>
+                  )}
 
                   <Card sx={{ p: 3 }}>
                     <TypographyTitle sx={{ mb: 3 }}>
@@ -193,29 +164,17 @@ function ProductDetailModal({
                             display: 'flex',
                             gap: 2,
                             flexWrap: 'wrap',
-                            width: '100%',
-                            border: '1px dashed',
-                            borderColor: 'grey',
-                            borderRadius: '4px',
-                            padding: '10px'
+                            width: '100%'
                           }}
                         >
                           {product?.product_images &&
                             product.product_images.map((img, index) => (
                               <Grid2 key={index} size={2}>
-                                <Box
-                                  sx={{
-                                    position: 'relative',
-                                    width: '133px',
-                                    height: '133px',
-                                    '&:hover .delete-overlay': {
-                                      opacity: 1
-                                    }
-                                  }}
-                                >
+                                <Box>
                                   <Box
                                     onClick={() => {
-                                      setSrc(img.url), setOpenLightbox(true)
+                                      ;(setActiveIndex(index),
+                                        setOpenLightbox(true))
                                     }}
                                     component="img"
                                     src={img.url}
@@ -277,10 +236,11 @@ function ProductDetailModal({
                           <Box sx={{ flex: 1 }}>
                             <TypographyLabel>Product Category</TypographyLabel>
                             <ReadOnlyTextField
-                              value={findCategoryName({
-                                categoryTree: categories,
-                                categoryCode: product?.product_category
-                              })}
+                              value={product?.product_category}
+                              // value={findCategoryName({
+                              //   categoryTree: categories,
+                              //   categoryCode: product?.product_category
+                              // })}
                             />
                           </Box>
                         </Box>
@@ -288,11 +248,13 @@ function ProductDetailModal({
                       <Grid2 size={12}>
                         <Box sx={{ flex: 1 }}>
                           <TypographyLabel>Product description</TypographyLabel>
-                          <ReactQuill
-                            readOnly={true}
-                            theme="snow"
-                            value={product?.product_description || ''}
-                          />
+                          <Box sx={{ maxHeight: '70vh', overflowY: 'auto' }}>
+                            <ReactQuill
+                              readOnly={true}
+                              theme="snow"
+                              value={product?.product_description || ''}
+                            />
+                          </Box>
                         </Box>
                       </Grid2>
                     </Grid2>
@@ -361,7 +323,9 @@ function ProductDetailModal({
                         <Grid2 size={6}>
                           <TypographyLabel>Product Revenue</TypographyLabel>
                           <ReadOnlyTextField
-                            value={product.products_sku[0].product_revenue}
+                            value={formatCurrency(
+                              product.products_sku[0].product_revenue
+                            )}
                           />
                         </Grid2>
                       </Grid2>
@@ -408,7 +372,7 @@ function ProductDetailModal({
                         </Grid2>
 
                         <TableContainer
-                          sx={{ maxHeight: 700, overflowY: 'auto', mt: 3 }}
+                          sx={{ maxHeight: '70vh', overflowY: 'auto', mt: 3 }}
                         >
                           <Table stickyHeader>
                             <TableHead sx={{ backgroundColor: grey[100] }}>
@@ -567,7 +531,9 @@ function ProductDetailModal({
 
                       <Grid2 size={4}>
                         <TypographyLabel>Product Revenue</TypographyLabel>
-                        <ReadOnlyTextField value={product?.product_revenue} />
+                        <ReadOnlyTextField
+                          value={formatCurrency(product?.product_revenue)}
+                        />
                       </Grid2>
 
                       <Grid2 size={4}>
@@ -611,7 +577,11 @@ function ProductDetailModal({
                 flexShrink: 0
               }}
             >
-              <Button color="secondary" variant="outlined" onClick={onClose}>
+              <Button
+                color="secondary"
+                variant="outlined"
+                onClick={handleClose}
+              >
                 Close
               </Button>
             </Box>
@@ -620,7 +590,11 @@ function ProductDetailModal({
       </Modal>
 
       {openLightbox && (
-        <LightboxImage src={src} onClose={() => setOpenLightbox(false)} />
+        <LightboxGallery
+          images={product?.product_images?.map((img) => img.url)}
+          activeIndex={activeIndex}
+          onClose={() => setOpenLightbox(false)}
+        />
       )}
     </>
   )

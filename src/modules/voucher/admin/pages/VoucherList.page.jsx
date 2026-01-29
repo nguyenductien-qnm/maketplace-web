@@ -6,7 +6,7 @@ import VoucherForm from '../components/VoucherForm'
 import VoucherHeader from '../components/VoucherHeader'
 import VoucherTable from '../components/VoucherTable'
 import VoucherSummary from '../components/VoucherSummary'
-import { useAdminVoucher } from '~/modules/voucher/admin/hooks/useAdminVoucher'
+import { useAdminVoucher } from '../hooks/useAdminVoucher'
 
 function VoucherList() {
   const { ui, data, handler } = useAdminVoucher()
