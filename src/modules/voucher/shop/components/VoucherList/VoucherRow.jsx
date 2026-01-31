@@ -134,7 +134,7 @@ function VoucherRow({ voucher, ui, handler }) {
         />
       </TableCell>
 
-      <TableCell sx={{ height: '100%' }}>
+      <TableCell>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           <Tooltip title="View detail this voucher">
             <RemoveRedEyeOutlinedIcon

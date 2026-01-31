@@ -26,7 +26,7 @@ const queryProductByShopAPI = async ({ payload }) => {
 
 const getProductDetailByShopAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/shop/product/${_id}`,
+    `${API_ROOT}/v1/api/shop/products/${_id}`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }

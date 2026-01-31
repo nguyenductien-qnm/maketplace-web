@@ -5,13 +5,9 @@ import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
 import TypographyTitle from '~/components/common/TypographyTitle'
-import SimpleDateRangeInput from '~/components/common/SimpleDateRangeInput'
-import toDateOnly from '~/utils/toDateOnly'
 import { useState } from 'react'
-import 'react-date-range/dist/styles.css'
-import 'react-date-range/dist/theme/default.css'
 
-function VoucherFilter({ data, handler }) {
+function ProductFilter({ data, handler }) {
   const { tempFilters } = data
   const { handleFilterChange, handleApplyFilter, handleClearTempFilters } =
     handler
@@ -73,7 +69,7 @@ function VoucherFilter({ data, handler }) {
             <TextField
               fullWidth
               label="Search"
-              placeholder="Enter voucher name or code"
+              placeholder="Enter product name, code, slug..."
               value={tempFilters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
             />
@@ -86,20 +82,8 @@ function VoucherFilter({ data, handler }) {
               onChange={(e) => handleFilterChange('type', e.target.value)}
             >
               <MenuItem value="">All</MenuItem>
-              <MenuItem value="fixed_amount">Fixed</MenuItem>
-              <MenuItem value="percent">Percent</MenuItem>
-            </TextField>
-
-            <TextField
-              select
-              fullWidth
-              label="Apply To"
-              value={tempFilters.apply_to || ''}
-              onChange={(e) => handleFilterChange('apply_to', e.target.value)}
-            >
-              <MenuItem value="">All</MenuItem>
-              <MenuItem value="all">All Products</MenuItem>
-              <MenuItem value="specific">Specific Products</MenuItem>
+              <MenuItem value="simple">Simple</MenuItem>
+              <MenuItem value="variable">Variable</MenuItem>
             </TextField>
 
             <TextField
@@ -113,29 +97,6 @@ function VoucherFilter({ data, handler }) {
               <MenuItem value="public">Public</MenuItem>
               <MenuItem value="private">Private</MenuItem>
             </TextField>
-
-            <SimpleDateRangeInput
-              label="Active Range"
-              config={{ minDate: new Date() }}
-              value={{
-                startDate: tempFilters?.active_from
-                  ? new Date(tempFilters.active_from)
-                  : undefined,
-                endDate: tempFilters?.active_to
-                  ? new Date(tempFilters.active_to)
-                  : undefined
-              }}
-              onChange={(range) => {
-                handleFilterChange(
-                  'active_from',
-                  range?.startDate ? toDateOnly(range.startDate) : undefined
-                )
-                handleFilterChange(
-                  'active_to',
-                  range?.endDate ? toDateOnly(range.endDate) : undefined
-                )
-              }}
-            />
           </Box>
 
           <Box
@@ -170,4 +131,4 @@ function VoucherFilter({ data, handler }) {
   )
 }
 
-export default VoucherFilter
+export default ProductFilter

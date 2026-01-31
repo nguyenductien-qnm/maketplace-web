@@ -3,7 +3,6 @@ import VendorDashboard from '~/pages/vendor/VendorDashboard'
 import VendorOrders from '~/pages/vendor/VendorOrders'
 import VendorOrderDetail from '~/pages/vendor/VendorOrderDetail'
 import VendorProductForm from '~/pages/vendor/VendorProductForm'
-import VendorProducts from '~/pages/vendor/VendorProducts'
 import VendorProfile from '~/pages/vendor/VendorProfile'
 import VendorWallet from '~/pages/vendor/VendorWallet'
 import VendorSetting from '~/pages/vendor/VendorSetting'
@@ -12,13 +11,14 @@ import { Route } from 'react-router-dom'
 import VendorMetrics from '~/pages/vendor/VendorMetrics'
 import VoucherFormPage from '~/modules/voucher/shop/pages/VoucherForm.page'
 import VoucherListPage from '~/modules/voucher/shop/pages/VoucherList.page'
+import ProductListPage from '~/modules/product/shop/page/ProductList.page'
 
 const VendorRoutes = ({ user }) => {
   return (
     <Route element={<RequireAuthRoute user={user} allowedRoles={['SHOP']} />}>
       <Route element={<VendorLayout />}>
         <Route path="dashboard" element={<VendorDashboard />} />
-        <Route path="product" element={<VendorProducts />} />
+        <Route path="product" element={<ProductListPage />} />
         <Route path="product/create" element={<VendorProductForm />} />
         <Route path="product/update/:_id" element={<VendorProductForm />} />
         <Route path="orders" element={<VendorOrders />} />
