@@ -70,6 +70,7 @@ function ProductImagesUpload({ form }) {
   )
 
   const errorMessage = errors?.product_images?.root?.message
+
   return (
     <Grid2 size={12}>
       <Box sx={{ display: 'flex', gap: 1 }}>

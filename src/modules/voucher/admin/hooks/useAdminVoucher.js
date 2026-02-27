@@ -25,7 +25,7 @@ import useCustomSearchParams from '~/hooks/common/searchParam.hook'
 import {
   useAdminShopFilterQuery,
   useAdminStaffFilterQuery
-} from '~/modules/admin/shared/server/reference.server'
+} from '~/modules/_shared/admin/server/reference.server'
 
 export const useAdminVoucher = () => {
   const [params, paramsReady, setParams] = useCustomSearchParams({

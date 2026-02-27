@@ -4,13 +4,13 @@ import AdminLayout from '~/layouts/admin/AdminLayout'
 import AdminShop from '~/pages/admin/AdminShop'
 import AdminUser from '~/pages/admin/AdminUser'
 import AdminOrder from '~/pages/admin/AdminOrder'
-import AdminCategory from '~/pages/admin/AdminCategory'
 import AdminWithdrawRequest from '~/pages/admin/AdminWithdrawRequest'
 import AdminCommissionRate from '~/pages/admin/AdminCommissionRate'
 import AdminWallet from '~/pages/admin/AdminWallet'
 import AdminTransaction from '~/pages/admin/AdminTransaction'
 import VoucherList from '~/modules/voucher/admin/pages/VoucherList.page'
 import ProductList from '~/modules/product/admin/pages/ProductList.page'
+import CategoryList from '~/modules/category/admin/pages/CategoryList.page'
 
 const AdminRoutes = ({ user }) => {
   return (
@@ -85,6 +85,8 @@ const AdminRoutes = ({ user }) => {
 
         <Route path="vouchers" element={<VoucherList />} />
 
+        <Route path="categories" element={<CategoryList />} />
+
         <Route path="withdraw-request">
           <Route
             path="vendor"
@@ -108,8 +110,6 @@ const AdminRoutes = ({ user }) => {
             element={<AdminTransaction type="CUSTOMER" />}
           />
         </Route>
-
-        <Route path="category" element={<AdminCategory />} />
 
         <Route path="commission-rate" element={<AdminCommissionRate />} />
       </Route>

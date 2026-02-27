@@ -5,14 +5,12 @@ import FiberManualRecordOutlinedIcon from '@mui/icons-material/FiberManualRecord
 export const TypeIcon = ({ droppable, status }) => {
   if (droppable) {
     return (
-      <FolderOutlinedIcon
-        sx={{ color: status === 'active' ? 'inherit' : 'red', mr: 1 }}
-      />
+      <FolderOutlinedIcon sx={{ color: status ? 'inherit' : 'red', mr: 1 }} />
     )
   } else {
     return (
       <FiberManualRecordOutlinedIcon
-        sx={{ color: status === 'active' ? 'inherit' : 'red', mr: 1 }}
+        sx={{ color: status ? 'inherit' : 'red', mr: 1 }}
         fontSize="small"
       />
     )

@@ -6,8 +6,8 @@ import {
 } from '@tanstack/react-query'
 import ProductCachePolicy from '../policies/product.cache.policy'
 import ProductQueryKeys from '../policies/product.queryKeys'
-import ReferenceCachePolicy from '~/modules/admin/shared/policies/reference.cache.policy'
-import ReferenceQueryKeys from '~/modules/admin/shared/policies/reference.queryKeys'
+import ReferenceCachePolicy from '~/modules/_shared/admin/policies/reference.cache.policy'
+import ReferenceQueryKeys from '~/modules/_shared/admin/policies/reference.queryKeys'
 import {
   getProductDetailByAdminAPI,
   getProductSummaryByAdminAPI,

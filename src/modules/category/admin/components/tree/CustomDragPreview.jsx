@@ -1,8 +1,8 @@
 import React from 'react'
 import { TypeIcon } from './TypeIcon'
-import styles from './CustomDragPreview.module.css'
+import styles from '../styles/CustomDragPreview.module.css'
 
-export const CustomDragPreview = (props) => {
+function CustomDragPreview(props) {
   const item = props.monitorProps.item
 
   return (
@@ -14,3 +14,5 @@ export const CustomDragPreview = (props) => {
     </div>
   )
 }
+
+export default CustomDragPreview

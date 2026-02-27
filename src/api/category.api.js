@@ -8,6 +8,7 @@ const getCategoriesByOwnerAPI = async () => {
   )
   return { status, resData: data }
 }
+
 // ============================ ADMIN ============================
 const getCategoriesRootByAdminAPI = async () => {
   const { status, data } = await authorizedAxios.get(
@@ -17,38 +18,64 @@ const getCategoriesRootByAdminAPI = async () => {
   return { status, resData: data }
 }
 
-const queryCategoriesByAdminAPI = async () => {
+const queryCategoryByAdminAPI = async () => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/admin/category`,
+    `${API_ROOT}/v1/api/admin/categories`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
 }
 
-const queryCategoryDetailByAdminAPI = async ({ id, parent }) => {
-  const isRoot = parent === 0
+const getCategoryDetailByAdminAPI = async ({ _id }) => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/admin/category/${id}`,
-    {
-      params: { root: isRoot },
-      ...TOAST_MODE.ONLY_ERROR
-    }
+    `${API_ROOT}/v1/api/admin/categories/${_id}`,
+    { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
 }
 
-const createCategoryRootAPI = async ({ payload, loadingClass }) => {
+const getCategoryFormSnapshotAPI = async ({ _id }) => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/admin/categories/${_id}/form`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
+const createRootCategoryByAdminAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/admin/category/root`,
+    `${API_ROOT}/v1/api/admin/categories/root`,
     payload,
     { ...TOAST_MODE.ALL, loadingClass }
   )
   return { status, resData: data }
 }
 
-const createCategoryChildAPI = async ({ payload, loadingClass }) => {
+const createChildCategoryByAdminAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/admin/category/child`,
+    `${API_ROOT}/v1/api/admin/categories/child`,
+    payload,
+    { ...TOAST_MODE.ALL, loadingClass }
+  )
+  return { status, resData: data }
+}
+
+const updateRootCategoryByAdminAPI = async ({ _id, payload, loadingClass }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/categories/${_id}/root`,
+    payload,
+    { ...TOAST_MODE.ALL, loadingClass }
+  )
+  return { status, resData: data }
+}
+
+const updateChildCategoryByAdminAPI = async ({
+  _id,
+  payload,
+  loadingClass
+}) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/categories/${_id}/child`,
     payload,
     { ...TOAST_MODE.ALL, loadingClass }
   )
@@ -57,7 +84,7 @@ const createCategoryChildAPI = async ({ payload, loadingClass }) => {
 
 const updateCategoryRootByAdminAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/admin/category/root`,
+    `${API_ROOT}/v1/api/admin/categories/${_id}/child`,
     payload,
     { ...TOAST_MODE.ALL, loadingClass }
   )
@@ -66,34 +93,28 @@ const updateCategoryRootByAdminAPI = async ({ payload, loadingClass }) => {
 
 const updateCategoryChildByAdminAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/admin/category/child`,
+    `${API_ROOT}/v1/api/admin/categories/child`,
     payload,
     { ...TOAST_MODE.ALL, loadingClass }
   )
   return { status, resData: data }
 }
 
-const updateCategoryPositionAPI = async ({ payload }) => {
-  try {
-    const { status, data } = await authorizedAxios.put(
-      `${API_ROOT}/v1/api/admin/category/update-position`,
-      payload,
-      { ...TOAST_MODE.ONLY_ERROR }
-    )
-    return { status, resData: data }
-  } catch (e) {
-    const { status } = e
-    return { status }
-  }
+const updateCategoryPositionByAdminAPI = async ({ _id, payload }) => {
+  const { status, data } = await authorizedAxios.put(
+    `${API_ROOT}/v1/api/admin/categories/${_id}/position`,
+    payload,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
 }
 
-const deleteCategoryByAdminAPI = async ({ _id, payload, loadingClass }) => {
-  const { status } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/admin/category/${_id}/delete`,
-    payload,
+const deleteCategoryByAdminAPI = async ({ _id, loadingClass }) => {
+  const { status, data } = await authorizedAxios.delete(
+    `${API_ROOT}/v1/api/admin/categories/${_id}`,
     { ...TOAST_MODE.ALL, loadingClass }
   )
-  return { status }
+  return { status, resData: data }
 }
 
 const exportCategoryDataByAdminAPI = async ({ loadingClass }) => {
@@ -119,16 +140,19 @@ const getCategoriesAPI = async () => {
 }
 
 export {
-  createCategoryRootAPI,
-  queryCategoriesByAdminAPI,
-  createCategoryChildAPI,
-  queryCategoryDetailByAdminAPI,
-  updateCategoryRootByAdminAPI,
+  createRootCategoryByAdminAPI,
+  queryCategoryByAdminAPI,
+  createChildCategoryByAdminAPI,
+  getCategoryDetailByAdminAPI,
   updateCategoryChildByAdminAPI,
-  updateCategoryPositionAPI,
+  updateCategoryPositionByAdminAPI,
   deleteCategoryByAdminAPI,
   getCategoriesRootByAdminAPI,
   getCategoriesAPI,
   exportCategoryDataByAdminAPI,
-  getCategoriesByOwnerAPI
+  getCategoriesByOwnerAPI,
+  getCategoryFormSnapshotAPI,
+  updateRootCategoryByAdminAPI,
+  updateChildCategoryByAdminAPI,
+  updateCategoryRootByAdminAPI // delete
 }

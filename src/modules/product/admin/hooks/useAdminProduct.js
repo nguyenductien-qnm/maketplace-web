@@ -19,7 +19,7 @@ import { useAdminProductCacheActions } from '../server/product.list.adapter'
 import {
   useAdminShopFilterQuery,
   useAdminCategoryQuery
-} from '~/modules/admin/shared/server/reference.server'
+} from '~/modules/_shared/admin/server/reference.server'
 
 export const useAdminProduct = () => {
   const [params, paramsReady, setParams] = useCustomSearchParams({

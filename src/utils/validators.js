@@ -73,11 +73,6 @@ export const CATEGORY_NAME_RULE = /^[A-Za-zÀ-ỹà-ỹ\s&',’\-]{3,50}$/
 export const CATEGORY_NAME_RULE_MESSAGE =
   'Please enter a valid name (3-50 letters, spaces, and "&" only).'
 
-// ==================== category code ============================
-export const CATEGORY_CODE_RULE = /^[A-Z_]{3,30}$/
-export const CATEGORY_CODE_RULE_MESSAGE =
-  'Please enter a valid code (3–30 uppercase letters and underscores only).'
-
 // ==================== reason ============================
 export const REASON_RULE = /^.{5,255}$/
 export const REASON_RULE_MESSAGE =
@@ -97,6 +92,11 @@ export const POSITIVE_NUMBER_RULE_MESSAGE = 'Positive number only.'
 export const VOUCHER_CODE_RULE = /^[A-Z0-9]{1,10}$/
 export const VOUCHER_CODE_RULE_MESSAGE =
   'Voucher code must contain A-Z, 0-9; 10 characters maximum.'
+
+// ==================== category code ============================
+export const CATEGORY_CODE_RULE = /^[A-Z0-9_]{5,50}$/
+export const CATEGORY_CODE_RULE_MESSAGE =
+  'Please enter category code (5–50 uppercase letters and underscores only).'
 
 // ==================== voucher name ============================
 export const VOUCHER_NAME_RULE = /^.{1,100}$/
