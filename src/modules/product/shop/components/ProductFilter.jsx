@@ -5,10 +5,13 @@ import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined'
 import TypographyTitle from '~/components/common/TypographyTitle'
+import TypographyLabel from '~/components/common/TypographyLabel'
+import CategoryTreeView from '~/components/common/CategoryTreeView'
 import { useState } from 'react'
+import { isArray } from 'lodash'
 
 function ProductFilter({ data, handler }) {
-  const { tempFilters } = data
+  const { tempFilters, categories } = data
   const { handleFilterChange, handleApplyFilter, handleClearTempFilters } =
     handler
 
@@ -17,6 +20,13 @@ function ProductFilter({ data, handler }) {
 
   const handleOpenFilter = (event) => setAnchorEl(event.currentTarget)
   const handleCloseFilter = () => setAnchorEl(null)
+
+  const categoriesValue = () => {
+    const categories = tempFilters.categories
+    if (!categories) return
+    if (isArray(categories)) return categories
+    return categories.split(',')
+  }
 
   return (
     <Box>
@@ -97,6 +107,20 @@ function ProductFilter({ data, handler }) {
               <MenuItem value="public">Public</MenuItem>
               <MenuItem value="private">Private</MenuItem>
             </TextField>
+
+            <Box>
+              <TypographyLabel>Categories</TypographyLabel>
+              <Box>
+                <CategoryTreeView
+                  multi={true}
+                  categories={categories}
+                  value={categoriesValue()}
+                  onChange={(newValue) =>
+                    handleFilterChange('categories', newValue)
+                  }
+                />
+              </Box>
+            </Box>
           </Box>
 
           <Box

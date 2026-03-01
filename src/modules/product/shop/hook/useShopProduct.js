@@ -8,6 +8,7 @@ import {
   useShopProductAuditLogQuery,
   useShopDeleteProductMutation
 } from '../server/product.list.server'
+import { useShopCategoryQuery } from '~/modules/_shared/shop/server/category.server'
 import { buildBanReasonMarkdown } from '~/helpers/buildBanReasonMarkdown'
 import { PRODUCT_DELETE_CONFIRM_DIALOG } from '../constants/product.constant'
 import { useEffect } from 'react'
@@ -46,6 +47,8 @@ const useShopProduct = () => {
   const listQuery = useShopProductListQuery({ filters: params, paramsReady })
 
   const summaryQuery = useShopProductSummaryQuery()
+
+  const categoryList = useShopCategoryQuery()
 
   const detailQuery = useShopProductDetailQuery({
     _id: selectedProductId,
@@ -156,7 +159,8 @@ const useShopProduct = () => {
       },
 
       filter: {
-        tempFilters
+        tempFilters,
+        categories: categoryList.data
       },
 
       auditLog: {

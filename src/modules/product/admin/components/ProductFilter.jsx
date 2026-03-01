@@ -29,6 +29,7 @@ import {
   FILTER_VALUE_MAP,
   FILTER_LABEL_MAP
 } from '~/modules/product/admin/constants/product.filter.constant'
+import { isArray } from 'lodash'
 
 function ProductFilter({ ui, data, handler }) {
   const [advancedOpen, setAdvancedOpen] = useState(false)
@@ -48,6 +49,13 @@ function ProductFilter({ ui, data, handler }) {
     if (!value) return
     const shop = shops?.find((s) => s._id.toString() === value.toString())
     return shop?.shop_name
+  }
+
+  const categoriesValue = () => {
+    const categories = tempFilters.categories
+    if (!categories) return
+    if (isArray(categories)) return categories
+    return categories.split(',')
   }
 
   return (
@@ -143,7 +151,7 @@ function ProductFilter({ ui, data, handler }) {
                     <CategoryTreeView
                       multi={true}
                       categories={categories}
-                      value={tempFilters?.categories || []}
+                      value={categoriesValue()}
                       onChange={(newValue) =>
                         handleFilterChange('categories', newValue)
                       }

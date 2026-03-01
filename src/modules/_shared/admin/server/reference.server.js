@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getStaffListForFilterAPI } from '~/api/user.api'
 import { getShopListForFilterAPI } from '~/api/shop.api'
 import { StatusCodes } from 'http-status-codes'
-import { getCategoriesAPI } from '~/api/category.api'
+import { getCategoryTreeAPI } from '~/api/category.api'
 
 const useAdminShopFilterQuery = () => {
   return useQuery({
@@ -35,7 +35,7 @@ const useAdminCategoryQuery = () => {
     staleTime: ReferenceCachePolicy.category,
     queryKey: ReferenceQueryKeys.category(),
     queryFn: async () => {
-      const { status, resData } = await getCategoriesAPI()
+      const { status, resData } = await getCategoryTreeAPI()
       if (status !== StatusCodes.OK) throw Error()
       return resData.metadata
     }

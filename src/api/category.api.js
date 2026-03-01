@@ -9,6 +9,14 @@ const getCategoriesByOwnerAPI = async () => {
   return { status, resData: data }
 }
 
+const getShopCategoriesAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/shop/shop/categories`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
 // ============================ ADMIN ============================
 const getCategoriesRootByAdminAPI = async () => {
   const { status, data } = await authorizedAxios.get(
@@ -133,7 +141,15 @@ const exportCategoryDataByAdminAPI = async ({ loadingClass }) => {
 // ============================ COMMON ============================
 const getCategoriesAPI = async () => {
   const { status, data } = await authorizedAxios.get(
-    `${API_ROOT}/v1/api/category`,
+    `${API_ROOT}/v1/api/categories`,
+    { ...TOAST_MODE.ONLY_ERROR }
+  )
+  return { status, resData: data }
+}
+
+const getCategoryTreeAPI = async () => {
+  const { status, data } = await authorizedAxios.get(
+    `${API_ROOT}/v1/api/categories`,
     { ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }
@@ -154,5 +170,7 @@ export {
   getCategoryFormSnapshotAPI,
   updateRootCategoryByAdminAPI,
   updateChildCategoryByAdminAPI,
-  updateCategoryRootByAdminAPI // delete
+  updateCategoryRootByAdminAPI, // delete,
+  getCategoryTreeAPI,
+  getShopCategoriesAPI
 }

@@ -94,9 +94,9 @@ export const VOUCHER_CODE_RULE_MESSAGE =
   'Voucher code must contain A-Z, 0-9; 10 characters maximum.'
 
 // ==================== category code ============================
-export const CATEGORY_CODE_RULE = /^[A-Z0-9_]{5,50}$/
+export const CATEGORY_CODE_RULE = /^[A-Z0-9_]{3,50}$/
 export const CATEGORY_CODE_RULE_MESSAGE =
-  'Please enter category code (5–50 uppercase letters and underscores only).'
+  'Please enter category code (3–50 uppercase letters and underscores only).'
 
 // ==================== voucher name ============================
 export const VOUCHER_NAME_RULE = /^.{1,100}$/

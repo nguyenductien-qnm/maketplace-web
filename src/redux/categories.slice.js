@@ -9,7 +9,7 @@ const initialState = {
 export const getCategoriesAPI = createAsyncThunk(
   'categories/getCategoriesAPI',
   async () => {
-    const result = await authorizedAxios.get(`${API_ROOT}/v1/api/category`)
+    const result = await authorizedAxios.get(`${API_ROOT}/v1/api/categories`)
     return result.data
   }
 )
