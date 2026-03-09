@@ -71,8 +71,7 @@ function VoucherFormPage() {
               variant="contained"
               fullWidth
               loading={isSubmitting}
-              loadingPosition="end"
-              className="btn-vendor-submit-voucher-form"
+              loadingPosition="start"
             >
               Submit
             </Button>

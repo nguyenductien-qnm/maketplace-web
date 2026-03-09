@@ -73,9 +73,7 @@ const useAdminCategoryList = () => {
   }
 
   const handleCloseConfirmDialog = () => {
-    console.log('call')
     if (deleteMutation.isPending) return
-    console.log('close')
     closeConfirmDialog()
   }
 

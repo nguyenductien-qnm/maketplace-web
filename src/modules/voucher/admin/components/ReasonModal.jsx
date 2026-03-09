@@ -74,7 +74,7 @@ function ReasonModal({ ui, handler }) {
           variant="contained"
           color={submitColor}
           loading={isSubmitting}
-          loadingPosition="end"
+          loadingPosition="start"
         >
           {submitText}
         </Button>

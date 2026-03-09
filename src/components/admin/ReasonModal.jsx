@@ -4,9 +4,9 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
 import TypographyLabel from '../common/TypographyLabel'
-import ReactQuill from 'react-quill-new'
 import { Controller, useForm } from 'react-hook-form'
 import { REASON_RULE, REASON_RULE_MESSAGE } from '~/utils/validators'
+import ReactQuill from 'react-quill-new'
 import 'react-quill-new/dist/quill.snow.css'
 
 function ReasonModal({
@@ -83,7 +83,7 @@ function ReasonModal({
           variant="contained"
           color={submitColor}
           loading={isSubmitting}
-          loadingPosition="end"
+          loadingPosition="start"
         >
           {submitText}
         </Button>

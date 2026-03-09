@@ -12,6 +12,7 @@ import VendorMetrics from '~/pages/vendor/VendorMetrics'
 import VoucherFormPage from '~/modules/voucher/shop/pages/VoucherForm.page'
 import VoucherListPage from '~/modules/voucher/shop/pages/VoucherList.page'
 import ProductListPage from '~/modules/product/shop/page/ProductList.page'
+import ProductForm from '~/modules/product/shop/page/ProductForm.page'
 
 const VendorRoutes = ({ user }) => {
   return (
@@ -19,8 +20,8 @@ const VendorRoutes = ({ user }) => {
       <Route element={<VendorLayout />}>
         <Route path="dashboard" element={<VendorDashboard />} />
         <Route path="product" element={<ProductListPage />} />
-        <Route path="product/create" element={<VendorProductForm />} />
-        <Route path="product/update/:_id" element={<VendorProductForm />} />
+        <Route path="product/create" element={<ProductForm />} />
+        <Route path="product/update/:_id" element={<ProductForm />} />
         <Route path="orders" element={<VendorOrders />} />
         <Route path="order-detail" element={<VendorOrderDetail />} />
         <Route path="profile" element={<VendorProfile />} />

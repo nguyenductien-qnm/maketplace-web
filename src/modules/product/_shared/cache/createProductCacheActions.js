@@ -1,7 +1,7 @@
 const createProductCacheActions = ({ queryKeys, queryClient }) => {
   const resetAll = () => {
     queryClient.invalidateQueries({
-      queryKeys: queryKeys.root(),
+      queryKey: queryKeys.root(),
       refetchType: 'active'
     })
   }

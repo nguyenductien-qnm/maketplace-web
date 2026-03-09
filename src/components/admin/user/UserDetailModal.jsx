@@ -9,8 +9,8 @@ import TextField from '@mui/material/TextField'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
-import ReactQuill from 'react-quill'
-import 'react-quill/dist/quill.snow.css'
+import ReactQuill from 'react-quill-new'
+import 'react-quill-new/dist/quill.snow.css'
 
 function UserDetailModal({ open, onClose, user }) {
   return (

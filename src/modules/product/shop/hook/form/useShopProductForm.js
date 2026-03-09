@@ -1,4 +1,3 @@
-import buildFormData from '~/helpers/buildFormData'
 import { pick } from 'lodash'
 import { navigate } from '~/helpers/navigation'
 import { toast } from 'react-toastify'
@@ -7,11 +6,11 @@ import { StatusCodes } from 'http-status-codes'
 import { useState, useEffect } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { getCategoriesByOwnerAPI } from '~/api/category.api'
+import { getProductDetailByShopAPI } from '~/api/product.api'
 import {
-  createProductByShopAPI,
-  getProductDetailByShopAPI,
-  updateProductByShopAPI
-} from '~/api/product.api'
+  useShopCreateProductMutation,
+  useShopUpdateProductMutation
+} from '../../server/product.form.server'
 
 import {
   FIELD_REQUIRED_MESSAGE,
@@ -23,56 +22,13 @@ import {
   PRODUCT_STOCK_MIN
 } from '~/utils/validators'
 
-const DEFAULT_VALUES = {
-  enable_variations: false,
-  product_name: '',
-  product_images: [],
-  product_price: null,
-  product_stock: null,
-  product_category: '',
-  product_visibility: '',
-  product_tags: [],
-  product_attributes: [
-    { key: '', value: '' },
-    { key: '', value: '' },
-    { key: '', value: '' }
-  ],
-  product_description: '',
-  product_variations: [],
-  products_sku: [],
-  product_dimensions: {
-    length: null,
-    width: null,
-    height: null,
-    weight: null
-  }
-}
+import {
+  PRODUCT_FORM_DEFAULT_VALUES,
+  SIMPLE_PRODUCT_FIELDS,
+  VARIABLE_PRODUCT_FIELDS
+} from '../../constants/product.constant'
 
-const BASE_PRODUCT_FIELDS = [
-  'product_images',
-  'product_name',
-  'product_category',
-  'product_description',
-  'product_tags',
-  'product_attributes',
-  'product_dimensions',
-  'product_visibility',
-  'enable_variations'
-]
-
-const SIMPLE_PRODUCT_FIELDS = [
-  ...BASE_PRODUCT_FIELDS,
-  'product_price',
-  'product_stock'
-]
-
-const VARIABLE_PRODUCT_FIELDS = [
-  ...BASE_PRODUCT_FIELDS,
-  'product_variations',
-  'products_sku'
-]
-
-export const useVendorProductForm = () => {
+export const useShopProductForm = () => {
   // ============================== DATA ==============================
   const {
     setValue,
@@ -84,7 +40,7 @@ export const useVendorProductForm = () => {
     clearErrors,
     handleSubmit,
     formState: { errors }
-  } = useForm({ defaultValues: DEFAULT_VALUES })
+  } = useForm({ defaultValues: PRODUCT_FORM_DEFAULT_VALUES })
 
   const { _id } = useParams()
   const { pathname } = useLocation()
@@ -105,6 +61,9 @@ export const useVendorProductForm = () => {
   const enableVariations = watch('enable_variations')
   const productSKUs = watch('products_sku')
   const productVariations = watch('product_variations')
+
+  const createMutation = useShopCreateProductMutation()
+  const updateMutation = useShopUpdateProductMutation()
 
   // ============================== EFFECT ==============================
 
@@ -139,46 +98,29 @@ export const useVendorProductForm = () => {
   }
 
   const handleFormSubmit = handleSubmit(async () => {
-    try {
-      setIsSubmitting(true)
-      const productFields = enableVariations
-        ? VARIABLE_PRODUCT_FIELDS
-        : SIMPLE_PRODUCT_FIELDS
+    const productFields = enableVariations
+      ? VARIABLE_PRODUCT_FIELDS
+      : SIMPLE_PRODUCT_FIELDS
 
-      const productData = pick(getValues(), productFields)
+    const productData = pick(getValues(), productFields)
 
-      const action = isCreate ? 'create' : 'update'
+    const formattedData = formatProductData({
+      data: productData,
+      productFields
+    })
 
-      const formattedData = formatProductData({
-        data: productData,
-        productFields,
-        action
-      })
+    if (isCreate) {
+      createMutation.mutate(
+        { payload: formattedData }
+        // { onSuccess: () => navigate('/vendor/product') }
+      )
+    }
 
-      if (isCreate) {
-        const { status } = await createProductByShopAPI({
-          payload: formattedData,
-          loadingClass: ['.btn-vendor-submit-product-form']
-        })
-        if (status === StatusCodes.CREATED) {
-          navigate('/vendor/product')
-        }
-      }
-
-      if (isUpdate) {
-        const { status } = await updateProductByShopAPI({
-          _id,
-          payload: formattedData,
-          loadingClass: ['.btn-vendor-submit-product-form']
-        })
-        if (status === StatusCodes.OK) {
-          navigate('/vendor/product')
-        }
-      }
-    } catch {
-      setIsSubmitting(false)
-    } finally {
-      setIsSubmitting(false)
+    if (isUpdate) {
+      updateMutation.mutate(
+        { payload: formattedData },
+        { onSuccess: () => navigate('/vendor/product') }
+      )
     }
   })
 
@@ -296,28 +238,12 @@ export const useVendorProductForm = () => {
     return value ?? 0
   }
 
-  const formatProductData = ({ data, productFields, action }) => {
+  const formatProductData = ({ data, productFields }) => {
     const formattedData = { ...data }
 
-    if (action == 'create')
-      formattedData.product_images = data.product_images?.map((img) => img.file)
-
-    if (action == 'update') {
-      const imageFiles = []
-      const imageMetadata = []
-
-      data.product_images?.forEach((img, index) => {
-        if (img.file instanceof File) {
-          imageFiles.push(img.file)
-          imageMetadata.push({ isNew: true, order: index })
-        } else {
-          imageMetadata.push({ ...img, order: index })
-        }
-      })
-
-      formattedData.product_images = imageMetadata
-      formattedData.new_product_images = imageFiles
-    }
+    formattedData.product_images = formattedData.product_images.map(
+      ({ previewUrl, ...rest }) => rest
+    )
 
     if (enableVariations) {
       formattedData.product_variations = data.product_variations?.map((v) => ({
@@ -335,18 +261,13 @@ export const useVendorProductForm = () => {
       formattedData.product_stock = parseInt(data.product_stock)
     }
 
-    const fieldsFormData =
-      formattedData.new_product_images?.length > 0
-        ? [...productFields, 'new_product_images']
-        : productFields
-
-    return buildFormData(formattedData, fieldsFormData)
+    return pick(formattedData, productFields)
   }
 
   return {
     ui: {
       loading,
-      isSubmitting,
+      isSubmitting: createMutation.isPending || updateMutation.isPending,
       pageTitle,
       isUpdate,
       productStatus

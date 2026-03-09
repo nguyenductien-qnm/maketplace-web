@@ -11,7 +11,7 @@ import {
   TableFooter,
   TablePagination
 } from '@mui/material'
-import { PRODUCT_TABLE_COLUMNS } from '../constants/product.constant'
+import { PRODUCT_TABLE_COLUMNS } from '../../constants/product.constant'
 import NoData from '~/components/common/NoData'
 import CircularProgress from '@mui/material/CircularProgress'
 import ProductRow from './ProductRow'

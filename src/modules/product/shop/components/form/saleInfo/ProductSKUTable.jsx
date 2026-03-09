@@ -1,0 +1,149 @@
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import TextField from '@mui/material/TextField'
+import TableCellHeader from '~/components/common/TableCellHeader'
+import { grey } from '@mui/material/colors'
+import { Controller } from 'react-hook-form'
+import { NumericFormat } from 'react-number-format'
+import { useProductSKUsTable } from '../../../hook/form/useProductSKUTable'
+import {
+  FIELD_REQUIRED_MESSAGE,
+  PRODUCT_PRICE_MAX,
+  PRODUCT_PRICE_MESSAGE,
+  PRODUCT_STOCK_MAX,
+  PRODUCT_STOCK_MESSAGE,
+  PRODUCT_STOCK_MIN
+} from '~/utils/validators'
+
+function ProductSKUTable({ form }) {
+  const renderPriceInput = (index) => (
+    <Controller
+      name={`products_sku.${index}.product_price`}
+      control={form.control}
+      rules={{
+        required: FIELD_REQUIRED_MESSAGE,
+        validate: {
+          positive: (value) => {
+            const numValue = parseFloat(String(value).replace(/[$,]/g, ''))
+            return numValue > 0 || PRODUCT_PRICE_MESSAGE
+          },
+          maxPrice: (value) => {
+            const numValue = parseFloat(String(value).replace(/[$,]/g, ''))
+            return numValue <= PRODUCT_PRICE_MAX || PRODUCT_PRICE_MESSAGE
+          }
+        }
+      }}
+      render={({ field: { ref, ...field } }) => (
+        <NumericFormat
+          placeholder="Price"
+          fullWidth
+          {...field}
+          allowNegative={false}
+          prefix="$"
+          decimalScale={2}
+          fixedDecimalScale
+          thousandSeparator
+          customInput={TextField}
+          error={!!errors.products_sku?.[index]?.product_price}
+          helperText={errors.products_sku?.[index]?.product_price?.message}
+          onValueChange={(values) => {
+            field.onChange(values.value || '')
+          }}
+        />
+      )}
+    />
+  )
+
+  const renderStockInput = (index) => (
+    <TextField
+      type="number"
+      fullWidth
+      placeholder="Stock"
+      {...register(`products_sku.${index}.product_stock`, {
+        required: FIELD_REQUIRED_MESSAGE,
+        min: {
+          value: PRODUCT_STOCK_MIN,
+          message: PRODUCT_STOCK_MESSAGE
+        },
+        max: {
+          value: PRODUCT_STOCK_MAX,
+          message: PRODUCT_STOCK_MESSAGE
+        },
+        validate: (value) =>
+          Number.isInteger(Number(value)) || 'Stock must be a whole number'
+      })}
+      error={!!errors.products_sku?.[index]?.product_stock}
+      helperText={errors.products_sku?.[index]?.product_stock?.message}
+    />
+  )
+
+  const { register, errors } = form
+
+  const { productVariations, productSKUs } = useProductSKUsTable({ form })
+
+  return (
+    <>
+      <TableContainer sx={{ maxHeight: 1000, overflowY: 'auto' }}>
+        <Table stickyHeader>
+          <TableHead sx={{ backgroundColor: grey[100] }}>
+            <TableRow>
+              {productVariations?.map((variation, index) => (
+                <TableCellHeader key={index}>
+                  {variation.name || `Variation ${index + 1}`}
+                </TableCellHeader>
+              ))}
+              <TableCellHeader>Price</TableCellHeader>
+              <TableCellHeader>Stock</TableCellHeader>
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {productSKUs.map((sku, index) => {
+              const [idx1, idx2] = sku.sku_tier_indices
+              const option1 = productVariations[0]?.options[idx1]
+              const option2 = productVariations[1]?.options[idx2]
+
+              const isFirstRowOfOption1 =
+                index === 0 ||
+                productSKUs[index - 1].sku_tier_indices[0] !== idx1
+
+              const rowSpanCount = productSKUs.filter(
+                (s) => s.sku_tier_indices[0] === idx1
+              ).length
+
+              return (
+                <TableRow key={index}>
+                  {isFirstRowOfOption1 && (
+                    <TableCell rowSpan={rowSpanCount}>
+                      {option1?.value}
+                    </TableCell>
+                  )}
+                  {option2 && <TableCell>{option2.value}</TableCell>}
+                  <TableCell
+                    style={{
+                      verticalAlign: 'top'
+                    }}
+                  >
+                    {renderPriceInput(index)}
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      verticalAlign: 'top'
+                    }}
+                  >
+                    {renderStockInput(index)}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
+  )
+}
+export default ProductSKUTable

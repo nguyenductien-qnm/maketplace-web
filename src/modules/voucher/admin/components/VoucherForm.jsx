@@ -446,7 +446,7 @@ function VoucherForm({ ui, data, handler }) {
                 </Button>
                 <Button
                   loading={isSubmitting}
-                  loadingPosition="end"
+                  loadingPosition="start"
                   className="btn-admin-voucher-form"
                   variant="contained"
                   color="primary"

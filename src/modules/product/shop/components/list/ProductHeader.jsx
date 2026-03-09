@@ -16,17 +16,15 @@ function ProductHeader({ ui, data, handler }) {
       <TypographyTitle>My Products</TypographyTitle>
 
       <Box sx={{ display: 'flex', gap: 1 }}>
-        <Tooltip title="Fetch the latest data">
-          <Button
-            disabled={isRefreshing}
-            variant="outlined"
-            onClick={handleRefresh}
-            sx={{ p: 1 }}
-          >
-            <RefreshOutlinedIcon sx={{ mr: 1 }} />
-            Refresh
-          </Button>
-        </Tooltip>
+        <Button
+          disabled={isRefreshing}
+          variant="outlined"
+          onClick={handleRefresh}
+          sx={{ p: 1 }}
+        >
+          <RefreshOutlinedIcon sx={{ mr: 1 }} />
+          Refresh
+        </Button>
 
         <ProductFilter data={data} handler={handler.filter} />
 

@@ -9,7 +9,7 @@ import Grid2 from '@mui/material/Grid2'
 import CategoryTreeView from '~/components/common/CategoryTreeView'
 import TypographyLabel from '~/components/common/TypographyLabel'
 import TypographyTitle from '~/components/common/TypographyTitle'
-import ProductImagesUpload from './ProductImagesUpload/ProductImagesUpload'
+import ProductImagesUpload from './ProductImage/ProductImagesUpload'
 import DividerVertical from '~/components/common/DividerVertical'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { Controller } from 'react-hook-form'
@@ -19,24 +19,9 @@ import {
   PRODUCT_NAME_RULE_MESSAGE
 } from '~/utils/validators'
 import { FormControl, MenuItem, Select } from '@mui/material'
+import { PRODUCT_BASIC_INFO_TOOLTIP } from '../../../constants/product.constant'
 import ReactQuill from 'react-quill-new'
 import 'react-quill-new/dist/quill.snow.css'
-
-const LABELS = {
-  TITLE: 'Basic Information',
-  PRODUCT_NAME: 'Product Name',
-  CATEGORY: 'Product Category',
-  DESCRIPTION: 'Product Description',
-  VISIBILITY: 'Product Visibility'
-}
-
-const TOOLTIP = {
-  PRODUCT_NAME:
-    'Product name must be 10-120 characters. Only letters, numbers, spaces and special characters (- _ , . ( ) :) are allowed.',
-  CATEGORY: `Select only 1 category for your product. If you don't have a suitable category, go to Settings to customize your shop categories based on platform's available categories.`,
-  DESCRIPTION:
-    'Product description must be 100-3000 characters. Provide detailed information about your product including materials, dimensions, features, and benefits.'
-}
 
 const FieldError = ({ error }) =>
   error ? (
@@ -50,7 +35,7 @@ function BasicInformation({ form, categoriesTree }) {
 
   return (
     <Card sx={{ p: 3 }}>
-      <TypographyTitle sx={{ mb: 3 }}>{LABELS.TITLE}</TypographyTitle>
+      <TypographyTitle sx={{ mb: 3 }}>Basic Information</TypographyTitle>
 
       <Grid2 container rowSpacing={3} sx={{ mt: 2 }}>
         <Grid2 size={12}>
@@ -59,8 +44,12 @@ function BasicInformation({ form, categoriesTree }) {
 
         <Grid2 size={12}>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <TypographyLabel>{LABELS.PRODUCT_NAME}</TypographyLabel>
-            <Tooltip arrow placement="top" title={TOOLTIP.PRODUCT_NAME}>
+            <TypographyLabel>Product Name</TypographyLabel>
+            <Tooltip
+              arrow
+              placement="top"
+              title={PRODUCT_BASIC_INFO_TOOLTIP.PRODUCT_NAME}
+            >
               <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
             </Tooltip>
           </Box>
@@ -92,8 +81,12 @@ function BasicInformation({ form, categoriesTree }) {
 
         <Grid2 size={12}>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <TypographyLabel>{LABELS.VISIBILITY}</TypographyLabel>
-            <Tooltip arrow placement="top" title={TOOLTIP.PRODUCT_NAME}>
+            <TypographyLabel>Product Visibility</TypographyLabel>
+            <Tooltip
+              arrow
+              placement="top"
+              title={PRODUCT_BASIC_INFO_TOOLTIP.PRODUCT_NAME}
+            >
               <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
             </Tooltip>
           </Box>
@@ -115,8 +108,12 @@ function BasicInformation({ form, categoriesTree }) {
 
         <Grid2 size={12}>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <TypographyLabel>{LABELS.CATEGORY}</TypographyLabel>
-            <Tooltip arrow placement="top" title={TOOLTIP.CATEGORY}>
+            <TypographyLabel>Product Category</TypographyLabel>
+            <Tooltip
+              arrow
+              placement="top"
+              title={PRODUCT_BASIC_INFO_TOOLTIP.CATEGORY}
+            >
               <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
             </Tooltip>
           </Box>
@@ -140,8 +137,12 @@ function BasicInformation({ form, categoriesTree }) {
 
         <Grid2 size={12}>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <TypographyLabel>{LABELS.DESCRIPTION}</TypographyLabel>
-            <Tooltip arrow placement="top" title={TOOLTIP.DESCRIPTION}>
+            <TypographyLabel>Product Description</TypographyLabel>
+            <Tooltip
+              arrow
+              placement="top"
+              title={PRODUCT_BASIC_INFO_TOOLTIP.DESCRIPTION}
+            >
               <InfoOutlinedIcon fontSize="small" sx={{ color: 'grey' }} />
             </Tooltip>
           </Box>

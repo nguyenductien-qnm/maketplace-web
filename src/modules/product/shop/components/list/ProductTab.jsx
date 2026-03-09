@@ -1,11 +1,13 @@
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
 import ProductTable from './ProductTable'
-import { TabContext, TabList, TabPanel } from '@mui/lab'
+import TabContext from '@mui/lab/TabContext'
+import TabList from '@mui/lab/TabList'
+import TabPanel from '@mui/lab/TabPanel'
 import {
   PRODUCT_TAB_LABELS,
   PRODUCT_TAB_KEYS
-} from '../constants/product.constant'
+} from '../../constants/product.constant'
 
 function ProductTab({ ui, data, handler }) {
   const { summary } = data

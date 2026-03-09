@@ -50,7 +50,7 @@ const getProductSummaryByShopAPI = async () => {
 
 const createProductByShopAPI = async ({ payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.post(
-    `${API_ROOT}/v1/api/shop/product`,
+    `${API_ROOT}/v1/api/shop/products`,
     payload,
     {
       loadingClass,
@@ -62,7 +62,7 @@ const createProductByShopAPI = async ({ payload, loadingClass }) => {
 
 const updateProductByShopAPI = async ({ _id, payload, loadingClass }) => {
   const { status, data } = await authorizedAxios.put(
-    `${API_ROOT}/v1/api/shop/product/${_id}`,
+    `${API_ROOT}/v1/api/shop/products/${_id}`,
     payload,
     { loadingClass, ...TOAST_MODE.ALL }
   )
@@ -71,7 +71,7 @@ const updateProductByShopAPI = async ({ _id, payload, loadingClass }) => {
 
 const deleteProductByShopAPI = async ({ _id, loadingClass }) => {
   const { status, data } = await authorizedAxios.delete(
-    `${API_ROOT}/v1/api/shop/product/${_id}`,
+    `${API_ROOT}/v1/api/shop/products/${_id}`,
     { loadingClass, ...TOAST_MODE.ONLY_ERROR }
   )
   return { status, resData: data }

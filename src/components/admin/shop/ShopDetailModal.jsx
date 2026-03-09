@@ -10,8 +10,8 @@ import BannerAndAvatarDisplay from '~/components/vendor/VendorProfile/BannerAndA
 import TypographyLabel from '~/components/common/TypographyLabel'
 import CircularIndeterminate from '~/components/common/CircularIndeterminate'
 import { WEB_ROOT } from '~/utils/constants'
-import ReactQuill from 'react-quill'
-import 'react-quill/dist/quill.snow.css'
+import ReactQuill from 'react-quill-new'
+import 'react-quill-new/dist/quill.snow.css'
 import capitalizeFirstLetter from '~/utils/capitalizeFirstLetter'
 
 function ShopDetailModal({ open, onClose, shop }) {

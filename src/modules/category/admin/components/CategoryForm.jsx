@@ -241,7 +241,7 @@ function CategoryForm({ ui, data, handler }) {
                 </Button>
                 <Button
                   loading={isSubmitting}
-                  loadingPosition="end"
+                  loadingPosition="start"
                   variant="contained"
                   color="primary"
                   type="submit"

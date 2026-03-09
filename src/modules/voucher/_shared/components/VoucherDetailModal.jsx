@@ -20,9 +20,9 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import TableCellHeader from '~/components/common/TableCellHeader'
-import ReactQuill from 'react-quill-new'
 import { modalConfig, modalStyle } from '~/config/modal'
 import { getVoucherStatus } from '~/utils/voucherStatus'
+import ReactQuill from 'react-quill-new'
 import 'react-quill-new/dist/quill.snow.css'
 
 function VoucherDetailModal({ ui, data, handler, mode }) {

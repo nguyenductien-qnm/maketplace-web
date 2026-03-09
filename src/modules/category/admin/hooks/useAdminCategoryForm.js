@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { initMediaUploadAPI } from '~/api/media.api'
+import { initMediaUploadSingleAPI } from '~/api/media.api'
 import buildFormData from '~/helpers/buildFormData'
 
 const useAdminCategoryForm = ({ category, action }) => {
@@ -35,11 +35,12 @@ const useAdminCategoryForm = ({ category, action }) => {
 
   const handleUploadImage = async (e) => {
     const file = e.target.files?.[0]
+
     if (!file) return
 
     const formData = buildFormData({ file })
 
-    const { status, resData } = await initMediaUploadAPI({
+    const { status, resData } = await initMediaUploadSingleAPI({
       payload: formData
     })
 

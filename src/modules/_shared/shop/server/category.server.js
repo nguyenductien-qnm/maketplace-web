@@ -5,8 +5,8 @@ import { getShopCategoriesAPI } from '~/api/category.api'
 
 const useShopCategoryQuery = () => {
   return useQuery({
-    staleTime: ReferenceQueryKeys.shopCategory(),
-    queryKey: ReferenceCachePolicy.shopCategory,
+    staleTime: ReferenceCachePolicy.shopCategory,
+    queryKey: ReferenceQueryKeys.shopCategory(),
     queryFn: async () => {
       const { status, resData } = await getShopCategoriesAPI()
       if (status !== 200) throw new Error()
